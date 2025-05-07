@@ -13,12 +13,21 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('firstName');
-            $table->string('lastName');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
+            $table->string('player');
+            $table->bigInteger('DateOfCreation');
+            $table->string('agent');
+            $table->decimal('balance', 10, 2)->default(0);
+            $table->string('distributor');
+            $table->json('gameHistory')->default('[]');
             $table->string('password');
-            $table->rememberToken();
+            $table->boolean('isupdated')->default(false);
+            $table->enum('role', ['admin', 'distributor', 'agent'])->default('agent');
+            $table->enum('status', ['Active', 'Inactive'])->default('Active');
+            $table->boolean('login_status')->default(false);
+            $table->integer('endpoint')->default(0);
+            $table->decimal('winamount', 10, 2)->default(0);
+            $table->unsignedBigInteger('distributor_id');
+            $table->unsignedBigInteger('agent_id');
             $table->timestamps();
         });
 
