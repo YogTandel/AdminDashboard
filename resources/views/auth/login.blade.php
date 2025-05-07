@@ -73,6 +73,15 @@
                                                 </button>
                                             </div>
                                         @endif
+                                        <label>Role</label>
+                                        <div class="mb-3">
+                                            <select class="form-control" name="role" required>
+                                                <option value="" disabled selected>Select Role</option>
+                                                <option value="admin">Admin</option>
+                                                <option value="distributor">Distributor</option>
+                                                <option value="agent">Agent</option>
+                                            </select>
+                                        </div>
                                         <label>Email</label>
                                         <div class="mb-3">
                                             <input type="email" class="form-control" placeholder="Email"
