@@ -12,8 +12,7 @@
         "php": "^8.2",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
-        "mongodb/laravel-mongodb": "^5.4",
-        "php-flasher/flasher-laravel": "^2.1"
+        "mongodb/laravel-mongodb": "^5.4"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
