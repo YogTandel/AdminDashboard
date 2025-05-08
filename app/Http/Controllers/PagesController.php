@@ -7,4 +7,19 @@ class PagesController extends Controller
     {
         return view('pages.agentlist');
     }
+
+    public function distributor()
+    {
+        return view('pages.distributor');
+    }
+
+    public function player()
+    {
+        return view('pages.player');
+    }
+
+    public function transactionreport()
+    {
+        return view('pages.transactionreport');
+    }
 }

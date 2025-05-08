@@ -73,7 +73,7 @@
 
             <!-- Distributor -->
             <li class="nav-item">
-                <a class="nav-link {{ Request::is('distributor*') ? 'active' : '' }}" href="{{ route('agentlist') }}">
+                <a class="nav-link {{ Request::is('distributor') ? 'active' : '' }}" href="{{ route('distributor') }}">
                     <div
                         class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="fas fa-truck text-dark"></i>
@@ -85,9 +85,11 @@
 
             <!-- Player -->
             <li class="nav-item">
-                <a class="nav-link" href="/pages/virtual-reality.html">
+                <a class="nav-link" {{ Request::is('player') ? 'active' : '' }}" href="{{ route('player') }}">
                     <div
-                        class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+                        class="icon icon-shape
+                    icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center
+                    justify-content-center">
                         <svg width="12px" height="12px" viewBox="0 0 40 40" version="1.1"
                             xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                             <title>player</title>
@@ -111,7 +113,8 @@
 
             <!-- Transaction Report -->
             <li class="nav-item">
-                <a class="nav-link" href="/pages/rtl.html">
+                <a class="nav-link" {{ Request::is('transactionreport') ? 'active' : '' }}"
+                    href="{{ route('transactionreport') }}">
                     <div
                         class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="fas fa-file-invoice-dollar text-dark"></i>
