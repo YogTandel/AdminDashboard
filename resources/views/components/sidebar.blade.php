@@ -158,7 +158,6 @@
                 </a>
             </li>
 
-
             <!-- Logout -->
             <li class="nav-item">
                 <form action="{{ route('logout') }}" method="POST">
