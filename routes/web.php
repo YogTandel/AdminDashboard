@@ -17,3 +17,5 @@ Route::get('/agentlist', [PagesController::class, 'agentList'])->name('agentlist
 Route::get('/distributor', [PagesController::class, 'distributor'])->name('distributor');
 Route::get('/player', [PagesController::class, 'player'])->name('player');
 Route::get('/transactionreport', [PagesController::class, 'transactionreport'])->name('transactionreport');
+Route::get('/setting', [PagesController::class, 'setting'])->name('setting');
+Route::get('/livegame', [PagesController::class, 'livegame'])->name('livegame');
