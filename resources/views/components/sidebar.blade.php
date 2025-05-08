@@ -82,10 +82,9 @@
                 </a>
             </li>
 
-
             <!-- Player -->
             <li class="nav-item">
-                <a class="nav-link" {{ Request::is('player') ? 'active' : '' }}" href="{{ route('player') }}">
+                <a class="nav-link {{ Request::is('player') ? 'active' : '' }}" href="{{ route('player') }}">
                     <div
                         class="icon icon-shape
                     icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center
@@ -113,7 +112,7 @@
 
             <!-- Transaction Report -->
             <li class="nav-item">
-                <a class="nav-link" {{ Request::is('transactionreport') ? 'active' : '' }}"
+                <a class="nav-link {{ Request::is('transactionreport') ? 'active' : '' }}"
                     href="{{ route('transactionreport') }}">
                     <div
                         class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
