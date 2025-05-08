@@ -1,10 +1,10 @@
 <?php
-
 namespace App\Http\Controllers;
-
-use Illuminate\Http\Request;
 
 class PagesController extends Controller
 {
-    //
+    public function agentList()
+    {
+        return view('pages.agentlist');
+    }
 }

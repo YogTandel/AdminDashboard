@@ -4,8 +4,7 @@
     <div class="sidenav-header">
         <i class="fas fa-times p-3 cursor-pointer text-secondary opacity-5 position-absolute end-0 top-0 d-none d-xl-none"
             aria-hidden="true" id="iconSidenav"></i>
-        <a class="navbar-brand m-0" href=" https://demos.creative-tim.com/soft-ui-dashboard/pages/dashboard.html "
-            target="_blank">
+        <a class="navbar-brand m-0" href="{{ route('dashboard') }}" target="_blank">
             <img src="/assets/img/logo-ct-dark.png" class="navbar-brand-img h-100" alt="main_logo">
             <span class="ms-1 font-weight-bold">Dashboard</span>
         </a>
@@ -15,7 +14,7 @@
         <ul class="navbar-nav">
             <!-- Dashboard -->
             <li class="nav-item">
-                <a class="nav-link active" href="/pages/dashboard.html">
+                <a class="nav-link {{ Request::is('dashboard*') ? 'active' : '' }}" href="{{ route('dashboard') }}">
                     <div
                         class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
                         <svg width="12px" height="12px" viewBox="0 0 45 40" version="1.1"
@@ -43,7 +42,7 @@
 
             <!-- Agent List -->
             <li class="nav-item">
-                <a class="nav-link  " href="/pages/tables.html">
+                <a class="nav-link {{ Request::is('agentlist') ? 'active' : '' }}" href="{{ route('agentlist') }}">
                     <div
                         class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
                         <svg width="12px" height="12px" viewBox="0 0 46 42" version="1.1"
@@ -74,7 +73,7 @@
 
             <!-- Distributor -->
             <li class="nav-item">
-                <a class="nav-link" href="/pages/billing.html">
+                <a class="nav-link {{ Request::is('distributor*') ? 'active' : '' }}" href="{{ route('agentlist') }}">
                     <div
                         class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="fas fa-truck text-dark"></i>
