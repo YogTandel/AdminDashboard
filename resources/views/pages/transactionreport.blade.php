@@ -26,83 +26,100 @@
                                 <thead>
                                     <tr>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                            Name
+                                            NO
+                                        </th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 py-2">
+                                            Transaction ID
                                         </th>
                                         <th
                                             class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                                            Password
+                                            Amount
                                         </th>
                                         <th
                                             class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                            Balance
+                                            DateTime
                                         </th>
                                         <th
                                             class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                            Distributor
+                                            Form
                                         </th>
                                         <th
                                             class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                            Endpoint
-                                        </th>
-                                        <th
-                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                            Status
-                                        </th>
-                                        <th
-                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                            DateOfCreation
-                                        </th>
-                                        <th
-                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                            Action
+                                            to
                                         </th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
+                                        <td class="align-middle text-center text-sm">
+                                            <p class="text-xs font-weight-bold mb-0">1</p>
+                                        </td>
                                         <td>
                                             <div class="d-flex px-2 py-1">
                                                 <div class="d-flex flex-column justify-content-center">
-                                                    <h6 class="mb-0 text-sm">John Michael</h6>
+                                                    <h6 class="mb-0 text-sm">-NtwatuOjz26zllcjdNh</h6>
                                                 </div>
                                             </div>
                                         </td>
                                         <td>
-                                            <p class="text-xs font-weight-bold mb-0">12345</p>
+                                            <p class="text-xs font-weight-bold mb-0">100.00</p>
                                         </td>
                                         <td class="align-middle text-center text-sm">
+                                            <p class="text-xs font-weight-bold mb-0">20240327024237</p>
+                                        </td>
+                                        <td class="align-middle text-center text-sm">
+                                            <p class="text-xs font-weight-bold mb-0">admin</p>
+                                        </td>
+                                        <td class="align-middle text-center text-sm">
+                                            <p class="text-xs font-weight-bold mb-0">dis</p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <p class="text-xs font-weight-bold mb-0">2</p>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex px-2 py-1">
+                                                <div class="d-flex flex-column justify-content-center">
+                                                    <h6 class="mb-0 text-sm">-NtwatuOjz26zllcjdNh</h6>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
                                             <p class="text-xs font-weight-bold mb-0">0.00</p>
                                         </td>
                                         <td class="align-middle text-center text-sm">
-                                            <p class="text-xs font-weight-bold mb-0">anish</p>
+                                            <p class="text-xs font-weight-bold mb-0">20240327024237</p>
                                         </td>
                                         <td class="align-middle text-center text-sm">
-                                            <p class="text-xs font-weight-bold mb-0">N/A</p>
+                                            <p class="text-xs font-weight-bold mb-0">dis</p>
                                         </td>
                                         <td class="align-middle text-center text-sm">
-                                            <span class="badge badge-sm bg-gradient-success">Online</span>
+                                            <p class="text-xs font-weight-bold mb-0">age</p>
                                         </td>
-                                        <td class="align-middle text-center">
-                                            <span class="text-secondary text-xs font-weight-bold">55868744746332</span>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <p class="text-xs font-weight-bold mb-0">3</p>
                                         </td>
-                                        <td class="align-middle">
-                                            <div class="d-flex align-items-center justify-content-around">
-                                                <a href="javascript:;" class="text-secondary font-weight-bold text-xs me-2"
-                                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Copy Agent">
-                                                    <i class="fas fa-copy"></i>
-                                                </a>
-                                                <a href="javascript:;" class="text-secondary font-weight-bold text-xs me-2"
-                                                    data-bs-placement="top" title="Edit Agent" data-bs-toggle="modal"
-                                                    data-bs-target="#exampleModalEditAgent">
-                                                    <i class="fas fa-edit"></i>
-                                                </a>
-                                                <a href="javascript:;"
-                                                    class="text-danger font-weight-bold text-xs toggle-status"
-                                                    data-bs-toggle="tooltip" data-bs-placement="top"
-                                                    title="Block/Unblock Agent">
-                                                    <i class="fas fa-ban"></i>
-                                                </a>
+                                        <td>
+                                            <div class="d-flex px-2 py-1">
+                                                <div class="d-flex flex-column justify-content-center">
+                                                    <h6 class="mb-0 text-sm">-NtwatuOjz26zllcjdNh</h6>
+                                                </div>
                                             </div>
+                                        </td>
+                                        <td>
+                                            <p class="text-xs font-weight-bold mb-0">500.00</p>
+                                        </td>
+                                        <td class="align-middle text-center text-sm">
+                                            <p class="text-xs font-weight-bold mb-0">20240327024237</p>
+                                        </td>
+                                        <td class="align-middle text-center text-sm">
+                                            <p class="text-xs font-weight-bold mb-0">dis</p>
+                                        </td>
+                                        <td class="align-middle text-center text-sm">
+                                            <p class="text-xs font-weight-bold mb-0">agent1</p>
                                         </td>
                                     </tr>
                                 </tbody>
