@@ -58,11 +58,7 @@
                                             </div>
                                         </td>
                                         <td>
-                                            <div class="d-flex px-2 py-1">
-                                                <div class="d-flex flex-column justify-content-center">
-                                                    <h6 class="mb-0 text-sm">-NtwatuOjz26zllcjdNh</h6>
-                                                </div>
-                                            </div>
+                                            <h6 class="mb-0 text-sm">-NtwatuOjz26zllcjdNh</h6>
                                         </td>
                                         <td>
                                             <p class="text-xs font-weight-bold mb-0">100.00</p>
@@ -80,7 +76,7 @@
                                     <tr>
                                         <td class="align-middle text-center text-sm">
                                             <div class="d-flex px-2 py-1">
-                                                <p class="text-xs font-weight-bold mb-0">1</p>
+                                                <p class="text-xs font-weight-bold mb-0">2</p>
                                             </div>
                                         </td>
                                         <td>
