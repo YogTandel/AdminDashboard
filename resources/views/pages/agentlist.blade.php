@@ -172,6 +172,55 @@
                 </div>
                 <!-- End Add Agent Modal -->
 
+                 <!-- Edit Agent Modal -->
+                 <div class="modal fade" id="exampleModalEditAgent" tabindex="-1" role="dialog"
+                    aria-labelledby="exampleModalEditAgent" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-md" role="document">
+                        <div class="modal-content">
+                            <div class="modal-body p-0">
+                                <div class="card card-plain">
+                                    <div class="card-header pb-0 text-left">
+                                        <h3 class="font-weight-bolder text-primary text-gradient">Edit  Agent</h3>
+                                    </div>
+                                    <div class="card-body pb-3">
+                                        <form role="form text-left">
+                                            <label>Agent Name</label>
+                                            <div class="input-group mb-3">
+                                                <input type="text" class="form-control" placeholder="Name"
+                                                    aria-label="Name" name="name" aria-describedby="name-addon">
+                                            </div>
+                                            <label>Initial Point (RS.0000)</label>
+                                            <div class="input-group mb-3">
+                                                <input type="number" class="form-control" placeholder="0.00"
+                                                    aria-label="Point" name="point" aria-describedby="email-addon">
+                                            </div>
+                                            <label>Password</label>
+                                            <div class="input-group mb-3">
+                                                <input type="password" class="form-control" placeholder="Password"
+                                                    aria-label="Password" name="password"
+                                                    aria-describedby="password-addon">
+                                            </div>
+                                            <label>Confirm Password</label>
+                                            <div class="input-group mb-3">
+                                                <input type="password" class="form-control" placeholder="Password"
+                                                    aria-label="Password" name="password"
+                                                    aria-describedby="password-addon">
+                                            </div>
+                                            <div class="text-center">
+                                                <button type="button"
+                                                    class="btn bg-gradient-primary btn-lg btn-rounded w-100 mt-4 mb-0">Update
+                                                    Agent
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- End Edit Agent Modal -->
+
                 <x-footer />
             </div>
     </main>
