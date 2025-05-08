@@ -22,4 +22,14 @@ class PagesController extends Controller
     {
         return view('pages.transactionreport');
     }
+
+    public function setting()
+    {
+        return view('pages.setting');
+    }
+
+    public function liveGame()
+    {
+        return view('pages.livegame');
+    }
 }

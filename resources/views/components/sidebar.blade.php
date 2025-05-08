@@ -124,7 +124,7 @@
 
             <!-- Setting -->
             <li class="nav-item">
-                <a class="nav-link" href="/pages/profile.html">
+                <a class="nav-link {{ Request::is('setting') ? 'active' : '' }}" href="{{ route('setting') }}">
                     <div
                         class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
                         <svg width="12px" height="12px" viewBox="0 0 40 40" version="1.1"
@@ -149,7 +149,7 @@
 
             <!-- Live Game -->
             <li class="nav-item">
-                <a class="nav-link" href="/pages/sign-in.html">
+                <a class="nav-link {{ Request::is('livegame') ? 'active' : '' }}" href="{{ route('livegame') }}">
                     <div
                         class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="fas fa-gamepad text-dark"></i>
