@@ -19,6 +19,10 @@
 
             <ul class="navbar-nav  justify-content-end">
                 @auth
+                    <a class="nav-link text-body font-weight-bold px-0">
+                        <i class="ps-3 fa fa-user me-sm-1"></i>
+                        <span class="d-sm-inline d-none">{{ Auth::user()->firstName }}</span>
+                    </a>
                     <li class="nav-item d-flex align-items-center">
                         <form action="{{ route('logout') }}" method="POST">
                             @csrf
@@ -27,10 +31,6 @@
                                 <span class="d-sm-inline d-none">Logout</span>
                             </button>
                         </form>
-                        <a class="nav-link text-body font-weight-bold px-0">
-                            <i class="ps-3 fa fa-user me-sm-1"></i>
-                            <span class="d-sm-inline d-none">{{ Auth::user()->firstName }}</span>
-                        </a>
                     </li>
                 @endauth
                 @guest
