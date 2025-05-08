@@ -62,7 +62,7 @@
                             </g>
                         </svg>
                     </div>
-                    <span class="nav-link-text ms-1">Tables</span>
+                    <span class="nav-link-text ms-1">Agent List</span>
                 </a>
             </li>
             <li class="nav-item">
@@ -88,7 +88,7 @@
                             </g>
                         </svg>
                     </div>
-                    <span class="nav-link-text ms-1">Billing</span>
+                    <span class="nav-link-text ms-1">Distributor</span>
                 </a>
             </li>
             <li class="nav-item">
@@ -117,7 +117,7 @@
                             </g>
                         </svg>
                     </div>
-                    <span class="nav-link-text ms-1">Virtual Reality</span>
+                    <span class="nav-link-text ms-1">Player</span>
                 </a>
             </li>
             <li class="nav-item">
@@ -147,11 +147,8 @@
                             </g>
                         </svg>
                     </div>
-                    <span class="nav-link-text ms-1">RTL</span>
+                    <span class="nav-link-text ms-1">Transaction Report</span>
                 </a>
-            </li>
-            <li class="nav-item mt-3">
-                <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Account pages</h6>
             </li>
             <li class="nav-item">
                 <a class="nav-link  " href="/pages/profile.html">
@@ -180,7 +177,7 @@
                             </g>
                         </svg>
                     </div>
-                    <span class="nav-link-text ms-1">Profile</span>
+                    <span class="nav-link-text ms-1">Setting</span>
                 </a>
             </li>
             <li class="nav-item">
@@ -207,7 +204,7 @@
                             </g>
                         </svg>
                     </div>
-                    <span class="nav-link-text ms-1">Sign In</span>
+                    <span class="nav-link-text ms-1">Live Game</span>
                 </a>
             </li>
             <li class="nav-item">
@@ -240,7 +237,7 @@
                             </g>
                         </svg>
                     </div>
-                    <span class="nav-link-text ms-1">Sign Up</span>
+                    <span class="nav-link-text ms-1">Logout</span>
                 </a>
             </li>
         </ul>
