@@ -21,11 +21,23 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $validate = $request->validate([
-            'firstName' => 'required|string|max:255',
-            'lastName'  => 'required|string|max:255',
-            'email'     => 'required|email|unique:users',
-            'password'  => 'required|string|min:6',
+            'player'         => 'required|string|max:255',
+            'password'       => 'required|string|min:6',
+            'role'           => 'required|in:admin,distributor,agent',
+            'agent'          => 'required|string|max:255',
+            'distributor'    => 'required|string|max:255',
+            'distributor_id' => 'required|exists:users,id',
+            'agent_id'       => 'required|exists:users,id',
         ]);
+
+        $validate['DateOfCreation'] = now()->format('YmdHis');
+        $validate['balance']        = 0;
+        $validate['gameHistory']    = [];
+        $validate['isupdated']      = false;
+        $validate['status']         = 'Active';
+        $validate['login_status']   = false;
+        $validate['endpoint']       = 0;
+        $validate['winamount']      = 0;
 
         $user = User::create($validate);
 
@@ -36,13 +48,27 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        $validate = $request->validate([
-            'email'    => 'required|email',
+        $credentials = $request->validate([
+            'player'   => 'required|string',
             'password' => 'required|string',
+            'role'     => 'required|in:admin,distributor,agent',
         ]);
 
-        if (Auth::attempt($validate)) {
+        // Only pass player and password to Auth::attempt()
+        if (Auth::attempt([
+            'player'   => $credentials['player'],
+            'password' => $credentials['password'],
+        ])) {
             $request->session()->regenerate();
+
+            // Optional: Check role after login, if needed
+            if (Auth::user()->role !== $credentials['role']) {
+                Auth::logout();
+                return back()->withErrors([
+                    'credentials' => 'Invalid role for this user.',
+                ]);
+            }
+
             return redirect()->route('dashboard')->with('success', 'Login successful!');
         }
 
