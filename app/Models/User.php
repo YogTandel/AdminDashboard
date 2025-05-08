@@ -1,7 +1,6 @@
 <?php
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use \Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use MongoDB\Laravel\Auth\User as Authenticatable;
@@ -20,10 +19,21 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
-        'firstName',
-        'lastName',
-        'email',
+        'player',
+        'DateOfCreation',
+        'agent',
+        'balance',
+        'distributor',
+        'gameHistory',
         'password',
+        'isupdated',
+        'role',
+        'status',
+        'login_status',
+        'endpoint',
+        'winamount',
+        'distributor_id',
+        'agent_id',
     ];
 
     /**
@@ -37,36 +47,17 @@ class User extends Authenticatable
     ];
 
     /**
-     * Get the attributes that should be cast.
+     * The attributes that should be cast.
      *
-     * @return array<string, string>
+     * @var array<string, string>
      */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password'          => 'hashed',
-        ];
-    }
-
-    /**
-     * The primary key type.
-     *
-     * @var string
-     */
-    protected $keyType = 'string';
-
-    /**
-     * Indicates if the model's ID is auto-incrementing.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * The attributes that should be cast to dates.
-     *
-     * @var array
-     */
-    protected $dates = ['email_verified_at', 'created_at', 'updated_at'];
+    protected $casts = [
+        'password'       => 'hashed',
+        'gameHistory'    => 'array',
+        'balance'        => 'decimal:2',
+        'winamount'      => 'decimal:2',
+        'isupdated'      => 'boolean',
+        'login_status'   => 'boolean',
+        'DateOfCreation' => 'integer',
+    ];
 }
