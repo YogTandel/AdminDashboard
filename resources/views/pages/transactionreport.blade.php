@@ -28,7 +28,8 @@
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                             NO
                                         </th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 py-2">
+                                        <th
+                                            class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 py-2">
                                             Transaction ID
                                         </th>
                                         <th
@@ -52,7 +53,9 @@
                                 <tbody>
                                     <tr>
                                         <td class="align-middle text-center text-sm">
-                                            <p class="text-xs font-weight-bold mb-0">1</p>
+                                            <div class="d-flex px-2 py-1">
+                                                <p class="text-xs font-weight-bold mb-0">1</p>
+                                            </div>
                                         </td>
                                         <td>
                                             <div class="d-flex px-2 py-1">
@@ -75,8 +78,10 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>
-                                            <p class="text-xs font-weight-bold mb-0">2</p>
+                                        <td class="align-middle text-center text-sm">
+                                            <div class="d-flex px-2 py-1">
+                                                <p class="text-xs font-weight-bold mb-0">1</p>
+                                            </div>
                                         </td>
                                         <td>
                                             <div class="d-flex px-2 py-1">
@@ -86,40 +91,16 @@
                                             </div>
                                         </td>
                                         <td>
-                                            <p class="text-xs font-weight-bold mb-0">0.00</p>
+                                            <p class="text-xs font-weight-bold mb-0">100.00</p>
                                         </td>
                                         <td class="align-middle text-center text-sm">
                                             <p class="text-xs font-weight-bold mb-0">20240327024237</p>
                                         </td>
                                         <td class="align-middle text-center text-sm">
-                                            <p class="text-xs font-weight-bold mb-0">dis</p>
-                                        </td>
-                                        <td class="align-middle text-center text-sm">
-                                            <p class="text-xs font-weight-bold mb-0">age</p>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <p class="text-xs font-weight-bold mb-0">3</p>
-                                        </td>
-                                        <td>
-                                            <div class="d-flex px-2 py-1">
-                                                <div class="d-flex flex-column justify-content-center">
-                                                    <h6 class="mb-0 text-sm">-NtwatuOjz26zllcjdNh</h6>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <p class="text-xs font-weight-bold mb-0">500.00</p>
-                                        </td>
-                                        <td class="align-middle text-center text-sm">
-                                            <p class="text-xs font-weight-bold mb-0">20240327024237</p>
+                                            <p class="text-xs font-weight-bold mb-0">admin</p>
                                         </td>
                                         <td class="align-middle text-center text-sm">
                                             <p class="text-xs font-weight-bold mb-0">dis</p>
-                                        </td>
-                                        <td class="align-middle text-center text-sm">
-                                            <p class="text-xs font-weight-bold mb-0">agent1</p>
                                         </td>
                                     </tr>
                                 </tbody>
