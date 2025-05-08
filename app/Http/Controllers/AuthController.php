@@ -58,10 +58,10 @@ class AuthController extends Controller
         if (Auth::attempt([
             'player'   => $credentials['player'],
             'password' => $credentials['password'],
+            'status'   => 'Active',
         ])) {
             $request->session()->regenerate();
 
-            // Optional: Check role after login, if needed
             if (Auth::user()->role !== $credentials['role']) {
                 Auth::logout();
                 return back()->withErrors([

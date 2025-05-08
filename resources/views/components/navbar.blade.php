@@ -19,16 +19,19 @@
 
             <ul class="navbar-nav  justify-content-end">
                 @auth
-                    <a class="nav-link text-body font-weight-bold px-0">
-                        <i class="ps-3 fa fa-user me-sm-1"></i>
-                        <span class="d-sm-inline d-none">{{ Auth::user()->firstName }}</span>
-                    </a>
+                    <li class="nav-item d-flex align-items-center">
+                        <a class="nav-link text-body font-weight-bold px-0">
+                            <i class="ps-3 fa fa-user me-sm-1"></i>
+                            <span class="d-sm-inline d-none">{{ Auth::user()->player }}</span>
+                        </a>
+                    </li>
+                @endauth
+                @auth
                     <li class="nav-item d-flex align-items-center">
                         <form action="{{ route('logout') }}" method="POST">
                             @csrf
                             <button type="submit" class="nav-link text-body font-weight-bold px-0">
-                                <i class="fa fa-lock me-sm-1"></i>
-                                <span class="d-sm-inline d-none">Logout</span>
+                                <i class=" ps-3 fas fa-sign-out-alt me-sm-1"></i>
                             </button>
                         </form>
                     </li>
