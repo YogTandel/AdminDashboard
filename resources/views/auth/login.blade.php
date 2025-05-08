@@ -82,11 +82,11 @@
                                                 <option value="agent">Agent</option>
                                             </select>
                                         </div>
-                                        <label>Email</label>
+                                        <label>Player</label>
                                         <div class="mb-3">
-                                            <input type="email" class="form-control" placeholder="Email"
-                                                aria-label="Email" name="email" value="{{ old('email') }}"
-                                                aria-describedby="email-addon" required>
+                                            <input type="text" class="form-control" placeholder="Player"
+                                                aria-label="Player" name="player" value="{{ old('player') }}"
+                                                aria-describedby="player-addon" required>
                                         </div>
                                         <label>Password</label>
                                         <div class="mb-3">
