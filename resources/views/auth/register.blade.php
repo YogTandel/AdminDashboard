@@ -1,4 +1,4 @@
-@extends('layouts.layout')
+@extends('auth.layout')
 
 @section('content')
     <!-- Navbar -->

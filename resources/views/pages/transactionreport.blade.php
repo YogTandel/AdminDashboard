@@ -1,3 +1,7 @@
-<div>
-    <!-- Simplicity is the essence of happiness. - Cedric Bledsoe -->
-</div>
+@extends('layouts.layout')
+
+@section('page-name', 'Transaction Report')
+
+@section('content')
+
+@endsection
