@@ -29,126 +29,111 @@
                             <table class="table align-items-center mb-0">
                                 <thead>
                                     <tr>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                            Name
+                                        <th class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                            No
                                         </th>
                                         <th
-                                            class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                            Player
+                                        </th>
+                                        <th
+                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                                             Password
                                         </th>
                                         <th
                                             class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                                             Role
                                         </th>
-                                        <th
-                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        <th class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                             Balance
                                         </th>
-                                        <th
-                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                             Distributor
                                         </th>
-                                        <th
-                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                             Agent
                                         </th>
-                                        <th
-                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        <th class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                             Status
                                         </th>
-                                        <th
-                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                            Winamount
+                                        <th class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                            Created At
                                         </th>
-                                        <th
-                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                            DateOfCreation
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                            Distributor ID
                                         </th>
-                                        <th
-                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                            Distributor Id
-                                        </th>
-                                        <th
-                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        <th class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                             Action
                                         </th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @if ($agents->isEmpty())
+                                    @forelse ($agents as $index => $agent)
                                         <tr>
-                                            <td colspan="12" class="text-center">No agents data found.</td>
+                                            <td class="text-center">
+                                                <p class="text-xs font-weight-bold mb-0">{{ $index + 1 }}</p>
+                                            </td>
+                                            <td class="text-center">
+                                                <p class="text-xs font-weight-bold mb-0">{{ $agent->player }}</p>
+                                            </td>
+                                            <td class="text-center">
+                                                <p class="text-xs font-weight-bold mb-0">{{ $agent->original_password }}</p>
+                                            </td>
+                                            <td class="text-center">
+                                                <p class="text-xs font-weight-bold mb-0">{{ ucfirst($agent->role) }}</p>
+                                            </td>
+                                            <td class="text-center">
+                                                <span
+                                                    class="text-xs font-weight-bold">₹{{ number_format($agent->balance, 2) }}</span>
+                                            </td>
+                                            <td class="text-center">
+                                                <p class="text-xs font-weight-bold mb-0">{{ $agent->distributor }}</p>
+                                            </td>
+                                            <td class="text-center">
+                                                <p class="text-xs font-weight-bold mb-0">{{ $agent->agent }}</p>
+                                            </td>
+                                            <td class="text-center">
+                                                <span
+                                                    class="badge badge-sm {{ $agent->status === 'Active' ? 'bg-gradient-success' : 'bg-gradient-danger' }}">
+                                                    {{ strtoupper($agent->status) }}
+                                                </span>
+                                            </td>
+                                            <td class="text-center">
+                                                <span class="text-secondary text-xs font-weight-bold">
+                                                    {{ \Carbon\Carbon::createFromFormat('YmdHis', $agent->DateOfCreation)->format('d M Y, H:i') }}
+                                                </span>
+                                            </td>
+                                            <td class="text-center">
+                                                <p class="text-xs font-weight-bold mb-0">{{ $agent->distributor_id }}</p>
+                                            </td>
+                                            <td class="text-center">
+                                                <div class="d-flex justify-content-center gap-2">
+                                                    <a href="javascript:;"
+                                                        class="text-secondary font-weight-bold text-xs me-2"
+                                                        data-bs-toggle="tooltip" data-bs-placement="top" title="Copy Agent">
+                                                        <i class="fas fa-copy"></i>
+                                                    </a>
+                                                    <a href="javascript:;"
+                                                        class="text-secondary font-weight-bold text-xs me-2"
+                                                        data-bs-placement="top" title="Edit Agent" data-bs-toggle="modal"
+                                                        data-bs-target="#exampleModalEditAgent">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                    <a href="javascript:;"
+                                                        class="text-danger font-weight-bold text-xs toggle-status"
+                                                        data-bs-toggle="tooltip" data-bs-placement="top"
+                                                        title="Block/Unblock Agent">
+                                                        <i class="fas fa-ban"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
                                         </tr>
-                                    @else
-                                        @foreach ($agents as $agent)
-                                            <tr>
-                                                <td>
-                                                    <div class="d-flex px-2 py-1">
-                                                        <div class="d-flex flex-column justify-content-center">
-                                                            <h6 class="mb-0 text-sm">{{ $agent->player }}</h6>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <p class="text-xs font-weight-bold mb-0">
-                                                        {{ $agent->original_password }}</p>
-                                                </td>
-                                                <td>
-                                                    <p class="text-xs font-weight-bold mb-0">
-                                                        {{ $agent->role }}</p>
-                                                </td>
-                                                <td class="align-middle text-center text-sm">
-                                                    <p class="text-xs font-weight-bold mb-0">₹{{ $agent->balance }}</p>
-                                                </td>
-                                                <td class="align-middle text-center text-sm">
-                                                    <p class="text-xs font-weight-bold mb-0">{{ $agent->distributor }}</p>
-                                                </td>
-                                                <td class="align-middle text-center text-sm">
-                                                    <p class="text-xs font-weight-bold mb-0">{{ $agent->agent }}</p>
-                                                </td>
-                                                <td class="align-middle text-center text-sm">
-                                                    <span
-                                                        class="badge badge-sm {{ $agent->status === 'Active' ? 'bg-gradient-success' : 'bg-gradient-danger' }}">
-                                                        {{ $agent->status }}
-                                                    </span>
-                                                </td>
-                                                <td class="align-middle text-center text-sm">
-                                                    <p class="text-xs font-weight-bold mb-0">{{ $agent->winamount }}</p>
-                                                </td>
-                                                <td class="align-middle text-center">
-                                                    <span class="text-secondary text-xs font-weight-bold">
-                                                        {{ \Carbon\Carbon::createFromFormat('YmdHis', $agent->DateOfCreation)->format('d M Y, H:i') }}
-                                                    </span>
-                                                </td>
-                                                <td class="align-middle text-center">
-                                                    <span
-                                                        class="text-secondary text-xs font-weight-bold">{{ $agent->distributor_id }}</span>
-                                                </td>
-                                                <td class="align-middle">
-                                                    <div class="d-flex align-items-center justify-content-around">
-                                                        <a href="javascript:;"
-                                                            class="text-secondary font-weight-bold text-xs me-2"
-                                                            data-bs-toggle="tooltip" data-bs-placement="top"
-                                                            title="Copy Agent">
-                                                            <i class="fas fa-copy"></i>
-                                                        </a>
-                                                        <a href="javascript:;"
-                                                            class="text-secondary font-weight-bold text-xs me-2"
-                                                            data-bs-placement="top" title="Edit Agent"
-                                                            data-bs-toggle="modal" data-bs-target="#exampleModalEditAgent">
-                                                            <i class="fas fa-edit"></i>
-                                                        </a>
-                                                        <a href="javascript:;"
-                                                            class="text-danger font-weight-bold text-xs toggle-status"
-                                                            data-bs-toggle="tooltip" data-bs-placement="top"
-                                                            title="Block/Unblock Agent">
-                                                            <i class="fas fa-ban"></i>
-                                                        </a>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    @endif
+                                    @empty
+                                        <tr>
+                                            <td colspan="11" class="text-center text-secondary text-sm">No agents data
+                                                found.</td>
+                                        </tr>
+                                    @endforelse
                                 </tbody>
                             </table>
                         </div>
