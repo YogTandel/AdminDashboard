@@ -37,12 +37,20 @@
                                             Password
                                         </th>
                                         <th
+                                            class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                            Role
+                                        </th>
+                                        <th
                                             class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                             Balance
                                         </th>
                                         <th
                                             class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                             Distributor
+                                        </th>
+                                        <th
+                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                            Agent
                                         </th>
                                         <th
                                             class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
@@ -54,7 +62,15 @@
                                         </th>
                                         <th
                                             class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                            Winamount
+                                        </th>
+                                        <th
+                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                             DateOfCreation
+                                        </th>
+                                        <th
+                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                            Distributor Id
                                         </th>
                                         <th
                                             class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
@@ -63,7 +79,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
+                                    {{-- <tr>
                                         <td>
                                             <div class="d-flex px-2 py-1">
                                                 <div class="d-flex flex-column justify-content-center">
@@ -108,7 +124,83 @@
                                                 </a>
                                             </div>
                                         </td>
-                                    </tr>
+                                    </tr> --}}
+                                    @if ($agents->isEmpty())
+                                        <tr>
+                                            <td colspan="12" class="text-center">No agents data found.</td>
+                                        </tr>
+                                    @else
+                                        @foreach ($agents as $agent)
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex px-2 py-1">
+                                                        <div class="d-flex flex-column justify-content-center">
+                                                            <h6 class="mb-0 text-sm">{{ $agent->player }}</h6>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <p class="text-xs font-weight-bold mb-0">
+                                                        {{ $agent->original_password }}</p>
+                                                </td>
+                                                <td>
+                                                    <p class="text-xs font-weight-bold mb-0">
+                                                        {{ $agent->role }}</p>
+                                                </td>
+                                                <td class="align-middle text-center text-sm">
+                                                    <p class="text-xs font-weight-bold mb-0">₹{{ $agent->balance }}</p>
+                                                </td>
+                                                <td class="align-middle text-center text-sm">
+                                                    <p class="text-xs font-weight-bold mb-0">{{ $agent->distributor }}</p>
+                                                </td>
+                                                <td class="align-middle text-center text-sm">
+                                                    <p class="text-xs font-weight-bold mb-0">{{ $agent->agent }}</p>
+                                                </td>
+                                                <td class="align-middle text-center text-sm">
+                                                    <p class="text-xs font-weight-bold mb-0">{{ $agent->endpoint }}</p>
+                                                </td>
+                                                <td class="align-middle text-center text-sm">
+                                                    <span
+                                                        class="badge badge-sm {{ $agent->status === 'Active' ? 'bg-gradient-success' : 'bg-gradient-danger' }}">
+                                                        {{ $agent->status }}
+                                                    </span>
+                                                </td>
+                                                <td class="align-middle text-center text-sm">
+                                                    <p class="text-xs font-weight-bold mb-0">{{ $agent->winamount }}</p>
+                                                </td>
+                                                <td class="align-middle text-center">
+                                                    <span
+                                                        class="text-secondary text-xs font-weight-bold">{{ $agent->DateOfCreation }}</span>
+                                                </td>
+                                                <td class="align-middle text-center">
+                                                    <span
+                                                        class="text-secondary text-xs font-weight-bold">{{ $agent->distributor_id }}</span>
+                                                </td>
+                                                <td class="align-middle">
+                                                    <div class="d-flex align-items-center justify-content-around">
+                                                        <a href="javascript:;"
+                                                            class="text-secondary font-weight-bold text-xs me-2"
+                                                            data-bs-toggle="tooltip" data-bs-placement="top"
+                                                            title="Copy Agent">
+                                                            <i class="fas fa-copy"></i>
+                                                        </a>
+                                                        <a href="javascript:;"
+                                                            class="text-secondary font-weight-bold text-xs me-2"
+                                                            data-bs-placement="top" title="Edit Agent"
+                                                            data-bs-toggle="modal" data-bs-target="#exampleModalEditAgent">
+                                                            <i class="fas fa-edit"></i>
+                                                        </a>
+                                                        <a href="javascript:;"
+                                                            class="text-danger font-weight-bold text-xs toggle-status"
+                                                            data-bs-toggle="tooltip" data-bs-placement="top"
+                                                            title="Block/Unblock Agent">
+                                                            <i class="fas fa-ban"></i>
+                                                        </a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    @endif
                                 </tbody>
                             </table>
                         </div>
@@ -135,8 +227,8 @@
                                         </div>
                                         <label>Initial Point (RS.0000)</label>
                                         <div class="input-group mb-3">
-                                            <input type="number" class="form-control" placeholder="0.00" aria-label="Point"
-                                                name="point" aria-describedby="email-addon">
+                                            <input type="number" class="form-control" placeholder="0.00"
+                                                aria-label="Point" name="point" aria-describedby="email-addon">
                                         </div>
                                         <label>Password</label>
                                         <div class="input-group mb-3">
@@ -192,8 +284,9 @@
                                         </div>
                                         <label>Confirm Password</label>
                                         <div class="input-group mb-3">
-                                            <input type="password" class="form-control" placeholder="Password"
-                                                aria-label="Password" name="password" aria-describedby="password-addon">
+                                            <input type="password" class="form-control" placeholder="Confirm Password"
+                                                aria-label="password_confirmation" name="password_confirmation"
+                                                aria-describedby="password-addon">
                                         </div>
                                         <div class="text-center">
                                             <button type="button"

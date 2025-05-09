@@ -37,12 +37,12 @@
                                             Password
                                         </th>
                                         <th
-                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                            Balance
+                                            class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                            Role
                                         </th>
                                         <th
                                             class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                            Distributor
+                                            Balance
                                         </th>
                                         <th
                                             class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
@@ -63,7 +63,71 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
+                                    @if ($distributors->isEmpty())
+                                        <tr>
+                                            <td colspan="8" class="text-center">No agents data found.</td>
+                                        </tr>
+                                    @else
+                                        @foreach ($distributors as $distributor)
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex px-2 py-1">
+                                                        <div class="d-flex flex-column justify-content-center">
+                                                            <h6 class="mb-0 text-sm">{{ $distributor->player }}</h6>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <p class="text-xs font-weight-bold mb-0">
+                                                        {{ $distributor->original_password }}</p>
+                                                </td>
+                                                <td>
+                                                    <p class="text-xs font-weight-bold mb-0">
+                                                        {{ $distributor->role }}</p>
+                                                </td>
+                                                <td class="align-middle text-center text-sm">
+                                                    <p class="text-xs font-weight-bold mb-0">{{ $distributor->balance }}</p>
+                                                </td>
+                                                <td class="align-middle text-center text-sm">
+                                                    <p class="text-xs font-weight-bold mb-0">{{ $distributor->endpoint }}
+                                                    </p>
+                                                </td>
+                                                <td class="align-middle text-center text-sm">
+                                                    <span
+                                                        class="badge badge-sm {{ $distributor->status === 'Active' ? 'bg-gradient-success' : 'bg-gradient-danger' }}">
+                                                        {{ $distributor->status }}
+                                                    </span>
+                                                </td>
+                                                <td class="align-middle text-center">
+                                                    <span
+                                                        class="text-secondary text-xs font-weight-bold">{{ $distributor->DateOfCreation }}</span>
+                                                </td>
+                                                <td class="align-middle">
+                                                    <div class="d-flex align-items-center justify-content-around">
+                                                        <a href="javascript:;"
+                                                            class="text-secondary font-weight-bold text-xs me-2"
+                                                            data-bs-toggle="tooltip" data-bs-placement="top"
+                                                            title="Copy Agent">
+                                                            <i class="fas fa-copy"></i>
+                                                        </a>
+                                                        <a href="javascript:;"
+                                                            class="text-secondary font-weight-bold text-xs me-2"
+                                                            data-bs-placement="top" title="Edit Agent"
+                                                            data-bs-toggle="modal" data-bs-target="#exampleModalEditAgent">
+                                                            <i class="fas fa-edit"></i>
+                                                        </a>
+                                                        <a href="javascript:;"
+                                                            class="text-danger font-weight-bold text-xs toggle-status"
+                                                            data-bs-toggle="tooltip" data-bs-placement="top"
+                                                            title="Block/Unblock Agent">
+                                                            <i class="fas fa-ban"></i>
+                                                        </a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    @endif
+                                    {{-- <tr>
                                         <td>
                                             <div class="d-flex px-2 py-1">
                                                 <div class="d-flex flex-column justify-content-center">
@@ -108,7 +172,7 @@
                                                 </a>
                                             </div>
                                         </td>
-                                    </tr>
+                                    </tr> --}}
                                 </tbody>
                             </table>
                         </div>
@@ -214,4 +278,3 @@
         </div>
     </div>
 @endsection
-
