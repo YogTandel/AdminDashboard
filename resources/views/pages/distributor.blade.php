@@ -96,7 +96,8 @@
                                                         {{ $distributor->role }}</p>
                                                 </td>
                                                 <td class="align-middle text-center text-sm">
-                                                    <p class="text-xs font-weight-bold mb-0">{{ $distributor->balance }}</p>
+                                                    <p class="text-xs font-weight-bold mb-0">
+                                                        {{ number_format($distributor->balance, 2) }}</p>
                                                 </td>
                                                 <td class="align-middle text-center text-sm">
                                                     <p class="text-xs font-weight-bold mb-0">{{ $distributor->endpoint }}
