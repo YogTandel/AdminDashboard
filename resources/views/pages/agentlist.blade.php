@@ -71,40 +71,40 @@
                                     @forelse ($agents as $index => $agent)
                                         <tr>
                                             <td class="text-center">
-                                                <p class="text-xs font-weight-bold mb-0">{{ $index + 1 }}</p>
+                                                <p class="text-xs font-weight-bold mb-0 text-dark">{{ $index + 1 }}</p>
                                             </td>
                                             <td class="text-center">
-                                                <p class="text-xs font-weight-bold mb-0">{{ $agent->player }}</p>
+                                                <p class="text-xs font-weight-bold mb-0 text-dark">{{ $agent->player }}</p>
                                             </td>
                                             <td class="text-center">
-                                                <p class="text-xs font-weight-bold mb-0">{{ $agent->original_password }}</p>
+                                                <p class="text-xs font-weight-bold mb-0 text-dark me-4">{{ $agent->original_password }}</p>
                                             </td>
                                             <td class="text-center">
-                                                <p class="text-xs font-weight-bold mb-0">{{ ucfirst($agent->role) }}</p>
+                                                <p class="text-xs font-weight-bold mb-0 text-dark">{{ ucfirst($agent->role) }}</p>
                                             </td>
                                             <td class="text-center">
                                                 <span
-                                                    class="text-xs font-weight-bold">₹{{ number_format($agent->balance, 2) }}</span>
+                                                    class="text-xs font-weight-bold text-dark">₹{{ number_format($agent->balance, 2) }}</span>
                                             </td>
                                             <td class="text-center">
-                                                <p class="text-xs font-weight-bold mb-0">{{ $agent->distributor }}</p>
+                                                <p class="text-xs font-weight-bold mb-0 text-dark">{{ $agent->distributor }}</p>
                                             </td>
                                             <td class="text-center">
-                                                <p class="text-xs font-weight-bold mb-0">{{ $agent->agent }}</p>
+                                                <p class="text-xs font-weight-bold mb-0 text-dark">{{ $agent->agent }}</p>
                                             </td>
-                                            <td class="text-center">
+                                            <td class="text-center text-dark">
                                                 <span
                                                     class="badge badge-sm {{ $agent->status === 'Active' ? 'bg-gradient-success' : 'bg-gradient-danger' }}">
                                                     {{ strtoupper($agent->status) }}
                                                 </span>
                                             </td>
-                                            <td class="text-center">
+                                            <td class="text-center text-dark">
                                                 <span class="text-secondary text-xs font-weight-bold">
                                                     {{ \Carbon\Carbon::createFromFormat('YmdHis', $agent->DateOfCreation)->format('d M Y, H:i') }}
                                                 </span>
                                             </td>
                                             <td class="text-center">
-                                                <p class="text-xs font-weight-bold mb-0">{{ $agent->distributor_id }}</p>
+                                                <p class="text-xs font-weight-bold mb-0 text-dark">{{ $agent->distributor_id }}</p>
                                             </td>
                                             <td class="text-center">
                                                 <div class="d-flex justify-content-center gap-2">
