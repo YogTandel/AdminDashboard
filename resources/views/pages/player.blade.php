@@ -104,7 +104,7 @@
                                                 </td>
                                                 <td class="align-middle text-center text-sm">
                                                     <p class="text-xs font-weight-bold mb-0">
-                                                        {{ number_format($player->balance, 2) }}</p>
+                                                        ₹{{ number_format($player->balance, 2) }}</p>
                                                 </td>
                                                 <td class="align-middle text-center text-sm">
                                                     <p class="text-xs font-weight-bold mb-0">{{ $player->distributor }}</p>
