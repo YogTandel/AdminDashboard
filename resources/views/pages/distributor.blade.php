@@ -18,7 +18,7 @@
                                     <button class="btn btn-outline-primary mb-0" type="button">Search</button>
                                 </div>
                             </div>
-                            <button type="button" class="btn bg-gradient-primary mb-0" data-bs-toggle="modal"
+                            <button type="button" class="btn bg-primary mb-0 text-white" data-bs-toggle="modal"
                                 data-bs-target="#exampleModalAddAgent">
                                 <i class="fas fa-plus"></i>&nbsp;&nbsp;Add Distributor
                             </button>
@@ -29,6 +29,9 @@
                             <table class="table align-items-center mb-0">
                                 <thead>
                                     <tr>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                            No
+                                        </th>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                             Name
                                         </th>
@@ -68,8 +71,15 @@
                                             <td colspan="8" class="text-center">No agents data found.</td>
                                         </tr>
                                     @else
-                                        @foreach ($distributors as $distributor)
+                                        @foreach ($distributors as $index => $distributor)
                                             <tr>
+                                                <td>
+                                                    <div class="d-flex px-2 py-1">
+                                                        <div class="d-flex flex-column justify-content-center">
+                                                            <h6 class="mb-0 text-sm">{{ $index + 1 }}</h6>
+                                                        </div>
+                                                    </div>
+                                                </td>
                                                 <td>
                                                     <div class="d-flex px-2 py-1">
                                                         <div class="d-flex flex-column justify-content-center">
