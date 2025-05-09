@@ -18,7 +18,7 @@
                                     <button class="btn btn-outline-primary mb-0" type="button">Search</button>
                                 </div>
                             </div>
-                            <button type="button" class="btn bg-gradient-primary mb-0" data-bs-toggle="modal"
+                            <button type="button" class="btn btn-primary mb-0" data-bs-toggle="modal"
                                 data-bs-target="#exampleModalAddAgent">
                                 <i class="fas fa-plus"></i>&nbsp;&nbsp;Add Agent
                             </button>
@@ -54,10 +54,6 @@
                                         </th>
                                         <th
                                             class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                            Endpoint
-                                        </th>
-                                        <th
-                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                             Status
                                         </th>
                                         <th
@@ -79,52 +75,6 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {{-- <tr>
-                                        <td>
-                                            <div class="d-flex px-2 py-1">
-                                                <div class="d-flex flex-column justify-content-center">
-                                                    <h6 class="mb-0 text-sm">John Michael</h6>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <p class="text-xs font-weight-bold mb-0">12345</p>
-                                        </td>
-                                        <td class="align-middle text-center text-sm">
-                                            <p class="text-xs font-weight-bold mb-0">0.00</p>
-                                        </td>
-                                        <td class="align-middle text-center text-sm">
-                                            <p class="text-xs font-weight-bold mb-0">anish</p>
-                                        </td>
-                                        <td class="align-middle text-center text-sm">
-                                            <p class="text-xs font-weight-bold mb-0">N/A</p>
-                                        </td>
-                                        <td class="align-middle text-center text-sm">
-                                            <span class="badge badge-sm bg-gradient-success">Online</span>
-                                        </td>
-                                        <td class="align-middle text-center">
-                                            <span class="text-secondary text-xs font-weight-bold">55868744746332</span>
-                                        </td>
-                                        <td class="align-middle">
-                                            <div class="d-flex align-items-center justify-content-around">
-                                                <a href="javascript:;" class="text-secondary font-weight-bold text-xs me-2"
-                                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Copy Agent">
-                                                    <i class="fas fa-copy"></i>
-                                                </a>
-                                                <a href="javascript:;" class="text-secondary font-weight-bold text-xs me-2"
-                                                    data-bs-placement="top" title="Edit Agent" data-bs-toggle="modal"
-                                                    data-bs-target="#exampleModalEditAgent">
-                                                    <i class="fas fa-edit"></i>
-                                                </a>
-                                                <a href="javascript:;"
-                                                    class="text-danger font-weight-bold text-xs toggle-status"
-                                                    data-bs-toggle="tooltip" data-bs-placement="top"
-                                                    title="Block/Unblock Agent">
-                                                    <i class="fas fa-ban"></i>
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr> --}}
                                     @if ($agents->isEmpty())
                                         <tr>
                                             <td colspan="12" class="text-center">No agents data found.</td>
@@ -157,9 +107,6 @@
                                                     <p class="text-xs font-weight-bold mb-0">{{ $agent->agent }}</p>
                                                 </td>
                                                 <td class="align-middle text-center text-sm">
-                                                    <p class="text-xs font-weight-bold mb-0">{{ $agent->endpoint }}</p>
-                                                </td>
-                                                <td class="align-middle text-center text-sm">
                                                     <span
                                                         class="badge badge-sm {{ $agent->status === 'Active' ? 'bg-gradient-success' : 'bg-gradient-danger' }}">
                                                         {{ $agent->status }}
@@ -169,8 +116,9 @@
                                                     <p class="text-xs font-weight-bold mb-0">{{ $agent->winamount }}</p>
                                                 </td>
                                                 <td class="align-middle text-center">
-                                                    <span
-                                                        class="text-secondary text-xs font-weight-bold">{{ $agent->DateOfCreation }}</span>
+                                                    <span class="text-secondary text-xs font-weight-bold">
+                                                        {{ \Carbon\Carbon::createFromFormat('YmdHis', $agent->DateOfCreation)->format('d M Y, H:i') }}
+                                                    </span>
                                                 </td>
                                                 <td class="align-middle text-center">
                                                     <span
