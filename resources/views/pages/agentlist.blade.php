@@ -152,30 +152,61 @@
                                     <p class="mb-0">Enter Agent name and password to register</p>
                                 </div>
                                 <div class="card-body pb-3">
-                                    <form role="form text-left">
-                                        <label>Agent Name</label>
+                                <form role="form text-left">
+                                        <label>PLAYER</label>
                                         <div class="input-group mb-3">
-                                            <input type="text" class="form-control" placeholder="Name" aria-label="Name"
-                                                name="name" aria-describedby="name-addon">
+                                            <input type="text" class="form-control" placeholder="enter Name"
+                                                aria-label="Name" name="name" aria-describedby="name-addon">
                                         </div>
-                                        <label>Initial Point (RS.0000)</label>
+                                        <label>PASSWORD</label>
                                         <div class="input-group mb-3">
-                                            <input type="number" class="form-control" placeholder="0.00"
+                                            <input type="number" class="form-control" placeholder="password"
                                                 aria-label="Point" name="point" aria-describedby="email-addon">
                                         </div>
-                                        <label>Password</label>
+                                        <label>ROLE</label>
                                         <div class="input-group mb-3">
-                                            <input type="password" class="form-control" placeholder="Password"
+                                            <input type="password" class="form-control" placeholder="enter Role"
                                                 aria-label="Password" name="password" aria-describedby="password-addon">
                                         </div>
-                                        <label>Confirm Password</label>
+                                        <label>BALANCE</label>
                                         <div class="input-group mb-3">
-                                            <input type="password" class="form-control" placeholder="Password"
-                                                aria-label="Password" name="password" aria-describedby="password-addon">
+                                            <input type="password" class="form-control" placeholder="Balance"
+                                                aria-label="password_confirmation" name="password_confirmation"
+                                                aria-describedby="password-addon">
+                                        </div>
+                                        <label>DISTRIBUTOR</label>
+                                        <div class="input-group mb-3">
+                                            <input type="password" class="form-control" placeholder="Distributor"
+                                                aria-label="password_confirmation" name="password_confirmation"
+                                                aria-describedby="password-addon">
+                                        </div>
+                                        <label>AGENT</label>
+                                        <div class="input-group mb-3">
+                                            <input type="password" class="form-control" placeholder="Agent"
+                                                aria-label="password_confirmation" name="password_confirmation"
+                                                aria-describedby="password-addon">
+                                        </div>
+                                        <label>STATUS</label>
+                                        <div class="input-group mb-3">
+                                            <input type="password" class="form-control" placeholder="Status"
+                                                aria-label="password_confirmation" name="password_confirmation"
+                                                aria-describedby="password-addon">
+                                        </div>
+                                        <label>CRATED AT</label>
+                                        <div class="input-group mb-3">
+                                            <input type="password" class="form-control" placeholder="Created at"
+                                                aria-label="password_confirmation" name="password_confirmation"
+                                                aria-describedby="password-addon">
+                                        </div>
+                                        <label>DISTRIBUTOR ID</label>
+                                        <div class="input-group mb-3">
+                                            <input type="password" class="form-control" placeholder="distributor id"
+                                                aria-label="password_confirmation" name="password_confirmation"
+                                                aria-describedby="password-addon">
                                         </div>
                                         <div class="text-center">
                                             <button type="button"
-                                                class="btn bg-gradient-primary btn-lg btn-rounded w-100 mt-4 mb-0">Save
+                                                class="btn bg-gradient-primary btn-lg btn-rounded w-100 mt-4 mb-0">Add
                                                 Agent
                                             </button>
                                         </div>
@@ -200,24 +231,54 @@
                                 </div>
                                 <div class="card-body pb-3">
                                     <form role="form text-left">
-                                        <label>Agent Name</label>
+                                        <label>PLAYER</label>
                                         <div class="input-group mb-3">
-                                            <input type="text" class="form-control" placeholder="Name"
+                                            <input type="text" class="form-control" placeholder="enter Name"
                                                 aria-label="Name" name="name" aria-describedby="name-addon">
                                         </div>
-                                        <label>Initial Point (RS.0000)</label>
+                                        <label>PASSWORD</label>
                                         <div class="input-group mb-3">
-                                            <input type="number" class="form-control" placeholder="0.00"
+                                            <input type="number" class="form-control" placeholder="password"
                                                 aria-label="Point" name="point" aria-describedby="email-addon">
                                         </div>
-                                        <label>Password</label>
+                                        <label>ROLE</label>
                                         <div class="input-group mb-3">
-                                            <input type="password" class="form-control" placeholder="Password"
+                                            <input type="password" class="form-control" placeholder="enter Role"
                                                 aria-label="Password" name="password" aria-describedby="password-addon">
                                         </div>
-                                        <label>Confirm Password</label>
+                                        <label>BALANCE</label>
                                         <div class="input-group mb-3">
-                                            <input type="password" class="form-control" placeholder="Confirm Password"
+                                            <input type="password" class="form-control" placeholder="Balance"
+                                                aria-label="password_confirmation" name="password_confirmation"
+                                                aria-describedby="password-addon">
+                                        </div>
+                                        <label>DISTRIBUTOR</label>
+                                        <div class="input-group mb-3">
+                                            <input type="password" class="form-control" placeholder="Distributor"
+                                                aria-label="password_confirmation" name="password_confirmation"
+                                                aria-describedby="password-addon">
+                                        </div>
+                                        <label>AGENT</label>
+                                        <div class="input-group mb-3">
+                                            <input type="password" class="form-control" placeholder="Agent"
+                                                aria-label="password_confirmation" name="password_confirmation"
+                                                aria-describedby="password-addon">
+                                        </div>
+                                        <label>STATUS</label>
+                                        <div class="input-group mb-3">
+                                            <input type="password" class="form-control" placeholder="Status"
+                                                aria-label="password_confirmation" name="password_confirmation"
+                                                aria-describedby="password-addon">
+                                        </div>
+                                        <label>CRATED AT</label>
+                                        <div class="input-group mb-3">
+                                            <input type="password" class="form-control" placeholder="Created at"
+                                                aria-label="password_confirmation" name="password_confirmation"
+                                                aria-describedby="password-addon">
+                                        </div>
+                                        <label>DISTRIBUTOR ID</label>
+                                        <div class="input-group mb-3">
+                                            <input type="password" class="form-control" placeholder="distributor id"
                                                 aria-label="password_confirmation" name="password_confirmation"
                                                 aria-describedby="password-addon">
                                         </div>
