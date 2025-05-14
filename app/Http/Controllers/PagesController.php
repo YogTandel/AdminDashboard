@@ -33,7 +33,6 @@ class PagesController extends Controller
             $validated['DateOfCreation'] = now()->format('YmdHis');
 
             User::create($validated);
-
             return redirect()->route('agentlist.show')->with('success', 'Agent added successfully');
         } catch (\Exception $e) {
             return redirect()->route('agentlist.show')->with('error', 'Failed to add agent. ' . $e->getMessage());
