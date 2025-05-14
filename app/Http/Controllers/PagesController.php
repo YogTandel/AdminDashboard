@@ -12,9 +12,15 @@ class PagesController extends Controller
         return view('pages.agentlist', compact('agents'));
     }
 
+    public function createAgent()
+    {
+        $agents = User::where('role', 'agent')->get();
+        return view('pages.createagent', compact('agents'));
+    }
+
     public function addAgent(Request $request)
     {
-        $validated = $request->validate([
+        $request->validate([
             'player'      => 'required|string|unique:users,player',
             'password'    => 'required|string|min:6',
             'role'        => 'required|string|in:agent',
@@ -24,19 +30,18 @@ class PagesController extends Controller
             'status'      => 'required|string|in:Active,Inactive',
         ]);
 
-        try {
-            // Store original password before hashing
-            $validated['original_password'] = $validated['password'];
-            $validated['password']          = bcrypt($validated['password']); // Hash password
+        $agent = User::create([
+            'player'            => $request->player,
+            'password'          => bcrypt($request->password),
+            'original_password' => $request->password,
+            'role'              => $request->role,
+            'balance'           => $request->balance,
+            'distributor'       => $request->distributor,
+            'agent'             => $request->agent,
+            'status'            => $request->status,
+        ]);
 
-            // Add current timestamp in YmdHis format for DateOfCreation
-            $validated['DateOfCreation'] = now()->format('YmdHis');
-
-            User::create($validated);
-            return redirect()->route('agentlist.show')->with('success', 'Agent added successfully');
-        } catch (\Exception $e) {
-            return redirect()->route('agentlist.show')->with('error', 'Failed to add agent. ' . $e->getMessage());
-        }
+        return redirect()->route('agentlist.show')->with('success', 'Agent added successfully');
     }
 
     public function distributor()
