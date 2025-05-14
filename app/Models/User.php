@@ -20,20 +20,14 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'player',
-        'DateOfCreation',
-        'agent',
+        'password',
+        'role',
         'balance',
         'distributor',
-        'gameHistory',
-        'password',
-        'isupdated',
-        'role',
+        'agent',
         'status',
-        'login_status',
-        'endpoint',
-        'winamount',
-        'distributor_id',
-        'agent_id',
+        'original_password',
+        'DateOfCreation',
     ];
 
     /**

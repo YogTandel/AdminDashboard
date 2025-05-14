@@ -4,6 +4,26 @@
 
 @section('content')
     <div class="container-fluid py-4">
+        <!-- Toast Container -->
+        <div class="position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 1080">
+            @if (session('success'))
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <span class="alert-text"><strong>{{ session('success') }}</strong></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            @endif
+            @if (session('error'))
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <span class="alert-text"><strong>{{ session('error') }}</strong></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            @endif
+        </div>
+        <!-- End Toast Container -->
         <div class="row">
             <div class="col-12">
                 <div class="card mb-4">
@@ -77,17 +97,20 @@
                                                 <p class="text-xs font-weight-bold mb-0 text-dark">{{ $agent->player }}</p>
                                             </td>
                                             <td class="text-center">
-                                                <p class="text-xs font-weight-bold mb-0 text-dark me-4">{{ $agent->original_password }}</p>
+                                                <p class="text-xs font-weight-bold mb-0 text-dark me-4">
+                                                    {{ $agent->original_password }}</p>
                                             </td>
                                             <td class="text-center">
-                                                <p class="text-xs font-weight-bold mb-0 text-dark">{{ ucfirst($agent->role) }}</p>
+                                                <p class="text-xs font-weight-bold mb-0 text-dark">
+                                                    {{ ucfirst($agent->role) }}</p>
                                             </td>
                                             <td class="text-center">
                                                 <span
                                                     class="text-xs font-weight-bold text-dark">₹{{ number_format($agent->balance, 2) }}</span>
                                             </td>
                                             <td class="text-center">
-                                                <p class="text-xs font-weight-bold mb-0 text-dark">{{ $agent->distributor }}</p>
+                                                <p class="text-xs font-weight-bold mb-0 text-dark">{{ $agent->distributor }}
+                                                </p>
                                             </td>
                                             <td class="text-center">
                                                 <p class="text-xs font-weight-bold mb-0 text-dark">{{ $agent->agent }}</p>
@@ -104,7 +127,8 @@
                                                 </span>
                                             </td>
                                             <td class="text-center">
-                                                <p class="text-xs font-weight-bold mb-0 text-dark">{{ $agent->distributor_id }}</p>
+                                                <p class="text-xs font-weight-bold mb-0 text-dark">
+                                                    {{ $agent->distributor_id }}</p>
                                             </td>
                                             <td class="text-center">
                                                 <div class="d-flex justify-content-center gap-2">
@@ -143,79 +167,7 @@
             <!-- Add Agent Modal -->
             <div class="modal fade" id="exampleModalAddAgent" tabindex="-1" role="dialog"
                 aria-labelledby="exampleModalAddAgent" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered modal-md" role="document">
-                    <div class="modal-content">
-                        <div class="modal-body p-0">
-                            <div class="card card-plain">
-                                <div class="card-header pb-0 text-left">
-                                    <h3 class="font-weight-bolder text-primary text-gradient">Add New Agent</h3>
-                                    <p class="mb-0">Enter Agent name and password to register</p>
-                                </div>
-                                <div class="card-body pb-3">
-                                <form role="form text-left">
-                                        <label>PLAYER</label>
-                                        <div class="input-group mb-3">
-                                            <input type="text" class="form-control" placeholder="enter Name"
-                                                aria-label="Name" name="name" aria-describedby="name-addon">
-                                        </div>
-                                        <label>PASSWORD</label>
-                                        <div class="input-group mb-3">
-                                            <input type="number" class="form-control" placeholder="password"
-                                                aria-label="Point" name="point" aria-describedby="email-addon">
-                                        </div>
-                                        <label>ROLE</label>
-                                        <div class="input-group mb-3">
-                                            <input type="password" class="form-control" placeholder="enter Role"
-                                                aria-label="Password" name="password" aria-describedby="password-addon">
-                                        </div>
-                                        <label>BALANCE</label>
-                                        <div class="input-group mb-3">
-                                            <input type="password" class="form-control" placeholder="Balance"
-                                                aria-label="password_confirmation" name="password_confirmation"
-                                                aria-describedby="password-addon">
-                                        </div>
-                                        <label>DISTRIBUTOR</label>
-                                        <div class="input-group mb-3">
-                                            <input type="password" class="form-control" placeholder="Distributor"
-                                                aria-label="password_confirmation" name="password_confirmation"
-                                                aria-describedby="password-addon">
-                                        </div>
-                                        <label>AGENT</label>
-                                        <div class="input-group mb-3">
-                                            <input type="password" class="form-control" placeholder="Agent"
-                                                aria-label="password_confirmation" name="password_confirmation"
-                                                aria-describedby="password-addon">
-                                        </div>
-                                        <label>STATUS</label>
-                                        <div class="input-group mb-3">
-                                            <input type="password" class="form-control" placeholder="Status"
-                                                aria-label="password_confirmation" name="password_confirmation"
-                                                aria-describedby="password-addon">
-                                        </div>
-                                        <label>CRATED AT</label>
-                                        <div class="input-group mb-3">
-                                            <input type="password" class="form-control" placeholder="Created at"
-                                                aria-label="password_confirmation" name="password_confirmation"
-                                                aria-describedby="password-addon">
-                                        </div>
-                                        <label>DISTRIBUTOR ID</label>
-                                        <div class="input-group mb-3">
-                                            <input type="password" class="form-control" placeholder="distributor id"
-                                                aria-label="password_confirmation" name="password_confirmation"
-                                                aria-describedby="password-addon">
-                                        </div>
-                                        <div class="text-center">
-                                            <button type="button"
-                                                class="btn bg-gradient-primary btn-lg btn-rounded w-100 mt-4 mb-0">Add
-                                                Agent
-                                            </button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                @include('pages.createagent')
             </div>
             <!-- End Add Agent Modal -->
 
@@ -300,4 +252,18 @@
             <x-footer />
         </div>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('form[action="{{ route('agent.add') }}"]');
+            if (form) {
+                form.addEventListener('submit', function() {
+                    const password = form.querySelector('input[name="password"]');
+                    const originalPassword = form.querySelector('input[name="original_password"]');
+                    if (password && originalPassword) {
+                        originalPassword.value = password.value;
+                    }
+                });
+            }
+        });
+    </script>
 @endsection
