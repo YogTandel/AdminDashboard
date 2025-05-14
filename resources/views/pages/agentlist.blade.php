@@ -3,6 +3,26 @@
 @section('page-name', 'Agent List')
 
 @section('content')
+    <!-- Toast Container -->
+    <div class="position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 1080">
+        @if (session('success'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <span class="alert-text"><strong>{{ session('success') }}</strong></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        @endif
+        @if (session('error'))
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <span class="alert-text"><strong>{{ session('error') }}</strong></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        @endif
+    </div>
+    <!-- End Toast Container -->
     <div class="container-fluid py-4">
         <div class="row">
             <div class="col-12">
@@ -77,17 +97,20 @@
                                                 <p class="text-xs font-weight-bold mb-0 text-dark">{{ $agent->player }}</p>
                                             </td>
                                             <td class="text-center">
-                                                <p class="text-xs font-weight-bold mb-0 text-dark me-4">{{ $agent->original_password }}</p>
+                                                <p class="text-xs font-weight-bold mb-0 text-dark me-4">
+                                                    {{ $agent->original_password }}</p>
                                             </td>
                                             <td class="text-center">
-                                                <p class="text-xs font-weight-bold mb-0 text-dark">{{ ucfirst($agent->role) }}</p>
+                                                <p class="text-xs font-weight-bold mb-0 text-dark">
+                                                    {{ ucfirst($agent->role) }}</p>
                                             </td>
                                             <td class="text-center">
                                                 <span
                                                     class="text-xs font-weight-bold text-dark">₹{{ number_format($agent->balance, 2) }}</span>
                                             </td>
                                             <td class="text-center">
-                                                <p class="text-xs font-weight-bold mb-0 text-dark">{{ $agent->distributor }}</p>
+                                                <p class="text-xs font-weight-bold mb-0 text-dark">{{ $agent->distributor }}
+                                                </p>
                                             </td>
                                             <td class="text-center">
                                                 <p class="text-xs font-weight-bold mb-0 text-dark">{{ $agent->agent }}</p>
@@ -104,7 +127,8 @@
                                                 </span>
                                             </td>
                                             <td class="text-center">
-                                                <p class="text-xs font-weight-bold mb-0 text-dark">{{ $agent->distributor_id }}</p>
+                                                <p class="text-xs font-weight-bold mb-0 text-dark">
+                                                    {{ $agent->distributor_id }}</p>
                                             </td>
                                             <td class="text-center">
                                                 <div class="d-flex justify-content-center gap-2">
@@ -152,60 +176,45 @@
                                     <p class="mb-0">Enter Agent name and password to register</p>
                                 </div>
                                 <div class="card-body pb-3">
-                                <form role="form text-left">
+                                    <form action="{{ route('agent.add') }}" role="form text-left" method="POST">
+                                        @csrf
                                         <label>PLAYER</label>
                                         <div class="input-group mb-3">
                                             <input type="text" class="form-control" placeholder="enter Name"
-                                                aria-label="Name" name="name" aria-describedby="name-addon">
+                                                aria-label="Name" name="player" aria-describedby="name-addon">
                                         </div>
                                         <label>PASSWORD</label>
                                         <div class="input-group mb-3">
-                                            <input type="number" class="form-control" placeholder="password"
-                                                aria-label="Point" name="point" aria-describedby="email-addon">
+                                            <input type="password" class="form-control" placeholder="password"
+                                                aria-label="Point" name="password" aria-describedby="email-addon">
                                         </div>
-                                        <label>ROLE</label>
-                                        <div class="input-group mb-3">
-                                            <input type="password" class="form-control" placeholder="enter Role"
-                                                aria-label="Password" name="password" aria-describedby="password-addon">
-                                        </div>
+                                        <input type="hidden" name="role" value="agent">
                                         <label>BALANCE</label>
                                         <div class="input-group mb-3">
-                                            <input type="password" class="form-control" placeholder="Balance"
-                                                aria-label="password_confirmation" name="password_confirmation"
-                                                aria-describedby="password-addon">
+                                            <input type="number" class="form-control" placeholder="Balance"
+                                                aria-label="balance" name="balance" aria-describedby="balance">
                                         </div>
                                         <label>DISTRIBUTOR</label>
                                         <div class="input-group mb-3">
-                                            <input type="password" class="form-control" placeholder="Distributor"
-                                                aria-label="password_confirmation" name="password_confirmation"
-                                                aria-describedby="password-addon">
+                                            <input type="text" class="form-control" placeholder="Distributor"
+                                                aria-label="distributor" name="distributor"
+                                                aria-describedby="distributor">
                                         </div>
                                         <label>AGENT</label>
                                         <div class="input-group mb-3">
-                                            <input type="password" class="form-control" placeholder="Agent"
-                                                aria-label="password_confirmation" name="password_confirmation"
-                                                aria-describedby="password-addon">
+                                            <input type="text" class="form-control" placeholder="Agent"
+                                                aria-label="agent" name="agent" aria-describedby="agent">
                                         </div>
                                         <label>STATUS</label>
                                         <div class="input-group mb-3">
-                                            <input type="password" class="form-control" placeholder="Status"
-                                                aria-label="password_confirmation" name="password_confirmation"
-                                                aria-describedby="password-addon">
+                                            <select class="form-control" name="status">
+                                                <option value="Active">Active</option>
+                                                <option value="Inactive">Inactive</option>
+                                            </select>
                                         </div>
-                                        <label>CRATED AT</label>
-                                        <div class="input-group mb-3">
-                                            <input type="password" class="form-control" placeholder="Created at"
-                                                aria-label="password_confirmation" name="password_confirmation"
-                                                aria-describedby="password-addon">
-                                        </div>
-                                        <label>DISTRIBUTOR ID</label>
-                                        <div class="input-group mb-3">
-                                            <input type="password" class="form-control" placeholder="distributor id"
-                                                aria-label="password_confirmation" name="password_confirmation"
-                                                aria-describedby="password-addon">
-                                        </div>
+                                        <input type="hidden" name="original_password" id="original_password">
                                         <div class="text-center">
-                                            <button type="button"
+                                            <button type="submit"
                                                 class="btn bg-gradient-primary btn-lg btn-rounded w-100 mt-4 mb-0">Add
                                                 Agent
                                             </button>
@@ -300,4 +309,10 @@
             <x-footer />
         </div>
     </div>
+    {{--  <script>
+        document.querySelector('form').addEventListener('submit', function(e) {
+            document.getElementById('original_password').value = document.querySelector('input[name="password"]')
+                .value;
+        });
+    </script> --}}
 @endsection

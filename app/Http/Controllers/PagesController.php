@@ -12,16 +12,25 @@ class PagesController extends Controller
         return view('pages.agentlist', compact('agents'));
     }
 
-    public function editAgent(Request $request, $id)
+    public function addAgent(Request $request)
     {
-        $validate = $request->validate([
-            'player'   => 'required|string',
-            'password' => 'required|string|min:8|confirmed',
+        $validated = $request->validate([
+            'player'            => 'required|string',
+            'role'              => 'required|string|in:agent',
+            'balance'           => 'required|integer',
+            'distributor'       => 'required|string',
+            'agent'             => 'required|string',
+            'status'            => 'required|string|in:Active,Inactive',
+            'password'          => 'required|string',
+            'original_password' => 'required|string|same:password',
         ]);
 
-        $agent = User::find($id);
-        $agent->update($validate);
-        return redirect()->back()->with('success', 'Agent updated successfully');
+        // Add current timestamp in YmdHis format for DateOfCreation
+        $validated['DateOfCreation'] = now()->format('YmdHis');
+
+        User::create($validated);
+
+        return redirect()->route('agentlist')->with('success', 'Agent added successfully');
     }
 
     public function distributor()
