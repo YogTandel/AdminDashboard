@@ -203,24 +203,34 @@
                                 </div>
                                 <div class="card-body pb-3">
                                     <form role="form text-left">
-                                        <label>Distributor Name</label>
+                                        <label>Name</label>
                                         <div class="input-group mb-3">
                                             <input type="text" class="form-control" placeholder="Name" aria-label="Name"
                                                 name="name" aria-describedby="name-addon">
                                         </div>
-                                        <label>Initial Point (RS.0000)</label>
-                                        <div class="input-group mb-3">
-                                            <input type="number" class="form-control" placeholder="0.00" aria-label="Point"
-                                                name="point" aria-describedby="email-addon">
-                                        </div>
                                         <label>Password</label>
                                         <div class="input-group mb-3">
-                                            <input type="password" class="form-control" placeholder="Password"
+                                            <input type="number" class="form-control" placeholder="password" aria-label="Point"
+                                                name="point" aria-describedby="email-addon">
+                                        </div>
+                                        <label>Roll</label>
+                                        <div class="input-group mb-3">
+                                            <input type="password" class="form-control" placeholder="roll"
                                                 aria-label="Password" name="password" aria-describedby="password-addon">
                                         </div>
-                                        <label>Confirm Password</label>
+                                        <label>Balance</label>
                                         <div class="input-group mb-3">
-                                            <input type="password" class="form-control" placeholder="Password"
+                                            <input type="password" class="form-control" placeholder="balance"
+                                                aria-label="Password" name="password" aria-describedby="password-addon">
+                                        </div>
+                                        <label>Endpoint</label>
+                                        <div class="input-group mb-3">
+                                            <input type="password" class="form-control" placeholder="endpoint"
+                                                aria-label="Password" name="password" aria-describedby="password-addon">
+                                        </div>
+                                        <label>DateOfCreation</label>
+                                        <div class="input-group mb-3">
+                                            <input type="password" class="form-control" placeholder="Dateofcreation"
                                                 aria-label="Password" name="password" aria-describedby="password-addon">
                                         </div>
                                         <div class="text-center">
@@ -250,24 +260,34 @@
                                 </div>
                                 <div class="card-body pb-3">
                                     <form role="form text-left">
-                                        <label>Distributor Name</label>
+                                        <label>Name</label>
                                         <div class="input-group mb-3">
                                             <input type="text" class="form-control" placeholder="Name"
                                                 aria-label="Name" name="name" aria-describedby="name-addon">
                                         </div>
-                                        <label>Initial Point (RS.0000)</label>
-                                        <div class="input-group mb-3">
-                                            <input type="number" class="form-control" placeholder="0.00"
-                                                aria-label="Point" name="point" aria-describedby="email-addon">
-                                        </div>
                                         <label>Password</label>
                                         <div class="input-group mb-3">
-                                            <input type="password" class="form-control" placeholder="Password"
+                                            <input type="number" class="form-control" placeholder="Password"
+                                                aria-label="Point" name="point" aria-describedby="email-addon">
+                                        </div>
+                                        <label>Roll</label>
+                                        <div class="input-group mb-3">
+                                            <input type="password" class="form-control" placeholder="Roll"
                                                 aria-label="Password" name="password" aria-describedby="password-addon">
                                         </div>
-                                        <label>Confirm Password</label>
+                                        <label>Balance</label>
                                         <div class="input-group mb-3">
-                                            <input type="password" class="form-control" placeholder="Password"
+                                            <input type="password" class="form-control" placeholder="Balance"
+                                                aria-label="Password" name="password" aria-describedby="password-addon">
+                                        </div>
+                                        <label>Endpoint</label>
+                                        <div class="input-group mb-3">
+                                            <input type="password" class="form-control" placeholder="Endpoint"
+                                                aria-label="Password" name="password" aria-describedby="password-addon">
+                                        </div>
+                                        <label>Dateofcreation</label>
+                                        <div class="input-group mb-3">
+                                            <input type="password" class="form-control" placeholder="Dateofcreation"
                                                 aria-label="Password" name="password" aria-describedby="password-addon">
                                         </div>
                                         <div class="text-center">
