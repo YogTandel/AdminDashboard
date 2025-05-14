@@ -169,51 +169,40 @@
                                 </div>
                                 <div class="card-body pb-3">
                                     <form role="form text-left">
-                                        <label>Name</label>
+                                    <label>Name</label>
                                         <div class="input-group mb-3">
-                                            <input type="text" class="form-control" placeholder="Name" aria-label="Name"
-                                                name="name" aria-describedby="name-addon">
+                                            <input type="text" class="form-control" placeholder="Name" name="name">
                                         </div>
                                         <label>Password</label>
                                         <div class="input-group mb-3">
-                                            <input type="number" class="form-control" placeholder="password"
-                                                aria-label="Point" name="point" aria-describedby="email-addon">
+                                            <input type="text" class="form-control" placeholder="Password" name="password">
                                         </div>
-                                        <label>Roll</label>
+                                        <label>Role</label>
                                         <div class="input-group mb-3">
-                                            <input type="password" class="form-control" placeholder="Roll"
-                                                aria-label="Password" name="password" aria-describedby="password-addon">
+                                            <input type="text" class="form-control" placeholder="Role" name="role">
                                         </div>
                                         <label>Balance</label>
                                         <div class="input-group mb-3">
-                                            <input type="password" class="form-control" placeholder="Balance"
-                                                aria-label="Password" name="password" aria-describedby="password-addon">
+                                            <input type="number" class="form-control" placeholder="Balance" name="balance">
                                         </div>
                                         <label>Distributor</label>
                                         <div class="input-group mb-3">
-                                            <input type="password" class="form-control" placeholder="Distributor"
-                                                aria-label="Password" name="password" aria-describedby="password-addon">
+                                            <input type="text" class="form-control" placeholder="Distributor" name="distributor">
                                         </div>
                                         <label>Agent</label>
                                         <div class="input-group mb-3">
-                                            <input type="password" class="form-control" placeholder="Agent"
-                                                aria-label="Password" name="password" aria-describedby="password-addon">
+                                            <input type="text" class="form-control" placeholder="Agent" name="agent">
                                         </div>
                                         <label>Winamount</label>
                                         <div class="input-group mb-3">
-                                            <input type="password" class="form-control" placeholder="winamount"
-                                                aria-label="Password" name="password" aria-describedby="password-addon">
+                                            <input type="number" class="form-control" placeholder="Winamount" name="winamount">
                                         </div>
-                                        <label>Dateofcreation</label>
+                                        <label>Date of Creation</label>
                                         <div class="input-group mb-3">
-                                            <input type="password" class="form-control" placeholder="Dateofcreation"
-                                                aria-label="Password" name="password" aria-describedby="password-addon">
+                                            <input type="date" class="form-control" placeholder="Date" name="dateofcreation">
                                         </div>
                                         <div class="text-center">
-                                            <button type="button"
-                                                class="btn bg-gradient-primary btn-lg btn-rounded w-100 mt-4 mb-0">Save
-                                                Player
-                                            </button>
+                                            <button type="submit" class="btn bg-gradient-primary btn-lg w-100 mt-4 mb-0">Save Player</button>
                                         </div>
                                     </form>
                                 </div>
@@ -236,51 +225,40 @@
                                 </div>
                                 <div class="card-body pb-3">
                                     <form role="form text-left">
-                                        <label>Name</label>
+                                    <label>Name</label>
                                         <div class="input-group mb-3">
-                                            <input type="text" class="form-control" placeholder="Name"
-                                                aria-label="Name" name="name" aria-describedby="name-addon">
+                                            <input type="text" class="form-control" placeholder="Name" name="name">
                                         </div>
                                         <label>Password</label>
                                         <div class="input-group mb-3">
-                                            <input type="number" class="form-c0ontrol" placeholder="password"
-                                                aria-label="Point" name="point" aria-describedby="email-addon">
+                                            <input type="text" class="form-control" placeholder="Password" name="password">
                                         </div>
-                                        <label>Roll</label>
+                                        <label>Role</label>
                                         <div class="input-group mb-3">
-                                            <input type="password" class="form-control" placeholder="Roll"
-                                                aria-label="Password" name="password" aria-describedby="password-addon">
+                                            <input type="text" class="form-control" placeholder="Role" name="role">
                                         </div>
                                         <label>Balance</label>
                                         <div class="input-group mb-3">
-                                            <input type="password" class="form-control" placeholder="Balance"
-                                                aria-label="Password" name="password" aria-describedby="password-addon">
+                                            <input type="number" class="form-control" placeholder="Balance" name="balance">
                                         </div>
                                         <label>Distributor</label>
                                         <div class="input-group mb-3">
-                                            <input type="password" class="form-control" placeholder="Distributor"
-                                                aria-label="Password" name="password" aria-describedby="password-addon">
+                                            <input type="text" class="form-control" placeholder="Distributor" name="distributor">
                                         </div>
                                         <label>Agent</label>
                                         <div class="input-group mb-3">
-                                            <input type="password" class="form-control" placeholder="Agent"
-                                                aria-label="Password" name="password" aria-describedby="password-addon">
+                                            <input type="text" class="form-control" placeholder="Agent" name="agent">
                                         </div>
                                         <label>Winamount</label>
                                         <div class="input-group mb-3">
-                                            <input type="password" class="form-control" placeholder="Winamount"
-                                                aria-label="Password" name="password" aria-describedby="password-addon">
+                                            <input type="number" class="form-control" placeholder="Winamount" name="winamount">
                                         </div>
-                                        <label>Dateofcreation</label>
+                                        <label>Date of Creation</label>
                                         <div class="input-group mb-3">
-                                            <input type="password" class="form-control" placeholder="Dateofcreation"
-                                                aria-label="Password" name="password" aria-describedby="password-addon">
+                                            <input type="date" class="form-control" placeholder="Date" name="dateofcreation">
                                         </div>
                                         <div class="text-center">
-                                            <button type="button"
-                                                class="btn bg-gradient-primary btn-lg btn-rounded w-100 mt-4 mb-0">Update
-                                                Player
-                                            </button>
+                                            <button type="submit" class="btn bg-gradient-primary btn-lg w-100 mt-4 mb-0">Save Player</button>
                                         </div>
                                     </form>
                                 </div>
