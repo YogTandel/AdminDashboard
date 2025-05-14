@@ -3,27 +3,27 @@
 @section('page-name', 'Agent List')
 
 @section('content')
-    <!-- Toast Container -->
-    <div class="position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 1080">
-        @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <span class="alert-text"><strong>{{ session('success') }}</strong></span>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-        @endif
-        @if (session('error'))
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <span class="alert-text"><strong>{{ session('error') }}</strong></span>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-        @endif
-    </div>
-    <!-- End Toast Container -->
     <div class="container-fluid py-4">
+        <!-- Toast Container -->
+        <div class="position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 1080">
+            @if (session('success'))
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <span class="alert-text"><strong>{{ session('success') }}</strong></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            @endif
+            @if (session('error'))
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <span class="alert-text"><strong>{{ session('error') }}</strong></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            @endif
+        </div>
+        <!-- End Toast Container -->
         <div class="row">
             <div class="col-12">
                 <div class="card mb-4">
@@ -176,17 +176,17 @@
                                     <p class="mb-0">Enter Agent name and password to register</p>
                                 </div>
                                 <div class="card-body pb-3">
-                                    <form action="{{ route('agent.add') }}" role="form text-left" method="POST">
+                                    <form action="{{ route('agent.add') }}" method="POST" role="form text-left">
                                         @csrf
                                         <label>PLAYER</label>
                                         <div class="input-group mb-3">
-                                            <input type="text" class="form-control" placeholder="enter Name"
-                                                aria-label="Name" name="player" aria-describedby="name-addon">
+                                            <input type="text" class="form-control" placeholder="Enter Player"
+                                                aria-label="player" name="player" aria-describedby="player">
                                         </div>
                                         <label>PASSWORD</label>
                                         <div class="input-group mb-3">
                                             <input type="password" class="form-control" placeholder="password"
-                                                aria-label="Point" name="password" aria-describedby="email-addon">
+                                                aria-label="password" name="password" aria-describedby="password">
                                         </div>
                                         <input type="hidden" name="role" value="agent">
                                         <label>BALANCE</label>
@@ -309,10 +309,18 @@
             <x-footer />
         </div>
     </div>
-    {{--  <script>
-        document.querySelector('form').addEventListener('submit', function(e) {
-            document.getElementById('original_password').value = document.querySelector('input[name="password"]')
-                .value;
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('form[action="{{ route('agent.add') }}"]');
+            if (form) {
+                form.addEventListener('submit', function() {
+                    const password = form.querySelector('input[name="password"]');
+                    const originalPassword = form.querySelector('input[name="original_password"]');
+                    if (password && originalPassword) {
+                        originalPassword.value = password.value;
+                    }
+                });
+            }
         });
-    </script> --}}
+    </script>
 @endsection

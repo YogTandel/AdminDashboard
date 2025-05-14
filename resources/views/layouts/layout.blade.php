@@ -37,7 +37,7 @@
     <script src="/assets/js/plugins/perfect-scrollbar.min.js"></script>
     <script src="/assets/js/plugins/smooth-scrollbar.min.js"></script>
     <script src="/assets/js/plugins/chartjs.min.js"></script>
-    <script>
+    {{-- <script>
         var chartElement = document.getElementById("chart-bars");
         if (chartElement) {
             var ctx = chartElement.getContext("2d");
@@ -208,7 +208,7 @@
                 },
             },
         });
-    </script>
+    </script> --}}
     <script>
         var win = navigator.platform.indexOf('Win') > -1;
         if (win && document.querySelector('#sidenav-scrollbar')) {

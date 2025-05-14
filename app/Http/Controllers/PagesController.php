@@ -15,22 +15,29 @@ class PagesController extends Controller
     public function addAgent(Request $request)
     {
         $validated = $request->validate([
-            'player'            => 'required|string',
-            'role'              => 'required|string|in:agent',
-            'balance'           => 'required|integer',
-            'distributor'       => 'required|string',
-            'agent'             => 'required|string',
-            'status'            => 'required|string|in:Active,Inactive',
-            'password'          => 'required|string',
-            'original_password' => 'required|string|same:password',
+            'player'      => 'required|string|unique:users,player',
+            'password'    => 'required|string|min:6',
+            'role'        => 'required|string|in:agent',
+            'balance'     => 'required|numeric|min:0',
+            'distributor' => 'required|string',
+            'agent'       => 'required|string',
+            'status'      => 'required|string|in:Active,Inactive',
         ]);
 
-        // Add current timestamp in YmdHis format for DateOfCreation
-        $validated['DateOfCreation'] = now()->format('YmdHis');
+        try {
+            // Store original password before hashing
+            $validated['original_password'] = $validated['password'];
+            $validated['password']          = bcrypt($validated['password']); // Hash password
 
-        User::create($validated);
+            // Add current timestamp in YmdHis format for DateOfCreation
+            $validated['DateOfCreation'] = now()->format('YmdHis');
 
-        return redirect()->route('agentlist')->with('success', 'Agent added successfully');
+            User::create($validated);
+
+            return redirect()->route('agentlist.show')->with('success', 'Agent added successfully');
+        } catch (\Exception $e) {
+            return redirect()->route('agentlist.show')->with('error', 'Failed to add agent. ' . $e->getMessage());
+        }
     }
 
     public function distributor()
