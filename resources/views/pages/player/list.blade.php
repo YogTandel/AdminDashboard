@@ -18,9 +18,9 @@
                                     <button class="btn btn-outline-primary mb-0" type="button">Search</button>
                                 </div>
                             </div>
-                            <button type="button" class="btn bg-gradient-primary mb-0" data-bs-toggle="modal"
+                            <button type="button" class="btn btn-primary mb-0" data-bs-toggle="modal"
                                 data-bs-target="#exampleModalAddAgent">
-                                <i class="fas fa-plus"></i>&nbsp;&nbsp;Add player
+                                <i class="fas fa-plus"></i>&nbsp;&nbsp;Add Player
                             </button>
                             @include('pages.player.create')
                         </div>
@@ -140,6 +140,7 @@
                                                             data-bs-toggle="modal" data-bs-target="#exampleModalEditAgent">
                                                             <i class="fas fa-edit"></i>
                                                         </a>
+                                                        @include('pages.player.edit')
                                                         <a href="javascript:;"
                                                             class="text-danger font-weight-bold text-xs toggle-status"
                                                             data-bs-toggle="tooltip" data-bs-placement="top"
@@ -157,13 +158,6 @@
                     </div>
                 </div>
             </div>
-            <!-- Add Agent Modal -->
-           
-            <!-- End Add Agent Modal -->
-
-            <!-- Edit Agent Modal -->
-          
-            <!-- End Edit Agent Modal -->
 
             <x-footer />
         </div>
