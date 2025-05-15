@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
@@ -20,14 +21,46 @@ class AuthController extends Controller
 
     public function createAgent(Request $request)
     {
+        Log::info('Attempting to create a new agent', ['input' => $request->except(['password', 'original_password'])]);
+
         $validate = $request->validate([
-            'player'      => 'required|string|max:255',
+            'player'      => 'required|string|max:255|unique:users,player',
             'password'    => 'required|string|min:6',
             'role'        => 'required|in:agent',
             'agent'       => 'required|string|max:255',
             'distributor' => 'required|string|max:255',
             'balance'     => 'required|numeric|min:0',
             'status'      => 'required|in:Active,Inactive',
+        ]);
+
+        try {
+            $validate['original_password'] = $validate['password'];
+            $validate['password']          = bcrypt($validate['password']);
+            $validate['DateOfCreation']    = now()->format('YmdHis');
+
+            $user = User::create($validate);
+
+            if ($user) {
+                Log::info('Agent inserted', ['id' => $user->_id ?? $user->id]);
+            } else {
+                Log::warning('Agent creation returned null');
+            }
+
+            return redirect()->route('agentlist.show')->with('success', 'Agent added successfully');
+        } catch (\Exception $e) {
+            Log::error('Failed to create agent', ['error' => $e->getMessage()]);
+            return back()->withErrors(['error' => 'Failed to create agent. Please try again.']);
+        }
+    }
+
+    public function createDistributor(Request $request)
+    {
+        $validate = $request->validate([
+            'player'   => 'required|string|max:255',
+            'password' => 'required|string|min:6',
+            'role'     => 'required|in:distributor',
+            'status'   => 'required|in:Active,Inactive',
+            'endpoint' => 'nullable|numeric|min:0',
         ]);
 
         $validate['original_password'] = $validate['password'];
@@ -38,7 +71,7 @@ class AuthController extends Controller
 
         Auth::login($user);
 
-        return redirect()->route('agentlist.show')->with('success', 'Agent added successfully');
+        return redirect()->route('distributor.show')->with('success', 'Agent added successfully');
     }
 
     public function login(Request $request)
@@ -51,8 +84,6 @@ class AuthController extends Controller
 
         $guard = $credentials['role'] === 'admin' ? 'admin' : 'web';
 
-        // Log::info('Selected guard:', ['guard' => $guard]);
-
         $loginData = [
             'player'   => $credentials['player'],
             'password' => $credentials['password'],
@@ -62,14 +93,10 @@ class AuthController extends Controller
             $loginData['status'] = 'Active';
         }
 
-        // Log::info('Attempting login with data:', $loginData);
-
         if (Auth::guard($guard)->attempt($loginData)) {
             $request->session()->regenerate();
 
             $user = Auth::guard($guard)->user();
-
-            // Log::info('Login successful', ['user' => $user]);
 
             if ($guard !== 'admin' && $user->role !== $credentials['role']) {
                 Auth::guard($guard)->logout();
@@ -80,8 +107,6 @@ class AuthController extends Controller
 
             return redirect()->route('dashboard')->with('success', 'Login successful!');
         }
-
-        // Log::warning('Login failed', ['guard' => $guard, 'credentials' => $loginData]);
 
         throw ValidationException::withMessages([
             'credentials' => 'Invalid credentials',

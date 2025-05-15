@@ -9,45 +9,78 @@
                 <div class="card-body pb-3">
                     <form action="{{ route('agent.add') }}" method="POST" role="form text-left">
                         @csrf
+
                         <label>PLAYER</label>
                         <div class="input-group mb-3">
-                            <input type="text" class="form-control" placeholder="Enter Player" aria-label="player"
-                                name="player" aria-describedby="player">
+                            <input type="text" class="form-control @error('player') is-invalid @enderror"
+                                placeholder="Enter Player" aria-label="player" name="player" aria-describedby="player"
+                                value="{{ old('player') }}">
+                            @error('player')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
+
                         <label>PASSWORD</label>
                         <div class="input-group mb-3">
-                            <input type="password" class="form-control" placeholder="password" aria-label="password"
-                                name="password" aria-describedby="password">
+                            <input type="password" class="form-control @error('password') is-invalid @enderror"
+                                placeholder="password" aria-label="password" name="password"
+                                aria-describedby="password">
+                            @error('password')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
+
                         <input type="hidden" name="role" value="agent">
+
                         <label>BALANCE</label>
                         <div class="input-group mb-3">
-                            <input type="number" class="form-control" placeholder="Balance" aria-label="balance"
-                                name="balance" aria-describedby="balance">
+                            <input type="number" class="form-control @error('balance') is-invalid @enderror"
+                                placeholder="Balance" aria-label="balance" name="balance" aria-describedby="balance"
+                                value="{{ old('balance') }}">
+                            @error('balance')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
+
                         <label>DISTRIBUTOR</label>
                         <div class="input-group mb-3">
-                            <input type="text" class="form-control" placeholder="Distributor"
-                                aria-label="distributor" name="distributor" aria-describedby="distributor">
+                            <input type="text" class="form-control @error('distributor') is-invalid @enderror"
+                                placeholder="Distributor" aria-label="distributor" name="distributor"
+                                aria-describedby="distributor" value="{{ old('distributor') }}">
+                            @error('distributor')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
+
                         <label>AGENT</label>
                         <div class="input-group mb-3">
-                            <input type="text" class="form-control" placeholder="Agent" aria-label="agent"
-                                name="agent" aria-describedby="agent">
+                            <input type="text" class="form-control @error('agent') is-invalid @enderror"
+                                placeholder="Agent" aria-label="agent" name="agent" aria-describedby="agent"
+                                value="{{ old('agent') }}">
+                            @error('agent')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
+
                         <label>STATUS</label>
                         <div class="input-group mb-3">
-                            <select class="form-control" name="status">
-                                <option value="Active">Active</option>
-                                <option value="Inactive">Inactive</option>
+                            <select class="form-control @error('status') is-invalid @enderror" name="status">
+                                <option value="">Select Status</option>
+                                <option value="Active" {{ old('status') == 'Active' ? 'selected' : '' }}>Active
+                                </option>
+                                <option value="Inactive" {{ old('status') == 'Inactive' ? 'selected' : '' }}>Inactive
+                                </option>
                             </select>
+                            @error('status')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
+
                         <input type="hidden" name="original_password" id="original_password">
+
                         <div class="text-center">
                             <button type="submit"
-                                class="btn bg-gradient-primary btn-lg btn-rounded w-100 mt-4 mb-0">Add
-                                Agent
-                            </button>
+                                class="btn bg-gradient-primary btn-lg btn-rounded w-100 mt-4 mb-0">Add Agent</button>
                         </div>
                     </form>
                 </div>
