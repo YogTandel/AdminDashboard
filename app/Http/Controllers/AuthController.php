@@ -86,6 +86,73 @@ class AuthController extends Controller
         }
     }
 
+    public function editAgent(Request $request, $id)
+    {
+        Log::info('Attempting to edit agent', ['id' => $id]);
+
+        $validate = $request->validate([
+            'player'      => 'required|string|max:255|unique:users,player,' . $id,
+            'password'    => 'nullable|string|min:3',
+            'role'        => 'required|in:agent',
+            'agent'       => 'required|string|max:255',
+            'distributor' => 'required|string|max:255',
+            'balance'     => 'required|numeric|min:0',
+            'status'      => 'required|in:Active,Inactive',
+        ]);
+
+        try {
+            $user = User::findOrFail($id);
+
+            if (! empty($validate['password'])) {
+                $validate['original_password'] = $validate['password'];
+                $validate['password']          = bcrypt($validate['password']);
+            } else {
+                unset($validate['password']);
+            }
+
+            $user->update($validate);
+
+            Log::info('Agent updated', ['id' => $user->id]);
+            return redirect()->route('agentlist.show')->with('success', 'Agent updated successfully');
+        } catch (\Exception $e) {
+            Log::error('Failed to update agent', ['id' => $id, 'error' => $e->getMessage()]);
+            return back()->withErrors(['error' => 'Failed to update agent. Please try again.']);
+        }
+    }
+
+    public function editDistributor(Request $request, $id)
+    {
+        Log::info('Attempting to edit distributor', ['id' => $id]);
+
+        $validate = $request->validate([
+            'player'   => 'required|string|max:255|unique:users,player,' . $id,
+            'password' => 'nullable|string|min:3',
+            'role'     => 'required|in:distributor',
+            'balance'  => 'required|numeric|min:0',
+            'status'   => 'required|in:Active,Inactive',
+            'endpoint' => 'required|numeric|min:0',
+        ]);
+
+        try {
+            $user = User::findOrFail($id);
+
+            if (! empty($validate['password'])) {
+                $validate['original_password'] = $validate['password'];
+                $validate['password']          = bcrypt($validate['password']);
+            } else {
+                unset($validate['password']);
+            }
+
+            $user->update($validate);
+
+            Log::info('Distributor updated', ['id' => $user->id]);
+            return redirect()->route('distributor.show')->with('success', 'Distributor updated successfully');
+        } catch (\Exception $e) {
+            Log::error('Failed to update distributor', ['id' => $id, 'error' => $e->getMessage()]);
+            return back()->withErrors(['error' => 'Failed to update distributor. Please try again.']);
+        }
+    }
+
     public function login(Request $request)
     {
         $credentials = $request->validate([

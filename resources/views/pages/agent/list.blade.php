@@ -42,6 +42,7 @@
                                 data-bs-target="#exampleModalAddAgent">
                                 <i class="fas fa-plus"></i>&nbsp;&nbsp;Add Agent
                             </button>
+                            @include('pages.agent.create')
                         </div>
                     </div>
                     <div class="card-body px-0 pt-0 pb-2">
@@ -132,10 +133,13 @@
                                                     </a>
                                                     <a href="javascript:;"
                                                         class="text-secondary font-weight-bold text-xs me-2"
-                                                        data-bs-placement="top" title="Edit Agent" data-bs-toggle="modal"
-                                                        data-bs-target="#exampleModalEditAgent">
+                                                        title="Edit Agent" data-bs-toggle="modal"
+                                                        data-bs-target="#editModal{{ $agent->id }}">
                                                         <i class="fas fa-edit"></i>
                                                     </a>
+                                                    @foreach ($agents as $agent)
+                                                        @include('pages.agent.edit')
+                                                    @endforeach
                                                     <a href="javascript:;"
                                                         class="text-danger font-weight-bold text-xs toggle-status"
                                                         data-bs-toggle="tooltip" data-bs-placement="top"
@@ -157,90 +161,6 @@
                     </div>
                 </div>
             </div>
-            <!-- Add Agent Modal -->
-            <div class="modal fade" id="exampleModalAddAgent" tabindex="-1" role="dialog"
-                aria-labelledby="exampleModalAddAgent" aria-hidden="true">
-                @include('pages.createagent')
-            </div>
-            <!-- End Add Agent Modal -->
-
-            <!-- Edit Agent Modal -->
-            <div class="modal fade" id="exampleModalEditAgent" tabindex="-1" role="dialog"
-                aria-labelledby="exampleModalEditAgent" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered modal-md" role="document">
-                    <div class="modal-content">
-                        <div class="modal-body p-0">
-                            <div class="card card-plain">
-                                <div class="card-header pb-0 text-left">
-                                    <h3 class="font-weight-bolder text-primary text-gradient">Edit Agent</h3>
-                                </div>
-                                <div class="card-body pb-3">
-                                    <form role="form text-left">
-                                        <label>PLAYER</label>
-                                        <div class="input-group mb-3">
-                                            <input type="text" class="form-control" placeholder="enter Name"
-                                                aria-label="Name" name="name" aria-describedby="name-addon">
-                                        </div>
-                                        <label>PASSWORD</label>
-                                        <div class="input-group mb-3">
-                                            <input type="number" class="form-control" placeholder="password"
-                                                aria-label="Point" name="point" aria-describedby="email-addon">
-                                        </div>
-                                        <label>ROLE</label>
-                                        <div class="input-group mb-3">
-                                            <input type="password" class="form-control" placeholder="enter Role"
-                                                aria-label="Password" name="password" aria-describedby="password-addon">
-                                        </div>
-                                        <label>BALANCE</label>
-                                        <div class="input-group mb-3">
-                                            <input type="password" class="form-control" placeholder="Balance"
-                                                aria-label="password_confirmation" name="password_confirmation"
-                                                aria-describedby="password-addon">
-                                        </div>
-                                        <label>DISTRIBUTOR</label>
-                                        <div class="input-group mb-3">
-                                            <input type="password" class="form-control" placeholder="Distributor"
-                                                aria-label="password_confirmation" name="password_confirmation"
-                                                aria-describedby="password-addon">
-                                        </div>
-                                        <label>AGENT</label>
-                                        <div class="input-group mb-3">
-                                            <input type="password" class="form-control" placeholder="Agent"
-                                                aria-label="password_confirmation" name="password_confirmation"
-                                                aria-describedby="password-addon">
-                                        </div>
-                                        <label>STATUS</label>
-                                        <div class="input-group mb-3">
-                                            <input type="password" class="form-control" placeholder="Status"
-                                                aria-label="password_confirmation" name="password_confirmation"
-                                                aria-describedby="password-addon">
-                                        </div>
-                                        <label>CRATED AT</label>
-                                        <div class="input-group mb-3">
-                                            <input type="password" class="form-control" placeholder="Created at"
-                                                aria-label="password_confirmation" name="password_confirmation"
-                                                aria-describedby="password-addon">
-                                        </div>
-                                        <label>DISTRIBUTOR ID</label>
-                                        <div class="input-group mb-3">
-                                            <input type="password" class="form-control" placeholder="distributor id"
-                                                aria-label="password_confirmation" name="password_confirmation"
-                                                aria-describedby="password-addon">
-                                        </div>
-                                        <div class="text-center">
-                                            <button type="button"
-                                                class="btn bg-gradient-primary btn-lg btn-rounded w-100 mt-4 mb-0">Update
-                                                Agent
-                                            </button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- End Edit Agent Modal -->
 
             <x-footer />
         </div>

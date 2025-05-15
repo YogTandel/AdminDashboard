@@ -22,6 +22,7 @@
                                 data-bs-target="#exampleModalAddAgent">
                                 <i class="fas fa-plus"></i>&nbsp;&nbsp;Add Distributor
                             </button>
+                            @include('pages.distributor.create')
                         </div>
                     </div>
                     <div class="card-body px-0 pt-0 pb-2">
@@ -124,10 +125,14 @@
                                                         </a>
                                                         <a href="javascript:;"
                                                             class="text-secondary font-weight-bold text-xs me-2"
-                                                            data-bs-placement="top" title="Edit Agent"
-                                                            data-bs-toggle="modal" data-bs-target="#exampleModalEditAgent">
+                                                            data-bs-placement="top" title="Edit Distributor"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#Editmodal{{ $distributor->id }}">
                                                             <i class="fas fa-edit"></i>
                                                         </a>
+                                                        @foreach ($distributors as $distributor)
+                                                            @include('pages.distributor.edit')
+                                                        @endforeach
                                                         <a href="javascript:;"
                                                             class="text-danger font-weight-bold text-xs toggle-status"
                                                             data-bs-toggle="tooltip" data-bs-placement="top"
@@ -139,121 +144,12 @@
                                             </tr>
                                         @endforeach
                                     @endif
-                                    {{-- <tr>
-                                        <td>
-                                            <div class="d-flex px-2 py-1">
-                                                <div class="d-flex flex-column justify-content-center">
-                                                    <h6 class="mb-0 text-sm">John Michael</h6>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <p class="text-xs font-weight-bold mb-0">12345</p>
-                                        </td>
-                                        <td class="align-middle text-center text-sm">
-                                            <p class="text-xs font-weight-bold mb-0">0.00</p>
-                                        </td>
-                                        <td class="align-middle text-center text-sm">
-                                            <p class="text-xs font-weight-bold mb-0">anish</p>
-                                        </td>
-                                        <td class="align-middle text-center text-sm">
-                                            <p class="text-xs font-weight-bold mb-0">N/A</p>
-                                        </td>
-                                        <td class="align-middle text-center text-sm">
-                                            <span class="badge badge-sm bg-gradient-success">Online</span>
-                                        </td>
-                                        <td class="align-middle text-center">
-                                            <span class="text-secondary text-xs font-weight-bold">55868744746332</span>
-                                        </td>
-                                        <td class="align-middle">
-                                            <div class="d-flex align-items-center justify-content-around">
-                                                <a href="javascript:;" class="text-secondary font-weight-bold text-xs me-2"
-                                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Copy Agent">
-                                                    <i class="fas fa-copy"></i>
-                                                </a>
-                                                <a href="javascript:;" class="text-secondary font-weight-bold text-xs me-2"
-                                                    data-bs-placement="top" title="Edit Agent" data-bs-toggle="modal"
-                                                    data-bs-target="#exampleModalEditAgent">
-                                                    <i class="fas fa-edit"></i>
-                                                </a>
-                                                <a href="javascript:;"
-                                                    class="text-danger font-weight-bold text-xs toggle-status"
-                                                    data-bs-toggle="tooltip" data-bs-placement="top"
-                                                    title="Block/Unblock Agent">
-                                                    <i class="fas fa-ban"></i>
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr> --}}
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- Add Agent Modal -->
-            <div class="modal fade" id="exampleModalAddAgent" tabindex="-1" role="dialog"
-                aria-labelledby="exampleModalAddAgent" aria-hidden="true">
-                @include('pages.creatdistributor')
-            </div>
-            <!-- End Add Agent Modal -->
-
-            <!-- Edit Agent Modal -->
-            <div class="modal fade" id="exampleModalEditAgent" tabindex="-1" role="dialog"
-                aria-labelledby="exampleModalEditAgent" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered modal-md" role="document">
-                    <div class="modal-content">
-                        <div class="modal-body p-0">
-                            <div class="card card-plain">
-                                <div class="card-header pb-0 text-left">
-                                    <h3 class="font-weight-bolder text-primary text-gradient">Edit Distributor</h3>
-                                </div>
-                                <div class="card-body pb-3">
-                                    <form role="form text-left">
-                                        <label>Name</label>
-                                        <div class="input-group mb-3">
-                                            <input type="text" class="form-control" placeholder="Name" aria-label="Name"
-                                                name="name" aria-describedby="name-addon">
-                                        </div>
-                                        <label>Password</label>
-                                        <div class="input-group mb-3">
-                                            <input type="number" class="form-control" placeholder="Password"
-                                                aria-label="Point" name="point" aria-describedby="email-addon">
-                                        </div>
-                                        <label>Roll</label>
-                                        <div class="input-group mb-3">
-                                            <input type="password" class="form-control" placeholder="Roll"
-                                                aria-label="Password" name="password" aria-describedby="password-addon">
-                                        </div>
-                                        <label>Balance</label>
-                                        <div class="input-group mb-3">
-                                            <input type="password" class="form-control" placeholder="Balance"
-                                                aria-label="Password" name="password" aria-describedby="password-addon">
-                                        </div>
-                                        <label>Endpoint</label>
-                                        <div class="input-group mb-3">
-                                            <input type="password" class="form-control" placeholder="Endpoint"
-                                                aria-label="Password" name="password" aria-describedby="password-addon">
-                                        </div>
-                                        <label>Dateofcreation</label>
-                                        <div class="input-group mb-3">
-                                            <input type="password" class="form-control" placeholder="Dateofcreation"
-                                                aria-label="Password" name="password" aria-describedby="password-addon">
-                                        </div>
-                                        <div class="text-center">
-                                            <button type="button"
-                                                class="btn bg-gradient-primary btn-lg btn-rounded w-100 mt-4 mb-0">Update
-                                                Distributor
-                                            </button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- End Edit Agent Modal -->
 
             <x-footer />
         </div>

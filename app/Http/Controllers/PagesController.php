@@ -2,21 +2,19 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class PagesController extends Controller
 {
     public function agentList()
     {
         $agents = User::where('role', 'agent')->get();
-        return view('pages.agentlist', compact('agents'));
+        return view('pages.agent.list', compact('agents'));
     }
 
     public function distributor()
     {
         $distributors = User::where('role', 'distributor')->get();
-        return view('pages.distributor', compact('distributors'));
+        return view('pages.distributor.list', compact('distributors'));
     }
 
     public function player()
