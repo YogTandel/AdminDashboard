@@ -86,6 +86,39 @@ class AuthController extends Controller
         }
     }
 
+    public function createplayer(Request $request)
+    {
+        Log::info('Attempting to create a new Distributor', ['input' => $request->except(['password', 'original_password'])]);
+
+        $validate = $request->validate([
+            'player'   => 'required|string|max:255|unique:users,player',
+            'password' => 'required|string|min:3',
+            'role'     => 'required|in:player',
+            'balance'  => 'required|numeric|min:0',
+            'status'   => 'required|in:Active,Inactive',
+            'endpoint' => 'required|numeric|min:0',
+        ]);
+
+        try {
+            $validate['original_password'] = $validate['password'];
+            $validate['password']          = bcrypt($validate['password']);
+            $validate['DateOfCreation']    = now()->format('YmdHis');
+
+            $user = User::create($validate);
+
+            if ($user) {
+                Log::info('player inserted', ['id' => $user->_id ?? $user->id]);
+            } else {
+                Log::warning('player creation returned null');
+            }
+
+            return redirect()->route('player.show')->with('success', 'player added successfully');
+        } catch (\Exception $e) {
+            Log::error('Failed to create player', ['error' => $e->getMessage()]);
+            return back()->withErrors(['error' => 'Failed to create player. Please try again.']);
+        }
+    }
+
     public function editAgent(Request $request, $id)
     {
         Log::info('Attempting to edit agent', ['id' => $id]);

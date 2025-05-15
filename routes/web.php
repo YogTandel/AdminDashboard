@@ -20,6 +20,7 @@ Route::get('/distributor', [PagesController::class, 'distributor'])->name('distr
 Route::post('/distributor/store', [AuthController::class, 'createDistributor'])->name('distributor.add');
 Route::put('/distributor/{id}/update', [AuthController::class, 'editDistributor'])->name('distributor.update');
 Route::get('/player', [PagesController::class, 'player'])->name('player');
+Route::post('/player/store', [AuthController::class, 'createplayer'])->name('player.add');
 Route::get('/transactionreport', [PagesController::class, 'transactionreport'])->name('transactionreport');
 Route::get('/setting', [PagesController::class, 'setting'])->name('setting');
 Route::get('/livegame', [PagesController::class, 'livegame'])->name('livegame');

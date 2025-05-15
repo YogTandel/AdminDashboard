@@ -9,51 +9,62 @@
                         <p class="mb-0">Enter Distributor name and password to register</p>
                     </div>
                     <div class="card-body pb-3">
-                        <form action="{{ route('distributor.add') }}" role="form text-left" method="POST">
+                    <form action="{{ route('player.add') }}" method="POST">
                             @csrf
-                            <label>Player</label>
+
+                            <label>Player Name</label>
                             <div class="input-group mb-3">
-                                <input type="text" class="form-control" placeholder="Player" aria-label="player"
-                                    name="player" aria-describedby="player-addon">
+                                <input type="text" class="form-control" name="player" placeholder="Player Name" required>
                             </div>
 
                             <label>Password</label>
                             <div class="input-group mb-3">
-                                <input type="password" class="form-control" placeholder="password" aria-label="password"
-                                    name="password" aria-describedby="password-addon">
+                                <input type="text" class="form-control" name="password" placeholder="Password" required>
                             </div>
 
-                            <input type="hidden" name="role" value="distributor">
+                            <label>Role</label>
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" name="role" value="distributor" placeholder="Role" required>
+                            </div>
 
                             <label>Balance</label>
                             <div class="input-group mb-3">
-                                <input type="text" class="form-control" placeholder="Balance" aria-label="balance"
-                                    name="balance" aria-describedby="balance-addon">
+                                <input type="number" class="form-control" name="balance" placeholder="Balance" required>
                             </div>
 
-                            <label>Endpoint</label>
+                            <label>Status</label>
                             <div class="input-group mb-3">
-                                <input type="number" class="form-control" placeholder="endpoint" aria-label="endpoint"
-                                    name="endpoint" aria-describedby="endpoint-addon">
-                            </div>
-
-                            <label>STATUS</label>
-                            <div class="input-group mb-3">
-                                <select class="form-control" name="status">
+                                <select class="form-control" name="status" required>
                                     <option value="Active">Active</option>
                                     <option value="Inactive">Inactive</option>
                                 </select>
                             </div>
 
-                            <input type="hidden" name="original_password" id="original_password">
+                            <label>Endpoint</label>
+                            <div class="input-group mb-3">
+                                <input type="number" class="form-control" name="endpoint" placeholder="Endpoint" required>
+                            </div>
+
+                            <label>Distributor</label>
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" name="Distributor" placeholder="Distributor" required>
+                            </div>
+
+                            <label>Agent</label>
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" name="Agent" placeholder="Agent" required>
+                            </div>
+
+                            <label>Winamount</label>
+                            <div class="input-group mb-3">
+                                <input type="number" class="form-control" name="winamount" placeholder="winamount" required>
+                            </div>
 
                             <div class="text-center">
-                                <button type="submit"
-                                    class="btn bg-gradient-primary btn-lg btn-rounded w-100 mt-4 mb-0">Save
-                                    Distributor
-                                </button>
+                                <button type="submit" class="btn bg-gradient-primary btn-lg w-100 mt-4 mb-0">Save Player</button>
                             </div>
                         </form>
+
                     </div>
                 </div>
             </div>
