@@ -55,23 +55,35 @@ class AuthController extends Controller
 
     public function createDistributor(Request $request)
     {
+        Log::info('Attempting to create a new Distributor', ['input' => $request->except(['password', 'original_password'])]);
+
         $validate = $request->validate([
-            'player'   => 'required|string|max:255',
+            'player'   => 'required|string|max:255|unique:users,player',
             'password' => 'required|string|min:3',
             'role'     => 'required|in:distributor',
+            'balance'  => 'required|numeric|min:0',
             'status'   => 'required|in:Active,Inactive',
-            'endpoint' => 'nullable|numeric|min:0',
+            'endpoint' => 'required|numeric|min:0',
         ]);
 
-        $validate['original_password'] = $validate['password'];
-        $validate['password']          = bcrypt($validate['password']);
-        $validate['DateOfCreation']    = now()->format('YmdHis');
+        try {
+            $validate['original_password'] = $validate['password'];
+            $validate['password']          = bcrypt($validate['password']);
+            $validate['DateOfCreation']    = now()->format('YmdHis');
 
-        $user = User::create($validate);
+            $user = User::create($validate);
 
-        Auth::login($user);
+            if ($user) {
+                Log::info('Distributor inserted', ['id' => $user->_id ?? $user->id]);
+            } else {
+                Log::warning('Distributor creation returned null');
+            }
 
-        return redirect()->route('distributor.show')->with('success', 'Agent added successfully');
+            return redirect()->route('distributor.show')->with('success', 'Distributor added successfully');
+        } catch (\Exception $e) {
+            Log::error('Failed to create Distributor', ['error' => $e->getMessage()]);
+            return back()->withErrors(['error' => 'Failed to create Distributor. Please try again.']);
+        }
     }
 
     public function login(Request $request)

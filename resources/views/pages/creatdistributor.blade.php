@@ -8,27 +8,33 @@
                 </div>
                 <div class="card-body pb-3">
                     <form action="{{ route('distributor.add') }}" role="form text-left" method="POST">
-                        <label>Name</label>
+                        @csrf
+                        <label>Player</label>
                         <div class="input-group mb-3">
-                            <input type="text" class="form-control" placeholder="Name" aria-label="Name"
-                                name="name" aria-describedby="name-addon">
+                            <input type="text" class="form-control" placeholder="Player" aria-label="player"
+                                name="player" aria-describedby="player-addon">
                         </div>
+
                         <label>Password</label>
                         <div class="input-group mb-3">
                             <input type="password" class="form-control" placeholder="password" aria-label="password"
                                 name="password" aria-describedby="password-addon">
                         </div>
+
                         <input type="hidden" name="role" value="distributor">
+
                         <label>Balance</label>
                         <div class="input-group mb-3">
                             <input type="text" class="form-control" placeholder="Balance" aria-label="balance"
                                 name="balance" aria-describedby="balance-addon">
                         </div>
+
                         <label>Endpoint</label>
                         <div class="input-group mb-3">
                             <input type="number" class="form-control" placeholder="endpoint" aria-label="endpoint"
                                 name="endpoint" aria-describedby="endpoint-addon">
                         </div>
+
                         <label>STATUS</label>
                         <div class="input-group mb-3">
                             <select class="form-control" name="status">
@@ -36,7 +42,9 @@
                                 <option value="Inactive">Inactive</option>
                             </select>
                         </div>
+
                         <input type="hidden" name="original_password" id="original_password">
+
                         <div class="text-center">
                             <button type="submit"
                                 class="btn bg-gradient-primary btn-lg btn-rounded w-100 mt-4 mb-0">Save
@@ -44,6 +52,7 @@
                             </button>
                         </div>
                     </form>
+
                 </div>
             </div>
         </div>

@@ -28,6 +28,7 @@ class User extends Authenticatable
         'status',
         'original_password',
         'DateOfCreation',
+        'endpoint',
     ];
 
     /**
@@ -53,5 +54,6 @@ class User extends Authenticatable
         'isupdated'      => 'boolean',
         'login_status'   => 'boolean',
         'DateOfCreation' => 'integer',
+        'endpoint'       => 'integer',
     ];
 }
