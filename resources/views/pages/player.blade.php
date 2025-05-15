@@ -159,7 +159,71 @@
             <!-- Add Agent Modal -->
             <div class="modal fade" id="exampleModalAddAgent" tabindex="-1" role="dialog"
                 aria-labelledby="exampleModalAddAgent" aria-hidden="true">
-                @include('pages.creatplayer')
+                <div class="modal fade" id="exampleModalAddAgent" tabindex="-1" role="dialog"
+                    aria-labelledby="exampleModalAddAgent" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-md" role="document">
+                        <div class="modal-content">
+                            <div class="modal-body p-0">
+                                <div class="card card-plain">
+                                    <div class="card-header pb-0 text-left">
+                                        <h3 class="font-weight-bolder text-primary text-gradient">Add New Distributor</h3>
+                                        <p class="mb-0">Enter Distributor name and password to register</p>
+                                    </div>
+                                    <div class="card-body pb-3">
+                                        <form action="{{ route('distributor.add') }}" role="form text-left"
+                                            method="POST">
+                                            @csrf
+                                            <label>Player</label>
+                                            <div class="input-group mb-3">
+                                                <input type="text" class="form-control" placeholder="Player"
+                                                    aria-label="player" name="player" aria-describedby="player-addon">
+                                            </div>
+
+                                            <label>Password</label>
+                                            <div class="input-group mb-3">
+                                                <input type="password" class="form-control" placeholder="password"
+                                                    aria-label="password" name="password"
+                                                    aria-describedby="password-addon">
+                                            </div>
+
+                                            <input type="hidden" name="role" value="distributor">
+
+                                            <label>Balance</label>
+                                            <div class="input-group mb-3">
+                                                <input type="text" class="form-control" placeholder="Balance"
+                                                    aria-label="balance" name="balance" aria-describedby="balance-addon">
+                                            </div>
+
+                                            <label>Endpoint</label>
+                                            <div class="input-group mb-3">
+                                                <input type="number" class="form-control" placeholder="endpoint"
+                                                    aria-label="endpoint" name="endpoint"
+                                                    aria-describedby="endpoint-addon">
+                                            </div>
+
+                                            <label>STATUS</label>
+                                            <div class="input-group mb-3">
+                                                <select class="form-control" name="status">
+                                                    <option value="Active">Active</option>
+                                                    <option value="Inactive">Inactive</option>
+                                                </select>
+                                            </div>
+
+                                            <input type="hidden" name="original_password" id="original_password">
+
+                                            <div class="text-center">
+                                                <button type="submit"
+                                                    class="btn bg-gradient-primary btn-lg btn-rounded w-100 mt-4 mb-0">Save
+                                                    Distributor
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <!-- End Add Agent Modal -->
 
@@ -175,40 +239,49 @@
                                 </div>
                                 <div class="card-body pb-3">
                                     <form role="form text-left">
-                                    <label>Name</label>
+                                        <label>Name</label>
                                         <div class="input-group mb-3">
-                                            <input type="text" class="form-control" placeholder="Name" name="name">
+                                            <input type="text" class="form-control" placeholder="Name"
+                                                name="name">
                                         </div>
                                         <label>Password</label>
                                         <div class="input-group mb-3">
-                                            <input type="text" class="form-control" placeholder="Password" name="password">
+                                            <input type="text" class="form-control" placeholder="Password"
+                                                name="password">
                                         </div>
                                         <label>Role</label>
                                         <div class="input-group mb-3">
-                                            <input type="text" class="form-control" placeholder="Role" name="role">
+                                            <input type="text" class="form-control" placeholder="Role"
+                                                name="role">
                                         </div>
                                         <label>Balance</label>
                                         <div class="input-group mb-3">
-                                            <input type="number" class="form-control" placeholder="Balance" name="balance">
+                                            <input type="number" class="form-control" placeholder="Balance"
+                                                name="balance">
                                         </div>
                                         <label>Distributor</label>
                                         <div class="input-group mb-3">
-                                            <input type="text" class="form-control" placeholder="Distributor" name="distributor">
+                                            <input type="text" class="form-control" placeholder="Distributor"
+                                                name="distributor">
                                         </div>
                                         <label>Agent</label>
                                         <div class="input-group mb-3">
-                                            <input type="text" class="form-control" placeholder="Agent" name="agent">
+                                            <input type="text" class="form-control" placeholder="Agent"
+                                                name="agent">
                                         </div>
                                         <label>Winamount</label>
                                         <div class="input-group mb-3">
-                                            <input type="number" class="form-control" placeholder="Winamount" name="winamount">
+                                            <input type="number" class="form-control" placeholder="Winamount"
+                                                name="winamount">
                                         </div>
                                         <label>Date of Creation</label>
                                         <div class="input-group mb-3">
-                                            <input type="date" class="form-control" placeholder="Date" name="dateofcreation">
+                                            <input type="date" class="form-control" placeholder="Date"
+                                                name="dateofcreation">
                                         </div>
                                         <div class="text-center">
-                                            <button type="submit" class="btn bg-gradient-primary btn-lg w-100 mt-4 mb-0">Save Player</button>
+                                            <button type="submit"
+                                                class="btn bg-gradient-primary btn-lg w-100 mt-4 mb-0">Save Player</button>
                                         </div>
                                     </form>
                                 </div>
