@@ -27,7 +27,7 @@
                                     placeholder="Leave blank to keep current">
                             </div>
 
-                            <input type="hidden" name="role" value="agent">
+                            <input type="hidden" name="role" value="distributor">
 
                             <!-- BALANCE -->
                             <label>BALANCE</label>
