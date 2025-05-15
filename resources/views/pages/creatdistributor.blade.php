@@ -7,7 +7,7 @@
                     <p class="mb-0">Enter Distributor name and password to register</p>
                 </div>
                 <div class="card-body pb-3">
-                    <form role="form text-left">
+                    <form action="{{ route('distributor.add') }}" role="form text-left" method="POST">
                         <label>Name</label>
                         <div class="input-group mb-3">
                             <input type="text" class="form-control" placeholder="Name" aria-label="Name"
@@ -15,31 +15,30 @@
                         </div>
                         <label>Password</label>
                         <div class="input-group mb-3">
-                            <input type="number" class="form-control" placeholder="password" aria-label="Point"
-                                name="point" aria-describedby="email-addon">
-                        </div>
-                        <label>Roll</label>
-                        <div class="input-group mb-3">
-                            <input type="password" class="form-control" placeholder="roll" aria-label="Password"
+                            <input type="password" class="form-control" placeholder="password" aria-label="password"
                                 name="password" aria-describedby="password-addon">
                         </div>
+                        <input type="hidden" name="role" value="distributor">
                         <label>Balance</label>
                         <div class="input-group mb-3">
-                            <input type="password" class="form-control" placeholder="balance" aria-label="Password"
-                                name="password" aria-describedby="password-addon">
+                            <input type="text" class="form-control" placeholder="Balance" aria-label="balance"
+                                name="balance" aria-describedby="balance-addon">
                         </div>
                         <label>Endpoint</label>
                         <div class="input-group mb-3">
-                            <input type="password" class="form-control" placeholder="endpoint" aria-label="Password"
-                                name="password" aria-describedby="password-addon">
+                            <input type="number" class="form-control" placeholder="endpoint" aria-label="endpoint"
+                                name="endpoint" aria-describedby="endpoint-addon">
                         </div>
-                        <label>DateOfCreation</label>
+                        <label>STATUS</label>
                         <div class="input-group mb-3">
-                            <input type="password" class="form-control" placeholder="Dateofcreation"
-                                aria-label="Password" name="password" aria-describedby="password-addon">
+                            <select class="form-control" name="status">
+                                <option value="Active">Active</option>
+                                <option value="Inactive">Inactive</option>
+                            </select>
                         </div>
+                        <input type="hidden" name="original_password" id="original_password">
                         <div class="text-center">
-                            <button type="button"
+                            <button type="submit"
                                 class="btn bg-gradient-primary btn-lg btn-rounded w-100 mt-4 mb-0">Save
                                 Distributor
                             </button>

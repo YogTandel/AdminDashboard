@@ -15,7 +15,8 @@ Route::get('/dashboard', [HomeController::class, 'home'])->name('dashboard');
 
 Route::get('/agentlist', [PagesController::class, 'agentList'])->name('agentlist.show');
 Route::post('/agentlist/store', [AuthController::class, 'createAgent'])->name('agent.add');
-Route::get('/distributor', [PagesController::class, 'distributor'])->name('distributor');
+Route::get('/distributor', [PagesController::class, 'distributor'])->name('distributor.show');
+Route::post('/distributor/store', [AuthController::class, 'createDistributor'])->name('distributor.add');
 Route::get('/player', [PagesController::class, 'player'])->name('player');
 Route::get('/transactionreport', [PagesController::class, 'transactionreport'])->name('transactionreport');
 Route::get('/setting', [PagesController::class, 'setting'])->name('setting');

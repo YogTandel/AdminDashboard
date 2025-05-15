@@ -33,13 +33,6 @@ class AuthController extends Controller
         $validate['original_password'] = $validate['password'];
         $validate['password']          = bcrypt($validate['password']);
         $validate['DateOfCreation']    = now()->format('YmdHis');
-        /* $validate['balance']           = 0;
-        $validate['gameHistory']       = [];
-        $validate['isupdated']         = false;
-        $validate['status']            = 'Active';
-        $validate['login_status']      = false;
-        $validate['endpoint']          = 0;
-        $validate['winamount']         = 0; */
 
         $user = User::create($validate);
 
@@ -56,16 +49,30 @@ class AuthController extends Controller
             'role'     => 'required|in:admin,distributor,agent',
         ]);
 
-        // Only pass player and password to Auth::attempt()
-        if (Auth::attempt([
+        $guard = $credentials['role'] === 'admin' ? 'admin' : 'web';
+
+        // Log::info('Selected guard:', ['guard' => $guard]);
+
+        $loginData = [
             'player'   => $credentials['player'],
             'password' => $credentials['password'],
-            'status'   => 'Active',
-        ])) {
+        ];
+
+        if ($guard !== 'admin') {
+            $loginData['status'] = 'Active';
+        }
+
+        // Log::info('Attempting login with data:', $loginData);
+
+        if (Auth::guard($guard)->attempt($loginData)) {
             $request->session()->regenerate();
 
-            if (Auth::user()->role !== $credentials['role']) {
-                Auth::logout();
+            $user = Auth::guard($guard)->user();
+
+            // Log::info('Login successful', ['user' => $user]);
+
+            if ($guard !== 'admin' && $user->role !== $credentials['role']) {
+                Auth::guard($guard)->logout();
                 return back()->withErrors([
                     'credentials' => 'Invalid role for this user.',
                 ]);
@@ -74,9 +81,12 @@ class AuthController extends Controller
             return redirect()->route('dashboard')->with('success', 'Login successful!');
         }
 
+        // Log::warning('Login failed', ['guard' => $guard, 'credentials' => $loginData]);
+
         throw ValidationException::withMessages([
             'credentials' => 'Invalid credentials',
         ]);
+
     }
 
     public function logout(Request $request)

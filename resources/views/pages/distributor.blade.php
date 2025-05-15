@@ -110,8 +110,9 @@
                                                     </span>
                                                 </td>
                                                 <td class="align-middle text-center">
-                                                    <span
-                                                        class="text-secondary text-xs font-weight-bold">{{ $distributor->DateOfCreation }}</span>
+                                                    <span class="text-secondary text-xs font-weight-bold">
+                                                        {{ \Carbon\Carbon::createFromFormat('YmdHis', $distributor->DateOfCreation)->format('d M Y, H:i') }}
+                                                    </span>
                                                 </td>
                                                 <td class="align-middle">
                                                     <div class="d-flex align-items-center justify-content-around">
@@ -211,8 +212,8 @@
                                     <form role="form text-left">
                                         <label>Name</label>
                                         <div class="input-group mb-3">
-                                            <input type="text" class="form-control" placeholder="Name"
-                                                aria-label="Name" name="name" aria-describedby="name-addon">
+                                            <input type="text" class="form-control" placeholder="Name" aria-label="Name"
+                                                name="name" aria-describedby="name-addon">
                                         </div>
                                         <label>Password</label>
                                         <div class="input-group mb-3">

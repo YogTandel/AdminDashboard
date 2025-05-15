@@ -79,9 +79,6 @@
                                         <th class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                             Created At
                                         </th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                            Distributor ID
-                                        </th>
                                         <th class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                             Action
                                         </th>
@@ -125,10 +122,6 @@
                                                 <span class="text-secondary text-xs font-weight-bold">
                                                     {{ \Carbon\Carbon::createFromFormat('YmdHis', $agent->DateOfCreation)->format('d M Y, H:i') }}
                                                 </span>
-                                            </td>
-                                            <td class="text-center">
-                                                <p class="text-xs font-weight-bold mb-0 text-dark">
-                                                    {{ $agent->distributor_id }}</p>
                                             </td>
                                             <td class="text-center">
                                                 <div class="d-flex justify-content-center gap-2">

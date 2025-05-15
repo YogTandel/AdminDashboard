@@ -68,14 +68,15 @@
                                         <label>Role</label>
                                         <div class="mb-3">
                                             <select class="form-control" name="role" required>
+                                                <option value="">Select Role</option>
                                                 <option value="admin">Admin</option>
                                                 <option value="distributor">Distributor</option>
                                                 <option value="agent">Agent</option>
                                             </select>
                                         </div>
-                                        <label>Player</label>
+                                        <label>Name</label>
                                         <div class="mb-3">
-                                            <input type="text" class="form-control" placeholder="Player"
+                                            <input type="text" class="form-control" placeholder="Name"
                                                 aria-label="Player" name="player" value="{{ old('player') }}"
                                                 aria-describedby="player-addon" required>
                                         </div>
