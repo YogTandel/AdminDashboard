@@ -18,32 +18,34 @@ class AuthController extends Controller
         return view('auth.login');
     }
 
-    public function register(Request $request)
+    public function createAgent(Request $request)
     {
         $validate = $request->validate([
-            'player'         => 'required|string|max:255',
-            'password'       => 'required|string|min:6',
-            'role'           => 'required|in:admin,distributor,agent',
-            'agent'          => 'required|string|max:255',
-            'distributor'    => 'required|string|max:255',
-            'distributor_id' => 'required|exists:users,id',
-            'agent_id'       => 'required|exists:users,id',
+            'player'      => 'required|string|max:255',
+            'password'    => 'required|string|min:6',
+            'role'        => 'required|in:agent',
+            'agent'       => 'required|string|max:255',
+            'distributor' => 'required|string|max:255',
+            'balance'     => 'required|numeric|min:0',
+            'status'      => 'required|in:Active,Inactive',
         ]);
 
-        $validate['DateOfCreation'] = now()->format('YmdHis');
-        $validate['balance']        = 0;
-        $validate['gameHistory']    = [];
-        $validate['isupdated']      = false;
-        $validate['status']         = 'Active';
-        $validate['login_status']   = false;
-        $validate['endpoint']       = 0;
-        $validate['winamount']      = 0;
+        $validate['original_password'] = $validate['password'];
+        $validate['password']          = bcrypt($validate['password']);
+        $validate['DateOfCreation']    = now()->format('YmdHis');
+        /* $validate['balance']           = 0;
+        $validate['gameHistory']       = [];
+        $validate['isupdated']         = false;
+        $validate['status']            = 'Active';
+        $validate['login_status']      = false;
+        $validate['endpoint']          = 0;
+        $validate['winamount']         = 0; */
 
         $user = User::create($validate);
 
         Auth::login($user);
 
-        return redirect()->route('show.login')->with('success', 'Registration successful!');
+        return redirect()->route('agentlist.show')->with('success', 'Agent added successfully');
     }
 
     public function login(Request $request)

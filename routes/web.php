@@ -14,7 +14,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/dashboard', [HomeController::class, 'home'])->name('dashboard');
 
 Route::get('/agentlist', [PagesController::class, 'agentList'])->name('agentlist.show');
-Route::post('/agentlist/store', [PagesController::class, 'addAgent'])->name('agent.add');
+Route::post('/agentlist/store', [AuthController::class, 'createAgent'])->name('agent.add');
 Route::get('/distributor', [PagesController::class, 'distributor'])->name('distributor');
 Route::get('/player', [PagesController::class, 'player'])->name('player');
 Route::get('/transactionreport', [PagesController::class, 'transactionreport'])->name('transactionreport');
