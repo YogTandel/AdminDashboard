@@ -95,7 +95,10 @@ class AuthController extends Controller
             'password' => 'required|string|min:3',
             'role'     => 'required|in:player',
             'balance'  => 'required|numeric|min:0',
+            'distributor' => 'required|string|max:255',
+            'agent'       => 'required|string|max:255',
             'status'   => 'required|in:Active,Inactive',
+            'winamount'=>'required|numeric',
             'endpoint' => 'required|numeric|min:0',
         ]);
 

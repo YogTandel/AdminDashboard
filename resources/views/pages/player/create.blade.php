@@ -5,8 +5,8 @@
             <div class="modal-body p-0">
                 <div class="card card-plain">
                     <div class="card-header pb-0 text-left">
-                        <h3 class="font-weight-bolder text-primary text-gradient">Add New Distributor</h3>
-                        <p class="mb-0">Enter Distributor name and password to register</p>
+                        <h3 class="font-weight-bolder text-primary text-gradient">Add New player</h3>
+                        <p class="mb-0">Enter player name and password to register</p>
                     </div>
                     <div class="card-body pb-3">
                     <form action="{{ route('player.add') }}" method="POST">
@@ -24,7 +24,7 @@
 
                             <label>Role</label>
                             <div class="input-group mb-3">
-                                <input type="text" class="form-control" name="role" value="distributor" placeholder="Role" required>
+                                <input type="text" class="form-control" name="role" value="player" placeholder="Role" required>
                             </div>
 
                             <label>Balance</label>
@@ -45,20 +45,10 @@
                                 <input type="number" class="form-control" name="endpoint" placeholder="Endpoint" required>
                             </div>
 
-                            <label>Distributor</label>
-                            <div class="input-group mb-3">
-                                <input type="text" class="form-control" name="Distributor" placeholder="Distributor" required>
-                            </div>
+                            <input type="hidden" name="distributor" value="amish"> 
+                            <input type="hidden" name="agent" value="zee">             
+                            <input type="hidden" name="winamount" value="500">                     
 
-                            <label>Agent</label>
-                            <div class="input-group mb-3">
-                                <input type="text" class="form-control" name="Agent" placeholder="Agent" required>
-                            </div>
-
-                            <label>Winamount</label>
-                            <div class="input-group mb-3">
-                                <input type="number" class="form-control" name="winamount" placeholder="winamount" required>
-                            </div>
 
                             <div class="text-center">
                                 <button type="submit" class="btn bg-gradient-primary btn-lg w-100 mt-4 mb-0">Save Player</button>
