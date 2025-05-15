@@ -25,7 +25,7 @@ class AuthController extends Controller
 
         $validate = $request->validate([
             'player'      => 'required|string|max:255|unique:users,player',
-            'password'    => 'required|string|min:6',
+            'password'    => 'required|string|min:3',
             'role'        => 'required|in:agent',
             'agent'       => 'required|string|max:255',
             'distributor' => 'required|string|max:255',
@@ -57,7 +57,7 @@ class AuthController extends Controller
     {
         $validate = $request->validate([
             'player'   => 'required|string|max:255',
-            'password' => 'required|string|min:6',
+            'password' => 'required|string|min:3',
             'role'     => 'required|in:distributor',
             'status'   => 'required|in:Active,Inactive',
             'endpoint' => 'nullable|numeric|min:0',
