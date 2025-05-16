@@ -140,6 +140,11 @@
                                                     @foreach ($agents as $agent)
                                                         @include('pages.agent.edit')
                                                     @endforeach
+                                                    <a href="javascript:;" class="text-danger font-weight-bold text-xs me-2"
+                                                        data-bs-toggle="tooltip" data-bs-placement="top"
+                                                        title="Delete Agent">
+                                                        <i class="fas fa-trash"></i>
+                                                    </a>
                                                     <a href="javascript:;"
                                                         class="text-danger font-weight-bold text-xs toggle-status"
                                                         data-bs-toggle="tooltip" data-bs-placement="top"
