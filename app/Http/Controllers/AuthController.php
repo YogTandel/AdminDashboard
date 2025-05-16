@@ -99,7 +99,6 @@ class AuthController extends Controller
             'agent'       => 'required|string|max:255',
             'status'      => 'required|in:Active,Inactive',
             'winamount'   => 'required|numeric',
-            'endpoint'    => 'required|numeric|min:0',
         ]);
 
         try {
@@ -189,6 +188,41 @@ class AuthController extends Controller
         }
     }
 
+    public function editPlayer(Request $request, $id)
+    {
+        Log::info('Attempting to edit player', ['id' => $id]);
+
+        $validate = $request->validate([
+            'player'      => 'required|string|max:255|unique:users,player,' . $id,
+            'password'    => 'nullable|string|min:3',
+            'role'        => 'required|in:player',
+            'balance'     => 'required|numeric|min:0',
+            'distributor' => 'required|string|max:255',
+            'agent'       => 'required|string|max:255',
+            'status'      => 'required|in:Active,Inactive',
+            'winamount'   => 'required|numeric',
+        ]);
+
+        try {
+            $user = User::findOrFail($id);
+
+            if (! empty($validate['password'])) {
+                $validate['original_password'] = $validate['password'];
+                $validate['password']          = bcrypt($validate['password']);
+            } else {
+                unset($validate['password']);
+            }
+
+            $user->update($validate);
+
+            Log::info('player updated', ['id' => $user->id]);
+            return redirect()->route('player.show')->with('success', 'Player updated successfully');
+        } catch (\Exception $e) {
+            Log::error('Failed to update player', ['id' => $id, 'error' => $e->getMessage()]);
+            return back()->withErrors(['error' => 'Failed to update player. Please try again.']);
+        }
+    }
+
     public function deleteAgent($id)
     {
         $agent = User::where('id', $id)->where('role', 'agent')->firstOrFail();
@@ -202,7 +236,6 @@ class AuthController extends Controller
         $agent->forceDelete();
         return redirect()->route('distributor.show')->with('success', 'Distributor deleted successfully');
     }
-
 
     public function deleteplayer($id)
     {

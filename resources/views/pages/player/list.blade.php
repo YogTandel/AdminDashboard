@@ -137,8 +137,8 @@
                                                         </a>
                                                         <a href="javascript:;"
                                                             class="text-secondary font-weight-bold text-xs me-2"
-                                                            data-bs-placement="top" title="Edit Agent"
-                                                            data-bs-toggle="modal" data-bs-target="#exampleModalEditAgent">
+                                                            title="Edit Agent" data-bs-toggle="modal"
+                                                            data-bs-target="#editModal{{ $player->id }}">
                                                             <i class="fas fa-edit"></i>
                                                         </a>
                                                         @include('pages.player.edit')

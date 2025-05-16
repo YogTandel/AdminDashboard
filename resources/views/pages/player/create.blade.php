@@ -9,27 +9,46 @@
                         <p class="mb-0">Enter player name and password to register</p>
                     </div>
                     <div class="card-body pb-3">
-                    <form action="{{ route('player.add') }}" method="POST">
+                        <form action="{{ route('player.add') }}" method="POST">
                             @csrf
 
-                            <label>Player Name</label>
+                            <label>Player</label>
                             <div class="input-group mb-3">
-                                <input type="text" class="form-control" name="player" placeholder="Player Name" required>
+                                <input type="text" class="form-control" name="player" placeholder="Player" required>
                             </div>
 
                             <label>Password</label>
                             <div class="input-group mb-3">
-                                <input type="text" class="form-control" name="password" placeholder="Password" required>
+                                <input type="password" class="form-control" name="password" placeholder="Password"
+                                    required>
                             </div>
 
-                            <label>Role</label>
-                            <div class="input-group mb-3">
-                                <input type="text" class="form-control" name="role" value="player" placeholder="Role" required>
-                            </div>
+                            <input type="hidden" name="role" value="player">
 
                             <label>Balance</label>
                             <div class="input-group mb-3">
-                                <input type="number" class="form-control" name="balance" placeholder="Balance" required>
+                                <input type="number" class="form-control" name="balance" placeholder="Balance"
+                                    required>
+                            </div>
+
+                            <label>Distributor</label>
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control @error('distributor') is-invalid @enderror"
+                                    placeholder="Distributor" aria-label="distributor" name="distributor"
+                                    aria-describedby="distributor" value="{{ old('distributor') }}">
+                                @error('distributor')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <label>Agent</label>
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control @error('agent') is-invalid @enderror"
+                                    placeholder="Agent" aria-label="agent" name="agent" aria-describedby="agent"
+                                    value="{{ old('agent') }}">
+                                @error('agent')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <label>Status</label>
@@ -40,21 +59,19 @@
                                 </select>
                             </div>
 
-                            <label>Endpoint</label>
+                            <label>Winamount</label>
                             <div class="input-group mb-3">
-                                <input type="number" class="form-control" name="endpoint" placeholder="Endpoint" required>
+                                <input type="number" class="form-control" name="winamount" placeholder="Winamount"
+                                    required>
                             </div>
 
-                            <input type="hidden" name="distributor" value="amish"> 
-                            <input type="hidden" name="agent" value="zee">             
-                            <input type="hidden" name="winamount" value="500">                     
-
+                            <input type="hidden" name="original_password" id="original_password">
 
                             <div class="text-center">
-                                <button type="submit" class="btn bg-gradient-primary btn-lg w-100 mt-4 mb-0">Save Player</button>
+                                <button type="submit" class="btn bg-gradient-primary btn-lg w-100 mt-4 mb-0">Save
+                                    Player</button>
                             </div>
                         </form>
-
                     </div>
                 </div>
             </div>

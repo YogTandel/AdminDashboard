@@ -29,6 +29,7 @@ class User extends Authenticatable
         'original_password',
         'DateOfCreation',
         'endpoint',
+        'winamount',
     ];
 
     /**

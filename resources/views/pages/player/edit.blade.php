@@ -1,5 +1,5 @@
-<div class="modal fade" id="exampleModalEditAgent" tabindex="-1" role="dialog" aria-labelledby="exampleModalEditAgent"
-    aria-hidden="true">
+<div class="modal fade" id="editModal{{ $player->id }}" tabindex="-1" role="dialog"
+    aria-labelledby="editModalLabel{{ $player->id }}" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-md" role="document">
         <div class="modal-content">
             <div class="modal-body p-0">
@@ -8,42 +8,73 @@
                         <h3 class="font-weight-bolder text-primary text-gradient">Edit Player</h3>
                     </div>
                     <div class="card-body pb-3">
-                        <form role="form text-left">
-                            <label>Name</label>
+                        <form action="{{ route('player.update', $player->id) }}" method="POST" role="form text-left">
+                            @csrf
+                            @method('PUT')
+
+                            <!-- PLAYER -->
+                            <label>PLAYER</label>
                             <div class="input-group mb-3">
-                                <input type="text" class="form-control" placeholder="Name" name="name">
+                                <input type="text" class="form-control" name="player"
+                                    value="{{ old('player', $player->player) }}">
                             </div>
-                            <label>Password</label>
+
+                            <!-- PASSWORD -->
+                            <label>PASSWORD</label>
                             <div class="input-group mb-3">
-                                <input type="text" class="form-control" placeholder="Password" name="password">
+                                <input type="password" class="form-control" name="password"
+                                    placeholder="Leave blank to keep current">
                             </div>
-                            <label>Role</label>
+
+                            <input type="hidden" name="role" value="player">
+
+                            <!-- BALANCE -->
+                            <label>BALANCE</label>
                             <div class="input-group mb-3">
-                                <input type="text" class="form-control" placeholder="Role" name="role">
+                                <input type="number" class="form-control" name="balance"
+                                    value="{{ old('balance', $player->balance) }}">
                             </div>
-                            <label>Balance</label>
+
+                            <!-- DISTRIBUTOR -->
+                            <label>DISTRIBUTOR</label>
                             <div class="input-group mb-3">
-                                <input type="number" class="form-control" placeholder="Balance" name="balance">
+                                <input type="text" class="form-control" name="distributor"
+                                    value="{{ old('distributor', $player->distributor) }}">
                             </div>
-                            <label>Distributor</label>
+
+                            <!-- AGENT -->
+                            <label>AGENT</label>
                             <div class="input-group mb-3">
-                                <input type="text" class="form-control" placeholder="Distributor" name="distributor">
+                                <input type="text" class="form-control" name="agent"
+                                    value="{{ old('agent', $player->agent) }}">
                             </div>
-                            <label>Agent</label>
+
+                            <!-- STATUS -->
+                            <label>STATUS</label>
                             <div class="input-group mb-3">
-                                <input type="text" class="form-control" placeholder="Agent" name="agent">
+                                <select class="form-control" name="status">
+                                    <option value="Active" {{ $player->status == 'Active' ? 'selected' : '' }}>
+                                        Active</option>
+                                    <option value="Inactive" {{ $player->status == 'Inactive' ? 'selected' : '' }}>
+                                        Inactive
+                                    </option>
+                                </select>
                             </div>
-                            <label>Winamount</label>
+
+                            <!-- Winamount -->
+                            <label>WINAMOUNT</label>
                             <div class="input-group mb-3">
-                                <input type="number" class="form-control" placeholder="Winamount" name="winamount">
+                                <input type="text" class="form-control" name="winamount"
+                                    value="{{ old('winamount', $player->winamount) }}">
                             </div>
-                            <label>Date of Creation</label>
-                            <div class="input-group mb-3">
-                                <input type="date" class="form-control" placeholder="Date" name="dateofcreation">
-                            </div>
+
+                            <input type="hidden" name="original_password">
+
                             <div class="text-center">
-                                <button type="submit" class="btn bg-gradient-primary btn-lg w-100 mt-4 mb-0">Save
-                                    Player</button>
+                                <button type="submit"
+                                    class="btn bg-gradient-warning btn-lg btn-rounded w-100 mt-4 mb-0">
+                                    Update Player
+                                </button>
                             </div>
                         </form>
                     </div>
