@@ -196,6 +196,13 @@ class AuthController extends Controller
         return redirect()->route('agentlist.show')->with('success', 'Agent deleted successfully');
     }
 
+    public function deleteDistributor($id)
+    {
+        $agent = User::where('id', $id)->where('role', 'distributor')->firstOrFail();
+        $agent->forceDelete();
+        return redirect()->route('distributor.show')->with('success', 'Agent deleted successfully');
+    }
+
     public function login(Request $request)
     {
         $credentials = $request->validate([
