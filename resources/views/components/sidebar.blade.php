@@ -98,7 +98,7 @@
 
             <!-- Player -->
             <li class="nav-item">
-                <a class="nav-link {{ Request::is('player') ? 'active' : '' }}" href="{{ route('player') }}">
+                <a class="nav-link {{ Request::is('player') ? 'active' : '' }}" href="{{ route('player.show') }}">
                     <div
                         class="icon icon-shape
                     icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center

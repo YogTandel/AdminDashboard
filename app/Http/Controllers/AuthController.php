@@ -91,15 +91,15 @@ class AuthController extends Controller
         Log::info('Attempting to create a new Distributor', ['input' => $request->except(['password', 'original_password'])]);
 
         $validate = $request->validate([
-            'player'   => 'required|string|max:255|unique:users,player',
-            'password' => 'required|string|min:3',
-            'role'     => 'required|in:player',
-            'balance'  => 'required|numeric|min:0',
+            'player'      => 'required|string|max:255|unique:users,player',
+            'password'    => 'required|string|min:3',
+            'role'        => 'required|in:player',
+            'balance'     => 'required|numeric|min:0',
             'distributor' => 'required|string|max:255',
             'agent'       => 'required|string|max:255',
-            'status'   => 'required|in:Active,Inactive',
-            'winamount'=>'required|numeric',
-            'endpoint' => 'required|numeric|min:0',
+            'status'      => 'required|in:Active,Inactive',
+            'winamount'   => 'required|numeric',
+            'endpoint'    => 'required|numeric|min:0',
         ]);
 
         try {
@@ -187,6 +187,13 @@ class AuthController extends Controller
             Log::error('Failed to update distributor', ['id' => $id, 'error' => $e->getMessage()]);
             return back()->withErrors(['error' => 'Failed to update distributor. Please try again.']);
         }
+    }
+
+    public function deleteAgent($id)
+    {
+        $agent = User::where('id', $id)->where('role', 'agent')->firstOrFail();
+        $agent->forceDelete();
+        return redirect()->route('agentlist.show')->with('success', 'Agent deleted successfully');
     }
 
     public function login(Request $request)
