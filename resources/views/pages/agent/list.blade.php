@@ -138,7 +138,8 @@
                                                         <i class="fas fa-edit"></i>
                                                     </a>
                                                     @include('pages.agent.edit')
-                                                    <form action="{{ route('agent.delete', $agent->id) }}" method="post" style="display:flex;">
+                                                    <form action="{{ route('agent.delete', $agent->id) }}" method="post"
+                                                        style="display:flex;">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button class="text-danger font-weight-bold text-xs me-2"
@@ -160,8 +161,9 @@
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="11" class="text-center text-secondary text-sm">No agents data
-                                                found.</td>
+                                            <td colspan="11" class="text-center text-secondary text-sm">
+                                                No agents data found.
+                                            </td>
                                         </tr>
                                     @endforelse
                                 </tbody>
