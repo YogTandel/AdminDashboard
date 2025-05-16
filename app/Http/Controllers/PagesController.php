@@ -7,13 +7,13 @@ class PagesController extends Controller
 {
     public function agentList()
     {
-        $agents = User::where('role', 'agent')->get();
+        $agents = User::where('role', 'agent')->paginate(5);
         return view('pages.agent.list', compact('agents'));
     }
 
     public function distributor()
     {
-        $distributors = User::where('role', 'distributor')->get();
+        $distributors = User::where('role', 'distributor')->paginate(5);
         return view('pages.distributor.list', compact('distributors'));
     }
 

@@ -133,8 +133,8 @@
                                                         @foreach ($distributors as $distributor)
                                                             @include('pages.distributor.edit')
                                                         @endforeach
-                                                        <form action="{{ route('Distributor.delete', $distributor->id) }}" method="post"
-                                                            style="display:flex;">
+                                                        <form action="{{ route('Distributor.delete', $distributor->id) }}"
+                                                            method="post" style="display:flex;">
                                                             @csrf
                                                             @method('DELETE')
                                                             <button class="text-danger font-weight-bold text-xs me-2"
@@ -158,6 +158,10 @@
                                     @endif
                                 </tbody>
                             </table>
+                            {{-- Pagination --}}
+                            <div class="d-flex justify-content-center mt-3 pagination pagination-info">
+                                {{ $distributors->links('vendor.pagination.bootstrap-4') }}
+                            </div>
                         </div>
                     </div>
                 </div>
