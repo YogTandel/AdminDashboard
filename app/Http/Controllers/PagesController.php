@@ -19,7 +19,7 @@ class PagesController extends Controller
 
     public function player()
     {
-        $players = User::where('role', 'player')->get();
+        $players = User::where('role', 'player')->paginate(5);
         return view('pages.player.list', compact('players'));
     }
 
