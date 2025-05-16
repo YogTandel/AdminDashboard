@@ -200,7 +200,15 @@ class AuthController extends Controller
     {
         $agent = User::where('id', $id)->where('role', 'distributor')->firstOrFail();
         $agent->forceDelete();
-        return redirect()->route('distributor.show')->with('success', 'Agent deleted successfully');
+        return redirect()->route('distributor.show')->with('success', 'Distributor deleted successfully');
+    }
+
+
+    public function deleteplayer($id)
+    {
+        $player = User::where('id', $id)->where('role', 'player')->firstOrFail();
+        $player->forceDelete();
+        return redirect()->route('player.show')->with('success', 'player deleted successfully');
     }
 
     public function login(Request $request)

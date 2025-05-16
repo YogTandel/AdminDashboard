@@ -20,8 +20,10 @@ Route::delete('/agentlist/{id}/delete', [AuthController::class, 'deleteAgent'])-
 Route::get('/distributor', [PagesController::class, 'distributor'])->name('distributor.show');
 Route::post('/distributor/store', [AuthController::class, 'createDistributor'])->name('distributor.add');
 Route::put('/distributor/{id}/update', [AuthController::class, 'editDistributor'])->name('distributor.update');
+Route::delete('/distributor/{id}/delete',[AuthController::class, 'deleteDistributor'])->name('Distributor.delete');
 Route::get('/player', [PagesController::class, 'player'])->name('player.show');
 Route::post('/player/store', [AuthController::class, 'createplayer'])->name('player.add');
+Route::delete('/player/{id}/delete',[AuthController::class, 'deleteplayer'])->name('player.delete');
 Route::get('/transactionreport', [PagesController::class, 'transactionreport'])->name('transactionreport');
 Route::get('/setting', [PagesController::class, 'setting'])->name('setting');
 Route::get('/livegame', [PagesController::class, 'livegame'])->name('livegame');

@@ -141,6 +141,18 @@
                                                             <i class="fas fa-edit"></i>
                                                         </a>
                                                         @include('pages.player.edit')
+                                                        <form action="{{ route('player.delete', $player->id) }}" method="post"
+                                                            style="display:flex;">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button class="text-danger font-weight-bold text-xs me-2"
+                                                                onclick="return confirm('Are you sure?')"
+                                                                data-bs-toggle="tooltip" data-bs-placement="top"
+                                                                title="Delete Agent"
+                                                                style="background: none; border: none; padding: 0;">
+                                                                <i class="fas fa-trash"></i>
+                                                            </button>
+                                                        </form>
                                                         <a href="javascript:;"
                                                             class="text-danger font-weight-bold text-xs toggle-status"
                                                             data-bs-toggle="tooltip" data-bs-placement="top"
