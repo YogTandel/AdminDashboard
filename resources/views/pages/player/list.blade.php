@@ -123,8 +123,9 @@
                                                     <p class="text-xs font-weight-bold mb-0">{{ $player->winamount }}</p>
                                                 </td>
                                                 <td class="align-middle text-center">
-                                                    <span
-                                                        class="text-secondary text-xs font-weight-bold">55868744746332</span>
+                                                    <span class="text-secondary text-xs font-weight-bold">
+                                                        {{ \Carbon\Carbon::createFromFormat('YmdHis', $player->DateOfCreation)->format('d M Y, H:i') }}
+                                                    </span>
                                                 </td>
                                                 <td class="align-middle">
                                                     <div class="d-flex align-items-center justify-content-around">
@@ -141,8 +142,8 @@
                                                             <i class="fas fa-edit"></i>
                                                         </a>
                                                         @include('pages.player.edit')
-                                                        <form action="{{ route('player.delete', $player->id) }}" method="post"
-                                                            style="display:flex;">
+                                                        <form action="{{ route('player.delete', $player->id) }}"
+                                                            method="post" style="display:flex;">
                                                             @csrf
                                                             @method('DELETE')
                                                             <button class="text-danger font-weight-bold text-xs me-2"
