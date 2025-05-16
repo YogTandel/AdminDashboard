@@ -32,10 +32,15 @@
                         <div class="d-flex align-items-center gap-3">
                             <div class="ms-md-auto pe-md-3 d-flex align-items-center">
                                 <div class="input-group">
-                                    <span class="input-group-text text-body"><i class="fas fa-search"
-                                            aria-hidden="true"></i></span>
-                                    <input type="text" class="form-control" placeholder="Search agent...">
-                                    <button class="btn btn-outline-primary mb-0" type="button">Search</button>
+                                    <form action="{{ route('agentlist.show') }}" method="GET" class="input-group w-auto">
+                                        <span class="input-group-text bg-white border-end-0">
+                                            <i class="fas fa-search text-secondary"></i>
+                                        </span>
+                                        <input type="search" name="search"
+                                            class="form-control border-start-0 border-end-0" placeholder="Search agent..."
+                                            aria-label="Search agent">
+                                        <button class="btn btn-outline-warning" type="submit">Search</button>
+                                    </form>
                                 </div>
                             </div>
                             <button type="button" class="btn btn-primary mb-0" data-bs-toggle="modal"

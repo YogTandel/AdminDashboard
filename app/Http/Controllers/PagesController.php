@@ -7,7 +7,12 @@ class PagesController extends Controller
 {
     public function agentList()
     {
-        $agents = User::where('role', 'agent')->paginate(5);
+        $query = User::query();
+        if (request()->has('search')) {
+            $query = $query->where('player', 'like', '%' . request()->search . '%');
+        }
+        $agents = $query->where('role', 'agent')->paginate(5);
+        // $agents = User::where('role', 'agent')->paginate(5);
         return view('pages.agent.list', compact('agents'));
     }
 
