@@ -18,22 +18,24 @@ class PagesController extends Controller
 
     public function distributor()
     {
-        $query = User::query();
+        $perPage = request()->get('per_page', 5);
+        $query   = User::query();
         if (request()->has('search')) {
             $query = $query->where('player', 'like', '%' . request()->search . '%');
         }
-        $distributors = $query->where('role', 'distributor')->paginate(5);
-        return view('pages.distributor.list', compact('distributors'));
+        $distributors = $query->where('role', 'distributor')->paginate($perPage)->appends(request()->query());
+        return view('pages.distributor.list', compact('distributors','perPage'));
     }
 
     public function player()
     {
+        $perPage = request()->get('per_page', 5);
         $query = User::query();
         if (request()->has('search')) {
             $query = $query->where('player', 'like', '%' . request()->search . '%');
         }
-        $players = $query->where('role', 'player')->paginate(5);
-        return view('pages.player.list', compact('players'));
+        $players = $query->where('role', 'player')->paginate($perPage)->appends(request()->query());
+        return view('pages.player.list', compact('players','perPage'));
     }
 
     public function transactionreport()
