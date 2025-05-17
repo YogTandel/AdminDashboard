@@ -12,10 +12,21 @@
                         <div class="d-flex align-items-center gap-3">
                             <div class="ms-md-auto pe-md-3 d-flex align-items-center">
                                 <div class="input-group">
-                                    <span class="input-group-text text-body"><i class="fas fa-search"
-                                            aria-hidden="true"></i></span>
-                                    <input type="text" class="form-control" placeholder="Search agent...">
-                                    <button class="btn btn-outline-primary mb-0" type="button">Search</button>
+                                <form action="{{ route('distributor.show') }}" method="GET"
+                                        class="d-flex align-items-center">
+                                        <div class="input-group input-group-outline rounded-pill me-2 shadow-sm">
+                                            <span class="input-group-text bg-transparent border-0 text-secondary">
+                                                <i class="fas fa-search"></i>
+                                            </span>
+                                            <label class="form-label"></label>
+                                            <input type="search" name="search" class="form-control border-0"
+                                                onfocus="this.parentElement.classList.add('is-focused')"
+                                                onfocusout="this.parentElement.classList.remove('is-focused')">
+                                        </div>
+                                        <button type="submit" class="btn bg-gradient-warning rounded-pill shadow-sm mb-0">
+                                            Search
+                                        </button>
+                                    </form>
                                 </div>
                             </div>
                             <button type="button" class="btn bg-primary mb-0 text-white" data-bs-toggle="modal"
