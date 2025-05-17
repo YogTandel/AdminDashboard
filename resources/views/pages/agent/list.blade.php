@@ -30,29 +30,42 @@
                 <div class="card mb-4">
                     <div class="card-header pb-0 d-flex justify-content-between align-items-center">
                         <h6>Agent Users</h6>
-                        <div class="d-flex align-items-center gap-3">
-                            <div class="ms-md-auto pe-md-3 d-flex align-items-center">
-                                <div class="input-group">
-                                    <form action="{{ route('agentlist.show') }}" method="GET"
-                                        class="d-flex align-items-center">
-                                        <div class="input-group input-group-outline rounded-pill me-2 shadow-sm">
-                                            <span class="input-group-text bg-transparent border-0 text-secondary">
-                                                <i class="fas fa-search"></i>
-                                            </span>
-                                            <label class="form-label"></label>
-                                            <input type="search" name="search" class="form-control border-0"
-                                                onfocus="this.parentElement.classList.add('is-focused')"
-                                                onfocusout="this.parentElement.classList.remove('is-focused')">
-                                        </div>
-                                        <button type="submit" class="btn bg-gradient-warning rounded-pill shadow-sm mb-0">
-                                            Search
-                                        </button>
-                                    </form>
+                        <div class="d-flex align-items-center gap-3 flex-wrap">
+                            <!-- Per Page Dropdown -->
+                            <form method="GET" class="d-flex align-items-center mb-0 me-3">
+                                <label for="per_page" class="mb-0 me-2 text-sm text-dark fw-bold">Show:</label>
+
+                                <div class="input-group input-group-outline border-radius-lg shadow-sm">
+                                    <select name="per_page" id="per_page" class="form-select border-0 ps-3 pe-4"
+                                        onchange="this.form.submit()" style="min-width: 60px;">
+                                        <option value="5" {{ request('per_page') == 5 ? 'selected' : '' }}>5</option>
+                                        <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
+                                    </select>
                                 </div>
-                            </div>
-                            <button type="button" class="btn btn-primary mb-0" data-bs-toggle="modal"
-                                data-bs-target="#exampleModalAddAgent">
-                                <i class="fas fa-plus"></i>&nbsp;&nbsp;Add Agent
+
+                                @if (request()->has('search'))
+                                    <input type="hidden" name="search" value="{{ request('search') }}">
+                                @endif
+                            </form>
+                            <!-- Search Form -->
+                            <form action="{{ route('agentlist.show') }}" method="GET" class="d-flex align-items-center">
+                                <div class="input-group input-group-outline rounded-pill me-2 shadow-sm">
+                                    <span class="input-group-text bg-transparent border-0 text-secondary">
+                                        <i class="fas fa-search"></i>
+                                    </span>
+                                    <input type="search" name="search" class="form-control border-0"
+                                        placeholder="Search..." value="{{ request('search') }}"
+                                        onfocus="this.parentElement.classList.add('is-focused')"
+                                        onfocusout="this.parentElement.classList.remove('is-focused')">
+                                </div>
+                                <button type="submit" class="btn bg-gradient-warning rounded-pill shadow-sm mb-0 px-3">
+                                    Search
+                                </button>
+                            </form>
+                            <!-- Add Agent Button -->
+                            <button type="button" class="btn bg-gradient-primary rounded-pill shadow-sm mb-0 px-3"
+                                data-bs-toggle="modal" data-bs-target="#exampleModalAddAgent">
+                                <i class="fas fa-plus me-1"></i> Add Agent
                             </button>
                             @include('pages.agent.create')
                         </div>
@@ -119,7 +132,8 @@
                                                     class="text-xs font-weight-bold text-dark">₹{{ number_format($agent->balance, 2) }}</span>
                                             </td>
                                             <td class="text-center">
-                                                <p class="text-xs font-weight-bold mb-0 text-dark">{{ $agent->distributor }}
+                                                <p class="text-xs font-weight-bold mb-0 text-dark">
+                                                    {{ $agent->distributor }}
                                                 </p>
                                             </td>
                                             <td class="text-center">
