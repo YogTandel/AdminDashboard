@@ -24,6 +24,7 @@
             @endif
         </div>
         <!-- End Toast Container -->
+
         <div class="row">
             <div class="col-12">
                 <div class="card mb-4">
@@ -32,14 +33,20 @@
                         <div class="d-flex align-items-center gap-3">
                             <div class="ms-md-auto pe-md-3 d-flex align-items-center">
                                 <div class="input-group">
-                                    <form action="{{ route('agentlist.show') }}" method="GET" class="input-group w-auto">
-                                        <span class="input-group-text bg-white border-end-0">
-                                            <i class="fas fa-search text-secondary"></i>
-                                        </span>
-                                        <input type="search" name="search"
-                                            class="form-control border-start-0 border-end-0" placeholder="Search agent..."
-                                            aria-label="Search agent">
-                                        <button class="btn btn-outline-warning" type="submit">Search</button>
+                                    <form action="{{ route('agentlist.show') }}" method="GET"
+                                        class="d-flex align-items-center">
+                                        <div class="input-group input-group-outline rounded-pill me-2 shadow-sm">
+                                            <span class="input-group-text bg-transparent border-0 text-secondary">
+                                                <i class="fas fa-search"></i>
+                                            </span>
+                                            <label class="form-label"></label>
+                                            <input type="search" name="search" class="form-control border-0"
+                                                onfocus="this.parentElement.classList.add('is-focused')"
+                                                onfocusout="this.parentElement.classList.remove('is-focused')">
+                                        </div>
+                                        <button type="submit" class="btn bg-gradient-warning rounded-pill shadow-sm mb-0">
+                                            Search
+                                        </button>
                                     </form>
                                 </div>
                             </div>
