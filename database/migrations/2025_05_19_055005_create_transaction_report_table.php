@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('transaction_report', function (Blueprint $table) {
             $table->id();
+            $table->integer('amount');
+            $table->string('from');
+            $table->string('to');
             $table->timestamps();
         });
     }
