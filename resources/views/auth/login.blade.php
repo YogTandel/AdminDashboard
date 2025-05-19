@@ -103,15 +103,16 @@
                             </div>
                         </div>
                         <div class="col-md-6 mt-5 position-relative">
-                            <div class="position-absolute top-0 start-0 w-100 h-100" style="
+                            <div class="position-absolute" style="
+                                width: 550px;
+                                height: 550px;
                                 background-image: url('{{ asset('assets/img/curved-images/golden 1.png') }}');
-                                background-size: cover;
+                                background-size: contain;
                                 background-position: center;
                                 background-repeat: no-repeat;
                                 z-index: 0;">
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>
