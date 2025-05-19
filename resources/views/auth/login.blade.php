@@ -4,19 +4,13 @@
     <!-- Toast Container -->
     <div class="position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 1080">
         @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <span class="alert-text"><strong>{{ session('success') }}</strong></span>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+            <div class="alert alert-success" role="alert">
+                <strong>{{ session('success') }}</strong>
             </div>
         @endif
         @if (session('error'))
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <span class="alert-text"><strong>{{ session('error') }}</strong></span>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+            <div class="alert alert-success" role="alert">
+                <strong>{{ session('error') }}</strong>
             </div>
         @endif
     </div>
