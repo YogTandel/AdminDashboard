@@ -17,6 +17,7 @@ return new class extends Migration
             $table->integer('amount');
             $table->string('from');
             $table->string('to');
+            $table->date('date_time');
         });
     }
 
