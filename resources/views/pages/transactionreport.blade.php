@@ -51,50 +51,30 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td class="align-middle text-center text-sm">
-                                            <div class="d-flex px-2 py-1">
-                                                <p class="text-xs font-weight-bold mb-0">1</p>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <h6 class="mb-0 text-sm">-NtwatuOjz26zllcjdNh</h6>
-                                        </td>
-                                        <td>
-                                            <p class="text-xs font-weight-bold mb-0">100.00</p>
-                                        </td>
-                                        <td class="align-middle text-center text-sm">
-                                            <p class="text-xs font-weight-bold mb-0">20240327024237</p>
-                                        </td>
-                                        <td class="align-middle text-center text-sm">
-                                            <p class="text-xs font-weight-bold mb-0">admin</p>
-                                        </td>
-                                        <td class="align-middle text-center text-sm">
-                                            <p class="text-xs font-weight-bold mb-0">dis</p>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="align-middle text-center text-sm">
-                                            <div class="d-flex px-2 py-1">
-                                                <p class="text-xs font-weight-bold mb-0">2</p>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <h6 class="mb-0 text-sm">-NtwatuOjz26zllcjdNh</h6>
-                                        </td>
-                                        <td>
-                                            <p class="text-xs font-weight-bold mb-0">100.00</p>
-                                        </td>
-                                        <td class="align-middle text-center text-sm">
-                                            <p class="text-xs font-weight-bold mb-0">20240327024237</p>
-                                        </td>
-                                        <td class="align-middle text-center text-sm">
-                                            <p class="text-xs font-weight-bold mb-0">admin</p>
-                                        </td>
-                                        <td class="align-middle text-center text-sm">
-                                            <p class="text-xs font-weight-bold mb-0">dis</p>
-                                        </td>
-                                    </tr>
+                                    @foreach ($transactions as $index => $transaction)
+                                        <tr>
+                                            <td class="align-middle text-center text-sm">
+                                                <div class="d-flex px-2 py-1">
+                                                    <p class="text-xs font-weight-bold mb-0">{{ $index + 1 }}</p>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <h6 class="mb-0 text-sm">{{ $transaction->id }}</h6>
+                                            </td>
+                                            <td>
+                                                <p class="text-xs font-weight-bold mb-0">{{ $transaction->amount }}</p>
+                                            </td>
+                                            <td class="align-middle text-center text-sm">
+                                                <p class="text-xs font-weight-bold mb-0">{{ $transaction->id }}</p>
+                                            </td>
+                                            <td class="align-middle text-center text-sm">
+                                                <p class="text-xs font-weight-bold mb-0">admin</p>
+                                            </td>
+                                            <td class="align-middle text-center text-sm">
+                                                <p class="text-xs font-weight-bold mb-0">dis</p>
+                                            </td>
+                                        </tr>
+                                    @endforeach
                                 </tbody>
                             </table>
                         </div>

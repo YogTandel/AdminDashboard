@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Models\Transaction;
 use App\Models\User;
 
 class PagesController extends Controller
@@ -24,23 +25,24 @@ class PagesController extends Controller
             $query = $query->where('player', 'like', '%' . request()->search . '%');
         }
         $distributors = $query->where('role', 'distributor')->paginate($perPage)->appends(request()->query());
-        return view('pages.distributor.list', compact('distributors','perPage'));
+        return view('pages.distributor.list', compact('distributors', 'perPage'));
     }
 
     public function player()
     {
         $perPage = request()->get('per_page', 5);
-        $query = User::query();
+        $query   = User::query();
         if (request()->has('search')) {
             $query = $query->where('player', 'like', '%' . request()->search . '%');
         }
         $players = $query->where('role', 'player')->paginate($perPage)->appends(request()->query());
-        return view('pages.player.list', compact('players','perPage'));
+        return view('pages.player.list', compact('players', 'perPage'));
     }
 
     public function transactionreport()
     {
-        return view('pages.transactionreport');
+        $transactions = Transaction::all();
+        return view('pages.transactionreport', compact('transactions'));
     }
 
     public function setting()
