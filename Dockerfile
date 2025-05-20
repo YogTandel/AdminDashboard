@@ -1,4 +1,4 @@
-FROM php:8.3.5-fpm-slim
+FROM php:8.3-fpm-slim
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git curl libpng-dev libonig-dev libxml2-dev zip unzip \
