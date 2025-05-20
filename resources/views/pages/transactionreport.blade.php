@@ -29,10 +29,6 @@
                                             NO
                                         </th>
                                         <th
-                                            class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 py-2">
-                                            ID
-                                        </th>
-                                        <th
                                             class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                                             Amount
                                         </th>
@@ -51,7 +47,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($transactions as $index => $transaction)
+                                    @forelse ($transactions as $index => $transaction)
                                         <tr>
                                             <td class="align-middle text-center text-sm">
                                                 <div class="d-flex px-2 py-1">
@@ -59,22 +55,27 @@
                                                 </div>
                                             </td>
                                             <td>
-                                                <h6 class="mb-0 text-sm">{{ $transaction->id }}</h6>
-                                            </td>
-                                            <td>
                                                 <p class="text-xs font-weight-bold mb-0">{{ $transaction->amount }}</p>
                                             </td>
                                             <td class="align-middle text-center text-sm">
-                                                <p class="text-xs font-weight-bold mb-0">{{ $transaction->id }}</p>
+                                                <p class="text-xs font-weight-bold mb-0">
+                                                    {{ \Carbon\Carbon::createFromFormat('YmdHis', $transaction->date_time)->format('d M Y h:i A') }}
+                                                </p>
                                             </td>
                                             <td class="align-middle text-center text-sm">
-                                                <p class="text-xs font-weight-bold mb-0">admin</p>
+                                                <p class="text-xs font-weight-bold mb-0">{{ $transaction->from }}</p>
                                             </td>
                                             <td class="align-middle text-center text-sm">
-                                                <p class="text-xs font-weight-bold mb-0">dis</p>
+                                                <p class="text-xs font-weight-bold mb-0">{{ $transaction->to }}</p>
                                             </td>
                                         </tr>
-                                    @endforeach
+                                    @empty
+                                        <tr>
+                                            <td colspan="6" class="text-center text-secondary text-sm">
+                                                No Transaction data found.
+                                            </td>
+                                        </tr>
+                                    @endforelse
                                 </tbody>
                             </table>
                         </div>

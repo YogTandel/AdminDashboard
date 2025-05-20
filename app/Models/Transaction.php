@@ -12,5 +12,6 @@ class Transaction extends Model
         'amount',
         'from',
         'to',
+        'date_time',
     ];
 }

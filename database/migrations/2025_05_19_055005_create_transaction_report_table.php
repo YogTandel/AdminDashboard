@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    protected $connection = 'mongodb';
     /**
      * Run the migrations.
      */
@@ -13,10 +14,11 @@ return new class extends Migration
     {
         Schema::create('transaction_report', function (Blueprint $table) {
             $table->id();
+            $table->string('transaction_id');
             $table->integer('amount');
             $table->string('from');
             $table->string('to');
-            $table->date('date_time');
+            $table->dateTime('date_time');
         });
     }
 
