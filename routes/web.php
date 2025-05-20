@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PagesController;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [AuthController::class, 'showLogin'])->name('show.login');
@@ -34,3 +35,8 @@ Route::delete('/player/{id}/delete', [AuthController::class, 'deleteplayer'])->n
 Route::get('/transactionreport', [PagesController::class, 'transactionreport'])->name('transactionreport');
 Route::get('/setting', [PagesController::class, 'setting'])->name('setting');
 Route::get('/livegame', [PagesController::class, 'livegame'])->name('livegame');
+
+
+Route::get('/test-db', function () {
+    return DB::connection('mongodb')->collection('test')->insert(['hello' => 'world']);
+});
