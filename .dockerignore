@@ -1,0 +1,29 @@
+# Laravel folders to exclude from image
+node_modules
+public/storage
+storage/*.key
+storage/framework/*
+storage/logs/*
+vendor
+
+# Environment files
+.env
+.env.*
+
+# IDE and OS files
+*.log
+*.git
+*.gitignore
+*.gitattributes
+*.envrc
+*.DS_Store
+*.vscode
+*.idea
+
+# Docker-related
+docker-compose.override.yml
+.dockerignore
+Dockerfile.*
+
+# Composer cache (optional, if stored locally)
+composer.lock
