@@ -41,7 +41,7 @@ class PagesController extends Controller
 
     public function transactionreport()
     {
-        $perPage = request()->get('per_page', 5);
+        $perPage = request()->get('per_page', 15);
         $query   = Transaction::query();
         if (request()->has('search')) {
             $query = $query->where('from', 'like', '%' . request()->search . '%');
