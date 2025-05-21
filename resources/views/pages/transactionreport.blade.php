@@ -28,6 +28,9 @@
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                             NO
                                         </th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                            ID
+                                        </th>
                                         <th
                                             class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                                             Amount
@@ -55,11 +58,14 @@
                                                 </div>
                                             </td>
                                             <td>
+                                                <p class="text-xs font-weight-bold mb-0">{{ $transaction->_id }}</p>
+                                            </td>
+                                            <td>
                                                 <p class="text-xs font-weight-bold mb-0">{{ $transaction->amount }}</p>
                                             </td>
                                             <td class="align-middle text-center text-sm">
                                                 <p class="text-xs font-weight-bold mb-0">
-                                                    {{ \Carbon\Carbon::createFromFormat('YmdHis', $transaction->date_time)->format('d M Y h:i A') }}
+                                                    {{ \Carbon\Carbon::parse($transaction->date_time)->format('d M Y h:i A') }}
                                                 </p>
                                             </td>
                                             <td class="align-middle text-center text-sm">

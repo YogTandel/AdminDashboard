@@ -6,7 +6,7 @@ use MongoDB\Laravel\Eloquent\Model;
 class Transaction extends Model
 {
     protected $connection = 'mongodb';
-    protected $collection = 'transaction_report';
+    protected $collection = 'transactions';
 
     protected $fillable = [
         'amount',
