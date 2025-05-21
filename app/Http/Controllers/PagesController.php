@@ -41,9 +41,15 @@ class PagesController extends Controller
 
     public function transactionreport()
     {
-        $transactions = Transaction::all();
-        return view('pages.transactionreport', compact('transactions'));
+        $perPage = request()->get('per_page', 5);
+        $query   = Transaction::query();
+        if (request()->has('search')) {
+            $query = $query->where('from', 'like', '%' . request()->search . '%');
+        }
+        $transactions = $query->paginate($perPage)->appends(request()->query());
+        return view('pages.transactionreport', compact('transactions', 'perPage'));
     }
+
 
     public function setting()
     {

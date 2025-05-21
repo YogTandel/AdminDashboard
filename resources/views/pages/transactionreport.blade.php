@@ -9,15 +9,38 @@
                 <div class="card mb-4">
                     <div class="card-header pb-0 d-flex justify-content-between align-items-center">
                         <h6>Transactions</h6>
-                        <div class="d-flex align-items-center gap-3">
-                            <div class="ms-md-auto pe-md-3 d-flex align-items-center">
-                                <div class="input-group">
-                                    <span class="input-group-text text-body"><i class="fas fa-search"
-                                            aria-hidden="true"></i></span>
-                                    <input type="text" class="form-control" placeholder="Search Transaction">
-                                    <button class="btn btn-outline-primary mb-0 ms-1" type="button">Search</button>
+                        <div class="d-flex align-items-center gap-3 flex-wrap">
+                            <!-- Per Page Dropdown -->
+                            <form method="GET" class="d-flex align-items-center mb-0 me-3">
+                                <label for="per_page" class="mb-0 me-2 text-sm text-dark fw-bold">Show:</label>
+
+                                <div class="input-group input-group-outline border-radius-lg shadow-sm">
+                                    <select name="per_page" id="per_page" class="form-select border-0 ps-3 pe-4"
+                                        onchange="this.form.submit()" style="min-width: 60px;">
+                                        <option value="15" {{ request('per_page') == 15 ? 'selected' : '' }}>15</option>
+                                        <option value="20" {{ request('per_page') == 20 ? 'selected' : '' }}>20</option>
+                                    </select>
                                 </div>
-                            </div>
+
+                                @if (request()->has('search'))
+                                    <input type="hidden" name="search" value="{{ request('search') }}">
+                                @endif
+                            </form>
+                            <!-- Search Form -->
+                            <form action="{{ route('transactionreport') }}" method="GET" class="d-flex align-items-center">
+                                <div class="input-group input-group-outline rounded-pill me-2 shadow-sm">
+                                    <span class="input-group-text bg-transparent border-0 text-secondary">
+                                        <i class="fas fa-search"></i>
+                                    </span>
+                                    <input type="search" name="search" class="form-control border-0"
+                                        placeholder="Search..." value="{{ request('search') }}"
+                                        onfocus="this.parentElement.classList.add('is-focused')"
+                                        onfocusout="this.parentElement.classList.remove('is-focused')">
+                                </div>
+                                <button type="submit" class="btn bg-gradient-warning rounded-pill shadow-sm mb-0 px-3">
+                                    Search
+                                </button>
+                            </form>
                         </div>
                     </div>
                     <div class="card-body px-0 pt-0 pb-2">
@@ -54,25 +77,25 @@
                                         <tr>
                                             <td class="align-middle text-center text-sm">
                                                 <div class="d-flex px-2 py-1">
-                                                    <p class="text-xs font-weight-bold mb-0">{{ $index + 1 }}</p>
+                                                    <p class="text-sm font-weight-bold mb-0">{{ $index + 1 }}</p>
                                                 </div>
                                             </td>
                                             <td>
-                                                <p class="text-xs font-weight-bold mb-0">{{ $transaction->_id }}</p>
+                                                <p class="text-sm font-weight-bold mb-0">{{ $transaction->_id }}</p>
                                             </td>
                                             <td>
-                                                <p class="text-xs font-weight-bold mb-0">{{ $transaction->amount }}</p>
+                                                <p class="text-sm font-weight-bold mb-0">{{ $transaction->amount }}</p>
                                             </td>
                                             <td class="align-middle text-center text-sm">
-                                                <p class="text-xs font-weight-bold mb-0">
+                                                <p class="text-sm font-weight-bold mb-0">
                                                     {{ \Carbon\Carbon::parse($transaction->date_time)->format('d M Y h:i A') }}
                                                 </p>
                                             </td>
                                             <td class="align-middle text-center text-sm">
-                                                <p class="text-xs font-weight-bold mb-0">{{ $transaction->from }}</p>
+                                                <p class="text-sm font-weight-bold mb-0">{{ $transaction->from }}</p>
                                             </td>
                                             <td class="align-middle text-center text-sm">
-                                                <p class="text-xs font-weight-bold mb-0">{{ $transaction->to }}</p>
+                                                <p class="text-sm font-weight-bold mb-0">{{ $transaction->to }}</p>
                                             </td>
                                         </tr>
                                     @empty
@@ -84,6 +107,10 @@
                                     @endforelse
                                 </tbody>
                             </table>
+                        </div>
+                        {{-- Pagination --}}
+                        <div class="d-flex justify-content-center mt-3 pagination pagination-info">
+                        {{ $transactions->links('vendor.pagination.bootstrap-4') }}
                         </div>
                     </div>
                 </div>
