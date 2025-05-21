@@ -176,12 +176,13 @@
                                                                 <i class="fas fa-trash"></i>
                                                             </button>
                                                         </form>
-                                                        <a href="javascript:;"
+                                                        <a href="#"
                                                             class="text-secondary font-weight-bold text-xs me-2"
-                                                            data-bs-toggle="tooltip" data-bs-placement="top"
-                                                            title="Player History">
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#playerHistoryModal-{{ $player->_id }}">
                                                             <i class="fas fa-history"></i>
                                                         </a>
+                                                        {{-- @include('pages.player.history') --}}
                                                     </div>
                                                 </td>
                                             </tr>
