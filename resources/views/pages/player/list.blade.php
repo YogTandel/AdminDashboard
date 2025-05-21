@@ -183,6 +183,13 @@
                                                             title="Block/Unblock Agent">
                                                             <i class="fas fa-ban"></i>
                                                         </a>
+                                                        <a href="javascript:;"
+                                                            class="text-secondary font-weight-bold text-xs me-3 "
+                                                            title="View History" data-bs-toggle="modal"
+                                                            data-bs-target="#editModal{{ $player->id }}">
+                                                            <i class="fas fa-history"></i>
+                                                        </a>
+
                                                     </div>
                                                 </td>
                                             </tr>
