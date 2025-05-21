@@ -25,9 +25,8 @@
                                 @if (request()->has('search'))
                                     <input type="hidden" name="search" value="{{ request('search') }}">
                                 @endif
-                            </form>  
-                            <form action="{{ route('player.show') }}" method="GET"
-                                class="d-flex align-items-center">
+                            </form>
+                            <form action="{{ route('player.show') }}" method="GET" class="d-flex align-items-center">
                                 <div class="input-group input-group-outline rounded-pill me-2 shadow-sm">
                                     <span class="input-group-text bg-transparent border-0 text-secondary">
                                         <i class="fas fa-search"></i>
@@ -178,18 +177,11 @@
                                                             </button>
                                                         </form>
                                                         <a href="javascript:;"
-                                                            class="text-danger font-weight-bold text-xs toggle-status"
+                                                            class="text-secondary font-weight-bold text-xs me-2"
                                                             data-bs-toggle="tooltip" data-bs-placement="top"
-                                                            title="Block/Unblock Agent">
-                                                            <i class="fas fa-ban"></i>
-                                                        </a>
-                                                        <a href="javascript:;"
-                                                            class="text-secondary font-weight-bold text-xs me-3 "
-                                                            title="View History" data-bs-toggle="modal"
-                                                            data-bs-target="#editModal{{ $player->id }}">
+                                                            title="Player History">
                                                             <i class="fas fa-history"></i>
                                                         </a>
-
                                                     </div>
                                                 </td>
                                             </tr>
