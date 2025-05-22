@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Transaction;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 
 class PagesController extends Controller
@@ -78,7 +79,6 @@ class PagesController extends Controller
 
     public function exportGameHistory($playerId)
     {
-        // Find player with role validation
         $player = User::where('_id', $playerId)
             ->where('role', 'player')
             ->firstOrFail();
@@ -94,7 +94,7 @@ class PagesController extends Controller
 
             foreach ($player->gameHistory as $entry) {
                 $net  = $entry['winpoint'] - $entry['playPoint'];
-                $time = \Carbon\Carbon::createFromFormat('YmdHis', $entry['stime'])->format('Y-m-d H:i:s');
+                $time = Carbon::createFromFormat('YmdHis', $entry['stime'])->format('Y-m-d H:i:s');
 
                 fputcsv($file, [
                     $time,
