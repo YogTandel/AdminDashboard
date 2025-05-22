@@ -177,7 +177,9 @@
                                                             </button>
                                                         </form>
                                                         <a href="{{ route('player.history', $player->_id) }}"
-                                                            class="text-secondary font-weight-bold text-xs me-2">
+                                                            class="text-secondary font-weight-bold text-xs me-2"
+                                                            data-bs-toggle="tooltip" data-bs-placement="top"
+                                                            title="Player History">
                                                             <i class="fas fa-history"></i>
                                                         </a>
                                                         {{-- @include('pages.player.history') --}}
