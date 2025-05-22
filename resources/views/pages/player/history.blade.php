@@ -43,7 +43,7 @@
                                     </div>
 
                                     <!-- NEXT LINE BUTTONS -->
-                                    <div class="mt-3 d-flex gap-2">
+                                    <div class="d-flex justify-content-center mt-3 gap-2">
                                         <a href="{{ route('export.game.history', $player->_id) }}"
                                             class="btn btn-sm btn-primary">
                                             <i class="fas fa-download me-1"></i> Export Data
