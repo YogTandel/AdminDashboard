@@ -58,6 +58,14 @@ class PagesController extends Controller
         return view('pages.transactionreport', compact('transactions', 'perPage'));
     }
 
+    public function playerHistory($id)
+    {
+        $player = User::where('_id', $id)
+            ->where('role', 'player')
+            ->firstOrFail();
+        return view('pages.player.history', compact('player'));
+    }
+
     public function setting()
     {
         return view('pages.setting');

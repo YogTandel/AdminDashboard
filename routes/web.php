@@ -33,6 +33,7 @@ Route::post('/player/store', [AuthController::class, 'createplayer'])->name('pla
 Route::put('/player/{id}/update', [AuthController::class, 'editPlayer'])->name('player.update');
 Route::delete('/player/{id}/delete', [AuthController::class, 'deleteplayer'])->name('player.delete');
 Route::get('/players/{playerId}/export-history', [PagesController::class, 'exportGameHistory'])->name('export.game.history');
+Route::get('/players/{id}/history', [PagesController::class, 'playerHistory'])->name('player.history');
 
 Route::get('/transactionreport', [PagesController::class, 'transactionreport'])->name('transactionreport');
 Route::get('/setting', [PagesController::class, 'setting'])->name('setting');
