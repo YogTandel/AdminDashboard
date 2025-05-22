@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Transaction;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class PagesController extends Controller
@@ -58,8 +59,11 @@ class PagesController extends Controller
         return view('pages.transactionreport', compact('transactions', 'perPage'));
     }
 
-    public function playerHistory($id)
+    public function playerHistory(Request $request,$id)
     {
+        $from = $request->input('from_date');
+        $to = $request->input('to_date');
+
         $player = User::where('_id', $id)
             ->where('role', 'player')
             ->firstOrFail();
