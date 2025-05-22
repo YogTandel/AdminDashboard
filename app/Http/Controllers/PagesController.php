@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Transaction;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -59,14 +60,35 @@ class PagesController extends Controller
         return view('pages.transactionreport', compact('transactions', 'perPage'));
     }
 
-    public function playerHistory(Request $request,$id)
+    public function playerHistory(Request $request, $id)
     {
         $from = $request->input('from_date');
-        $to = $request->input('to_date');
+        $to   = $request->input('to_date');
 
         $player = User::where('_id', $id)
             ->where('role', 'player')
             ->firstOrFail();
+
+        if ($player->gameHistory && is_array($player->gameHistory)) {
+            $filteredHistory = collect($player->gameHistory);
+
+            if ($from) {
+                $filteredHistory = $filteredHistory->filter(function ($entry) use ($from) {
+                    $entryDate = Carbon::createFromFormat('YmdHis', $entry['stime'])->format('Y-m-d');
+                    return $entryDate >= $from;
+                });
+            }
+
+            if ($to) {
+                $filteredHistory = $filteredHistory->filter(function ($entry) use ($to) {
+                    $entryDate = Carbon::createFromFormat('YmdHis', $entry['stime'])->format('Y-m-d');
+                    return $entryDate <= $to;
+                });
+            }
+
+            $player->gameHistory = $filteredHistory->values()->all();
+        }
+
         return view('pages.player.history', compact('player'));
     }
 

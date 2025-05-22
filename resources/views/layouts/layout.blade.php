@@ -236,6 +236,35 @@
             toastList.forEach(toast => toast.show())
         });
     </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const fromDate = document.getElementById('from_date');
+            const toDate = document.getElementById('to_date');
+
+            // Set max date for "from" field to today
+            if (fromDate) {
+                fromDate.max = new Date().toISOString().split('T')[0];
+            }
+
+            // Set max date for "to" field to today
+            if (toDate) {
+                toDate.max = new Date().toISOString().split('T')[0];
+            }
+
+            // Validate date range
+            const form = document.querySelector('form');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    if (fromDate.value && toDate.value && fromDate.value > toDate.value) {
+                        e.preventDefault();
+                        alert('"From" date cannot be after "To" date');
+                        return false;
+                    }
+                    return true;
+                });
+            }
+        });
+    </script>
 </body>
 
 </html>
