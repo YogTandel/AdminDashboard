@@ -81,7 +81,6 @@
                 </li>
             @endif
 
-
             <!-- Distributor -->
             @if (in_array($role, ['admin', 'distributor']))
                 <li class="nav-item">

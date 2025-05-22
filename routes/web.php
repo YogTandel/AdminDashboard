@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PagesController;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
@@ -36,7 +37,11 @@ Route::get('/transactionreport', [PagesController::class, 'transactionreport'])-
 Route::get('/setting', [PagesController::class, 'setting'])->name('setting');
 Route::get('/livegame', [PagesController::class, 'livegame'])->name('livegame');
 
-
 Route::get('/test-db', function () {
     return DB::connection('mongodb')->collection('test')->insert(['hello' => 'world']);
+});
+
+Route::get('/test-player', function () {
+    $player = User::where('player', 'zeeshan')->first();
+    dd($player->gameHistory); 
 });

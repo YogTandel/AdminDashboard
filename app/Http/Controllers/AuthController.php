@@ -99,6 +99,7 @@ class AuthController extends Controller
             'agent'       => 'required|string|max:255',
             'status'      => 'required|in:Active,Inactive',
             'winamount'   => 'required|numeric',
+            'gameHistory' => 'nullable|array',
         ]);
 
         try {
@@ -201,6 +202,7 @@ class AuthController extends Controller
             'agent'       => 'required|string|max:255',
             'status'      => 'required|in:Active,Inactive',
             'winamount'   => 'required|numeric',
+            'gameHistory' => 'nullable|array',
         ]);
 
         try {

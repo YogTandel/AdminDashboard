@@ -182,7 +182,7 @@
                                                             data-bs-target="#playerHistoryModal-{{ $player->_id }}">
                                                             <i class="fas fa-history"></i>
                                                         </a>
-                                                        {{-- @include('pages.player.history') --}}
+                                                        @include('pages.player.history')
                                                     </div>
                                                 </td>
                                             </tr>

@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Transaction;
 use App\Models\User;
+use Illuminate\Support\Facades\Log;
 
 class PagesController extends Controller
 {
@@ -36,6 +37,13 @@ class PagesController extends Controller
             $query = $query->where('player', 'like', '%' . request()->search . '%');
         }
         $players = $query->where('role', 'player')->paginate($perPage)->appends(request()->query());
+
+        if ($players->count() > 0) {
+            $firstPlayer = $players->first();
+            Log::debug('gameHistory type: ' . gettype($firstPlayer->gameHistory));
+            Log::debug('gameHistory content: ', is_array($firstPlayer->gameHistory) ? $firstPlayer->gameHistory : [$firstPlayer->gameHistory]);
+        }
+
         return view('pages.player.list', compact('players', 'perPage'));
     }
 
@@ -49,7 +57,6 @@ class PagesController extends Controller
         $transactions = $query->paginate($perPage)->appends(request()->query());
         return view('pages.transactionreport', compact('transactions', 'perPage'));
     }
-
 
     public function setting()
     {
