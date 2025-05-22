@@ -26,29 +26,34 @@
                             <!-- Right: Search + Buttons -->
                             <div class="d-flex flex-wrap align-items-center gap-2 mt-2 mt-md-0">
                                 <!-- Search Bar -->
-                                <div class="input-group input-group-outline" style="min-width: 240px;">
-                                    <span class="input-group-text pe-0">
-                                        <i class="fas fa-search"></i>
-                                    </span>
-                                    <input type="text" class="form-control ps-2" placeholder="Search history..."
-                                        id="historySearch">
+                                <form method="GET" action="{{ route('player.history','$player->_id') }}">
+                                <div class="d-flex gap-2 flex-wrap">
+                                    <div>
+                                        <label for="from_date" class="form-label mb-0">From Date</label>
+                                        <input type="date" name="from_date" id="from_date" class="form-control" value="{{ request('from_date') }}">
+                                    </div>
+
+                                    <div>
+                                        <label for="to_date" class="form-label mb-0">To Date</label>
+                                        <input type="date" name="to_date" id="to_date" class="form-control" value="{{ request('to_date') }}">
+                                    </div>
+
+                                    <div class="align-self-end">
+                                        <button type="submit" class="btn btn-warning">Filter</button>
+                                    </div>
                                 </div>
 
-                                <!-- Export Button -->
-                                <a href="{{ route('export.game.history', $player->_id) }}"
-                                    class="btn btn-primary btn-sm d-flex align-items-center gap-1 px-3"
-                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Export Data">
-                                    <i class="fas fa-file-export"></i>
-                                    <span>Export Data</span>
-                                </a>
+                                <!-- NEXT LINE BUTTONS -->
+                                <div class="mt-3 d-flex gap-2">
+                                    <a href="{{ route('export.game.history', $player->_id) }}" class="btn btn-warning">
+                                        <i class="fas fa-download me-1"></i> Export Data
+                                    </a>
 
-                                <!-- Back Button -->
-                                <a href="{{ route('player.show') }}"
-                                    class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1 px-3"
-                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Go Back">
-                                    <i class="fas fa-arrow-left"></i>
-                                    <span>Back</span>
-                                </a>
+                                    <a href="{{ route('player.show') }}" class="btn btn-outline-dark">
+                                        ← Back
+                                    </a>
+                                </div>
+                            </form>
                             </div>
                         </div>
                     </div>
