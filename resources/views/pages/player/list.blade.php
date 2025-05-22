@@ -154,12 +154,12 @@
                                                         <a href="javascript:;"
                                                             class="text-secondary font-weight-bold text-xs me-2"
                                                             data-bs-toggle="tooltip" data-bs-placement="top"
-                                                            title="Copy Agent">
+                                                            title="Copy Player">
                                                             <i class="fas fa-copy"></i>
                                                         </a>
                                                         <a href="javascript:;"
                                                             class="text-secondary font-weight-bold text-xs me-2"
-                                                            title="Edit Agent" data-bs-toggle="modal"
+                                                            title="Edit Player" data-bs-toggle="modal"
                                                             data-bs-target="#editModal{{ $player->id }}">
                                                             <i class="fas fa-edit"></i>
                                                         </a>
@@ -171,7 +171,7 @@
                                                             <button class="text-danger font-weight-bold text-xs me-2"
                                                                 onclick="return confirm('Are you sure?')"
                                                                 data-bs-toggle="tooltip" data-bs-placement="top"
-                                                                title="Delete Agent"
+                                                                title="Delete Player"
                                                                 style="background: none; border: none; padding: 0;">
                                                                 <i class="fas fa-trash"></i>
                                                             </button>
