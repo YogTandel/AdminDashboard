@@ -1,6 +1,6 @@
 @extends('layouts.layout')
 
-@section('page-name', 'Player History')
+@section('page-name', 'Player History of ' . $player->player)
 
 @section('content')
     <div class="container-fluid py-4">
