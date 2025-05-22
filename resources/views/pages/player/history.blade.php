@@ -147,52 +147,69 @@
                             </div>
                             <!-- Summary Cards -->
                             <div class="row mt-4">
-                                <!-- Keep the same summary cards as in your modal -->
-                                <div class="col-lg-4 col-md-6 mb-lg-0 mb-4">
-                                    <div class="card">
-                                        <div class="card-body p-3">
-                                            <div class="d-flex">
-                                                <div class="numbers">
-                                                    <p class="text-sm mb-0 text-capitalize font-weight-bold">Total Bets
-                                                    </p>
-                                                    <h5 class="font-weight-bolder mb-0">
+                                <!-- Total Bets Card -->
+                                <div class="col-xl-4 col-md-6 mb-4">
+                                    <div class="card border-left-info shadow h-100 py-2">
+                                        <div class="card-body">
+                                            <div class="row no-gutters align-items-center">
+                                                <div class="col mr-2">
+                                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                                        Total Bets</div>
+                                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
                                                         {{ number_format(array_sum(array_column($player->gameHistory, 'playPoint'))) }}
-                                                    </h5>
+                                                    </div>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <i class="fas fa-coins fa-2x text-info"></i>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-lg-4 col-md-6 mb-lg-0 mb-4">
-                                    <div class="card">
-                                        <div class="card-body p-3">
-                                            <div class="d-flex">
-                                                <div class="numbers">
-                                                    <p class="text-sm mb-0 text-capitalize font-weight-bold">Total Wins
-                                                    </p>
-                                                    <h5 class="font-weight-bolder mb-0 text-success">
+
+                                <!-- Total Wins Card -->
+                                <div class="col-xl-4 col-md-6 mb-4">
+                                    <div class="card border-left-success shadow h-100 py-2">
+                                        <div class="card-body">
+                                            <div class="row no-gutters align-items-center">
+                                                <div class="col mr-2">
+                                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                                        Total Wins</div>
+                                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
                                                         {{ number_format(array_sum(array_column($player->gameHistory, 'winpoint'))) }}
-                                                    </h5>
+                                                    </div>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <i class="fas fa-trophy fa-2x text-success"></i>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-lg-4 col-md-6">
-                                    <div class="card">
-                                        <div class="card-body p-3">
-                                            <div class="d-flex">
-                                                <div class="numbers">
-                                                    <p class="text-sm mb-0 text-capitalize font-weight-bold">Net Result</p>
-                                                    @php
-                                                        $totalNet =
-                                                            array_sum(array_column($player->gameHistory, 'winpoint')) -
-                                                            array_sum(array_column($player->gameHistory, 'playPoint'));
-                                                        $netClass = $totalNet >= 0 ? 'text-success' : 'text-danger';
-                                                    @endphp
-                                                    <h5 class="font-weight-bolder mb-0 {{ $netClass }}">
+
+                                <!-- Net Result Card -->
+                                <div class="col-xl-4 col-md-6 mb-4">
+                                    @php
+                                        $totalNet =
+                                            array_sum(array_column($player->gameHistory, 'winpoint')) -
+                                            array_sum(array_column($player->gameHistory, 'playPoint'));
+                                        $netClass = $totalNet >= 0 ? 'success' : 'danger';
+                                        $netIcon = $totalNet >= 0 ? 'arrow-up' : 'arrow-down';
+                                    @endphp
+                                    <div class="card border-left-{{ $netClass }} shadow h-100 py-2">
+                                        <div class="card-body">
+                                            <div class="row no-gutters align-items-center">
+                                                <div class="col mr-2">
+                                                    <div
+                                                        class="text-xs font-weight-bold text-{{ $netClass }} text-uppercase mb-1">
+                                                        Net Result</div>
+                                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
                                                         {{ number_format($totalNet) }}
-                                                    </h5>
+                                                    </div>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <i
+                                                        class="fas fa-{{ $netIcon }} fa-2x text-{{ $netClass }}"></i>
                                                 </div>
                                             </div>
                                         </div>
