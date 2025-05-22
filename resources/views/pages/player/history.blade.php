@@ -25,7 +25,7 @@
 
                             <!-- Right: Date + Buttons -->
                             <div class="d-flex flex-wrap align-items-end gap-2 mt-2 mt-md-0">
-                                <form method="GET" action="{{ route('player.history', '$player->_id') }}">
+                                <form method="GET" action="{{ route('player.history', $player->_id) }}">
                                     <div class="d-flex justify-content-end gap-2 mb-3">
                                         <div>
                                             <label for="from_date" class="form-label mb-0">From Date</label>
