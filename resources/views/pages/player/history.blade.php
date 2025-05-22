@@ -26,34 +26,37 @@
                             <!-- Right: Search + Buttons -->
                             <div class="d-flex flex-wrap align-items-center gap-2 mt-2 mt-md-0">
                                 <!-- Search Bar -->
-                                <form method="GET" action="{{ route('player.history','$player->_id') }}">
-                                <div class="d-flex gap-2 flex-wrap">
-                                    <div>
-                                        <label for="from_date" class="form-label mb-0">From Date</label>
-                                        <input type="date" name="from_date" id="from_date" class="form-control" value="{{ request('from_date') }}">
+                                <form method="GET" action="{{ route('player.history', '$player->_id') }}">
+                                    <div class="d-flex gap-2 flex-wrap">
+                                        <div>
+                                            <label for="from_date" class="form-label mb-0">From Date</label>
+                                            <input type="date" name="from_date" id="from_date" class="form-control"
+                                                value="{{ request('from_date') }}">
+                                        </div>
+
+                                        <div>
+                                            <label for="to_date" class="form-label mb-0">To Date</label>
+                                            <input type="date" name="to_date" id="to_date" class="form-control"
+                                                value="{{ request('to_date') }}">
+                                        </div>
                                     </div>
 
-                                    <div>
-                                        <label for="to_date" class="form-label mb-0">To Date</label>
-                                        <input type="date" name="to_date" id="to_date" class="form-control" value="{{ request('to_date') }}">
+                                    <!-- NEXT LINE BUTTONS -->
+                                    <div class="mt-3 d-flex gap-2">
+                                        <div class="align-self-end">
+                                            <button type="submit" class="btn btn-sm btn-primary">Filter</button>
+                                        </div>
+
+                                        <a href="{{ route('export.game.history', $player->_id) }}"
+                                            class="btn btn-sm btn-primary">
+                                            <i class="fas fa-download me-1"></i> Export Data
+                                        </a>
+
+                                        <a href="{{ route('player.show') }}" class="btn btn-sm btn-outline-dark">
+                                            ← Back
+                                        </a>
                                     </div>
-
-                                    <div class="align-self-end">
-                                        <button type="submit" class="btn btn-warning">Filter</button>
-                                    </div>
-                                </div>
-
-                                <!-- NEXT LINE BUTTONS -->
-                                <div class="mt-3 d-flex gap-2">
-                                    <a href="{{ route('export.game.history', $player->_id) }}" class="btn btn-warning">
-                                        <i class="fas fa-download me-1"></i> Export Data
-                                    </a>
-
-                                    <a href="{{ route('player.show') }}" class="btn btn-outline-dark">
-                                        ← Back
-                                    </a>
-                                </div>
-                            </form>
+                                </form>
                             </div>
                         </div>
                     </div>
