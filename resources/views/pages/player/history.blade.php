@@ -165,7 +165,9 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-sm bg-gradient-primary">Export Data</button>
+                <a href="{{ route('export.game.history', $player->_id) }}" class="btn btn-sm bg-gradient-primary">
+                    <i class="fas fa-file-export me-1"></i> Export Data
+                </a>
             </div>
         </div>
     </div>

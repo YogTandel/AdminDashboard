@@ -67,4 +67,39 @@ class PagesController extends Controller
     {
         return view('pages.livegame');
     }
+
+    public function exportGameHistory($playerId)
+    {
+        // Find player with role validation
+        $player = User::where('_id', $playerId)
+            ->where('role', 'player')
+            ->firstOrFail();
+
+        $headers = [
+            'Content-Type'        => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="game_history_' . $player->player . '_' . date('Y-m-d') . '.csv"',
+        ];
+
+        $callback = function () use ($player) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, ['Time', 'Bet Amount', 'Win Amount', 'Net Result', 'Game Result', 'Bet Values']);
+
+            foreach ($player->gameHistory as $entry) {
+                $net  = $entry['winpoint'] - $entry['playPoint'];
+                $time = \Carbon\Carbon::createFromFormat('YmdHis', $entry['stime'])->format('Y-m-d H:i:s');
+
+                fputcsv($file, [
+                    $time,
+                    $entry['playPoint'],
+                    $entry['winpoint'],
+                    $net,
+                    $entry['result'],
+                    implode('|', $entry['betValues']),
+                ]);
+            }
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
 }

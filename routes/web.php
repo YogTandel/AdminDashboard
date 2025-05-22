@@ -32,6 +32,7 @@ Route::get('/player', [PagesController::class, 'player'])->name('player.show');
 Route::post('/player/store', [AuthController::class, 'createplayer'])->name('player.add');
 Route::put('/player/{id}/update', [AuthController::class, 'editPlayer'])->name('player.update');
 Route::delete('/player/{id}/delete', [AuthController::class, 'deleteplayer'])->name('player.delete');
+Route::get('/players/{playerId}/export-history', [PagesController::class, 'exportGameHistory'])->name('export.game.history');
 
 Route::get('/transactionreport', [PagesController::class, 'transactionreport'])->name('transactionreport');
 Route::get('/setting', [PagesController::class, 'setting'])->name('setting');
@@ -43,5 +44,5 @@ Route::get('/test-db', function () {
 
 Route::get('/test-player', function () {
     $player = User::where('player', 'zeeshan')->first();
-    dd($player->gameHistory); 
+    dd($player->gameHistory);
 });
