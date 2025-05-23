@@ -16,7 +16,7 @@
                                     <i class="fas fa-history me-2"></i> Game History - {{ $player->player }}
                                 </h5>
                                 <div class="d-flex align-items-center flex-wrap">
-                                    <span class="badge bg-gradient-primary me-2">
+                                    <span class="badge bg-primary me-2">
                                         {{ count($player->gameHistory ?? []) }} records
                                     </span>
                                     <span class="text-sm">Current balance: {{ number_format($player->balance, 2) }}</span>
