@@ -240,15 +240,34 @@
         document.addEventListener('DOMContentLoaded', function() {
             const fromDate = document.getElementById('from_date');
             const toDate = document.getElementById('to_date');
+            const dateRange = document.getElementById('date_range');
 
-            // Set max date for "from" field to today
-            if (fromDate) {
-                fromDate.max = new Date().toISOString().split('T')[0];
-            }
+            // Set max date for "from" and "to" fields to today
+            const today = new Date().toISOString().split('T')[0];
+            if (fromDate) fromDate.max = today;
+            if (toDate) toDate.max = today;
 
-            // Set max date for "to" field to today
-            if (toDate) {
-                toDate.max = new Date().toISOString().split('T')[0];
+            // Handle quick date range selection
+            if (dateRange) {
+                dateRange.addEventListener('change', function() {
+                    const range = this.value;
+                    const today = new Date();
+
+                    if (range === '2_days_ago') {
+                        const twoDaysAgo = new Date();
+                        twoDaysAgo.setDate(today.getDate() - 2);
+                        fromDate.value = twoDaysAgo.toISOString().split('T')[0];
+                        toDate.value = today.toISOString().split('T')[0];
+                    } else if (range === 'this_week') {
+                        const firstDayOfWeek = new Date(today.setDate(today.getDate() - today.getDay()));
+                        fromDate.value = firstDayOfWeek.toISOString().split('T')[0];
+                        toDate.value = today.toISOString().split('T')[0];
+                    } else if (range === 'this_month') {
+                        const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+                        fromDate.value = firstDayOfMonth.toISOString().split('T')[0];
+                        toDate.value = today.toISOString().split('T')[0];
+                    }
+                });
             }
 
             // Validate date range

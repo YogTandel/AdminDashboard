@@ -28,6 +28,16 @@
                                 <form method="GET" action="{{ route('player.history', $player->_id) }}">
                                     <div class="d-flex justify-content-end gap-2 mb-3">
                                         <div>
+                                            <label for="date_range" class="form-label mb-0">Quick Date Range</label>
+                                            <select name="date_range" id="date_range" class="form-control mb-0">
+                                                <option value="">Select a range</option>
+                                                <option value="2_days_ago">Last 2 Days</option>
+                                                <option value="this_week">This Week</option>
+                                                <option value="this_month">This Month</option>
+                                            </select>
+                                        </div>
+
+                                        <div>
                                             <label for="from_date" class="form-label mb-0">From Date</label>
                                             <input type="date" name="from_date" id="from_date" class="form-control mb-0"
                                                 value="{{ request('from_date') }}">

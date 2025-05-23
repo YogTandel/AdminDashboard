@@ -62,8 +62,9 @@ class PagesController extends Controller
 
     public function playerHistory(Request $request, $id)
     {
-        $from = $request->input('from_date');
-        $to   = $request->input('to_date');
+        $from      = $request->input('from_date');
+        $to        = $request->input('to_date');
+        $dateRange = $request->input('date_range');
 
         $player = User::where('_id', $id)
             ->where('role', 'player')
@@ -71,6 +72,20 @@ class PagesController extends Controller
 
         if ($player->gameHistory && is_array($player->gameHistory)) {
             $filteredHistory = collect($player->gameHistory);
+
+            if ($dateRange) {
+                $today = Carbon::today();
+                if ($dateRange === '2_days_ago') {
+                    $from = $today->copy()->subDays(2)->format('Y-m-d');
+                    $to   = $today->format('Y-m-d');
+                } elseif ($dateRange === 'this_week') {
+                    $from = $today->copy()->startOfWeek()->format('Y-m-d');
+                    $to   = $today->format('Y-m-d');
+                } elseif ($dateRange === 'this_month') {
+                    $from = $today->copy()->startOfMonth()->format('Y-m-d');
+                    $to   = $today->format('Y-m-d');
+                }
+            }
 
             if ($from) {
                 $filteredHistory = $filteredHistory->filter(function ($entry) use ($from) {
