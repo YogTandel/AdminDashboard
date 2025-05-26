@@ -74,7 +74,7 @@
                     </div>
 
                     <!-- Second Row: Date Filter -->
-                    <form method="GET" class="d-flex justify-content-end align-items-center flex-wrap gap-2 mt-2 me-3">
+                    <form action="{{ route('agentlist.show') }}" method="GET" class="d-flex justify-content-end align-items-center flex-wrap gap-2 mt-2 me-3">
                         <!-- Date Range -->
                         <select name="date_range" class="form-select form-select-sm" onchange="this.form.submit()" style="width: 150px;">
                             <option value="">Date Range</option>
@@ -100,7 +100,7 @@
 
                         <!-- Reset Button -->
                         @if (request()->has('from_date') || request()->has('to_date') || request()->has('date_range'))
-                            <a href="{{ route('agentlist.show') }}" class="btn btn-secondary btn-sm px-3">Reset</a>
+                            <a href="{{ route('agentlist.show') }}" class="btn btn-secondary btn-sm px-3 mt-3">Reset</a>
                         @endif
                     </form>
 

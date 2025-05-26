@@ -70,7 +70,7 @@
 
                         <!-- Reset Button -->
                         @if (request()->has('from_date') || request()->has('to_date') || request()->has('date_range'))
-                            <a href="{{ route('transactionreport') }}" class="btn btn-secondary btn-sm px-3">Reset</a>
+                            <a href="{{ route('transactionreport') }}" class="btn btn-secondary btn-sm px-3 mt-3">Reset</a>
                         @endif
                     </form>
                     <div class="card-body px-0 pt-0 pb-2">
