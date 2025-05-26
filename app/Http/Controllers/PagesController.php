@@ -101,11 +101,44 @@ class PagesController extends Controller
     {
         $perPage = request()->get('per_page', 5);
         $query   = User::query();
+
+        // Search filter
         if (request()->has('search')) {
             $query = $query->where('player', 'like', '%' . request()->search . '%');
         }
-        $players = $query->where('role', 'player')->paginate($perPage)->appends(request()->query());
 
+        // Date range filter
+        $from      = request()->input('from_date');
+        $to        = request()->input('to_date');
+        $dateRange = request()->input('date_range');
+
+        if ($dateRange) {
+            $today = Carbon::today();
+            if ($dateRange === '2_days_ago') {
+                $from = $today->copy()->subDays(2)->format('Ymd');
+                $to   = $today->format('Ymd');
+            } elseif ($dateRange === 'this_week') {
+                $from = $today->copy()->startOfWeek()->format('Ymd');
+                $to   = $today->format('Ymd');
+            } elseif ($dateRange === 'this_month') {
+                $from = $today->copy()->startOfMonth()->format('Ymd');
+                $to   = $today->format('Ymd');
+            }
+        }
+
+        if ($from) {
+            $query->where('DateOfCreation', '>=', $from);
+        }
+
+        if ($to) {
+            $query->where('DateOfCreation', '<=', $to);
+        }
+
+        $players = $query->where('role', 'player')
+            ->paginate($perPage)
+            ->appends(request()->query());
+
+        // Debug logging (kept from your original code)
         if ($players->count() > 0) {
             $firstPlayer = $players->first();
             Log::debug('gameHistory type: ' . gettype($firstPlayer->gameHistory));
@@ -119,10 +152,41 @@ class PagesController extends Controller
     {
         $perPage = request()->get('per_page', 15);
         $query   = Transaction::query();
+
+        // Search filter
         if (request()->has('search')) {
             $query = $query->where('from', 'like', '%' . request()->search . '%');
         }
+
+        // Date range filter
+        $from      = request()->input('from_date');
+        $to        = request()->input('to_date');
+        $dateRange = request()->input('date_range');
+
+        if ($dateRange) {
+            $today = Carbon::today();
+            if ($dateRange === '2_days_ago') {
+                $from = $today->copy()->subDays(2)->format('Y-m-d');
+                $to   = $today->format('Y-m-d');
+            } elseif ($dateRange === 'this_week') {
+                $from = $today->copy()->startOfWeek()->format('Y-m-d');
+                $to   = $today->format('Y-m-d');
+            } elseif ($dateRange === 'this_month') {
+                $from = $today->copy()->startOfMonth()->format('Y-m-d');
+                $to   = $today->format('Y-m-d');
+            }
+        }
+
+        if ($from) {
+            $query->whereDate('created_at', '>=', $from);
+        }
+
+        if ($to) {
+            $query->whereDate('created_at', '<=', $to);
+        }
+
         $transactions = $query->paginate($perPage)->appends(request()->query());
+
         return view('pages.transactionreport', compact('transactions', 'perPage'));
     }
 

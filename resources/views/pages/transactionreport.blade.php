@@ -12,6 +12,35 @@
                         <div class="d-flex align-items-center gap-3 flex-wrap">
                             <!-- Per Page Dropdown -->
                             <form method="GET" class="d-flex align-items-center mb-0 me-3">
+                                <!-- Date Range Selector -->
+                                <div class="input-group input-group-outline border-radius-lg shadow-sm">
+                                    <select name="date_range" class="form-select border-0 ps-3 pe-4"
+                                        onchange="this.form.submit()">
+                                        <option value="">Select Date Range</option>
+                                        <option value="2_days_ago"
+                                            {{ request('date_range') == '2_days_ago' ? 'selected' : '' }}>Last 2 Days
+                                        </option>
+                                        <option value="this_week"
+                                            {{ request('date_range') == 'this_week' ? 'selected' : '' }}>This Week</option>
+                                        <option value="this_month"
+                                            {{ request('date_range') == 'this_month' ? 'selected' : '' }}>This Month
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <!-- Custom Date Range -->
+                                <div class="input-group input-group-outline border-radius-lg shadow-sm">
+                                    <input type="date" name="from_date" class="form-control border-0 ps-3"
+                                        value="{{ request('from_date') }}" placeholder="From Date">
+                                </div>
+                                <span class="text-sm">to</span>
+                                <div class="input-group input-group-outline border-radius-lg shadow-sm">
+                                    <input type="date" name="to_date" class="form-control border-0 ps-3"
+                                        value="{{ request('to_date') }}" placeholder="To Date">
+                                </div>
+                                <button type="submit" class="btn bg-gradient-info rounded-pill shadow-sm px-3">
+                                    Filter
+                                </button>
                                 <label for="per_page" class="mb-0 me-2 text-sm text-dark fw-bold">Show:</label>
 
                                 <div class="input-group input-group-outline border-radius-lg shadow-sm">
@@ -25,9 +54,19 @@
                                 @if (request()->has('search'))
                                     <input type="hidden" name="search" value="{{ request('search') }}">
                                 @endif
+                                @if (request()->has('per_page'))
+                                    <input type="hidden" name="per_page" value="{{ request('per_page') }}">
+                                @endif
+                                @if (request()->has('from_date') || request()->has('to_date') || request()->has('date_range'))
+                                    <a href="{{ route('transactionreport') }}"
+                                        class="btn bg-gradient-secondary rounded-pill shadow-sm px-3 ms-2">
+                                        Reset
+                                    </a>
+                                @endif
                             </form>
                             <!-- Search Form -->
-                            <form action="{{ route('transactionreport') }}" method="GET" class="d-flex align-items-center">
+                            <form action="{{ route('transactionreport') }}" method="GET"
+                                class="d-flex align-items-center">
                                 <div class="input-group input-group-outline rounded-pill me-2 shadow-sm">
                                     <span class="input-group-text bg-transparent border-0 text-secondary">
                                         <i class="fas fa-search"></i>
@@ -110,7 +149,7 @@
                         </div>
                         {{-- Pagination --}}
                         <div class="d-flex justify-content-center mt-3 pagination pagination-info">
-                        {{ $transactions->links('vendor.pagination.bootstrap-4') }}
+                            {{ $transactions->links('vendor.pagination.bootstrap-4') }}
                         </div>
                     </div>
                 </div>
