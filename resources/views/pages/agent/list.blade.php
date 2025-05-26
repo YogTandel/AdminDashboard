@@ -28,86 +28,82 @@
         <div class="row">
             <div class="col-12">
                 <div class="card mb-4">
-                    <div class="card-header pb-0 d-flex justify-content-between align-items-center">
-                        <h6>Agent Users</h6>
-                        <div class="d-flex align-items-center gap-3 flex-wrap">
-                            <!-- Per Page Dropdown -->
-                            <form method="GET" class="d-flex align-items-center mb-0 me-3">
-                                <!-- Date Range Selector -->
-                                <div class="input-group input-group-outline border-radius-lg shadow-sm">
-                                    <select name="date_range" class="form-select border-0 ps-3 pe-4"
-                                        onchange="this.form.submit()">
-                                        <option value="">Select Date Range</option>
-                                        <option value="2_days_ago"
-                                            {{ request('date_range') == '2_days_ago' ? 'selected' : '' }}>Last 2 Days
-                                        </option>
-                                        <option value="this_week"
-                                            {{ request('date_range') == 'this_week' ? 'selected' : '' }}>This Week</option>
-                                        <option value="this_month"
-                                            {{ request('date_range') == 'this_month' ? 'selected' : '' }}>This Month
-                                        </option>
-                                    </select>
-                                </div>
+                    <!-- First Row -->
+                    <div class="d-flex justify-content-between align-items-center flex-wrap mb-2">
+                        <h6 class="mb-0 ms-2">Agent Users</h6>
+                        <div class="d-flex align-items-center gap-2 flex-wrap mt-3 me-3">
+                            <!-- Show Dropdown -->
+                            <form method="GET" class="d-flex align-items-center mb-0">
+                            <label for="per_page" class="mb-0 me-2 text-sm text-dark fw-bold">Show:</label>
 
-                                <!-- Custom Date Range -->
-                                <div class="input-group input-group-outline border-radius-lg shadow-sm">
-                                    <input type="date" name="from_date" class="form-control border-0 ps-3"
-                                        value="{{ request('from_date') }}" placeholder="From Date">
-                                </div>
-                                <span class="text-sm">to</span>
-                                <div class="input-group input-group-outline border-radius-lg shadow-sm">
-                                    <input type="date" name="to_date" class="form-control border-0 ps-3"
-                                        value="{{ request('to_date') }}" placeholder="To Date">
-                                </div>
-                                <button type="submit" class="btn bg-gradient-info rounded-pill shadow-sm px-3">
-                                    Filter
-                                </button>
-                                <label for="per_page" class="mb-0 me-2 text-sm text-dark fw-bold">Show:</label>
-
-                                <div class="input-group input-group-outline border-radius-lg shadow-sm">
-                                    <select name="per_page" id="per_page" class="form-select border-0 ps-3 pe-4"
-                                        onchange="this.form.submit()" style="min-width: 60px;">
-                                        <option value="5" {{ request('per_page') == 5 ? 'selected' : '' }}>5</option>
-                                        <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
-                                    </select>
-                                </div>
-
+                            <div class="input-group input-group-outline border-radius-lg shadow-sm">
+                                <select name="per_page" id="per_page" class="form-select border-0 ps-3 pe-4"
+                                    onchange="this.form.submit()" style="min-width: 60px;">
+                                    <option value="5" {{ request('per_page') == 5 ? 'selected' : '' }}>5</option>
+                                    <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
+                                </select>
+                            </div>
                                 @if (request()->has('search'))
                                     <input type="hidden" name="search" value="{{ request('search') }}">
                                 @endif
-                                @if (request()->has('per_page'))
-                                    <input type="hidden" name="per_page" value="{{ request('per_page') }}">
-                                @endif
-                                @if (request()->has('from_date') || request()->has('to_date') || request()->has('date_range'))
-                                    <a href="{{ route('agentlist.show') }}"
-                                        class="btn bg-gradient-secondary rounded-pill shadow-sm px-3 ms-2">
-                                        Reset
-                                    </a>
-                                @endif
                             </form>
-                            <!-- Search Form -->
+
+                            <!-- Search -->
                             <form action="{{ route('agentlist.show') }}" method="GET" class="d-flex align-items-center">
-                                <div class="input-group input-group-outline rounded-pill me-2 shadow-sm">
+                            <div class="input-group input-group-outline rounded-pill me-2 shadow-sm">
                                     <span class="input-group-text bg-transparent border-0 text-secondary">
                                         <i class="fas fa-search"></i>
                                     </span>
+                                    <label class="form-label"></label>
                                     <input type="search" name="search" class="form-control border-0"
-                                        placeholder="Search..." value="{{ request('search') }}"
                                         onfocus="this.parentElement.classList.add('is-focused')"
                                         onfocusout="this.parentElement.classList.remove('is-focused')">
                                 </div>
-                                <button type="submit" class="btn bg-gradient-warning rounded-pill shadow-sm mb-0 px-3">
-                                    Search
+                                <button type="submit" class="btn bg-gradient-warning rounded-pill shadow-sm mb-0">
+                                    Search   
                                 </button>
                             </form>
-                            <!-- Add Agent Button -->
-                            <button type="button" class="btn bg-gradient-primary rounded-pill shadow-sm mb-0 px-3"
-                                data-bs-toggle="modal" data-bs-target="#exampleModalAddAgent">
-                                <i class="fas fa-plus me-1"></i> Add Agent
+
+                            <!-- Add Agent -->
+                            <button type="button" class="btn bg-primary mb-0 text-white" data-bs-toggle="modal"
+                            data-bs-target="#exampleModalAddAgent">
+                                <i class="fas fa-plus"></i>&nbsp;&nbsp;Add Distributor
                             </button>
                             @include('pages.agent.create')
                         </div>
                     </div>
+
+                    <!-- Second Row: Date Filter -->
+                    <form method="GET" class="d-flex justify-content-end align-items-center flex-wrap gap-2 mt-2 me-3">
+                        <!-- Date Range -->
+                        <select name="date_range" class="form-select form-select-sm" onchange="this.form.submit()" style="width: 150px;">
+                            <option value="">Date Range</option>
+                            <option value="2_days_ago" {{ request('date_range') == '2_days_ago' ? 'selected' : '' }}>Last 2 Days</option>
+                            <option value="this_week" {{ request('date_range') == 'this_week' ? 'selected' : '' }}>This Week</option>
+                            <option value="this_month" {{ request('date_range') == 'this_month' ? 'selected' : '' }}>This Month</option>
+                        </select>
+
+                        <!-- From Date -->
+                        <input type="date" name="from_date" class="form-control form-control-sm" value="{{ request('from_date') }}" style="width: 150px;">
+
+                        <!-- To Date -->
+                        <span class="text-sm mx-1">to</span>
+                        <input type="date" name="to_date" class="form-control form-control-sm" value="{{ request('to_date') }}" style="width: 150px;">
+
+                        <!-- Search Hidden -->
+                        @if (request()->has('search'))
+                            <input type="hidden" name="search" value="{{ request('search') }}">
+                        @endif
+
+                        <!-- Filter Button -->
+                        <button type="submit" class="btn btn-sm btn-primary  mb-0">Filter</button>
+
+                        <!-- Reset Button -->
+                        @if (request()->has('from_date') || request()->has('to_date') || request()->has('date_range'))
+                            <a href="{{ route('agentlist.show') }}" class="btn btn-secondary btn-sm px-3">Reset</a>
+                        @endif
+                    </form>
+
                     <div class="card-body px-0 pt-0 pb-2">
                         <div class="table-responsive p-0">
                             <table class="table align-items-center mb-0">
