@@ -30,7 +30,7 @@
                 <div class="card mb-4">
                     <!-- First Row -->
                     <div class="d-flex justify-content-between align-items-center flex-wrap mb-2">
-                        <h6 class="mb-0 ms-5 mt-2 text-bolder">Agent Users</h6>
+                        <h6 class="mb-0 ms-4 mt-3 text-bolder">Agent Users</h6>
                         <div class="d-flex align-items-center gap-2 flex-wrap mt-3 me-3">
                             <!-- Show Dropdown -->
                             <form method="GET" class="d-flex align-items-center mb-0">
