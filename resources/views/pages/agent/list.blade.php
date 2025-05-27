@@ -137,6 +137,9 @@
                                             Status
                                         </th>
                                         <th class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                            endpoint
+                                        </th>
+                                        <th class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                             Created At
                                         </th>
                                         <th class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
@@ -180,45 +183,54 @@
                                                     {{ strtoupper($agent->status) }}
                                                 </span>
                                             </td>
+                                            <td class="text-center">
+                                                <p class="text-xs font-weight-bold mb-0 text-dark">
+                                                    {{ $agent->endpoint }}
+                                                </p>
+                                            </td>
                                             <td class="text-center text-dark">
                                                 <span class="text-secondary text-xs font-weight-bold">
                                                     {{ \Carbon\Carbon::createFromFormat('YmdHis', $agent->DateOfCreation)->format('d M Y, H:i') }}
                                                 </span>
                                             </td>
                                             <td class="text-center">
-                                                <div class="d-flex justify-content-center gap-2">
-                                                    <a href="javascript:;"
-                                                        class="text-secondary font-weight-bold text-xs me-2"
-                                                        data-bs-toggle="tooltip" data-bs-placement="top"
-                                                        title="Copy Agent">
+                                                <div class="d-flex justify-content-center gap-2 align-items-center">
+                                                    <!-- Radio Button -->
+                                                    <input type="radio" name="agent_select" value="{{ $agent->id }}" title="Select Agent">
+
+                                                    <!-- Copy Icon -->
+                                                    <a href="javascript:;" class="text-secondary font-weight-bold text-xs me-2"
+                                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Copy Agent">
                                                         <i class="fas fa-copy"></i>
                                                     </a>
-                                                    <a href="javascript:;"
-                                                        class="text-secondary font-weight-bold text-xs me-2"
-                                                        title="Edit Agent" data-bs-toggle="modal"
-                                                        data-bs-target="#editModal{{ $agent->id }}">
+
+                                                    <!-- Edit Icon -->
+                                                    <a href="javascript:;" class="text-secondary font-weight-bold text-xs me-2"
+                                                    title="Edit Agent" data-bs-toggle="modal" data-bs-target="#editModal{{ $agent->id }}">
                                                         <i class="fas fa-edit"></i>
                                                     </a>
+
                                                     @include('pages.agent.edit')
-                                                    <form action="{{ route('agent.delete', $agent->id) }}" method="post"
-                                                        style="display:flex;">
+
+                                                    <!-- Delete Button -->
+                                                    <form action="{{ route('agent.delete', $agent->id) }}" method="post" style="display:flex;">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button class="text-danger font-weight-bold text-xs me-2"
-                                                            onclick="return confirm('Are you sure?')"
-                                                            data-bs-toggle="tooltip" data-bs-placement="top"
-                                                            title="Delete Agent"
-                                                            style="background: none; border: none; padding: 0;">
+                                                                onclick="return confirm('Are you sure?')"
+                                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Delete Agent"
+                                                                style="background: none; border: none; padding: 0;">
                                                             <i class="fas fa-trash"></i>
                                                         </button>
                                                     </form>
-                                                    <a href="javascript:;"
-                                                        class="text-danger font-weight-bold text-xs toggle-status"
-                                                        data-bs-toggle="tooltip" data-bs-placement="top"
-                                                        title="Block/Unblock Agent">
+
+                                                    <!-- Block/Unblock Icon -->
+                                                    <a href="javascript:;" class="text-danger font-weight-bold text-xs toggle-status"
+                                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Block/Unblock Agent">
                                                         <i class="fas fa-ban"></i>
                                                     </a>
                                                 </div>
+
                                             </td>
                                         </tr>
                                     @empty
