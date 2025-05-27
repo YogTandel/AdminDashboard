@@ -34,15 +34,15 @@
                         <div class="d-flex align-items-center gap-2 flex-wrap mt-3 me-3">
                             <!-- Show Dropdown -->
                             <form method="GET" class="d-flex align-items-center mb-0">
-                            <label for="per_page" class="mb-0 me-2 text-sm text-dark fw-bold">Show:</label>
+                                <label for="per_page" class="mb-0 me-2 text-sm text-dark fw-bold">Show:</label>
 
-                            <div class="input-group input-group-outline border-radius-lg shadow-sm">
-                                <select name="per_page" id="per_page" class="form-select border-0 ps-3 pe-4"
-                                    onchange="this.form.submit()" style="min-width: 60px;">
-                                    <option value="5" {{ request('per_page') == 5 ? 'selected' : '' }}>5</option>
-                                    <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
-                                </select>
-                            </div>
+                                <div class="input-group input-group-outline border-radius-lg shadow-sm">
+                                    <select name="per_page" id="per_page" class="form-select border-0 ps-3 pe-4"
+                                        onchange="this.form.submit()" style="min-width: 60px;">
+                                        <option value="5" {{ request('per_page') == 5 ? 'selected' : '' }}>5</option>
+                                        <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
+                                    </select>
+                                </div>
                                 @if (request()->has('search'))
                                     <input type="hidden" name="search" value="{{ request('search') }}">
                                 @endif
@@ -50,7 +50,7 @@
 
                             <!-- Search -->
                             <form action="{{ route('agentlist.show') }}" method="GET" class="d-flex align-items-center">
-                            <div class="input-group input-group-outline rounded-pill me-2 shadow-sm">
+                                <div class="input-group input-group-outline rounded-pill me-2 shadow-sm">
                                     <span class="input-group-text bg-transparent border-0 text-secondary">
                                         <i class="fas fa-search"></i>
                                     </span>
@@ -60,13 +60,13 @@
                                         onfocusout="this.parentElement.classList.remove('is-focused')">
                                 </div>
                                 <button type="submit" class="btn bg-gradient-warning rounded-pill shadow-sm mb-0">
-                                    Search   
+                                    Search
                                 </button>
                             </form>
 
                             <!-- Add Agent -->
                             <button type="button" class="btn bg-primary mb-0 text-white" data-bs-toggle="modal"
-                            data-bs-target="#exampleModalAddAgent">
+                                data-bs-target="#exampleModalAddAgent">
                                 <i class="fas fa-plus"></i>&nbsp;&nbsp;Add Agent
                             </button>
                             @include('pages.agent.create')
@@ -74,21 +74,28 @@
                     </div>
 
                     <!-- Second Row: Date Filter -->
-                    <form action="{{ route('agentlist.show') }}" method="GET" class="d-flex justify-content-end align-items-center flex-wrap gap-2 mt-2 me-3">
+                    <form action="{{ route('agentlist.show') }}" method="GET"
+                        class="d-flex justify-content-end align-items-center flex-wrap gap-2 mt-2 me-3">
                         <!-- Date Range -->
-                        <select name="date_range" class="form-select form-select-sm" onchange="this.form.submit()" style="width: 150px;">
+                        <select name="date_range" class="form-select form-select-sm" onchange="this.form.submit()"
+                            style="width: 150px;">
                             <option value="">Date Range</option>
-                            <option value="2_days_ago" {{ request('date_range') == '2_days_ago' ? 'selected' : '' }}>Last 2 Days</option>
-                            <option value="this_week" {{ request('date_range') == 'this_week' ? 'selected' : '' }}>This Week</option>
-                            <option value="this_month" {{ request('date_range') == 'this_month' ? 'selected' : '' }}>This Month</option>
+                            <option value="2_days_ago" {{ request('date_range') == '2_days_ago' ? 'selected' : '' }}>Last 2
+                                Days</option>
+                            <option value="this_week" {{ request('date_range') == 'this_week' ? 'selected' : '' }}>This Week
+                            </option>
+                            <option value="this_month" {{ request('date_range') == 'this_month' ? 'selected' : '' }}>This
+                                Month</option>
                         </select>
 
                         <!-- From Date -->
-                        <input type="date" name="from_date" class="form-control form-control-sm" value="{{ request('from_date') }}" style="width: 150px;">
+                        <input type="date" name="from_date" class="form-control form-control-sm"
+                            value="{{ request('from_date') }}" style="width: 150px;">
 
                         <!-- To Date -->
                         <span class="text-sm mx-1">to</span>
-                        <input type="date" name="to_date" class="form-control form-control-sm" value="{{ request('to_date') }}" style="width: 150px;">
+                        <input type="date" name="to_date" class="form-control form-control-sm"
+                            value="{{ request('to_date') }}" style="width: 150px;">
 
                         <!-- Search Hidden -->
                         @if (request()->has('search'))
@@ -196,37 +203,46 @@
                                             <td class="text-center">
                                                 <div class="d-flex justify-content-center gap-2 align-items-center">
                                                     <!-- Radio Button -->
-                                                    <input type="radio" name="agent_select" value="{{ $agent->id }}" title="Select Agent">
+                                                    <input type="radio" name="agent_select"
+                                                        value="{{ $agent->id }}" title="Select Agent">
 
                                                     <!-- Copy Icon -->
-                                                    <a href="javascript:;" class="text-secondary font-weight-bold text-xs me-2"
-                                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Copy Agent">
+                                                    <a href="javascript:;"
+                                                        class="text-secondary font-weight-bold text-xs me-2"
+                                                        data-bs-toggle="tooltip" data-bs-placement="top"
+                                                        title="Copy Agent">
                                                         <i class="fas fa-copy"></i>
                                                     </a>
 
                                                     <!-- Edit Icon -->
-                                                    <a href="javascript:;" class="text-secondary font-weight-bold text-xs me-2"
-                                                    title="Edit Agent" data-bs-toggle="modal" data-bs-target="#editModal{{ $agent->id }}">
+                                                    <a href="javascript:;"
+                                                        class="text-secondary font-weight-bold text-xs me-2"
+                                                        title="Edit Agent" data-bs-toggle="modal"
+                                                        data-bs-target="#editModal{{ $agent->id }}">
                                                         <i class="fas fa-edit"></i>
                                                     </a>
 
                                                     @include('pages.agent.edit')
 
                                                     <!-- Delete Button -->
-                                                    <form action="{{ route('agent.delete', $agent->id) }}" method="post" style="display:flex;">
+                                                    <form action="{{ route('agent.delete', $agent->id) }}" method="post"
+                                                        style="display:flex;">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button class="text-danger font-weight-bold text-xs me-2"
-                                                                onclick="return confirm('Are you sure?')"
-                                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Delete Agent"
-                                                                style="background: none; border: none; padding: 0;">
+                                                            onclick="return confirm('Are you sure?')"
+                                                            data-bs-toggle="tooltip" data-bs-placement="top"
+                                                            title="Delete Agent"
+                                                            style="background: none; border: none; padding: 0;">
                                                             <i class="fas fa-trash"></i>
                                                         </button>
                                                     </form>
 
                                                     <!-- Block/Unblock Icon -->
-                                                    <a href="javascript:;" class="text-danger font-weight-bold text-xs toggle-status"
-                                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Block/Unblock Agent">
+                                                    <a href="javascript:;"
+                                                        class="text-danger font-weight-bold text-xs toggle-status"
+                                                        data-bs-toggle="tooltip" data-bs-placement="top"
+                                                        title="Block/Unblock Agent">
                                                         <i class="fas fa-ban"></i>
                                                     </a>
                                                 </div>
