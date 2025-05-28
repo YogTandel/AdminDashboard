@@ -65,7 +65,6 @@
         </div>
         <!-- Profit Section -->
         <div class="row">
-            <!-- Profit Settings -->
             <div class="col-lg-6 mb-4">
                 <div class="card shadow-soft border-radius-xl">
                     <div class="card-header pb-0">
