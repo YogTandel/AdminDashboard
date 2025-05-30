@@ -123,7 +123,10 @@
                             <!-- Add Points -->
                             <div class="mb-4">
                                 <label class="form-label">Add Points</label>
-                                <input type="text" class="form-control" placeholder="Enter Points to Add">
+                                @if ($selectedAgent['endpoint'])
+                                    <input type="number" class="form-control" value={{ $selectedAgent['endpoint'] }}
+                                        placeholder="Enter Profit Percentage">
+                                @endif
                                 <div class="d-grid mt-2">
                                     <button type="submit" class="btn btn-success shadow-soft">Add To Admin</button>
                                 </div>
