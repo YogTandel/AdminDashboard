@@ -5,12 +5,18 @@
 @section('content')
     <div class="container-fluid py-4">
         @if ($selectedAgent)
-            <div class="alert alert-info">
-                Currently managing settings for: <strong>{{ $selectedAgent['name'] }}</strong>
-                <span class="float-end">Balance: ₹{{ number_format($selectedAgent['balance'], 2) }}</span>
+            <div class="alert alert-custom alert-dismissible fade show" role="alert">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>Currently managing settings for: {{ $selectedAgent['name'] }}</strong>
+                    </div>
+                    <div>
+                        <strong>Balance: ₹{{ number_format($selectedAgent['balance'], 2) }}</strong>
+                    </div>
+                </div>
             </div>
         @else
-            <div class="alert alert-warning">
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
                 No agent selected. Please select an agent from the agent list.
             </div>
         @endif
@@ -138,6 +144,17 @@
         </div>
 
     </div>
+    <style>
+        .alert-custom {
+            background-color: #e7f1ff;
+            /* Light blue background */
+            border-color: #b8daff;
+            color: #004085;
+            padding: 1rem;
+            border-radius: 0.25rem;
+            margin-bottom: 1rem;
+        }
+    </style>
 
     <x-footer />
 @endsection
