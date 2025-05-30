@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="container-fluid py-4">
-        @if (isset($selectedAgent))
+        @if ($selectedAgent)
             <div class="alert alert-info">
                 Currently managing settings for: <strong>{{ $selectedAgent['name'] }}</strong>
                 <span class="float-end">Balance: ₹{{ number_format($selectedAgent['balance'], 2) }}</span>
