@@ -293,9 +293,6 @@
         document.addEventListener('DOMContentLoaded', function() {
             const radioButtons = document.querySelectorAll('.agent-radio');
 
-            // Clear any existing selection from sessionStorage
-            sessionStorage.removeItem('selectedAgent');
-
             radioButtons.forEach(radio => {
                 radio.addEventListener('change', function() {
                     if (this.checked) {
@@ -310,12 +307,11 @@
                         // Store the selected agent in sessionStorage
                         sessionStorage.setItem('selectedAgent', JSON.stringify(agentData));
 
-                        // Redirect to settings page
-                        window.location.href = "{{ route('setting') }}";
+                        // Redirect to settings page with agent ID as parameter
+                        window.location.href = "{{ route('setting') }}?agent_id=" + agentData.id;
                     }
                 });
             });
         });
     </script>
-
 @endsection
