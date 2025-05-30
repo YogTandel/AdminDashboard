@@ -204,7 +204,12 @@
                                                 <div class="d-flex justify-content-center gap-2 align-items-center">
                                                     <!-- Radio Button -->
                                                     <input type="radio" name="agent_select"
-                                                        value="{{ $agent->id }}" title="Select Agent">
+                                                        value="{{ $agent->id }}" title="Select Agent"
+                                                        class="agent-radio" data-agent-id="{{ $agent->id }}"
+                                                        data-agent-name="{{ $agent->player }}"
+                                                        data-agent-balance="{{ $agent->balance }}"
+                                                        data-agent-distributor="{{ $agent->distributor }}"
+                                                        data-agent-endpoint="{{ $agent->endpoint }}">
 
                                                     <!-- Copy Icon -->
                                                     <a href="javascript:;"
@@ -284,4 +289,40 @@
             }
         });
     </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const radioButtons = document.querySelectorAll('.agent-radio');
+
+            radioButtons.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    if (this.checked) {
+                        const agentData = {
+                            id: this.getAttribute('data-agent-id'),
+                            name: this.getAttribute('data-agent-name'),
+                            balance: this.getAttribute('data-agent-balance'),
+                            distributor: this.getAttribute('data-agent-distributor'),
+                            endpoint: this.getAttribute('data-agent-endpoint')
+                        };
+
+                        // Store the selected agent in sessionStorage
+                        sessionStorage.setItem('selectedAgent', JSON.stringify(agentData));
+
+                        // Redirect to settings page
+                        window.location.href = "{{ route('setting') }}";
+                    }
+                });
+            });
+
+            // Check if there's a previously selected agent
+            const selectedAgent = sessionStorage.getItem('selectedAgent');
+            if (selectedAgent) {
+                const agent = JSON.parse(selectedAgent);
+                const radio = document.querySelector(`.agent-radio[data-agent-id="${agent.id}"]`);
+                if (radio) {
+                    radio.checked = true;
+                }
+            }
+        });
+    </script>
+
 @endsection

@@ -35,8 +35,14 @@ Route::delete('/player/{id}/delete', [AuthController::class, 'deleteplayer'])->n
 Route::get('/players/{playerId}/export-history', [PagesController::class, 'exportGameHistory'])->name('export.game.history');
 Route::get('/players/{id}/history', [PagesController::class, 'playerHistory'])->name('player.history');
 
+// transaction report
 Route::get('/transactionreport', [PagesController::class, 'transactionreport'])->name('transactionreport');
+
+// setting
 Route::get('/setting', [PagesController::class, 'setting'])->name('setting');
+Route::post('/settings/update-commissions', [PagesController::class, 'updateCommissions'])->name('settings.updateCommissions');
+
+// live game
 Route::get('/livegame', [PagesController::class, 'livegame'])->name('livegame');
 
 Route::get('/test-db', function () {

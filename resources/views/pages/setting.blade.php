@@ -4,6 +4,12 @@
 
 @section('content')
     <div class="container-fluid py-4">
+        @if (isset($selectedAgent))
+            <div class="alert alert-info">
+                Currently managing settings for: <strong>{{ $selectedAgent['name'] }}</strong>
+                <span class="float-end">Balance: ₹{{ number_format($selectedAgent['balance'], 2) }}</span>
+            </div>
+        @endif
         <div class="row">
             <!-- Commissions Section -->
             <div class="col-lg-6 mb-4">
@@ -12,35 +18,41 @@
                         <h6 class="mb-0">Commissions</h6>
                     </div>
                     <div class="card-body pt-3">
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label class="form-label">Agent Commission</label>
-                                <div class="input-group">
-                                    <span class="input-group-text">%</span>
-                                    <input type="number" class="form-control" placeholder="e.g. 5" value="5"
-                                        min="0" max="100" step="0.01">
+                        <form action="{{ route('settings.updateCommissions') }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="agent_id" value="{{ $selectedAgent['id'] ?? '' }}">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Agent Commission</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">%</span>
+                                        <input type="number" name="agent_commission" class="form-control"
+                                            placeholder="e.g. 5" value="{{ $settings->agentComission ?? 5 }}" min="0"
+                                            max="100" step="0.01" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Distributor Commission</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">%</span>
+                                        <input type="number" name="distributor_commission" class="form-control"
+                                            placeholder="e.g. 0.10" value="{{ $settings->distributorComission ?? 0.1 }}"
+                                            min="0" max="100" step="0.01" required>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Distributor Commission</label>
-                                <div class="input-group">
-                                    <span class="input-group-text">%</span>
-                                    <input type="number" class="form-control" placeholder="e.g. 0.10" value="0.10"
-                                        min="0" max="100" step="0.01">
-                                </div>
+                            <div class="d-flex flex-wrap gap-2 mt-3">
+                                <button type="submit" class="btn bg-gradient-info mb-2">
+                                    Update Commissions
+                                </button>
+                                <button type="button" class="btn bg-gradient-success mb-2">
+                                    Release Commission
+                                </button>
+                                <button type="button" class="btn bg-gradient-warning text-white mb-2">
+                                    Set To Minimum
+                                </button>
                             </div>
-                        </div>
-                        <div class="d-flex flex-wrap gap-2 mt-3">
-                            <button type="button" class="btn bg-gradient-info mb-2">
-                                Update Commissions
-                            </button>
-                            <button type="button" class="btn bg-gradient-success mb-2">
-                                Release Commission
-                            </button>
-                            <button type="button" class="btn bg-gradient-warning text-white mb-2">
-                                Set To Minimum
-                            </button>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </div>

@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Models\Setting;
 use App\Models\Transaction;
 use App\Models\User;
 use Carbon\Carbon;
@@ -239,7 +240,41 @@ class PagesController extends Controller
 
     public function setting()
     {
-        return view('pages.setting');
+        $selectedAgent = null;
+        if (request()->session()->has('selected_agent')) {
+            $selectedAgent = request()->session()->get('selected_agent');
+        } elseif (isset($_COOKIE['selectedAgent'])) {
+            $selectedAgent = json_decode($_COOKIE['selectedAgent'], true);
+        }
+
+        // Get settings for this agent
+        $settings = Setting::where('agent_id', $selectedAgent['id'] ?? null)->first();
+
+        return view('pages.setting', [
+            'selectedAgent' => $selectedAgent,
+            'settings'      => $settings,
+        ]);
+    }
+
+    public function updateCommissions(Request $request)
+    {
+        $validated = $request->validate([
+            'agent_commission'       => 'required|numeric|min:0|max:100',
+            'distributor_commission' => 'required|numeric|min:0|max:100',
+            'agent_id'               => 'required|exists:users,_id',
+        ]);
+
+        // Update or create settings
+        Setting::updateOrCreate(
+            ['agent_id' => $validated['agent_id']],
+            [
+                'agentComission'       => $validated['agent_commission'],
+                'distributorComission' => $validated['distributor_commission'],
+                // Add other fields as needed
+            ]
+        );
+
+        return back()->with('success', 'Commissions updated successfully');
     }
 
     public function liveGame()

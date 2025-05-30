@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('settings', function (Blueprint $table) {
             $table->id();
+            $table->string('agent_id')->after('id')->nullable();
+            $table->index('agent_id');
             $table->decimal('agent_comission', 5, 2)->default(0.0);
             $table->decimal('distributor_comission', 5, 2)->default(0.00);
             $table->decimal('earning', 12, 2);
