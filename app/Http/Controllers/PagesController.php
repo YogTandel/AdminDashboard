@@ -265,7 +265,7 @@ class PagesController extends Controller
 
             foreach ($player->gameHistory as $entry) {
                 $net  = $entry['winpoint'] - $entry['playPoint'];
-                $time = \Carbon\Carbon::createFromFormat('YmdHis', $entry['stime'])->format('Y-m-d H:i:s');
+                $time = Carbon::createFromFormat('YmdHis', $entry['stime'])->format('Y-m-d H:i:s');
 
                 fputcsv($file, [
                     $time,
