@@ -304,11 +304,28 @@
                             endpoint: this.getAttribute('data-agent-endpoint')
                         };
 
-                        // Store the selected agent in sessionStorage
+                        // Store in sessionStorage as fallback
                         sessionStorage.setItem('selectedAgent', JSON.stringify(agentData));
 
-                        // Redirect to settings page with agent ID as parameter
-                        window.location.href = "{{ route('setting') }}?agent_id=" + agentData.id;
+                        // Submit form to set server-side session
+                        const form = document.createElement('form');
+                        form.method = 'POST';
+                        form.action = "{{ route('agent.select') }}";
+
+                        const csrf = document.createElement('input');
+                        csrf.type = 'hidden';
+                        csrf.name = '_token';
+                        csrf.value = "{{ csrf_token() }}";
+                        form.appendChild(csrf);
+
+                        const agentInput = document.createElement('input');
+                        agentInput.type = 'hidden';
+                        agentInput.name = 'agent_id';
+                        agentInput.value = agentData.id;
+                        form.appendChild(agentInput);
+
+                        document.body.appendChild(form);
+                        form.submit();
                     }
                 });
             });

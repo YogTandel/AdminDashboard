@@ -238,17 +238,58 @@ class PagesController extends Controller
         return view('pages.player.history', compact('player'));
     }
 
+    public function selectAgent(Request $request)
+    {
+        $agent = User::where('id', $request->agent_id)
+            ->where('role', 'agent')
+            ->firstOrFail();
+
+        $selectedAgent = [
+            'id'          => $agent->id,
+            'name'        => $agent->player,
+            'balance'     => $agent->balance,
+            'distributor' => $agent->distributor,
+            'endpoint'    => $agent->endpoint,
+        ];
+
+        // Store in session
+        session(['selected_agent' => $selectedAgent]);
+
+        // Redirect to settings page
+        return redirect()->route('setting');
+    }
+
     public function setting()
     {
         $selectedAgent = null;
-        if (request()->session()->has('selected_agent')) {
-            $selectedAgent = request()->session()->get('selected_agent');
-        } elseif (isset($_COOKIE['selectedAgent'])) {
+
+        // Check session first
+        if (session()->has('selected_agent')) {
+            $selectedAgent = session('selected_agent');
+        }
+        // Fallback to cookie
+        elseif (isset($_COOKIE['selectedAgent'])) {
             $selectedAgent = json_decode($_COOKIE['selectedAgent'], true);
+            // Verify the agent exists
+            $agentExists = User::where('id', $selectedAgent['id'] ?? null)
+                ->where('role', 'agent')
+                ->exists();
+            if (! $agentExists) {
+                $selectedAgent = null;
+            }
         }
 
         // Get settings for this agent
         $settings = Setting::where('agent_id', $selectedAgent['id'] ?? null)->first();
+
+        // If no settings exist, create default ones
+        if (! $settings && $selectedAgent) {
+            $settings = Setting::create([
+                'agent_id'               => $selectedAgent['id'],
+                'agent_commission'       => 5.0, // default values
+                'distributor_commission' => 0.1,
+            ]);
+        }
 
         return view('pages.setting', [
             'selectedAgent' => $selectedAgent,

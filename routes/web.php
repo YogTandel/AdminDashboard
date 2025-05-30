@@ -20,6 +20,7 @@ Route::get('/agentlist', [PagesController::class, 'agentList'])->name('agentlist
 Route::post('/agentlist/store', [AuthController::class, 'createAgent'])->name('agent.add');
 Route::put('/agentlist/{id}/update', [AuthController::class, 'editAgent'])->name('agent.update');
 Route::delete('/agentlist/{id}/delete', [AuthController::class, 'deleteAgent'])->name('agent.delete');
+Route::post('/select-agent', [PagesController::class, 'selectAgent'])->name('agent.select');
 
 //distributor
 Route::get('/distributor', [PagesController::class, 'distributor'])->name('distributor.show');

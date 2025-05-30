@@ -9,6 +9,10 @@
                 Currently managing settings for: <strong>{{ $selectedAgent['name'] }}</strong>
                 <span class="float-end">Balance: ₹{{ number_format($selectedAgent['balance'], 2) }}</span>
             </div>
+        @else
+            <div class="alert alert-warning">
+                No agent selected. Please select an agent from the agent list.
+            </div>
         @endif
         <div class="row">
             <!-- Commissions Section -->
