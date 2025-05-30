@@ -293,6 +293,9 @@
         document.addEventListener('DOMContentLoaded', function() {
             const radioButtons = document.querySelectorAll('.agent-radio');
 
+            // Clear any existing selection from sessionStorage
+            sessionStorage.removeItem('selectedAgent');
+
             radioButtons.forEach(radio => {
                 radio.addEventListener('change', function() {
                     if (this.checked) {
@@ -312,16 +315,6 @@
                     }
                 });
             });
-
-            // Check if there's a previously selected agent
-            const selectedAgent = sessionStorage.getItem('selectedAgent');
-            if (selectedAgent) {
-                const agent = JSON.parse(selectedAgent);
-                const radio = document.querySelector(`.agent-radio[data-agent-id="${agent.id}"]`);
-                if (radio) {
-                    radio.checked = true;
-                }
-            }
         });
     </script>
 
