@@ -150,7 +150,6 @@
     <style>
         .alert-custom {
             background-color: #e7f1ff;
-            /* Light blue background */
             border-color: #b8daff;
             color: #004085;
             padding: 1rem;
