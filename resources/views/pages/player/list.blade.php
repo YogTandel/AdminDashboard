@@ -103,6 +103,10 @@
                                             class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                             Distributor
                                         </th>
+                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                            Login Status
+                                        </th>
+
                                         <th
                                             class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                             Agent
@@ -161,6 +165,12 @@
                                                 <td class="align-middle text-center text-sm">
                                                     <p class="text-xs font-weight-bold mb-0">{{ $player->distributor }}</p>
                                                 </td>
+                                                <td class="align-middle text-center text-sm">
+                                                    <span class="badge badge-sm {{ $player->login_status == 'True' ? 'bg-gradient-success' : 'bg-gradient-danger' }}">
+                                                        {{ $player->login_status }}
+                                                    </span>
+                                                </td>
+
                                                 <td class="align-middle text-center text-sm">
                                                     <p class="text-xs font-weight-bold mb-0">{{ $player->agent }}</p>
                                                 </td>

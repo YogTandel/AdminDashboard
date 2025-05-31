@@ -24,6 +24,7 @@ class User extends Authenticatable
         'role',
         'balance',
         'distributor',
+        'login_status',
         'agent',
         'status',
         'original_password',
@@ -53,7 +54,7 @@ class User extends Authenticatable
         'balance'        => 'decimal:2',
         'winamount'      => 'decimal:2',
         'isupdated'      => 'boolean',
-        'login_status'   => 'boolean',
+        // 'login_status'   => 'boolean',
         'DateOfCreation' => 'integer',
         'endpoint'       => 'integer',
     ];

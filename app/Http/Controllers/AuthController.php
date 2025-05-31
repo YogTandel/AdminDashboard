@@ -88,7 +88,7 @@ class AuthController extends Controller
 
     public function createplayer(Request $request)
     {
-        Log::info('Attempting to create a new Distributor', ['input' => $request->except(['password', 'original_password'])]);
+        Log::info('Attempting to create a new Plyer', ['input' => $request->except(['password', 'original_password'])]);
 
         $validate = $request->validate([
             'player'      => 'required|string|max:255|unique:users,player',
@@ -97,6 +97,7 @@ class AuthController extends Controller
             'balance'     => 'required|numeric|min:0',
             'distributor' => 'required|string|max:255',
             'agent'       => 'required|string|max:255',
+            'login_status'  => 'required|in:True,False',
             'status'      => 'required|in:Active,Inactive',
             'winamount'   => 'required|numeric',
             'gameHistory' => 'nullable|array',

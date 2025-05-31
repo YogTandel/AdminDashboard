@@ -40,6 +40,14 @@
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
+                            <label>Login Status</label>
+                                <div class="input-group mb-3">
+                                    <select class="form-control" name="login_status" required>
+                                        <option value="True">True</option>
+                                        <option value="False">False</option>
+                                    </select>
+                                </div>
+
 
                             <label>Agent</label>
                             <div class="input-group mb-3">
