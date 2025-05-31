@@ -21,6 +21,7 @@ Route::post('/agentlist/store', [AuthController::class, 'createAgent'])->name('a
 Route::put('/agentlist/{id}/update', [AuthController::class, 'editAgent'])->name('agent.update');
 Route::delete('/agentlist/{id}/delete', [AuthController::class, 'deleteAgent'])->name('agent.delete');
 Route::post('/select-agent', [PagesController::class, 'selectAgent'])->name('agent.select');
+Route::post('/agent/deselect', [PagesController::class, 'deselect'])->name('agent.deselect');
 
 //distributor
 Route::get('/distributor', [PagesController::class, 'distributor'])->name('distributor.show');

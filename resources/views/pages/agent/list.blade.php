@@ -291,11 +291,42 @@
     </script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Get the stored selected agent from sessionStorage
+            const storedAgent = JSON.parse(sessionStorage.getItem('selectedAgent'));
             const radioButtons = document.querySelectorAll('.agent-radio');
 
+            // Set initial checked state based on storage
+            if (storedAgent) {
+                radioButtons.forEach(radio => {
+                    if (radio.getAttribute('data-agent-id') === storedAgent.id) {
+                        radio.checked = true;
+                    }
+                });
+            }
+
             radioButtons.forEach(radio => {
-                radio.addEventListener('change', function() {
-                    if (this.checked) {
+                radio.addEventListener('click', function(e) {
+                    // If this radio is already checked, uncheck it
+                    if (this.checked && storedAgent && this.getAttribute('data-agent-id') ===
+                        storedAgent.id) {
+                        this.checked = false;
+                        sessionStorage.removeItem('selectedAgent');
+
+                        // Submit form to clear server-side session
+                        const form = document.createElement('form');
+                        form.method = 'POST';
+                        form.action = "{{ route('agent.deselect') }}";
+
+                        const csrf = document.createElement('input');
+                        csrf.type = 'hidden';
+                        csrf.name = '_token';
+                        csrf.value = "{{ csrf_token() }}";
+                        form.appendChild(csrf);
+
+                        document.body.appendChild(form);
+                        form.submit();
+                    } else {
+                        // Proceed with normal selection
                         const agentData = {
                             id: this.getAttribute('data-agent-id'),
                             name: this.getAttribute('data-agent-name'),
@@ -304,7 +335,7 @@
                             endpoint: this.getAttribute('data-agent-endpoint')
                         };
 
-                        // Store in sessionStorage as fallback
+                        // Store in sessionStorage
                         sessionStorage.setItem('selectedAgent', JSON.stringify(agentData));
 
                         // Submit form to set server-side session

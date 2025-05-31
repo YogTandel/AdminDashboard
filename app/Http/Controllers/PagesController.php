@@ -318,6 +318,12 @@ class PagesController extends Controller
         return back()->with('success', 'Commissions updated successfully');
     }
 
+    public function deselect(Request $request)
+    {
+        $request->session()->forget('selected_agent');
+        return back();
+    }
+
     public function liveGame()
     {
         return view('pages.livegame');
