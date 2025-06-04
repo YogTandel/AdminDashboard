@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('distributor_report', function (Blueprint $table) {
             $table->id();
             $table->string('agent_id');
+            $table->string('transition_amount');
+            $table->string('distributor_id');
             $table->timestamps();
         });
     }
