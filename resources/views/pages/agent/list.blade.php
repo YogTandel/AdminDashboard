@@ -174,7 +174,8 @@
                                             </td>
                                             <td class="text-center">
                                                 <span
-                                                    class="text-xs font-weight-bold text-dark">₹{{ number_format($agent->balance, 2) }}</span>
+                                                    class="text-xs font-weight-bold text-dark">₹{{ number_format($agent->balance, 2) }}
+                                                </span>
                                             </td>
                                             <td class="text-center">
                                                 <p class="text-xs font-weight-bold mb-0 text-dark">
