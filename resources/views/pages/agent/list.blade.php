@@ -236,13 +236,11 @@
                                                         </button>
                                                     </form>
 
-                                                    <!-- Copy Icon -->
-                                                    <a href="javascript:;"
-                                                        class="text-secondary font-weight-bold text-xs me-2"
-                                                        data-bs-toggle="tooltip" data-bs-placement="top"
-                                                        title="Copy Agent">
-                                                        <i class="fas fa-copy"></i>
-                                                    </a>
+                                                    <!-- Transfer Icon -->
+                                                    {{-- <a href="#" class="btn bg-gradient-info mb-0 text-white"
+                                                        id="transfer-link">
+                                                        <i class="fas fa-exchange-alt"></i>
+                                                    </a> --}}
 
                                                     <!-- Block/Unblock Icon -->
                                                     <a href="javascript:;"
@@ -360,6 +358,36 @@
                         form.submit();
                     }
                 });
+            });
+        });
+    </script>
+
+    <!-- Transfer -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const transferLink = document.getElementById('transfer-link');
+
+            // Update transfer link when agent is selected
+            function updateTransferLink() {
+                const storedAgent = JSON.parse(sessionStorage.getItem('selectedAgent'));
+                if (storedAgent) {
+                    // Update the href to include agent ID as parameter
+                    transferLink.href = "{{ route('transfer.page') }}?agent_id=" + storedAgent.id;
+                    transferLink.classList.remove('disabled');
+                } else {
+                    transferLink.href = "#";
+                    transferLink.classList.add('disabled');
+                }
+            }
+
+            // Check selection on page load
+            updateTransferLink();
+
+            // Update when radio buttons are clicked
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('agent-radio')) {
+                    setTimeout(updateTransferLink, 100);
+                }
             });
         });
     </script>

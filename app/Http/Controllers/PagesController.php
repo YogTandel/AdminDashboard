@@ -366,6 +366,44 @@ class PagesController extends Controller
 
     public function transferForm()
     {
-        return view('pages.transfer.form');
+        // Get selected agent from session
+        $selectedAgent = session('selected_agent');
+
+        if (! $selectedAgent) {
+            return redirect()->route('agentlist.show')->with('error', 'Please select an agent first');
+        }
+
+        // Get fresh agent data from database
+        $agent = User::findOrFail($selectedAgent['id']);
+
+        return view('pages.transfer.form', [
+            'selectedAgent' => $agent,
+            'balance'       => $agent->balance,
+        ]);
+    }
+
+    public function processTransfer(Request $request)
+    {
+        // Simple validation
+        $request->validate([
+            'agent_id' => 'required|exists:users,_id',
+            'amount'   => 'required|numeric|min:0.01',
+            'type'     => 'required|in:add,subtract',
+        ]);
+
+        // Get the agent
+        $agent = User::findOrFail($request->agent_id);
+
+        // Just display the result without saving
+        $newBalance = $request->type === 'add'
+        ? $agent->balance + $request->amount
+        : $agent->balance - $request->amount;
+
+        return back()->with([
+            'success'            => 'Transfer calculation complete',
+            'calculated_balance' => $newBalance,
+            'transfer_amount'    => $request->amount,
+            'transfer_type'      => $request->type,
+        ]);
     }
 }

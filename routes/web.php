@@ -48,7 +48,8 @@ Route::post('/settings/update-commissions', [PagesController::class, 'updateComm
 Route::get('/livegame', [PagesController::class, 'livegame'])->name('livegame');
 
 // transfer
-Route::get('/transfer/login', [PagesController::class, 'transferForm'])->name('transfer.form');
+Route::get('/transfer', [PagesController::class, 'transferForm'])->name('transfer.page');
+Route::post('/transfer', [PagesController::class, 'processTransfer'])->name('transfer.execute');
 
 // test-db
 Route::get('/test-db', function () {
