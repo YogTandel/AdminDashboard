@@ -406,4 +406,19 @@ class PagesController extends Controller
             'transfer_type'      => $request->type,
         ]);
     }
+
+    public function distributorReport(Request $request)
+{
+    $amount = $request->query('amount');
+    $id = $request->query('id');
+
+    // Load distributor from ID if needed
+    $distributor = User::findOrFail($id);
+
+    return view('pages.DestributorReport.Report', [
+        'selectedistributor' => $distributor,
+        'balance' => $distributor->balance,
+        'amount' => $amount,
+    ]);
+}
 }
