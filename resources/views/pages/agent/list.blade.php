@@ -221,14 +221,6 @@
 
                                                     @include('pages.agent.edit')
 
-                                                    <!-- Copy Icon -->
-                                                    <a href="javascript:;"
-                                                        class="text-secondary font-weight-bold text-xs me-2"
-                                                        data-bs-toggle="tooltip" data-bs-placement="top"
-                                                        title="Copy Agent">
-                                                        <i class="fas fa-copy"></i>
-                                                    </a>
-
                                                     <!-- Delete Button -->
                                                     <form action="{{ route('agent.delete', $agent->id) }}" method="post"
                                                         style="display:flex;">
@@ -242,6 +234,14 @@
                                                             <i class="fas fa-trash"></i>
                                                         </button>
                                                     </form>
+
+                                                    <!-- Copy Icon -->
+                                                    <a href="javascript:;"
+                                                        class="text-secondary font-weight-bold text-xs me-2"
+                                                        data-bs-toggle="tooltip" data-bs-placement="top"
+                                                        title="Copy Agent">
+                                                        <i class="fas fa-copy"></i>
+                                                    </a>
 
                                                     <!-- Block/Unblock Icon -->
                                                     <a href="javascript:;"
