@@ -408,27 +408,25 @@ class PagesController extends Controller
     }
 
     public function showForm()
-{
-    // Fetch only users with role = 'distributor'
-    $distributors = User::where('role', 'distributor')->get();
+    {
+        // Fetch only users with role = 'distributor'
+        $distributors = User::where('role', 'distributor')->get();
 
-    return view('distributor.report-form', compact('distributors'));
-}
-
+        return view('pages.distributor.report-form', compact('distributors'));
+    }
 
     public function transferAmount(Request $request)
     {
         // Validate inputs
         $request->validate([
             'distributor_id' => 'required|exists:distributors,id',
-            'agent_id' => 'required',
-            'amount' => 'required|numeric|min:1',
+            'agent_id'       => 'required',
+            'amount'         => 'required|numeric|min:1',
         ]);
 
         // Process logic here (store, transfer, etc.)
-        
+
         return back()->with('success', 'Amount transferred successfully!');
     }
 
 }
-
