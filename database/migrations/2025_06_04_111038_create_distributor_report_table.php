@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('agent_id');
             $table->string('transition_amount');
-            $table->string('distributor_id');
+            $table->string('date');
             $table->timestamps();
         });
     }
