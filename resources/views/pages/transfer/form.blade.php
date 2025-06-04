@@ -70,7 +70,7 @@
             const submitBtn = document.getElementById('submitBtn');
 
             // Initialize remaining balance
-            remainingBalance.value = '$' + agentBalance.toFixed(2);
+            remainingBalance.value = agentBalance.toFixed(2);
 
             // Calculate remaining balance on amount change
             transferAmount.addEventListener('input', function() {
