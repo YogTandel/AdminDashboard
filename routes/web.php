@@ -51,7 +51,8 @@ Route::get('/livegame', [PagesController::class, 'livegame'])->name('livegame');
 Route::get('/transfer', [PagesController::class, 'transferForm'])->name('transfer.page');
 Route::post('/transfer', [PagesController::class, 'processTransfer'])->name('transfer.execute');
 
-Route::get('/distributor-report', [PagesController::class, 'distributorReport'])->name('distributor.report');
+Route::get('/distributor-report-form',[PagesController::class, 'showForm'])->name('distributor.report.form');
+Route::post('/distributor-transfer', [PagesController::class, 'transferAmount'])->name('distributor.transfer');
 
 
 // test-db
