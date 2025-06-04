@@ -407,18 +407,28 @@ class PagesController extends Controller
         ]);
     }
 
-    public function distributorReport(Request $request)
+    public function showForm()
 {
-    $amount = $request->query('amount');
-    $id = $request->query('id');
+    // Fetch only users with role = 'distributor'
+    $distributors = User::where('role', 'distributor')->get();
 
-    // Load distributor from ID if needed
-    $distributor = User::findOrFail($id);
+    return view('distributor.report-form', compact('distributors'));
+}
 
-    return view('pages.DestributorReport.Report', [
-        'selectedistributor' => $distributor,
-        'balance' => $distributor->balance,
-        'amount' => $amount,
-    ]);
+
+    public function transferAmount(Request $request)
+    {
+        // Validate inputs
+        $request->validate([
+            'distributor_id' => 'required|exists:distributors,id',
+            'agent_id' => 'required',
+            'amount' => 'required|numeric|min:1',
+        ]);
+
+        // Process logic here (store, transfer, etc.)
+        
+        return back()->with('success', 'Amount transferred successfully!');
+    }
+
 }
-}
+
