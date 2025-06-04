@@ -183,6 +183,18 @@
                 </a>
             </li>
 
+            {{-- Distributor Report --}}
+            <li class="nav-item">
+                <a class="nav-link {{ Request::is('transfer.page') ? 'active' : '' }}"
+                    href="{{ route('transfer.page') }}">
+                    <div
+                        class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+                        <i class="fas fa-file-alt text-dark"></i>
+                    </div>
+                    <span class="nav-link-text ms-1">Distributor Report</span>
+                </a>
+            </li>
+
             <!-- Logout -->
             <li class="nav-item">
                 <form action="{{ route('logout') }}" method="POST">
