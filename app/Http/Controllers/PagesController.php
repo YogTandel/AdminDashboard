@@ -366,6 +366,6 @@ class PagesController extends Controller
 
     public function transferLogin()
     {
-        return view('pages.transfer.login');
+        return view('pages.transfer.form');
     }
 }
