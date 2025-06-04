@@ -47,10 +47,15 @@ Route::post('/settings/update-commissions', [PagesController::class, 'updateComm
 // live game
 Route::get('/livegame', [PagesController::class, 'livegame'])->name('livegame');
 
+// transfer
+Route::get('/transfer/login', [PagesController::class, 'transferLogin'])->name('transfer.login');
+
+// test-db
 Route::get('/test-db', function () {
     return DB::connection('mongodb')->collection('test')->insert(['hello' => 'world']);
 });
 
+// test-player
 Route::get('/test-player', function () {
     $player = User::where('player', 'zeeshan')->first();
     dd($player->gameHistory);

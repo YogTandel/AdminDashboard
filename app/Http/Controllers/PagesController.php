@@ -363,4 +363,9 @@ class PagesController extends Controller
 
         return response()->stream($callback, 200, $headers);
     }
+
+    public function transferLogin()
+    {
+        return view('pages.transfer.login');
+    }
 }
