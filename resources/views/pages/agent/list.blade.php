@@ -211,14 +211,6 @@
                                                         data-agent-distributor="{{ $agent->distributor }}"
                                                         data-agent-endpoint="{{ $agent->endpoint }}">
 
-                                                    <!-- Copy Icon -->
-                                                    <a href="javascript:;"
-                                                        class="text-secondary font-weight-bold text-xs me-2"
-                                                        data-bs-toggle="tooltip" data-bs-placement="top"
-                                                        title="Copy Agent">
-                                                        <i class="fas fa-copy"></i>
-                                                    </a>
-
                                                     <!-- Edit Icon -->
                                                     <a href="javascript:;"
                                                         class="text-secondary font-weight-bold text-xs me-2"
@@ -228,6 +220,14 @@
                                                     </a>
 
                                                     @include('pages.agent.edit')
+
+                                                    <!-- Copy Icon -->
+                                                    <a href="javascript:;"
+                                                        class="text-secondary font-weight-bold text-xs me-2"
+                                                        data-bs-toggle="tooltip" data-bs-placement="top"
+                                                        title="Copy Agent">
+                                                        <i class="fas fa-copy"></i>
+                                                    </a>
 
                                                     <!-- Delete Button -->
                                                     <form action="{{ route('agent.delete', $agent->id) }}" method="post"
