@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('distributor_report', function (Blueprint $table) {
             $table->id();
+            $table->string('agent_id');
             $table->timestamps();
         });
     }
