@@ -195,7 +195,6 @@
                         <span class="nav-link-text ms-1">Logout</span>
                     </button>
                 </form>
-
             </li>
         </ul>
     </div>
