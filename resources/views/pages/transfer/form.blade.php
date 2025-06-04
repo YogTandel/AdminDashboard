@@ -102,7 +102,7 @@
 
                 // Here you would typically make an AJAX call or form submission
                 alert(
-                    `Transfer of $${amount.toFixed(2)} would be processed. Remaining balance: ${(agentBalance - amount).toFixed(2)}`
+                    `Transfer of ${amount.toFixed(2)} would be processed. Remaining balance: ${(agentBalance - amount).toFixed(2)}`
                 );
             });
         });
