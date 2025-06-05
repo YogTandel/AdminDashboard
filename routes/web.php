@@ -54,7 +54,7 @@ Route::post('/transfer', [PagesController::class, 'processTransfer'])->name('tra
 // In routes/web.php
 Route::get('/report-form', [PagesController::class, 'showReportForm'])->name('report.form');
 
-
+//distributor report
 Route::get('/distributor-report-form',[PagesController::class, 'showForm'])->name('distributor.report.form');
 Route::post('/distributor-transfer', [PagesController::class, 'transferAmount'])->name('distributor.transfer');
 
