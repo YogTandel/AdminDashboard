@@ -17,17 +17,21 @@
                         <form method="POST" action="{{ route('distributor.transfer') }}">
                             @csrf
 
-                            <div class="mb-3">
-                                <label for="agent_id" class="form-label">Agent ID</label>
-                                <input type="text" class="form-control" name="agent_id" id="agent_id"
-                                value="{{ request('agent_id') }}" required>                          
-                            </div>
+                        <div class="mb-3">
+                            <label for="agent_id" class="form-label">Agent ID</label>
+                            <input type="text" class="form-control" name="agent_id" id="agent_id"
+                                value="{{ $agentId }}" readonly>
+                        </div>
 
-                            <div class="mb-3">
-                                <label for="amount" class="form-label">Transfer Amount</label>
-                                <input type="number" class="form-control" name="amount" id="amount"
-                                    value="{{ request('amount') }}" required min="1">
-                            </div>
+                        <div class="mb-3">
+                            <label class="form-label">Transfer Amount</label>
+                            <input type="text" class="form-control" value="{{ number_format($transferAmount, 2) }}" readonly>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Remaining Balance</label>
+                            <input type="text" class="form-control" value="{{ number_format($remainingBalance, 2) }}" readonly>
+                        </div>
 
                         </form>
 

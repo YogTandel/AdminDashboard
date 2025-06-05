@@ -429,11 +429,15 @@ class PagesController extends Controller
         return back()->with('success', 'Amount transferred successfully!');
     }
 
-    public function showReportForm()
+ public function showReportForm(Request $request)
 {
-    $distributors = User::where('role', 'distributor')->get();
-    return view('pages.distributor.report-form', compact('distributors'));
+    $agentId = $request->agent_id;
+    $transferAmount = $request->amount;
+    $remainingBalance = $request->remaining_balance;
+
+    return view('pages.distributor.report-form', compact('agentId', 'transferAmount', 'remainingBalance'));
 }
+
 
 
 }

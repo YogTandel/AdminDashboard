@@ -101,11 +101,14 @@
                     return;
                 }
 
-                // Redirect to report-form page with optional query parameters
-                const queryParams = new URLSearchParams({
-                    agent_id: "{{ $selectedAgent['id'] }}",
-                    amount: amount.toFixed(2)
-                });
+                const remaining = (agentBalance - amount).toFixed(2);
+
+const queryParams = new URLSearchParams({
+    agent_id: "{{ $selectedAgent['id'] }}",
+    amount: amount.toFixed(2),
+    remaining_balance: remaining
+});
+
 
                 window.location.href = "{{ route('report.form') }}?" + queryParams.toString();
             });
