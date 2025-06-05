@@ -18,16 +18,6 @@
                             @csrf
 
                             <div class="mb-3">
-                                <label for="distributor_id" class="form-label">Select Distributor</label>
-                                <select name="distributor_id" id="distributor_id" class="form-select" required>
-                                    <option value="">-- Select --</option>
-                                    @foreach ($distributors as $distributor)
-                                        <option value="{{ $distributor->id }}">{{ $distributor->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <div class="mb-3">
                                 <label for="agent_id" class="form-label">Agent ID</label>
                                 <input type="text" class="form-control" name="agent_id" id="agent_id"
                                 value="{{ request('agent_id') }}" required>                          
