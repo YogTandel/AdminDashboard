@@ -429,4 +429,11 @@ class PagesController extends Controller
         return back()->with('success', 'Amount transferred successfully!');
     }
 
+    public function showReportForm()
+{
+    $distributors = User::where('role', 'distributor')->get();
+    return view('pages.distributor.report-form', compact('distributors'));
+}
+
+
 }

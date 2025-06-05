@@ -91,6 +91,7 @@
             });
 
             // Form submission
+           // Form submission
             document.getElementById('transferForm').addEventListener('submit', function(e) {
                 e.preventDefault();
 
@@ -100,11 +101,15 @@
                     return;
                 }
 
-                // Here you would typically make an AJAX call or form submission
-                alert(
-                    `Transfer of ${amount.toFixed(2)} would be processed. Remaining balance: ${(agentBalance - amount).toFixed(2)}`
-                );
+                // Redirect to report-form page with optional query parameters
+                const queryParams = new URLSearchParams({
+                    agent_id: "{{ $selectedAgent['id'] }}",
+                    amount: amount.toFixed(2)
+                });
+
+                window.location.href = "{{ route('report.form') }}?" + queryParams.toString();
             });
+
         });
     </script>
 @endsection

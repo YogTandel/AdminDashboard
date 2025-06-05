@@ -51,6 +51,10 @@ Route::get('/livegame', [PagesController::class, 'livegame'])->name('livegame');
 Route::get('/transfer', [PagesController::class, 'transferForm'])->name('transfer.page');
 Route::post('/transfer', [PagesController::class, 'processTransfer'])->name('transfer.execute');
 
+// In routes/web.php
+Route::get('/report-form', [PagesController::class, 'showReportForm'])->name('report.form');
+
+
 Route::get('/distributor-report-form',[PagesController::class, 'showForm'])->name('distributor.report.form');
 Route::post('/distributor-transfer', [PagesController::class, 'transferAmount'])->name('distributor.transfer');
 
