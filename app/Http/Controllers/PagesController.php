@@ -382,62 +382,29 @@ class PagesController extends Controller
         ]);
     }
 
-    public function processTransfer(Request $request)
-    {
-        // Simple validation
-        $request->validate([
-            'agent_id' => 'required|exists:users,_id',
-            'amount'   => 'required|numeric|min:0.01',
-            'type'     => 'required|in:add,subtract',
-        ]);
+public function processTransfer(Request $request)
+{
+    $request->validate([
+        'agent_id' => 'required|exists:users,_id',
+        'amount'   => 'required|numeric|min:0.01',
+        'type'     => 'required|in:add,subtract',
+    ]);
 
-        // Get the agent
-        $agent = User::findOrFail($request->agent_id);
+    $agent = User::findOrFail($request->agent_id);
 
-        // Just display the result without saving
-        $newBalance = $request->type === 'add'
+    $newBalance = $request->type === 'add'
         ? $agent->balance + $request->amount
         : $agent->balance - $request->amount;
 
-        return back()->with([
-            'success'            => 'Transfer calculation complete',
-            'calculated_balance' => $newBalance,
-            'transfer_amount'    => $request->amount,
-            'transfer_type'      => $request->type,
-        ]);
-    }
+    // You can also store this in DB if needed
 
-    public function showForm()
-    {
-        // Fetch only users with role = 'distributor'
-        $distributors = User::where('role', 'distributor')->get();
-
-        return view('pages.distributor.report-form', compact('distributors'));
-    }
-
-    public function transferAmount(Request $request)
-    {
-        // Validate inputs
-        $request->validate([
-            'distributor_id' => 'required|exists:distributors,id',
-            'agent_id'       => 'required',
-            'amount'         => 'required|numeric|min:1',
-        ]);
-
-        // Process logic here (store, transfer, etc.)
-
-        return back()->with('success', 'Amount transferred successfully!');
-    }
-
- public function showReportForm(Request $request)
-{
-    $agentId = $request->agent_id;
-    $transferAmount = $request->amount;
-    $remainingBalance = $request->remaining_balance;
-
-    return view('pages.distributor.report-form', compact('agentId', 'transferAmount', 'remainingBalance'));
+    return response()->json([
+        'success' => 'Transfer successfully',
+        'calculated_balance' => $newBalance,
+        'transfer_amount' => $request->amount,
+        'transfer_type' => $request->type
+    ]);
 }
-
 
 
 }
