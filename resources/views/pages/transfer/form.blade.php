@@ -126,27 +126,29 @@
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Accept': 'application/json'
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
                 },
                 body: JSON.stringify(data)
             })
-                .then(response => response.json())
+
+                .then(res => res.json())
                 .then(res => {
                     if (res.success) {
                         successMessage.classList.remove('d-none');
                         successMessage.innerHTML =
                             `<i class="fas fa-check-circle me-2"></i> ${res.success}`;
 
-                        // Optionally disable form after success
                         submitBtn.disabled = true;
                     } else {
-                        alert('Transfer failed.');
+                        alert('Transfer failed: ' + (res.message || 'Unknown error'));
                     }
                 })
                 .catch(error => {
-                    console.error('Error:', error);
-                    alert('An error occurred while processing the transfer.');
+                    console.error('Fetch error:', error);
+                    alert('An error occurred: ' + error.message);
                 });
+
         });
     });
 </script>

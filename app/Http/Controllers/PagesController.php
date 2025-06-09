@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 use App\Models\Setting;
 use App\Models\Transaction;
 use App\Models\User;
+use App\Models\User as Agent;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class PagesController extends Controller
@@ -384,26 +386,41 @@ class PagesController extends Controller
 
 public function processTransfer(Request $request)
 {
-    $request->validate([
-        'agent_id' => 'required|exists:users,_id',
-        'amount'   => 'required|numeric|min:0.01',
-        'type'     => 'required|in:add,subtract',
-    ]);
+    try {
+        $request->validate([
+            'agent_id' => 'required|exists:users,id',
+            'amount' => 'required|numeric|min:0.01',
+            'type' => 'required|in:add,subtract',
+        ]);
 
-    $agent = User::findOrFail($request->agent_id);
+        $agent = User::findOrFail($request->agent_id);
 
-    $newBalance = $request->type === 'add'
-        ? $agent->balance + $request->amount
-        : $agent->balance - $request->amount;
+        if ($request->type === 'subtract') {
+            if ($agent->balance < $request->amount) {
+                return response()->json(['success' => false, 'message' => 'Insufficient balance.']);
+            }
 
-    // You can also store this in DB if needed
+            $agent->balance -= $request->amount;
+        } else {
+            $agent->balance += $request->amount;
+        }
 
-    return response()->json([
-        'success' => 'Transfer successfully',
-        'calculated_balance' => $newBalance,
-        'transfer_amount' => $request->amount,
-        'transfer_type' => $request->type
-    ]);
+        $agent->save();
+
+        // Optional log
+        DB::table('transfers')->insert([
+            'agent_id' => $agent->id,
+            'amount' => $request->amount,
+            'type' => $request->type,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        return response()->json(['success' => 'Transfer successful.']);
+
+    } catch (\Exception $e) {
+        return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+    }
 }
 
 public function showTransferReport()
