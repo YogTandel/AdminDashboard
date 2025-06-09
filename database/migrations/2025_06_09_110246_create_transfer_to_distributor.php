@@ -13,7 +13,12 @@ return new class extends Migration
     {
         Schema::create('transfer_to_distributor', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('agent_id');
+            $table->decimal('amount', 10, 2);
+            $table->enum('type', ['add', 'subtract']);
             $table->timestamps();
+
+            $table->foreign('agent_id')->references('id')->on('agents')->onDelete('cascade');
         });
     }
 

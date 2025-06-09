@@ -408,7 +408,7 @@ public function processTransfer(Request $request)
         $agent->save();
 
         // Optional log
-        DB::table('transfers')->insert([
+        DB::table('transfer_to_distributor')->insert([
             'agent_id' => $agent->id,
             'amount' => $request->amount,
             'type' => $request->type,
