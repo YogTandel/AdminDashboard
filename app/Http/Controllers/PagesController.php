@@ -391,7 +391,10 @@ public function processTransfer(Request $request)
             'agent_id' => 'required|exists:users,id',
             'amount' => 'required|numeric|min:0.01',
             'type' => 'required|in:add,subtract',
+            // 'distributor_id' => 'required|exists:users,id', ← remove this
         ]);
+
+        $distributorId = auth()->id(); // Automatically set distributor
 
         $agent = User::findOrFail($request->agent_id);
 
@@ -407,10 +410,11 @@ public function processTransfer(Request $request)
 
         $agent->save();
 
-        // Optional log
         DB::table('transfer_to_distributor')->insert([
             'agent_id' => $agent->id,
+            'distributor_id' => $distributorId,
             'amount' => $request->amount,
+            'remaining_balance' => $agent->balance,
             'type' => $request->type,
             'created_at' => now(),
             'updated_at' => now(),
@@ -422,6 +426,8 @@ public function processTransfer(Request $request)
         return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
     }
 }
+
+
 
 public function showTransferReport()
 {
