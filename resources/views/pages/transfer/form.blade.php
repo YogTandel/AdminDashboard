@@ -79,78 +79,82 @@
 
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const agentBalance = parseFloat({{ $selectedAgent['balance'] }});
-        const transferAmount = document.getElementById('transferAmount');
-        const remainingBalance = document.getElementById('remainingBalance');
-        const amountError = document.getElementById('amountError');
-        const submitBtn = document.getElementById('submitBtn');
-        const successMessage = document.getElementById('successMessage');
+   document.addEventListener('DOMContentLoaded', function () {
+    const agentBalance = parseFloat({{ $selectedAgent['balance'] }});
+    const transferAmount = document.getElementById('transferAmount');
+    const remainingBalance = document.getElementById('remainingBalance');
+    const amountError = document.getElementById('amountError');
+    const submitBtn = document.getElementById('submitBtn');
+    const successMessage = document.getElementById('successMessage');
 
-        remainingBalance.value = agentBalance.toFixed(2);
+    //  If agent balance is 0, disable submit button and show alert
+    if (agentBalance <= 0) {
+        submitBtn.disabled = true;
+        amountError.style.display = 'block';
+        amountError.innerHTML = `<i class="fas fa-exclamation-circle me-2"></i> Agent has zero balance. Transfer not allowed.`;
+    }
 
-        transferAmount.addEventListener('input', function () {
-            const amount = parseFloat(this.value) || 0;
-            const remaining = agentBalance - amount;
+    remainingBalance.value = agentBalance.toFixed(2);
 
-            if (amount > agentBalance) {
-                amountError.style.display = 'block';
+    transferAmount.addEventListener('input', function () {
+        const amount = parseFloat(this.value) || 0;
+        const remaining = agentBalance - amount;
+
+        if (amount > agentBalance || agentBalance <= 0) {
+            amountError.style.display = 'block';
+            submitBtn.disabled = true;
+            remainingBalance.value = '0.00';
+            this.classList.add('is-invalid');
+        } else {
+            amountError.style.display = 'none';
+            submitBtn.disabled = false;
+            remainingBalance.value = remaining.toFixed(2);
+            this.classList.remove('is-invalid');
+        }
+    });
+
+    document.getElementById('transferForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const amount = parseFloat(transferAmount.value);
+        if (amount > agentBalance || amount <= 0 || agentBalance <= 0) {
+            alert('Please enter a valid amount. Agent must have sufficient balance.');
+            return;
+        }
+
+        const data = {
+            agent_id: "{{ $selectedAgent['id'] }}",
+            amount: amount,
+            type: 'subtract',
+            _token: "{{ csrf_token() }}"
+        };
+
+        fetch("{{ route('transfer.execute') }}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(res => res.json())
+        .then(res => {
+            if (res.success) {
+                successMessage.classList.remove('d-none');
+                successMessage.innerHTML = `<i class="fas fa-check-circle me-2"></i> ${res.success}`;
                 submitBtn.disabled = true;
-                remainingBalance.value = '0.00';
-                this.classList.add('is-invalid');
             } else {
-                amountError.style.display = 'none';
-                submitBtn.disabled = false;
-                remainingBalance.value = remaining.toFixed(2);
-                this.classList.remove('is-invalid');
+                alert('Transfer failed: ' + (res.message || 'Unknown error'));
             }
-        });
-
-        document.getElementById('transferForm').addEventListener('submit', function (e) {
-            e.preventDefault();
-
-            const amount = parseFloat(transferAmount.value);
-            if (amount > agentBalance || amount <= 0) {
-                alert('Please enter a valid amount.');
-                return;
-            }
-
-            const data = {
-                agent_id: "{{ $selectedAgent['id'] }}",
-                amount: amount,
-                type: 'subtract', // Or 'add' based on your business logic
-                _token: "{{ csrf_token() }}"
-            };
-
-            fetch("{{ route('transfer.execute') }}", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: JSON.stringify(data)
-            })
-
-                .then(res => res.json())
-                .then(res => {
-                    if (res.success) {
-                        successMessage.classList.remove('d-none');
-                        successMessage.innerHTML =
-                            `<i class="fas fa-check-circle me-2"></i> ${res.success}`;
-
-                        submitBtn.disabled = true;
-                    } else {
-                        alert('Transfer failed: ' + (res.message || 'Unknown error'));
-                    }
-                })
-                .catch(error => {
-                    console.error('Fetch error:', error);
-                    alert('An error occurred: ' + error.message);
-                });
-
+        })
+        .catch(error => {
+            console.error('Fetch error:', error);
+            alert('An error occurred: ' + error.message);
         });
     });
+});
+
 </script>
 
 @endsection
