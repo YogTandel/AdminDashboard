@@ -1,6 +1,6 @@
 @extends('layouts.layout')
 
-@section('page-name', 'Agent List')
+@section('page-name', 'report')
 
 @section('content')
 
@@ -47,9 +47,6 @@
                                         </th>
                                         <th class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                             Balance
-                                        </th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                            Distributor
                                         </th>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                             Agent
