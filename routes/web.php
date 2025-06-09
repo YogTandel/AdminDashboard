@@ -51,6 +51,9 @@ Route::get('/livegame', [PagesController::class, 'livegame'])->name('livegame');
 Route::get('/transfer', [PagesController::class, 'transferForm'])->name('transfer.page');
 Route::post('/transfer', [PagesController::class, 'processTransfer'])->name('transfer.execute');
 
+Route::get('/transfer-report', [PagesController::class, 'showTransferReport'])->name('transfer.report');
+
+
 
 // test-db
 Route::get('/test-db', function () {

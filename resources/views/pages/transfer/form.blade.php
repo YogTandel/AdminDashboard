@@ -63,9 +63,9 @@
                             </button>
                         </div>
                         <!-- Success message -->
-<div class="alert alert-success d-none" id="successMessage">
-    <i class="fas fa-check-circle me-2"></i> Transfer processed successfully!
-</div>
+                        <div class="alert alert-success d-none" id="successMessage">
+                            <i class="fas fa-check-circle me-2"></i> Transfer processed successfully!
+                        </div>
                     </form>
 
                     </div>

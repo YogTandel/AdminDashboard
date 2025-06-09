@@ -406,5 +406,11 @@ public function processTransfer(Request $request)
     ]);
 }
 
+public function showTransferReport()
+{
+    return view('pages.transfer.report');
+}
+
+
 
 }
