@@ -390,12 +390,11 @@ public function processTransfer(Request $request)
         $request->validate([
             'agent_id' => 'required|exists:users,id',
             'amount' => 'required|numeric|min:0.01',
-            'type' => 'required|in:add,subtract',
             //'distributor_id' => 'required|exists:users,id',
         ]);
 
         $agent = User::findOrFail($request->agent_id);
-$distributorId = $agent->distributor_id;
+        $distributorId = $agent->distributor_id;
 
 
         if ($request->type === 'subtract') {
@@ -410,12 +409,11 @@ $distributorId = $agent->distributor_id;
 
         $agent->save();
 
-        DB::table('transfer_to_distributor')->insert([
+            DB::table('transfer_to_distributor')->insert([
             'agent_id' => $agent->id,
             'distributor_id' => $distributorId,
             'amount' => $request->amount,
             'remaining_balance' => $agent->balance,
-            'type' => $request->type,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
