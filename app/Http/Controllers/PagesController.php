@@ -391,12 +391,12 @@ public function processTransfer(Request $request)
             'agent_id' => 'required|exists:users,id',
             'amount' => 'required|numeric|min:0.01',
             'type' => 'required|in:add,subtract',
-            // 'distributor_id' => 'required|exists:users,id', ← remove this
+            //'distributor_id' => 'required|exists:users,id',
         ]);
 
-        $distributorId = auth()->id(); // Automatically set distributor
-
         $agent = User::findOrFail($request->agent_id);
+$distributorId = $agent->distributor_id;
+
 
         if ($request->type === 'subtract') {
             if ($agent->balance < $request->amount) {
