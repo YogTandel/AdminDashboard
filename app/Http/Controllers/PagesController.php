@@ -384,62 +384,62 @@ class PagesController extends Controller
         ]);
     }
 
-  public function processTransfer(Request $request)
-{
-    try {
-        $request->validate([
-            'agent_id' => 'required|exists:users,id',
-            'amount' => 'required|numeric|min:0.01',
-        ]);
+    public function processTransfer(Request $request)
+    {
+        try {
+            $request->validate([
+                'agent_id' => 'required|exists:users,id',
+                'amount' => 'required|numeric|min:0.01',
+            ]);
 
-        $agent = User::findOrFail($request->agent_id);
-        $distributorId = $agent->distributor_id;
-        //'distributor_id' => 'required|exists:users,id',
+            $agent = User::findOrFail($request->agent_id);
+            $distributorId = $agent->distributor_id;
+            //'distributor_id' => 'required|exists:users,id',
 
-        if (! $distributorId) {
-            return response()->json(['success' => false, 'message' => 'Distributor not assigned to this agent.']);
-        }
-
-        $distributor = User::findOrFail($distributorId);
-
-        // Subtract from agent, add to distributor
-        if ($request->type === 'subtract') {
-            if ($agent->balance < $request->amount) {
-                return response()->json(['success' => false, 'message' => 'Insufficient balance.']);
+            if (! $distributorId) {
+                return response()->json(['success' => false, 'message' => 'Distributor not assigned to this agent.']);
             }
 
-            $agent->balance -= $request->amount;
-            $distributor->balance += $request->amount;
+            $distributor = User::findOrFail($distributorId);
 
-        } else {
-            $agent->balance += $request->amount;
-            $distributor->balance -= $request->amount;
+            // Subtract from agent, add to distributor
+            if ($request->type === 'subtract') {
+                if ($agent->balance < $request->amount) {
+                    return response()->json(['success' => false, 'message' => 'Insufficient balance.']);
+                }
 
-            if ($distributor->balance < 0) {
-                return response()->json(['success' => false, 'message' => 'Distributor has insufficient balance.']);
+                $agent->balance -= $request->amount;
+                $distributor->balance += $request->amount;
+
+            } else {
+                $agent->balance += $request->amount;
+                $distributor->balance -= $request->amount;
+
+                if ($distributor->balance < 0) {
+                    return response()->json(['success' => false, 'message' => 'Distributor has insufficient balance.']);
+                }
             }
+
+            // Save both agent and distributor
+            $agent->save();
+            $distributor->save();
+
+            // Insert transfer record
+            DB::table('transfer_to_distributor')->insert([
+                'agent_id' => $agent->id,
+                'distributor_id' => $distributorId,
+                'amount' => $request->amount,
+                'remaining_balance' => $agent->balance,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            return response()->json(['success' => 'Transfer successful.']);
+
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
-
-        // Save both agent and distributor
-        $agent->save();
-        $distributor->save();
-
-        // Insert transfer record
-        DB::table('transfer_to_distributor')->insert([
-            'agent_id' => $agent->id,
-            'distributor_id' => $distributorId,
-            'amount' => $request->amount,
-            'remaining_balance' => $agent->balance,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        return response()->json(['success' => 'Transfer successful.']);
-
-    } catch (\Exception $e) {
-        return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
     }
-}
 
 
 
