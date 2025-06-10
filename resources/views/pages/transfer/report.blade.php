@@ -1,70 +1,38 @@
 @extends('layouts.layout')
 
-@section('page-name', 'report')
+@section('page-name', 'Transfer History')
 
 @section('content')
+<div class="container py-4">
+    <h3 class="mb-4 text-dark" style="font-weight: 600; font-size: 1.2rem;">Transfer History</h3>
 
-  <div class="container-fluid py-4">
-        <!-- Toast Container -->
-        <div class="position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 1080">
-            @if (session('success'))
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <span class="alert-text"><strong>{{ session('success') }}</strong></span>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-            @endif
-            @if (session('error'))
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <span class="alert-text"><strong>{{ session('error') }}</strong></span>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-            @endif
-        </div>
-        <!-- End Toast Container -->
-
-        <div class="row">
-            <div class="col-12">
-                <div class="card mb-4">
-                    <!-- First Row -->
-                    <div class="d-flex justify-content-between align-items-center flex-wrap mb-2">
-                        <h6 class="mb-0 ms-4 mt-3 text-bolder">Transfer Report</h6>
-                        <div class="d-flex align-items-center gap-2 flex-wrap mt-3 me-3">
-                           
-                        </div>
-                    </div>
-
-                    <div class="card-body px-0 pt-0 pb-2">
-                        <div class="table-responsive p-0">
-                            <table class="table align-items-center mb-0">
-                                <thead>
-                                    <tr>
-                                        <th class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                            No
-                                        </th>
-                                        <th class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                            Balance
-                                        </th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                            Agent
-                                        </th>
-                                      
-                                        <th class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                            endpoint
-                                        </th>
-                                    </tr>
-                                </thead>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <x-footer />
-        </div>
-    </div>
-
+    @if(count($transfers) > 0)
+        <table class="table table-bordered table-hover" style="font-size: 0.8rem; color: #212529;">
+            <thead>
+                <tr>
+                    <th scope="col" class="text-dark">Agent ID</th>
+                    <th scope="col" class="text-dark">Distributor ID</th>
+                    <th scope="col" class="text-dark">Amount</th>
+                    <th scope="col" class="text-dark">Remaining Balance</th>
+                    <th scope="col" class="text-dark">Created At</th>
+                    <th scope="col" class="text-dark">Updated At</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($transfers as $transfer)
+                    <tr>
+                        <td class="text-dark">{{ $transfer->agent_id }}</td>
+                        <td>{{ $transfer->distributor_id ?? 'N/A' }}</td>
+                        <td class="text-dark">{{ number_format($transfer->amount, 2) }}</td>
+                        <td>{{ $transfer->remaining_balance ?? 'N/A' }}</td>
+                        <td class="text-dark">{{ \Carbon\Carbon::parse($transfer->created_at)->format('d-M-Y h:i A') }}</td>
+                        <td class="text-dark">{{ \Carbon\Carbon::parse($transfer->updated_at)->format('d-M-Y h:i A') }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    @else
+        <div class="alert alert-info small">No transfer records found.</div>
+    @endif
+</div>
 @endsection

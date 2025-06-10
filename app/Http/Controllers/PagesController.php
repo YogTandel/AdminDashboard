@@ -429,7 +429,18 @@ public function processTransfer(Request $request)
 
 public function showTransferReport()
 {
-    return view('pages.transfer.report');
+      $transfers = DB::table('transfer_to_distributor')
+        ->select(
+            'agent_id',
+            'distributor_id',
+            'amount',
+            'remaining_balance',
+            'created_at',
+            'updated_at'
+        )
+        ->orderBy('created_at', 'desc')
+        ->get();
+    return view('pages.transfer.report', compact('transfers'));
 }
 
 
