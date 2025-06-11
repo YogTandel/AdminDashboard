@@ -170,8 +170,8 @@
 
                <!-- Setting -->
            <li class="nav-item">
-                <a class="nav-link {{ Request::is('setting-page') ? 'active' : '' }}"
-                    href="{{ route('setting-page') }}">
+                <a class="nav-link {{ Request::is('setting') ? 'active' : '' }}"
+                    href="{{ route('setting') }}">
                     <div
                         class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="fas fa-file-invoice-dollar text-dark"></i>

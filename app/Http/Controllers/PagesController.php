@@ -261,64 +261,64 @@ class PagesController extends Controller
         return redirect()->route('setting');
     }
 
-    // public function setting()
-    // {
-    //     $selectedAgent = null;
+    public function setting()
+    {
+        $selectedAgent = null;
 
-    //     // Check session first
-    //     if (session()->has('selected_agent')) {
-    //         $selectedAgent = session('selected_agent');
-    //     }
-    //     // Fallback to cookie
-    //     elseif (isset($_COOKIE['selectedAgent'])) {
-    //         $selectedAgent = json_decode($_COOKIE['selectedAgent'], true);
-    //         // Verify the agent exists
-    //         $agentExists = User::where('id', $selectedAgent['id'] ?? null)
-    //             ->where('role', 'agent')
-    //             ->exists();
-    //         if (! $agentExists) {
-    //             $selectedAgent = null;
-    //         }
-    //     }
+        // Check session first
+        if (session()->has('selected_agent')) {
+            $selectedAgent = session('selected_agent');
+        }
+        // Fallback to cookie
+        elseif (isset($_COOKIE['selectedAgent'])) {
+            $selectedAgent = json_decode($_COOKIE['selectedAgent'], true);
+            // Verify the agent exists
+            $agentExists = User::where('id', $selectedAgent['id'] ?? null)
+                ->where('role', 'agent')
+                ->exists();
+            if (! $agentExists) {
+                $selectedAgent = null;
+            }
+        }
 
-    //     // Get settings for this agent
-    //     $settings = Setting::where('agent_id', $selectedAgent['id'] ?? null)->first();
+        // Get settings for this agent
+        $settings = Setting::where('agent_id', $selectedAgent['id'] ?? null)->first();
 
-    //     // If no settings exist, create default ones
-    //     if (! $settings && $selectedAgent) {
-    //         $settings = Setting::create([
-    //             'agent_id'               => $selectedAgent['id'],
-    //             'agent_commission'       => 5.0, // default values
-    //             'distributor_commission' => 0.1,
-    //         ]);
-    //     }
+        // If no settings exist, create default ones
+        if (! $settings && $selectedAgent) {
+            $settings = Setting::create([
+                'agent_id'               => $selectedAgent['id'],
+                'agent_commission'       => 5.0, // default values
+                'distributor_commission' => 0.1,
+            ]);
+        }
 
-    //     return view('pages.setting', [
-    //         'selectedAgent' => $selectedAgent,
-    //         'settings'      => $settings,
-    //     ]);
-    // }
+        return view('pages.setting', [
+            'selectedAgent' => $selectedAgent,
+            'settings'      => $settings,
+        ]);
+    }
 
-    // public function updateCommissions(Request $request)
-    // {
-    //     $validated = $request->validate([
-    //         'agent_commission'       => 'required|numeric|min:0|max:100',
-    //         'distributor_commission' => 'required|numeric|min:0|max:100',
-    //         'agent_id'               => 'required|exists:users,_id',
-    //     ]);
+    public function updateCommissions(Request $request)
+    {
+        $validated = $request->validate([
+            'agent_commission'       => 'required|numeric|min:0|max:100',
+            'distributor_commission' => 'required|numeric|min:0|max:100',
+            'agent_id'               => 'required|exists:users,_id',
+        ]);
 
-    //     // Update or create settings
-    //     Setting::updateOrCreate(
-    //         ['agent_id' => $validated['agent_id']],
-    //         [
-    //             'agentComission'       => $validated['agent_commission'],
-    //             'distributorComission' => $validated['distributor_commission'],
-    //             // Add other fields as needed
-    //         ]
-    //     );
+        // Update or create settings
+        Setting::updateOrCreate(
+            ['agent_id' => $validated['agent_id']],
+            [
+                'agentComission'       => $validated['agent_commission'],
+                'distributorComission' => $validated['distributor_commission'],
+                // Add other fields as needed
+            ]
+        );
 
-    //     return back()->with('success', 'Commissions updated successfully');
-    // }
+        return back()->with('success', 'Commissions updated successfully');
+    }
 
     public function deselect(Request $request)
     {
@@ -459,22 +459,22 @@ class PagesController extends Controller
         return view('pages.transfer.report', compact('transfers'));
     }
 
-    public function setting()
-{
-    $selectedAgent = session('selected_agent');
+//     public function setting()
+// {
+//     $selectedAgent = session('selected_agent');
 
-    if ($selectedAgent && isset($selectedAgent['id'])) {
-        $selectedAgent = \App\Models\User::find($selectedAgent['id']);
-    }
+//     if ($selectedAgent && isset($selectedAgent['id'])) {
+//         $selectedAgent = \App\Models\User::find($selectedAgent['id']);
+//     }
 
-    $settings = (object)[
-        'agentComission' => 5,
-        'distributorComission' => 0.1,
-        'mode' => session('settings_mode', '')  // load mode from session
-    ];
+//     $settings = (object)[
+//         'agentComission' => 5,
+//         'distributorComission' => 0.1,
+//         'mode' => session('settings_mode', '')  // load mode from session
+//     ];
 
-    return view('pages.setting', compact('selectedAgent', 'settings'));
-}
+//     return view('pages.setting', compact('selectedAgent', 'settings'));
+//}
 
 
 
