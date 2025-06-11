@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="container-fluid py-4">
-        @if ($selectedAgent)
+        <!-- @if ($selectedAgent)
             <div class="alert alert-custom alert-dismissible fade show" role="alert">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
@@ -19,7 +19,7 @@
             <div class="alert alert-warning alert-dismissible fade show" role="alert">
                 No agent selected. Please select an agent from the agent list.
             </div>
-        @endif
+        @endif -->
         <div class="row">
             <!-- Commissions Section -->
             <div class="col-lg-6 mb-4">
@@ -28,7 +28,7 @@
                         <h6 class="mb-0">Commissions</h6>
                     </div>
                     <div class="card-body pt-3">
-                        <form action="{{ route('settings.updateCommissions') }}" method="POST">
+                        <form action="{{ route('setting-page') }}" method="POST">
                             @csrf
                             <input type="hidden" name="agent_id" value="{{ $selectedAgent['id'] ?? '' }}">
                             <div class="row mb-3">

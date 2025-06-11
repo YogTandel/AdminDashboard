@@ -53,6 +53,8 @@ Route::post('/transfer', [PagesController::class, 'processTransfer'])->name('tra
 
 Route::get('/transfer-report', [PagesController::class, 'showTransferReport'])->name('transfer.report');
 
+Route::get('/setting-page', [PagesController::class, 'setting'])->name('setting-page');
+
 
 
 // test-db
