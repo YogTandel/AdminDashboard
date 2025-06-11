@@ -380,7 +380,7 @@ class PagesController extends Controller
 
         return view('pages.transfer.form', [
             'selectedAgent' => $agent,
-            'balance'       => $agent->balance,
+            'endpoint'       => $agent->endpoint,
         ]);
     }
 
@@ -389,9 +389,9 @@ class PagesController extends Controller
         try {
             $request->validate([
                 'agent_id' => 'required|exists:users,id',
-                'amount' => 'required|numeric|min:0.01',
+                'endpoint' => 'required|numeric|min:0.01',
             ]);
-
+                                                                                                                                             
             $agent = User::findOrFail($request->agent_id);
             $distributorId = $agent->distributor_id;
             //'distributor_id' => 'required|exists:users,id',
@@ -404,19 +404,19 @@ class PagesController extends Controller
 
             // Subtract from agent, add to distributor
             if ($request->type === 'subtract') {
-                if ($agent->balance < $request->amount) {
+                if ($agent->endpoint < $request->amount) {
                     return response()->json(['success' => false, 'message' => 'Insufficient balance.']);
                 }
 
-                $agent->balance -= $request->amount;
-                $distributor->balance += $request->amount;
+                $agent->endpoint -= $request->amount;
+                $distributor->endpoint += $request->amount;
 
             } else {
-                $agent->balance += $request->amount;
-                $distributor->balance -= $request->amount;
+                $agent->endpoint += $request->amount;
+                $distributor->endpoint -= $request->amount;
 
-                if ($distributor->balance < 0) {
-                    return response()->json(['success' => false, 'message' => 'Distributor has insufficient balance.']);
+                if ($distributor->endpoint < 0) {
+                    return response()->json(['success' => false, 'message' => 'Distributor has insufficient endpoint.']);
                 }
             }
 
@@ -429,7 +429,7 @@ class PagesController extends Controller
                 'agent_id' => $agent->id,
                 'distributor_id' => $distributorId,
                 'amount' => $request->amount,
-                'remaining_balance' => $agent->balance,
+                'remaining_balance' => $agent->endpoint,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);

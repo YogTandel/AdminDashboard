@@ -35,13 +35,13 @@
                         <!-- Agent Balance -->
                         <div class="mb-4">
                             <label class="form-label">Agent Balance</label>
-                            <input type="text" class="form-control" value="{{ number_format($selectedAgent['balance'], 2) }}" readonly>
+                            <input type="text" class="form-control" value="{{ number_format($selectedAgent['endpoint'], 2) }}" readonly>
                         </div>
 
                         <!-- Amount to Transfer -->
                         <div class="mb-4">
                             <label for="transferAmount" class="form-label">Amount to Transfer</label>
-                            <input type="number" class="form-control" name="amount" id="transferAmount" min="0.01" step="0.01" max="{{ $selectedAgent['balance'] }}" required>
+                            <input type="number" class="form-control" name="amount" id="transferAmount" min="0.01" step="0.01" max="{{ $selectedAgent['endpoint'] }}" required>
                         </div>
 
                         <!-- Error Message -->
@@ -80,14 +80,13 @@
 
 <script>
    document.addEventListener('DOMContentLoaded', function () {
-    const agentBalance = parseFloat({{ $selectedAgent['balance'] }});
+    const agentBalance = parseFloat({{ $selectedAgent['endpoint'] }}); // changed from balance to endpoint
     const transferAmount = document.getElementById('transferAmount');
     const remainingBalance = document.getElementById('remainingBalance');
     const amountError = document.getElementById('amountError');
     const submitBtn = document.getElementById('submitBtn');
     const successMessage = document.getElementById('successMessage');
 
-    //  If agent balance is 0, disable submit button and show alert
     if (agentBalance <= 0) {
         submitBtn.disabled = true;
         amountError.style.display = 'block';
@@ -154,7 +153,7 @@
         });
     });
 });
-
 </script>
+
 
 @endsection
