@@ -311,61 +311,60 @@
             }
 
             radioButtons.forEach(radio => {
-                radio.addEventListener('click', function(e) {
-                    // If this radio is already checked, uncheck it
-                    if (this.checked && storedAgent && this.getAttribute('data-agent-id') ===
-                        storedAgent.id) {
-                        this.checked = false;
-                        sessionStorage.removeItem('selectedAgent');
+            radio.addEventListener('click', function(e) {
+        const clickedAgentId = this.getAttribute('data-agent-id');
 
-                        // Submit form to clear server-side session
-                        const form = document.createElement('form');
-                        form.method = 'POST';
-                        form.action = "{{ route('agent.deselect') }}";
+        if (this.checked && storedAgent && clickedAgentId === storedAgent.id) {
+            // Unselect logic
+            this.checked = false;
+            sessionStorage.removeItem('selectedAgent');
 
-                        const csrf = document.createElement('input');
-                        csrf.type = 'hidden';
-                        csrf.name = '_token';
-                        csrf.value = "{{ csrf_token() }}";
-                        form.appendChild(csrf);
+            // Optional: clear sidebar content
+            document.getElementById('sidebar-setting-content').innerHTML = '';
 
-                        document.body.appendChild(form);
-                        form.submit();
-                    } else {
-                        // Proceed with normal selection
-                        const agentData = {
-                            id: this.getAttribute('data-agent-id'),
-                            name: this.getAttribute('data-agent-name'),
-                            balance: this.getAttribute('data-agent-balance'),
-                            distributor: this.getAttribute('data-agent-distributor'),
-                            endpoint: this.getAttribute('data-agent-endpoint')
-                        };
-
-                        // Store in sessionStorage
-                        sessionStorage.setItem('selectedAgent', JSON.stringify(agentData));
-
-                        // Submit form to set server-side session
-                        const form = document.createElement('form');
-                        form.method = 'POST';
-                        form.action = "{{ route('agent.select') }}";
-
-                        const csrf = document.createElement('input');
-                        csrf.type = 'hidden';
-                        csrf.name = '_token';
-                        csrf.value = "{{ csrf_token() }}";
-                        form.appendChild(csrf);
-
-                        const agentInput = document.createElement('input');
-                        agentInput.type = 'hidden';
-                        agentInput.name = 'agent_id';
-                        agentInput.value = agentData.id;
-                        form.appendChild(agentInput);
-
-                        document.body.appendChild(form);
-                        form.submit();
-                    }
-                });
+            // Optional: inform server via AJAX if needed
+            fetch("{{ route('agent.deselect') }}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': "{{ csrf_token() }}"
+                },
+                body: JSON.stringify({})
             });
+
+        } else {
+            // Save selected agent data in sessionStorage
+            const agentData = {
+                id: clickedAgentId,
+                name: this.getAttribute('data-agent-name'),
+                balance: this.getAttribute('data-agent-balance'),
+                distributor: this.getAttribute('data-agent-distributor'),
+                endpoint: this.getAttribute('data-agent-endpoint')
+            };
+            sessionStorage.setItem('selectedAgent', JSON.stringify(agentData));
+
+            // Load setting content via AJAX into sidebar
+            fetch('/setting/sidebar/' + clickedAgentId)
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('sidebar-setting-content').innerHTML = html;
+                })
+                .catch(() => {
+                    document.getElementById('sidebar-setting-content').innerHTML = '<p>Error loading setting.</p>';
+                });
+
+            // Optional: Send data to server via AJAX
+            fetch("{{ route('agent.select') }}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': "{{ csrf_token() }}"
+                },
+                body: JSON.stringify({ agent_id: clickedAgentId })
+            });
+        }
+    });
+});
         });
     </script>
 
