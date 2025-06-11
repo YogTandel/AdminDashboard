@@ -204,13 +204,11 @@
                                             <td class="text-center">
                                                 <div class="d-flex justify-content-center gap-2 align-items-center">
                                                     <!-- Radio Button -->
-                                                    <input type="radio" name="agent_select"
-                                                        value="{{ $agent->id }}" title="Select Agent"
-                                                        class="agent-radio" data-agent-id="{{ $agent->id }}"
-                                                        data-agent-name="{{ $agent->player }}"
-                                                        data-agent-balance="{{ $agent->balance }}"
-                                                        data-agent-distributor="{{ $agent->distributor }}"
-                                                        data-agent-endpoint="{{ $agent->endpoint }}">
+                                                    <div class="form-check form-switch">
+                                                        <input class="form-check-input" type="radio" name="mode" id="option2" value="option2"
+                                                            {{ old('mode', $settings->mode ?? '') == 'option2' ? 'checked' : '' }}>
+                                                        <label class="form-check-label" for="option2"></label>
+                                                    </div>
 
                                                     <!-- Edit Icon -->
                                                     <a href="javascript:;"

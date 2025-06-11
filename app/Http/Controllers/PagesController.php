@@ -460,23 +460,22 @@ class PagesController extends Controller
     }
 
     public function setting()
-    {
-        // Get selected agent from session
-        $selectedAgent = session('selected_agent');
+{
+    $selectedAgent = session('selected_agent');
 
-        // Optional: Fetch the latest agent data from the database
-        if ($selectedAgent && isset($selectedAgent['id'])) {
-            $selectedAgent = \App\Models\User::find($selectedAgent['id']);
-        }
-
-        // Optional: Get settings from DB or use defaults
-        $settings = (object)[
-            'agentComission' => 5,
-            'distributorComission' => 0.1,
-        ];
-
-        return view('pages.setting', compact('selectedAgent', 'settings'));
+    if ($selectedAgent && isset($selectedAgent['id'])) {
+        $selectedAgent = \App\Models\User::find($selectedAgent['id']);
     }
+
+    $settings = (object)[
+        'agentComission' => 5,
+        'distributorComission' => 0.1,
+        'mode' => session('settings_mode', '')  // load mode from session
+    ];
+
+    return view('pages.setting', compact('selectedAgent', 'settings'));
+}
+
 
 
 
