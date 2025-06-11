@@ -389,7 +389,7 @@ class PagesController extends Controller
         try {
             $request->validate([
                 'agent_id' => 'required|exists:users,id',
-                'endpoint' => 'required|numeric|min:0.01',
+               'amount' => 'required|numeric|min:0.01',
             ]);
                                                                                                                                              
             $agent = User::findOrFail($request->agent_id);
