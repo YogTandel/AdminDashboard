@@ -204,11 +204,20 @@
                                             <td class="text-center">
                                                 <div class="d-flex justify-content-center gap-2 align-items-center">
                                                     <!-- Radio Button -->
-                                                    <div class="form-check form-switch">
-                                                        <input class="form-check-input" type="radio" name="mode" id="option2" value="option2"
-                                                            {{ old('mode', $settings->mode ?? '') == 'option2' ? 'checked' : '' }}>
-                                                        <label class="form-check-label" for="option2"></label>
-                                                    </div>
+                                                    
+                                                        <div class="form-check form-switch">
+                                                            <input class="form-check-input agent-radio" 
+                                                                type="radio" 
+                                                                name="agent_select" 
+                                                                id="agentSwitch{{ $agent->id }}" 
+                                                                value="{{ $agent->id }}"
+                                                                data-agent-id="{{ $agent->id }}"
+                                                                data-agent-name="{{ $agent->player }}"
+                                                                data-agent-balance="{{ $agent->balance }}"
+                                                                data-agent-distributor="{{ $agent->distributor }}"
+                                                                data-agent-endpoint="{{ $agent->endpoint }}">
+                                                        </div>
+
 
                                                     <!-- Edit Icon -->
                                                     <a href="javascript:;"

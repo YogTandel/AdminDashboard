@@ -135,6 +135,31 @@
                 </a>
             </li>
 
+            <!-- Setting -->
+            {{-- <li class="nav-item">
+                <a class="nav-link {{ Request::is('setting') ? 'active' : '' }}" href="{{ route('setting') }}">
+                    <div
+                        class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+                        <svg width="12px" height="12px" viewBox="0 0 40 40" version="1.1"
+                            xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                            <title>settings</title>
+                            <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                <g transform="translate(-2020.000000, -442.000000)" fill="#FFFFFF"
+                                    fill-rule="nonzero">
+                                    <g transform="translate(1716.000000, 291.000000)">
+                                        <g transform="translate(304.000000, 151.000000)">
+                                            <path class="color-background"
+                                                d="M38.1,20.6 L35.2,20.1 C34.9,19 34.5,18 33.9,17.1 L35.5,14.6 C35.8,14.2 35.8,13.6 35.4,13.2 L33.9,11.7 C33.5,11.3 32.9,11.3 32.5,11.6 L30,13.2 C29.1,12.6 28.1,12.2 27,11.9 L26.5,9 C26.4,8.5 26,8.1 25.5,8.1 L23.3,8.1 C22.8,8.1 22.4,8.5 22.3,9 L21.8,11.9 C20.7,12.2 19.7,12.6 18.8,13.2 L16.3,11.6 C15.9,11.3 15.3,11.3 14.9,11.7 L13.4,13.2 C13,13.6 13,14.2 13.3,14.6 L14.9,17.1 C14.3,18 13.9,19 13.6,20.1 L10.7,20.6 C10.2,20.7 9.8,21.1 9.8,21.6 L9.8,23.8 C9.8,24.3 10.2,24.7 10.7,24.8 L13.6,25.3 C13.9,26.4 14.3,27.4 14.9,28.3 L13.3,30.8 C13,31.2 13,31.8 13.4,32.2 L14.9,33.7 C15.3,34.1 15.9,34.1 16.3,33.8 L18.8,32.2 C19.7,32.8 20.7,33.2 21.8,33.5 L22.3,36.4 C22.4,36.9 22.8,37.3 23.3,37.3 L25.5,37.3 C26,37.3 26.4,36.9 26.5,36.4 L27,33.5 C28.1,33.2 29.1,32.8 30,32.2 L32.5,33.8 C32.9,34.1 33.5,34.1 33.9,33.7 L35.4,32.2 C35.8,31.8 35.8,31.2 35.5,30.8 L33.9,28.3 C34.5,27.4 34.9,26.4 35.2,25.3 L38.1,24.8 C38.6,24.7 39,24.3 39,23.8 L39,21.6 C39,21.1 38.6,20.7 38.1,20.6 Z M24.4,28.7 C21.4,28.7 18.9,26.2 18.9,23.2 C18.9,20.2 21.4,17.7 24.4,17.7 C27.4,17.7 29.9,20.2 29.9,23.2 C29.9,26.2 27.4,28.7 24.4,28.7 Z" />
+                                        </g>
+                                    </g>
+                                </g>
+                            </g>
+                        </svg>
+                    </div>
+                    <span class="nav-link-text ms-1">Setting</span>
+                </a>
+            </li> --}}
+
             <!-- Live Game -->
             <li class="nav-item">
                 <a class="nav-link {{ Request::is('livegame') ? 'active' : '' }}" href="{{ route('livegame') }}">
@@ -148,7 +173,7 @@
 
             {{-- Transfer Menu --}}
             <li class="nav-item">
-                <a class="nav-link {{ Request::is('transfer.page') ? 'active' : '' }}"
+                <a class="nav-link {{ Request::is('transfer.transfer.page') ? 'active' : '' }}"
                     href="{{ route('transfer.page') }}">
                     <div
                         class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
@@ -165,18 +190,6 @@
                         <i class="fas fa-file-alt text-dark"></i>
                     </div>
                     <span class="nav-link-text ms-1">Transfer Report</span>
-                </a>
-            </li>
-
-               <!-- Setting -->
-           <li class="nav-item">
-                <a class="nav-link {{ Request::is('setting') ? 'active' : '' }}"
-                    href="{{ route('setting') }}">
-                    <div
-                        class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                        <i class="fas fa-file-invoice-dollar text-dark"></i>
-                    </div>
-                    <span class="nav-link-text ms-1">setting</span>
                 </a>
             </li>
 
