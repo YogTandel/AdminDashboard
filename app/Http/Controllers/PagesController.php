@@ -459,24 +459,5 @@ class PagesController extends Controller
         return view('pages.transfer.report', compact('transfers'));
     }
 
-//     public function setting()
-// {
-//     $selectedAgent = session('selected_agent');
-
-//     if ($selectedAgent && isset($selectedAgent['id'])) {
-//         $selectedAgent = \App\Models\User::find($selectedAgent['id']);
-//     }
-
-//     $settings = (object)[
-//         'agentComission' => 5,
-//         'distributorComission' => 0.1,
-//         'mode' => session('settings_mode', '')  // load mode from session
-//     ];
-
-//     return view('pages.setting', compact('selectedAgent', 'settings'));
-//}
-
-
-
 
 }
