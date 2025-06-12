@@ -295,78 +295,89 @@
             }
         });
     </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Get the stored selected agent from sessionStorage
-            const storedAgent = JSON.parse(sessionStorage.getItem('selectedAgent'));
-            const radioButtons = document.querySelectorAll('.agent-radio');
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const storedAgent = JSON.parse(sessionStorage.getItem('selectedAgent'));
+    const radioButtons = document.querySelectorAll('.agent-radio');
 
-            // Set initial checked state based on storage
-            if (storedAgent) {
-                radioButtons.forEach(radio => {
-                    if (radio.getAttribute('data-agent-id') === storedAgent.id) {
-                        radio.checked = true;
-                    }
+    if (storedAgent) {
+        radioButtons.forEach(radio => {
+            if (radio.getAttribute('data-agent-id') === storedAgent.id) {
+                radio.checked = true;
+            }
+        });
+    }
+
+    radioButtons.forEach(radio => {
+        radio.addEventListener('click', function () {
+            const clickedAgentId = this.getAttribute('data-agent-id');
+
+            if (this.checked && storedAgent && clickedAgentId === storedAgent.id) {
+                this.checked = false;
+                sessionStorage.removeItem('selectedAgent');
+                document.getElementById('sidebar-setting-content').innerHTML = '';
+
+                fetch("{{ route('agent.deselect') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': "{{ csrf_token() }}"
+                    },
+                    body: JSON.stringify({})
+                });
+
+                // Clear is_nagative_agent
+                fetch("/update-negative-agent", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': "{{ csrf_token() }}"
+                    },
+                    body: JSON.stringify({ agent_id: null })
+                });
+
+            } else {
+                const agentData = {
+                    id: clickedAgentId,
+                    name: this.getAttribute('data-agent-name'),
+                    balance: this.getAttribute('data-agent-balance'),
+                    distributor: this.getAttribute('data-agent-distributor'),
+                    endpoint: this.getAttribute('data-agent-endpoint')
+                };
+                sessionStorage.setItem('selectedAgent', JSON.stringify(agentData));
+
+                fetch('/setting/sidebar/' + clickedAgentId)
+                    .then(response => response.text())
+                    .then(html => {
+                        document.getElementById('sidebar-setting-content').innerHTML = html;
+                    })
+                    .catch(() => {
+                        document.getElementById('sidebar-setting-content').innerHTML = '<p>Error loading setting.</p>';
+                    });
+
+                fetch("{{ route('agent.select') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': "{{ csrf_token() }}"
+                    },
+                    body: JSON.stringify({ agent_id: clickedAgentId })
+                });
+
+                // Set is_nagative_agent
+                fetch("/update-negative-agent", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': "{{ csrf_token() }}"
+                    },
+                    body: JSON.stringify({ agent_id: clickedAgentId })
                 });
             }
-
-            radioButtons.forEach(radio => {
-            radio.addEventListener('click', function(e) {
-        const clickedAgentId = this.getAttribute('data-agent-id');
-
-        if (this.checked && storedAgent && clickedAgentId === storedAgent.id) {
-            // Unselect logic
-            this.checked = false;
-            sessionStorage.removeItem('selectedAgent');
-
-            // Optional: clear sidebar content
-            document.getElementById('sidebar-setting-content').innerHTML = '';
-
-            // Optional: inform server via AJAX if needed
-            fetch("{{ route('agent.deselect') }}", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': "{{ csrf_token() }}"
-                },
-                body: JSON.stringify({})
-            });
-
-        } else {
-            // Save selected agent data in sessionStorage
-            const agentData = {
-                id: clickedAgentId,
-                name: this.getAttribute('data-agent-name'),
-                balance: this.getAttribute('data-agent-balance'),
-                distributor: this.getAttribute('data-agent-distributor'),
-                endpoint: this.getAttribute('data-agent-endpoint')
-            };
-            sessionStorage.setItem('selectedAgent', JSON.stringify(agentData));
-
-            // Load setting content via AJAX into sidebar
-            fetch('/setting/sidebar/' + clickedAgentId)
-                .then(response => response.text())
-                .then(html => {
-                    document.getElementById('sidebar-setting-content').innerHTML = html;
-                })
-                .catch(() => {
-                    document.getElementById('sidebar-setting-content').innerHTML = '<p>Error loading setting.</p>';
-                });
-
-            // Optional: Send data to server via AJAX
-            fetch("{{ route('agent.select') }}", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': "{{ csrf_token() }}"
-                },
-                body: JSON.stringify({ agent_id: clickedAgentId })
-            });
-        }
+        });
     });
 });
-        });
-    </script>
+</script>
 
     <!-- Transfer -->
     <script>

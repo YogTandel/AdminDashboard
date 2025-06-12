@@ -319,6 +319,20 @@ class PagesController extends Controller
         return back()->with('success', 'Commissions updated successfully');
     }
 
+ public function updateNegativeAgent(Request $request)
+{
+    $agentId = $request->input('agent_id');
+
+    DB::table('settings')->update([
+        'is_nagative_agent' => $agentId ?? '',
+        // Don't include updated_at, so it won't be changed
+    ]);
+
+    return response()->json(['status' => 'success']);
+}
+
+
+
     public function deselect(Request $request)
     {
         $request->session()->forget('selected_agent');
