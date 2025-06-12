@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 use App\Models\Setting;
 use App\Models\Transaction;
 use App\Models\User;
-use App\Models\User as Agent;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -269,7 +269,7 @@ class PagesController extends Controller
         if (session()->has('selected_agent')) {
             $selectedAgent = session('selected_agent');
         }
-        // Fallback to cookie
+        // Fallback to sessionStorage (via JavaScript)
         elseif (isset($_COOKIE['selectedAgent'])) {
             $selectedAgent = json_decode($_COOKIE['selectedAgent'], true);
             // Verify the agent exists
@@ -284,8 +284,8 @@ class PagesController extends Controller
         // Get settings for this agent
         $settings = Setting::where('agent_id', $selectedAgent['id'] ?? null)->first();
 
-        // If no settings exist, create default ones
-       if ($settings) {
+        // If settings exist, update them (don't create new ones)
+        if ($settings) {
             $settings->update([
                 'agent_commission'       => 5.0,
                 'distributor_commission' => 0.1,
@@ -298,55 +298,50 @@ class PagesController extends Controller
         ]);
     }
 
-  public function updateCommissions(Request $request)
-{
-    $validated = $request->validate([
-        'agent_commission'       => 'required|numeric|min:0|max:100',
-        'distributor_commission' => 'required|numeric|min:0|max:100',
-        'agent_id'               => 'nullable|exists:users,id', // allow null
-    ]);
+    public function updateCommissions(Request $request)
+    {
+        $validated = $request->validate([
+            'agent_commission'       => 'required|numeric|min:0|max:100',
+            'distributor_commission' => 'required|numeric|min:0|max:100',
+            'agent_id'               => 'nullable|exists:users,id', // allow null
+        ]);
 
-    // Convert '' to null explicitly
-    $agentId = $validated['agent_id'] ?: null;
+        // Convert '' to null explicitly
+        $agentId = $validated['agent_id'] ?: null;
 
-    Setting::updateOrCreate(
-        ['agent_id' => $agentId],
-        [
-            'agent_commission'       => $validated['agent_commission'],
-            'distributor_commission' => $validated['distributor_commission'],
-        ]
-    );
+        Setting::updateOrCreate(
+            ['agent_id' => $agentId],
+            [
+                'agent_commission'       => $validated['agent_commission'],
+                'distributor_commission' => $validated['distributor_commission'],
+            ]
+        );
 
-    return back()->with('success', 'Commissions updated successfully');
-}
+        return back()->with('success', 'Commissions updated successfully');
+    }
 
-public function updateNegativeAgent(Request $request)
-{
-    $agentId = $request->input('agent_id');
+    public function updateNegativeAgent(Request $request)
+    {
+        $agentId = $request->input('agent_id');
 
-    DB::table('settings')->update([
-        'is_nagative_agent' => $agentId ?? '',
-        // Don't include updated_at, so it won't be changed
-    ]);
+        DB::table('settings')->update([
+            'is_nagative_agent' => $agentId ?? '',
+            // Don't include updated_at, so it won't be changed
+        ]);
 
-    return response()->json(['status' => 'success']);
-}
-
-
-
-
-
+        return response()->json(['status' => 'success']);
+    }
 
     public function deselect(Request $request)
     {
-       
-    // Sessionમાંથી એજન્ટ કાઢી નાંખો
-    session()->forget('selected_agent');
 
-    // Setting table માંથી એજન્ટ ID null કરો
-    Setting::whereNotNull('agent_id')->update(['agent_id' => null]);
+        // Sessionમાંથી એજન્ટ કાઢી નાંખો
+        session()->forget('selected_agent');
 
-    return response()->json(['status' => 'Agent deselected']);
+        // Setting table માંથી એજન્ટ ID null કરો
+        Setting::whereNotNull('agent_id')->update(['agent_id' => null]);
+
+        return response()->json(['status' => 'Agent deselected']);
     }
 
     public function liveGame()
@@ -392,7 +387,7 @@ public function updateNegativeAgent(Request $request)
     public function transferForm()
     {
         // Get selected agent from session
-         $selectedAgent = session('selected_agent');
+        $selectedAgent = session('selected_agent');
 
         if (! $selectedAgent) {
             return redirect()->route('agentlist.show')->with('error', 'Please select an agent first');
@@ -403,7 +398,7 @@ public function updateNegativeAgent(Request $request)
 
         return view('pages.transfer.form', [
             'selectedAgent' => $agent,
-            'endpoint'       => $agent->endpoint,
+            'endpoint'      => $agent->endpoint,
         ]);
     }
 
@@ -412,10 +407,10 @@ public function updateNegativeAgent(Request $request)
         try {
             $request->validate([
                 'agent_id' => 'required|exists:users,id',
-               'amount' => 'required|numeric|min:0.01',
+                'amount'   => 'required|numeric|min:0.01',
             ]);
-                                                                                                                                             
-            $agent = User::findOrFail($request->agent_id);
+
+            $agent         = User::findOrFail($request->agent_id);
             $distributorId = $agent->distributor_id;
             //'distributor_id' => 'required|exists:users,id',
 
@@ -449,12 +444,12 @@ public function updateNegativeAgent(Request $request)
 
             // Insert transfer record
             DB::table('transfer_to_distributor')->insert([
-                'agent_id' => $agent->id,
-                'distributor_id' => $distributorId,
-                'amount' => $request->amount,
+                'agent_id'          => $agent->id,
+                'distributor_id'    => $distributorId,
+                'amount'            => $request->amount,
                 'remaining_balance' => $agent->endpoint,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at'        => now(),
+                'updated_at'        => now(),
             ]);
 
             return response()->json(['success' => 'Transfer successful.']);
@@ -463,8 +458,6 @@ public function updateNegativeAgent(Request $request)
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
-
-
 
     public function showTransferReport()
     {
@@ -482,5 +475,45 @@ public function updateNegativeAgent(Request $request)
         return view('pages.transfer.report', compact('transfers'));
     }
 
+    public function update(Request $request)
+    {
+        $agentId   = $request->input('agent_id');
+        $agentData = $request->input('agent_data');
+
+        // Update session/cookie
+        if ($agentId) {
+            session(['selected_agent' => $agentData]);
+            Cookie::queue('selectedAgent', json_encode($agentData), 60 * 24 * 30);
+        } else {
+            session()->forget('selected_agent');
+            Cookie::queue(Cookie::forget('selectedAgent'));
+        }
+
+        // Update settings in database
+        if ($agentId) {
+            Setting::updateOrCreate(
+                ['agent_id' => $agentId],
+                [
+                    'agent_commission'       => 5.0,
+                    'distributor_commission' => 0.1,
+                ]
+            );
+        } else {
+            // When agent is disabled (null)
+            // Either delete the settings or set agent_id to null
+            // Option 1: Delete
+            Setting::where('agent_id', session('agent_id'))->delete();
+
+            // Option 2: Set to null (if your DB allows)
+            // Setting::where('agent_id', session('previous_agent_id'))->update(['agent_id' => null]);
+        }
+
+        // Store previous agent ID for next time
+        if ($agentId) {
+            session(['previous_agent_id' => $agentId]);
+        }
+
+        return response()->json(['success' => true]);
+    }
 
 }

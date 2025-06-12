@@ -22,6 +22,7 @@ Route::put('/agentlist/{id}/update', [AuthController::class, 'editAgent'])->name
 Route::delete('/agentlist/{id}/delete', [AuthController::class, 'deleteAgent'])->name('agent.delete');
 Route::post('/select-agent', [PagesController::class, 'selectAgent'])->name('agent.select');
 Route::post('/agent/deselect', [PagesController::class, 'deselect'])->name('agent.deselect');
+Route::post('/agent/update', [PagesController::class, 'update'])->name('agent.update');
 
 //distributor
 Route::get('/distributor', [PagesController::class, 'distributor'])->name('distributor.show');
@@ -45,8 +46,6 @@ Route::get('/setting', [PagesController::class, 'setting'])->name('setting');
 Route::post('/settings/update-commissions', [PagesController::class, 'updateCommissions'])->name('settings.updateCommissions');
 Route::post('/update-negative-agent', [PagesController::class, 'updateNegativeAgent']);
 
-
-
 // live game
 Route::get('/livegame', [PagesController::class, 'livegame'])->name('livegame');
 
@@ -55,9 +54,6 @@ Route::get('/transfer', [PagesController::class, 'transferForm'])->name('transfe
 Route::post('/transfer', [PagesController::class, 'processTransfer'])->name('transfer.execute');
 
 Route::get('/transfer-report', [PagesController::class, 'showTransferReport'])->name('transfer.report');
-
-
-
 
 // test-db
 Route::get('/test-db', function () {
