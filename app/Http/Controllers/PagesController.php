@@ -298,26 +298,25 @@ class PagesController extends Controller
         ]);
     }
 
-    public function updateCommissions(Request $request)
-    {
-        $validated = $request->validate([
-            'agent_commission'       => 'required|numeric|min:0|max:100',
-            'distributor_commission' => 'required|numeric|min:0|max:100',
-            'agent_id'               => 'required|exists:users,_id',
-        ]);
+   public function updateCommissions(Request $request)
+{
+    $validated = $request->validate([
+        'agent_commission'       => 'required|numeric|min:0|max:100',
+        'distributor_commission' => 'required|numeric|min:0|max:100',
+        'agent_id'               => 'nullable|exists:users,id', // allow null if needed
+    ]);
 
-        // Update or create settings
-        Setting::update(
-            ['agent_id' => $validated['agent_id']],
-            [
-                'agentComission'       => $validated['agent_commission'],
-                'distributorComission' => $validated['distributor_commission'],
-                // Add other fields as needed
-            ]
-        );
+    Setting::updateOrCreate(
+        ['agent_id' => $validated['agent_id']],
+        [
+            'agent_commission'       => $validated['agent_commission'],
+            'distributor_commission' => $validated['distributor_commission'],
+        ]
+    );
 
-        return back()->with('success', 'Commissions updated successfully');
-    }
+    return back()->with('success', 'Commissions updated successfully');
+}
+
 
  public function updateNegativeAgent(Request $request)
 {

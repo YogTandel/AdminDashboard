@@ -297,46 +297,63 @@
     </script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const storedAgent = JSON.parse(sessionStorage.getItem('selectedAgent'));
+    // Load selected agent from sessionStorage
+    let storedAgent = JSON.parse(sessionStorage.getItem('selectedAgent'));
     const radioButtons = document.querySelectorAll('.agent-radio');
 
-    if (storedAgent) {
-        radioButtons.forEach(radio => {
-            if (radio.getAttribute('data-agent-id') === storedAgent.id) {
-                radio.checked = true;
-            }
-        });
-    }
-
+    // Initialize radio buttons
     radioButtons.forEach(radio => {
+        // Set initial checked state
+        if (storedAgent && radio.getAttribute('data-agent-id') === storedAgent.id) {
+            radio.checked = true;
+        }
+
+        // Add click event
         radio.addEventListener('click', function () {
             const clickedAgentId = this.getAttribute('data-agent-id');
-
+            
+            // If clicking already selected radio (deselecting)
             if (this.checked && storedAgent && clickedAgentId === storedAgent.id) {
+                // Deselect the radio
                 this.checked = false;
                 sessionStorage.removeItem('selectedAgent');
+                storedAgent = null; // IMPORTANT: Update the storedAgent variable
+                
+                // Clear sidebar
                 document.getElementById('sidebar-setting-content').innerHTML = '';
 
-                fetch("{{ route('agent.deselect') }}", {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': "{{ csrf_token() }}"
-                    },
-                    body: JSON.stringify({})
+                // Send deselect requests
+                Promise.all([
+                    fetch("{{ route('agent.deselect') }}", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': "{{ csrf_token() }}"
+                        },
+                        body: JSON.stringify({})
+                    }),
+                    fetch("/update-negative-agent", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': "{{ csrf_token() }}"
+                        },
+                        body: JSON.stringify({ agent_id: null })
+                    })
+                ]).then(() => {
+                    console.log('Agent deselected successfully');
+                }).catch(error => {
+                    console.error('Error:', error);
+                });
+            } 
+            // Selecting a new agent
+            else {
+                // Uncheck all other radios
+                radioButtons.forEach(rb => {
+                    if (rb !== this) rb.checked = false;
                 });
 
-                // Clear is_nagative_agent
-                fetch("/update-negative-agent", {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': "{{ csrf_token() }}"
-                    },
-                    body: JSON.stringify({ agent_id: null })
-                });
-
-            } else {
+                // Store new selection
                 const agentData = {
                     id: clickedAgentId,
                     name: this.getAttribute('data-agent-name'),
@@ -344,8 +361,11 @@ document.addEventListener('DOMContentLoaded', function () {
                     distributor: this.getAttribute('data-agent-distributor'),
                     endpoint: this.getAttribute('data-agent-endpoint')
                 };
+                
                 sessionStorage.setItem('selectedAgent', JSON.stringify(agentData));
+                storedAgent = agentData; // IMPORTANT: Update the storedAgent variable
 
+                // Update UI and backend
                 fetch('/setting/sidebar/' + clickedAgentId)
                     .then(response => response.text())
                     .then(html => {
@@ -355,23 +375,28 @@ document.addEventListener('DOMContentLoaded', function () {
                         document.getElementById('sidebar-setting-content').innerHTML = '<p>Error loading setting.</p>';
                     });
 
-                fetch("{{ route('agent.select') }}", {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': "{{ csrf_token() }}"
-                    },
-                    body: JSON.stringify({ agent_id: clickedAgentId })
-                });
-
-                // Set is_nagative_agent
-                fetch("/update-negative-agent", {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': "{{ csrf_token() }}"
-                    },
-                    body: JSON.stringify({ agent_id: clickedAgentId })
+                // Update backend
+                Promise.all([
+                    fetch("{{ route('agent.select') }}", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': "{{ csrf_token() }}"
+                        },
+                        body: JSON.stringify({ agent_id: clickedAgentId })
+                    }),
+                    fetch("/update-negative-agent", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': "{{ csrf_token() }}"
+                        },
+                        body: JSON.stringify({ agent_id: clickedAgentId })
+                    })
+                ]).then(() => {
+                    console.log('Agent selected successfully');
+                }).catch(error => {
+                    console.error('Error:', error);
                 });
             }
         });
