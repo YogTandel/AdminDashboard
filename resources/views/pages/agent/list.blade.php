@@ -214,13 +214,13 @@
                                                             data-agent-name="{{ $agent->player }}"
                                                             data-agent-balance="{{ $agent->balance }}"
                                                             data-agent-distributor="{{ $agent->distributor }}"
-                                                            data-agent-endpoint="{{ $agent->endpoint }}">
+                                                            data-agent-endpoint="{{ $agent->endpoint }}"
+                                                            data-checked="{{ session('selected_agent.id') == $agent->id ? 'true' : 'false' }}">
                                                         <label class="form-check-label"
                                                             for="agentSwitch{{ $agent->id }}">
                                                             {{ $agent->player }}
                                                         </label>
                                                     </div>
-
 
                                                     <!-- Edit Icon -->
                                                     <a href="javascript:;"
@@ -298,12 +298,16 @@
             }
         });
     </script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const toggleSwitches = document.querySelectorAll('.agent-toggle');
             const sidebarContent = document.getElementById('sidebar-setting-content');
 
             toggleSwitches.forEach(toggle => {
+                // Set initial state from server-side value
+                toggle.checked = toggle.getAttribute('data-checked') === 'true';
+
                 toggle.addEventListener('change', function() {
                     const agentId = this.checked ? this.value : null;
                     const agentData = this.checked ? {
@@ -351,15 +355,22 @@
                                 agent_data: agentData
                             })
                         })
-                        .then(response => response.json())
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+                            return response.json();
+                        })
                         .then(data => {
                             console.log('Update successful', data);
-                            if (!this.checked) {
+                            if (!this.checked || data.force_reload) {
                                 location.reload();
                             }
                         })
                         .catch(error => {
                             console.error('Error:', error);
+                            // Revert UI change if update failed
+                            this.checked = !this.checked;
                         });
                 });
             });

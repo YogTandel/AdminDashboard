@@ -269,7 +269,7 @@ class PagesController extends Controller
         if (session()->has('selected_agent')) {
             $selectedAgent = session('selected_agent');
         }
-        // Fallback to sessionStorage (via JavaScript)
+        // Fallback to cookie
         elseif (isset($_COOKIE['selectedAgent'])) {
             $selectedAgent = json_decode($_COOKIE['selectedAgent'], true);
             // Verify the agent exists
@@ -281,16 +281,10 @@ class PagesController extends Controller
             }
         }
 
-        // Get settings for this agent
-        $settings = Setting::where('agent_id', $selectedAgent['id'] ?? null)->first();
-
-        // If settings exist, update them (don't create new ones)
-        if ($settings) {
-            $settings->update([
-                'agent_commission'       => 5.0,
-                'distributor_commission' => 0.1,
-            ]);
-        }
+        // Get settings for this agent (or null settings if no agent)
+        $settings = $selectedAgent
+        ? Setting::where('agent_id', $selectedAgent['id'])->first()
+        : null;
 
         return view('pages.setting', [
             'selectedAgent' => $selectedAgent,
@@ -477,43 +471,55 @@ class PagesController extends Controller
 
     public function update(Request $request)
     {
-        $agentId   = $request->input('agent_id');
-        $agentData = $request->input('agent_data');
+        try {
+            $agentId   = $request->input('agent_id');
+            $agentData = $request->input('agent_data');
 
-        // Update session/cookie
-        if ($agentId) {
-            session(['selected_agent' => $agentData]);
-            Cookie::queue('selectedAgent', json_encode($agentData), 60 * 24 * 30);
-        } else {
-            session()->forget('selected_agent');
-            Cookie::queue(Cookie::forget('selectedAgent'));
+            // Update session/cookie
+            if ($agentId) {
+                session(['selected_agent' => $agentData]);
+                Cookie::queue('selectedAgent', json_encode($agentData), 60 * 24 * 30);
+            } else {
+                session()->forget('selected_agent');
+                Cookie::queue(Cookie::forget('selectedAgent'));
+            }
+
+            // Handle settings update
+            if ($agentId) {
+                // Update existing settings for this agent
+                $settings = Setting::where('agent_id', $agentId)->first();
+
+                if ($settings) {
+                    $settings->update([
+                        'agent_commission'       => 5.0,
+                        'distributor_commission' => 0.1,
+                    ]);
+                }
+            } else {
+                // When disabling, find and update the previously selected agent's settings
+                if (session()->has('previous_agent_id')) {
+                    Setting::where('agent_id', session('previous_agent_id'))
+                        ->update(['agent_id' => null]);
+                }
+            }
+
+            // Store previous agent ID for next time
+            if ($agentId) {
+                session(['previous_agent_id' => $agentId]);
+            }
+
+            return response()->json([
+                'success'      => true,
+                'force_reload' => ! $agentId, // Force reload when disabling
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Agent update error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Update failed',
+            ], 500);
         }
-
-        // Update settings in database
-        if ($agentId) {
-            Setting::updateOrCreate(
-                ['agent_id' => $agentId],
-                [
-                    'agent_commission'       => 5.0,
-                    'distributor_commission' => 0.1,
-                ]
-            );
-        } else {
-            // When agent is disabled (null)
-            // Either delete the settings or set agent_id to null
-            // Option 1: Delete
-            Setting::where('agent_id', session('agent_id'))->delete();
-
-            // Option 2: Set to null (if your DB allows)
-            // Setting::where('agent_id', session('previous_agent_id'))->update(['agent_id' => null]);
-        }
-
-        // Store previous agent ID for next time
-        if ($agentId) {
-            session(['previous_agent_id' => $agentId]);
-        }
-
-        return response()->json(['success' => true]);
     }
 
 }
