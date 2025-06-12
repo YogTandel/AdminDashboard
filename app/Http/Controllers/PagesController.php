@@ -285,10 +285,9 @@ class PagesController extends Controller
         $settings = Setting::where('agent_id', $selectedAgent['id'] ?? null)->first();
 
         // If no settings exist, create default ones
-        if (! $settings && $selectedAgent) {
-            $settings = Setting::create([
-                'agent_id'               => $selectedAgent['id'],
-                'agent_commission'       => 5.0, // default values
+       if ($settings) {
+            $settings->update([
+                'agent_commission'       => 5.0,
                 'distributor_commission' => 0.1,
             ]);
         }
@@ -308,7 +307,7 @@ class PagesController extends Controller
         ]);
 
         // Update or create settings
-        Setting::updateOrCreate(
+        Setting::update(
             ['agent_id' => $validated['agent_id']],
             [
                 'agentComission'       => $validated['agent_commission'],
@@ -369,7 +368,7 @@ class PagesController extends Controller
     public function transferForm()
     {
         // Get selected agent from session
-        $selectedAgent = session('selected_agent');
+         $selectedAgent = session('selected_agent');
 
         if (! $selectedAgent) {
             return redirect()->route('agentlist.show')->with('error', 'Please select an agent first');
