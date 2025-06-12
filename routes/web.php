@@ -45,6 +45,8 @@ Route::get('/setting', [PagesController::class, 'setting'])->name('setting');
 Route::post('/settings/update-commissions', [PagesController::class, 'updateCommissions'])->name('settings.updateCommissions');
 Route::post('/update-negative-agent', [PagesController::class, 'updateNegativeAgent']);
 
+
+
 // live game
 Route::get('/livegame', [PagesController::class, 'livegame'])->name('livegame');
 

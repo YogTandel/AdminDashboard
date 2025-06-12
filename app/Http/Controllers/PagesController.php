@@ -298,16 +298,19 @@ class PagesController extends Controller
         ]);
     }
 
-   public function updateCommissions(Request $request)
+  public function updateCommissions(Request $request)
 {
     $validated = $request->validate([
         'agent_commission'       => 'required|numeric|min:0|max:100',
         'distributor_commission' => 'required|numeric|min:0|max:100',
-        'agent_id'               => 'nullable|exists:users,id', // allow null if needed
+        'agent_id'               => 'nullable|exists:users,id', // allow null
     ]);
 
+    // Convert '' to null explicitly
+    $agentId = $validated['agent_id'] ?: null;
+
     Setting::updateOrCreate(
-        ['agent_id' => $validated['agent_id']],
+        ['agent_id' => $agentId],
         [
             'agent_commission'       => $validated['agent_commission'],
             'distributor_commission' => $validated['distributor_commission'],
@@ -317,8 +320,7 @@ class PagesController extends Controller
     return back()->with('success', 'Commissions updated successfully');
 }
 
-
- public function updateNegativeAgent(Request $request)
+public function updateNegativeAgent(Request $request)
 {
     $agentId = $request->input('agent_id');
 
@@ -332,10 +334,19 @@ class PagesController extends Controller
 
 
 
+
+
+
     public function deselect(Request $request)
     {
-        $request->session()->forget('selected_agent');
-        return back();
+       
+    // Sessionમાંથી એજન્ટ કાઢી નાંખો
+    session()->forget('selected_agent');
+
+    // Setting table માંથી એજન્ટ ID null કરો
+    Setting::whereNotNull('agent_id')->update(['agent_id' => null]);
+
+    return response()->json(['status' => 'Agent deselected']);
     }
 
     public function liveGame()
