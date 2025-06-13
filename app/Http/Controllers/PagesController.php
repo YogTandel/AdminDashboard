@@ -261,42 +261,22 @@ class PagesController extends Controller
         return redirect()->route('setting');
     }
 
-    public function setting()
-    {
-        $selectedAgent = null;
-
-        // Check session first
-        if (session()->has('selected_agent')) {
-            $selectedAgent = session('selected_agent');
-        }
-        // Fallback to cookie
-        elseif (isset($_COOKIE['selectedAgent'])) {
-            $selectedAgent = json_decode($_COOKIE['selectedAgent'], true);
-            // Verify the agent exists
-            $agentExists = User::where('id', $selectedAgent['id'] ?? null)
-                ->where('role', 'agent')
-                ->exists();
-            if (! $agentExists) {
-                $selectedAgent = null;
-            }
-        }
-
-        // Get settings for this agent
-        $settings = Setting::where('agent_id', $selectedAgent['id'] ?? null)->first();
-
-        // If no settings exist, create default ones
-       if ($settings) {
-            $settings->update([
-                'agent_commission'       => 5.0,
-                'distributor_commission' => 0.1,
-            ]);
-        }
-
-        return view('pages.setting', [
-            'selectedAgent' => $selectedAgent,
-            'settings'      => $settings,
-        ]);
+   // SettingController.php
+public function setting()
+{
+    $selectedAgent = null;
+    
+    if (session()->has('selected_agent')) {
+        $selectedAgent = session('selected_agent');
+    } elseif (isset($_COOKIE['selectedAgent'])) {
+        $selectedAgent = json_decode($_COOKIE['selectedAgent'], true);
     }
+    
+    return view('pages.setting', [
+        'selectedAgent' => $selectedAgent,
+        'settings' => Setting::where('agent_id', $selectedAgent['id'] ?? null)->first()
+    ]);
+}
 
     public function updateCommissions(Request $request)
     {
