@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 use App\Models\Setting;
 use App\Models\Transaction;
 use App\Models\User;
+use App\Models\User as Agent;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -281,10 +281,16 @@ class PagesController extends Controller
             }
         }
 
-        // Get settings for this agent (or null settings if no agent)
-        $settings = $selectedAgent
-        ? Setting::where('agent_id', $selectedAgent['id'])->first()
-        : null;
+        // Get settings for this agent
+        $settings = Setting::where('agent_id', $selectedAgent['id'] ?? null)->first();
+
+        // If no settings exist, create default ones
+       if ($settings) {
+            $settings->update([
+                'agent_commission'       => 5.0,
+                'distributor_commission' => 0.1,
+            ]);
+        }
 
         return view('pages.setting', [
             'selectedAgent' => $selectedAgent,
@@ -297,17 +303,16 @@ class PagesController extends Controller
         $validated = $request->validate([
             'agent_commission'       => 'required|numeric|min:0|max:100',
             'distributor_commission' => 'required|numeric|min:0|max:100',
-            'agent_id'               => 'nullable|exists:users,id', // allow null
+            'agent_id'               => 'required|exists:users,_id',
         ]);
 
-        // Convert '' to null explicitly
-        $agentId = $validated['agent_id'] ?: null;
-
-        Setting::updateOrCreate(
-            ['agent_id' => $agentId],
+        // Update or create settings
+        Setting::update(
+            ['agent_id' => $validated['agent_id']],
             [
-                'agent_commission'       => $validated['agent_commission'],
-                'distributor_commission' => $validated['distributor_commission'],
+                'agentComission'       => $validated['agent_commission'],
+                'distributorComission' => $validated['distributor_commission'],
+                // Add other fields as needed
             ]
         );
 
@@ -316,26 +321,34 @@ class PagesController extends Controller
 
     public function updateNegativeAgent(Request $request)
     {
-        $agentId = $request->input('agent_id');
-
-        DB::table('settings')->update([
-            'is_nagative_agent' => $agentId ?? '',
-            // Don't include updated_at, so it won't be changed
+        $request->validate([
+            'agent_id' => 'nullable|exists:users,_id'
         ]);
 
-        return response()->json(['status' => 'success']);
+        $agentId = $request->input('agent_id');
+        
+        // Convert empty string to null
+        if ($agentId === 'null' || $agentId === '' || $agentId === null) {
+            $agentId = null;
+        }
+
+        // Update all settings (as per your current logic)
+        DB::table('settings')->update([
+            'is_nagative_agent' => $agentId,
+            'updated_at' => now() // Include this to track changes
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'agent_id' => $agentId
+        ]);
     }
+
 
     public function deselect(Request $request)
     {
-
-        // Sessionમાંથી એજન્ટ કાઢી નાંખો
-        session()->forget('selected_agent');
-
-        // Setting table માંથી એજન્ટ ID null કરો
-        Setting::whereNotNull('agent_id')->update(['agent_id' => null]);
-
-        return response()->json(['status' => 'Agent deselected']);
+        $request->session()->forget('selected_agent');
+        return back();
     }
 
     public function liveGame()
@@ -381,7 +394,7 @@ class PagesController extends Controller
     public function transferForm()
     {
         // Get selected agent from session
-        $selectedAgent = session('selected_agent');
+         $selectedAgent = session('selected_agent');
 
         if (! $selectedAgent) {
             return redirect()->route('agentlist.show')->with('error', 'Please select an agent first');
@@ -392,7 +405,7 @@ class PagesController extends Controller
 
         return view('pages.transfer.form', [
             'selectedAgent' => $agent,
-            'endpoint'      => $agent->endpoint,
+            'endpoint'       => $agent->endpoint,
         ]);
     }
 
@@ -401,10 +414,10 @@ class PagesController extends Controller
         try {
             $request->validate([
                 'agent_id' => 'required|exists:users,id',
-                'amount'   => 'required|numeric|min:0.01',
+               'amount' => 'required|numeric|min:0.01',
             ]);
-
-            $agent         = User::findOrFail($request->agent_id);
+                                                                                                                                             
+            $agent = User::findOrFail($request->agent_id);
             $distributorId = $agent->distributor_id;
             //'distributor_id' => 'required|exists:users,id',
 
@@ -438,12 +451,12 @@ class PagesController extends Controller
 
             // Insert transfer record
             DB::table('transfer_to_distributor')->insert([
-                'agent_id'          => $agent->id,
-                'distributor_id'    => $distributorId,
-                'amount'            => $request->amount,
+                'agent_id' => $agent->id,
+                'distributor_id' => $distributorId,
+                'amount' => $request->amount,
                 'remaining_balance' => $agent->endpoint,
-                'created_at'        => now(),
-                'updated_at'        => now(),
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
 
             return response()->json(['success' => 'Transfer successful.']);
@@ -452,6 +465,8 @@ class PagesController extends Controller
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
+
+
 
     public function showTransferReport()
     {
@@ -469,57 +484,5 @@ class PagesController extends Controller
         return view('pages.transfer.report', compact('transfers'));
     }
 
-    public function update(Request $request)
-    {
-        try {
-            $agentId   = $request->input('agent_id');
-            $agentData = $request->input('agent_data');
-
-            // Update session/cookie
-            if ($agentId) {
-                session(['selected_agent' => $agentData]);
-                Cookie::queue('selectedAgent', json_encode($agentData), 60 * 24 * 30);
-            } else {
-                session()->forget('selected_agent');
-                Cookie::queue(Cookie::forget('selectedAgent'));
-            }
-
-            // Handle settings update
-            if ($agentId) {
-                // Update existing settings for this agent
-                $settings = Setting::where('agent_id', $agentId)->first();
-
-                if ($settings) {
-                    $settings->update([
-                        'agent_commission'       => 5.0,
-                        'distributor_commission' => 0.1,
-                    ]);
-                }
-            } else {
-                // When disabling, find and update the previously selected agent's settings
-                if (session()->has('previous_agent_id')) {
-                    Setting::where('agent_id', session('previous_agent_id'))
-                        ->update(['agent_id' => null]);
-                }
-            }
-
-            // Store previous agent ID for next time
-            if ($agentId) {
-                session(['previous_agent_id' => $agentId]);
-            }
-
-            return response()->json([
-                'success'      => true,
-                'force_reload' => ! $agentId, // Force reload when disabling
-            ]);
-
-        } catch (\Exception $e) {
-            Log::error('Agent update error: ' . $e->getMessage());
-            return response()->json([
-                'success' => false,
-                'message' => 'Update failed',
-            ], 500);
-        }
-    }
 
 }

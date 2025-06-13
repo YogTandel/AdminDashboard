@@ -204,23 +204,19 @@
                                             <td class="text-center">
                                                 <div class="d-flex justify-content-center gap-2 align-items-center">
                                                     <!-- Radio Button -->
-
-                                                    <div class="form-check form-switch">
-                                                        <input class="form-check-input agent-toggle" type="checkbox"
-                                                            name="agent_toggle" id="agentSwitch{{ $agent->id }}"
-                                                            value="{{ $agent->id }}"
-                                                            {{ session('selected_agent.id') == $agent->id ? 'checked' : '' }}
-                                                            data-agent-id="{{ $agent->id }}"
-                                                            data-agent-name="{{ $agent->player }}"
-                                                            data-agent-balance="{{ $agent->balance }}"
-                                                            data-agent-distributor="{{ $agent->distributor }}"
-                                                            data-agent-endpoint="{{ $agent->endpoint }}"
-                                                            data-checked="{{ session('selected_agent.id') == $agent->id ? 'true' : 'false' }}">
-                                                        <label class="form-check-label"
-                                                            for="agentSwitch{{ $agent->id }}">
-                                                            {{ $agent->player }}
-                                                        </label>
-                                                    </div>
+                                                    
+                                                        <div class="form-check form-switch">
+                                                            <input class="form-check-input agent-radio" 
+                                                                type="radio" 
+                                                                name="agent_select" 
+                                                                id="agentSwitch{{ $agent->id }}" 
+                                                                value="{{ $agent->id }}"
+                                                                data-agent-id="{{ $agent->id }}"
+                                                                data-agent-name="{{ $agent->player }}"
+                                                                data-agent-balance="{{ $agent->balance }}"
+                                                                data-agent-distributor="{{ $agent->distributor }}"
+                                                                data-agent-endpoint="{{ $agent->endpoint }}">
+                                                        </div>
 
                                                     <!-- Edit Icon -->
                                                     <a href="javascript:;"
@@ -298,84 +294,109 @@
             }
         });
     </script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // Track selected agent
+    let selectedAgent = JSON.parse(sessionStorage.getItem('selectedAgent'));
+    const radioButtons = document.querySelectorAll('.agent-radio');
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const toggleSwitches = document.querySelectorAll('.agent-toggle');
-            const sidebarContent = document.getElementById('sidebar-setting-content');
+    // Initialize radio buttons
+    radioButtons.forEach(radio => {
+        const agentId = radio.getAttribute('data-agent-id');
+        radio.checked = (selectedAgent && selectedAgent.id === agentId);
+        
+        radio.addEventListener('click', async function () {
+            const clickedAgentId = this.getAttribute('data-agent-id');
+            
+            // If clicking the already selected radio (deselect)
+            if (this.checked && selectedAgent && clickedAgentId === selectedAgent.id) {
+                // Deselect the radio
+                this.checked = false;
+                sessionStorage.removeItem('selectedAgent');
+                selectedAgent = null;
+                
+                // Clear sidebar
+                document.getElementById('sidebar-setting-content').innerHTML = '';
 
-            toggleSwitches.forEach(toggle => {
-                // Set initial state from server-side value
-                toggle.checked = toggle.getAttribute('data-checked') === 'true';
-
-                toggle.addEventListener('change', function() {
-                    const agentId = this.checked ? this.value : null;
-                    const agentData = this.checked ? {
-                        id: this.getAttribute('data-agent-id'),
-                        name: this.getAttribute('data-agent-name'),
-                        balance: this.getAttribute('data-agent-balance'),
-                        distributor: this.getAttribute('data-agent-distributor'),
-                        endpoint: this.getAttribute('data-agent-endpoint')
-                    } : null;
-
-                    // Update UI immediately
-                    if (this.checked) {
-                        // Uncheck all other toggles
-                        toggleSwitches.forEach(ts => {
-                            if (ts !== this) ts.checked = false;
-                        });
-
-                        // Load sidebar content if element exists
-                        if (sidebarContent) {
-                            fetch('/setting/sidebar/' + agentData.id)
-                                .then(response => response.text())
-                                .then(html => {
-                                    sidebarContent.innerHTML = html;
-                                })
-                                .catch(() => {
-                                    if (sidebarContent) {
-                                        sidebarContent.innerHTML =
-                                            '<p>Error loading setting.</p>';
-                                    }
-                                });
-                        }
-                    } else if (sidebarContent) {
-                        sidebarContent.innerHTML = '';
-                    }
-
-                    // Update backend
-                    fetch("{{ route('agent.update') }}", {
+                try {
+                    // Send deselect requests
+                    await Promise.all([
+                        fetch("{{ route('agent.deselect') }}", {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
                                 'X-CSRF-TOKEN': "{{ csrf_token() }}"
                             },
-                            body: JSON.stringify({
-                                agent_id: agentId,
-                                agent_data: agentData
-                            })
+                            body: JSON.stringify({})
+                        }),
+                        fetch("/update-negative-agent", {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': "{{ csrf_token() }}"
+                            },
+                            body: JSON.stringify({ agent_id: null }) // Explicit null
                         })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error('Network response was not ok');
-                            }
-                            return response.json();
-                        })
-                        .then(data => {
-                            console.log('Update successful', data);
-                            if (!this.checked || data.force_reload) {
-                                location.reload();
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            // Revert UI change if update failed
-                            this.checked = !this.checked;
-                        });
+                    ]);
+                    console.log('Agent deselected successfully');
+                } catch (error) {
+                    console.error('Error deselecting agent:', error);
+                }
+            } 
+            // Selecting a new agent
+            else {
+                // Uncheck all other radios
+                radioButtons.forEach(rb => {
+                    if (rb !== this) rb.checked = false;
                 });
-            });
+
+                // Store new selection
+                const agentData = {
+                    id: clickedAgentId,
+                    name: this.getAttribute('data-agent-name'),
+                    balance: this.getAttribute('data-agent-balance'),
+                    distributor: this.getAttribute('data-agent-distributor'),
+                    endpoint: this.getAttribute('data-agent-endpoint')
+                };
+                
+                sessionStorage.setItem('selectedAgent', JSON.stringify(agentData));
+                selectedAgent = agentData;
+
+                try {
+                    // Update UI and backend
+                    await Promise.all([
+                        fetch('/setting/sidebar/' + clickedAgentId)
+                            .then(response => response.text())
+                            .then(html => {
+                                document.getElementById('sidebar-setting-content').innerHTML = html;
+                            }),
+                        fetch("{{ route('agent.select') }}", {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': "{{ csrf_token() }}"
+                            },
+                            body: JSON.stringify({ agent_id: clickedAgentId })
+                        }),
+                        fetch("/update-negative-agent", {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': "{{ csrf_token() }}"
+                            },
+                            body: JSON.stringify({ agent_id: clickedAgentId })
+                        })
+                    ]);
+                    console.log('Agent selected successfully');
+                } catch (error) {
+                    console.error('Error selecting agent:', error);
+                    document.getElementById('sidebar-setting-content').innerHTML = '<p>Error loading setting.</p>';
+                }
+            }
         });
-    </script>
+    });
+});
+</script>
 
     <!-- Transfer -->
     <script>
