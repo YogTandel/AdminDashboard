@@ -262,21 +262,21 @@ class PagesController extends Controller
     }
 
    // SettingController.php
-public function setting()
-{
-    $selectedAgent = null;
-    
-    if (session()->has('selected_agent')) {
-        $selectedAgent = session('selected_agent');
-    } elseif (isset($_COOKIE['selectedAgent'])) {
-        $selectedAgent = json_decode($_COOKIE['selectedAgent'], true);
+    public function setting()
+    {
+        $selectedAgent = null;
+        
+        if (session()->has('selected_agent')) {
+            $selectedAgent = session('selected_agent');
+        } elseif (isset($_COOKIE['selectedAgent'])) {
+            $selectedAgent = json_decode($_COOKIE['selectedAgent'], true);
+        }
+        
+        return view('pages.setting', [
+            'selectedAgent' => $selectedAgent,
+            'settings' => Setting::where('agent_id', $selectedAgent['id'] ?? null)->first()
+        ]);
     }
-    
-    return view('pages.setting', [
-        'selectedAgent' => $selectedAgent,
-        'settings' => Setting::where('agent_id', $selectedAgent['id'] ?? null)->first()
-    ]);
-}
 
     public function updateCommissions(Request $request)
     {
