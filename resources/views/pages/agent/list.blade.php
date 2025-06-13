@@ -294,151 +294,152 @@
             }
         });
     </script>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Password copy functionality (existing)
-    const form = document.querySelector('form[action="{{ route('agent.add') }}"]');
-    if (form) {
-        form.addEventListener('submit', function() {
-            const password = form.querySelector('input[name="password"]');
-            const originalPassword = form.querySelector('input[name="original_password"]');
-            if (password && originalPassword) {
-                originalPassword.value = password.value;
-            }
-        });
-    }
-
-    // Improved Agent Selection/Deselection
-    let selectedAgent = JSON.parse(sessionStorage.getItem('selectedAgent')) || null;
-    const radioButtons = document.querySelectorAll('.agent-radio');
-    const sidebarContent = document.getElementById('sidebar-setting-content');
-
-    // Initialize radio buttons state
-    radioButtons.forEach(radio => {
-        const agentId = radio.getAttribute('data-agent-id');
-        radio.checked = (selectedAgent && selectedAgent.id === agentId);
-    });
-
-    // Handle radio button clicks
-    radioButtons.forEach(radio => {
-        radio.addEventListener('click', async function() {
-            const clickedAgentId = this.getAttribute('data-agent-id');
-            
-            // If deselecting current agent
-            if (this.checked && selectedAgent && clickedAgentId === selectedAgent.id) {
-                await handleDeselect(this);
-            } 
-            // Selecting a new agent
-            else {
-                await handleSelect(this, clickedAgentId);
-            }
-        });
-    });
-
-    // Deselect handler
-    async function handleDeselect(radioElement) {
-        try {
-            // Uncheck the radio
-            radioElement.checked = false;
-            
-            // Clear UI
-            if (sidebarContent) {
-                sidebarContent.innerHTML = '';
-            }
-            
-            // Clear storage
-            sessionStorage.removeItem('selectedAgent');
-            selectedAgent = null;
-            
-            // Send deselect request
-            const response = await fetch("{{ route('agent.deselect') }}", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': "{{ csrf_token() }}"
-                },
-                body: JSON.stringify({})
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Password copy functionality (existing)
+        const form = document.querySelector('form[action="{{ route('agent.add') }}"]');
+        if (form) {
+            form.addEventListener('submit', function() {
+                const password = form.querySelector('input[name="password"]');
+                const originalPassword = form.querySelector('input[name="original_password"]');
+                if (password && originalPassword) {
+                    originalPassword.value = password.value;
+                }
             });
-
-            if (!response.ok) throw new Error('Deselect failed');
-
-            // Only send negative agent update after successful deselect
-            await fetch("/update-negative-agent", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': "{{ csrf_token() }}"
-                },
-                body: JSON.stringify({ agent_id: null })
-            });
-
-            console.log('Agent deselected successfully');
-        } catch (error) {
-            console.error('Error deselecting agent:', error);
-            // Revert UI if error occurs
-            radioElement.checked = true;
         }
-    }
 
-    // Select handler
-    async function handleSelect(radioElement, agentId) {
-        try {
-            // Uncheck all other radios
-            radioButtons.forEach(rb => {
-                if (rb !== radioElement) rb.checked = false;
+        // Improved Agent Selection/Deselection
+        let selectedAgent = JSON.parse(sessionStorage.getItem('selectedAgent')) || null;
+        const radioButtons = document.querySelectorAll('.agent-radio');
+        const sidebarContent = document.getElementById('sidebar-setting-content');
+
+        // Initialize radio buttons state
+        radioButtons.forEach(radio => {
+            const agentId = radio.getAttribute('data-agent-id');
+            radio.checked = (selectedAgent && selectedAgent.id === agentId);
+        });
+
+        // Handle radio button clicks
+        radioButtons.forEach(radio => {
+            radio.addEventListener('click', async function() {
+                const clickedAgentId = this.getAttribute('data-agent-id');
+                
+                // If deselecting current agent
+                if (this.checked && selectedAgent && clickedAgentId === selectedAgent.id) {
+                    await handleDeselect(this);
+                } 
+                // Selecting a new agent
+                else {
+                    await handleSelect(this, clickedAgentId);
+                }
             });
+        });
 
-            // Store new selection
-            const agentData = {
-                id: agentId,
-                name: radioElement.getAttribute('data-agent-name'),
-                balance: radioElement.getAttribute('data-agent-balance'),
-                distributor: radioElement.getAttribute('data-agent-distributor'),
-                endpoint: radioElement.getAttribute('data-agent-endpoint')
-            };
-            
-            sessionStorage.setItem('selectedAgent', JSON.stringify(agentData));
-            selectedAgent = agentData;
+        // Deselect handler
+        async function handleDeselect(radioElement) {
+            try {
+                // Uncheck the radio
+                radioElement.checked = false;
+                
+                // Clear UI
+                if (sidebarContent) {
+                    sidebarContent.innerHTML = '';
+                }
+                
+                // Clear storage
+                sessionStorage.removeItem('selectedAgent');
+                selectedAgent = null;
+                
+                // Send deselect request
+                const response = await fetch("{{ route('agent.deselect') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': "{{ csrf_token() }}"
+                    },
+                    body: JSON.stringify({})
+                });
 
-            // First update UI
-            if (sidebarContent) {
-                const sidebarResponse = await fetch('/setting/sidebar/' + agentId);
-                if (!sidebarResponse.ok) throw new Error('Sidebar load failed');
-                sidebarContent.innerHTML = await sidebarResponse.text();
+                if (!response.ok) throw new Error('Deselect failed');
+
+                // Only send negative agent update after successful deselect
+                await fetch("/update-negative-agent", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': "{{ csrf_token() }}"
+                    },
+                    body: JSON.stringify({ agent_id: null })
+                });
+
+                console.log('Agent deselected successfully');
+            } catch (error) {
+                console.error('Error deselecting agent:', error);
+                // Revert UI if error occurs
+                radioElement.checked = true;
             }
-
-            // Then send select request
-            const selectResponse = await fetch("{{ route('agent.select') }}", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': "{{ csrf_token() }}"
-                },
-                body: JSON.stringify({ agent_id: agentId })
-            });
-
-            if (!selectResponse.ok) throw new Error('Select failed');
-
-            // Finally update negative agent
-            await fetch("/update-negative-agent", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': "{{ csrf_token() }}"
-                },
-                body: JSON.stringify({ agent_id: agentId })
-            });
-
-            console.log('Agent selected successfully');
-        } catch (error) {
-            console.error('Error selecting agent:', error);
-            // Revert UI if error occurs
-            radioButtons.forEach(rb => rb.checked = false);
-            if (sidebarContent) sidebarContent.innerHTML = '<p class="text-danger">Error loading agent settings</p>';
         }
-    }
-});
-</script>
+
+        // Select handler
+        async function handleSelect(radioElement, agentId) {
+            try {
+                // Uncheck all other radios
+                radioButtons.forEach(rb => {
+                    if (rb !== radioElement) rb.checked = false;
+                });
+
+                // Store new selection
+                const agentData = {
+                    id: agentId,
+                    name: radioElement.getAttribute('data-agent-name'),
+                    balance: radioElement.getAttribute('data-agent-balance'),
+                    distributor: radioElement.getAttribute('data-agent-distributor'),
+                    endpoint: radioElement.getAttribute('data-agent-endpoint')
+                };
+                
+                sessionStorage.setItem('selectedAgent', JSON.stringify(agentData));
+                selectedAgent = agentData;
+
+                // First update UI
+                if (sidebarContent) {
+                    const sidebarResponse = await fetch('/setting/sidebar/' + agentId);
+                    if (!sidebarResponse.ok) throw new Error('Sidebar load failed');
+                    sidebarContent.innerHTML = await sidebarResponse.text();
+                }
+
+                // Then send select request
+                const selectResponse = await fetch("{{ route('agent.select') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': "{{ csrf_token() }}"
+                    },
+                    body: JSON.stringify({ agent_id: agentId })
+                });
+
+                if (!selectResponse.ok) throw new Error('Select failed');
+
+                // Finally update negative agent
+                await fetch("/update-negative-agent", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': "{{ csrf_token() }}"
+                    },
+                    body: JSON.stringify({ agent_id: agentId })
+                });
+
+                console.log('Agent selected successfully');
+            } catch (error) {
+                console.error('Error selecting agent:', error);
+                // Revert UI if error occurs
+                radioButtons.forEach(rb => rb.checked = false);
+                if (sidebarContent) sidebarContent.innerHTML = '<p class="text-danger">Error loading agent settings</p>';
+            }
+        }
+    });
+    </script>
 
     <!-- Transfer -->
     <script>
