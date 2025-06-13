@@ -370,81 +370,66 @@ class PagesController extends Controller
 
         return response()->stream($callback, 200, $headers);
     }
-
     public function transferForm()
     {
-        // Get selected agent from session
-         $selectedAgent = session('selected_agent');
-
-        if (! $selectedAgent) {
-            return redirect()->route('agentlist.show')->with('error', 'Please select an agent first');
-        }
-
-        // Get fresh agent data from database
-        $agent = User::findOrFail($selectedAgent['id']);
+        $agent = auth()->user();
 
         return view('pages.transfer.form', [
-            'selectedAgent' => $agent,
-            'endpoint'       => $agent->endpoint,
+            'agent' => $agent
         ]);
     }
 
-    public function processTransfer(Request $request)
-    {
-        try {
-            $request->validate([
-                'agent_id' => 'required|exists:users,id',
-               'amount' => 'required|numeric|min:0.01',
-            ]);
-                                                                                                                                             
-            $agent = User::findOrFail($request->agent_id);
-            $distributorId = $agent->distributor_id;
-            //'distributor_id' => 'required|exists:users,id',
+public function processTransfer(Request $request)
+{
+    try {
+        $request->validate([
+            'agent_id' => 'required|exists:users,id',
+            'amount' => 'required|numeric|min:0.01',
+        ]);
 
-            if (! $distributorId) {
-                return response()->json(['success' => false, 'message' => 'Distributor not assigned to this agent.']);
-            }
+        $agent = User::findOrFail($request->agent_id);
+        $distributorId = $agent->distributor_id;
 
-            $distributor = User::findOrFail($distributorId);
-
-            // Subtract from agent, add to distributor
-            if ($request->type === 'subtract') {
-                if ($agent->endpoint < $request->amount) {
-                    return response()->json(['success' => false, 'message' => 'Insufficient balance.']);
-                }
-
-                $agent->endpoint -= $request->amount;
-                $distributor->endpoint += $request->amount;
-
-            } else {
-                $agent->endpoint += $request->amount;
-                $distributor->endpoint -= $request->amount;
-
-                if ($distributor->endpoint < 0) {
-                    return response()->json(['success' => false, 'message' => 'Distributor has insufficient endpoint.']);
-                }
-            }
-
-            // Save both agent and distributor
-            $agent->save();
-            $distributor->save();
-
-            // Insert transfer record
-            DB::table('transfer_to_distributor')->insert([
-                'agent_id' => $agent->id,
-                'distributor_id' => $distributorId,
-                'amount' => $request->amount,
-                'remaining_balance' => $agent->endpoint,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-
-            return response()->json(['success' => 'Transfer successful.']);
-
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        if (! $distributorId) {
+            return response()->json(['success' => false, 'message' => 'Distributor not assigned to this agent.']);
         }
+
+        $distributor = User::findOrFail($distributorId);
+
+        if ($request->type === 'subtract') {
+            if ($agent->endpoint < $request->amount) {
+                return response()->json(['success' => false, 'message' => 'Insufficient balance.']);
+            }
+
+            $agent->endpoint -= $request->amount;
+            $distributor->endpoint += $request->amount;
+        } else {
+            $agent->endpoint += $request->amount;
+            $distributor->endpoint -= $request->amount;
+
+            if ($distributor->endpoint < 0) {
+                return response()->json(['success' => false, 'message' => 'Distributor has insufficient endpoint.']);
+            }
+        }
+
+        $agent->save();
+        $distributor->save();
+
+        DB::table('transfer_to_distributor')->insert([
+            'agent_id' => $agent->id,
+            'distributor_id' => $distributorId,
+            'amount' => $request->amount,
+            'remaining_balance' => $agent->endpoint,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        return response()->json(['success' => 'Transfer successful.']);
+
+    } catch (\Exception $e) {
+        return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
     }
+}
 
 
 

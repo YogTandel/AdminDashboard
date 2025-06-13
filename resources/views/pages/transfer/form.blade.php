@@ -9,78 +9,61 @@
     </div>
 @endif
 
-
 @section('content')
-    <div class="container-fluid py-4">
-        <div class="row justify-content-center">
-            <div class="col-6">
-                <div class="card">
-                    <!-- Card header -->
-                    <div class="card-header pb-0">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h6 class="mb-0">Transfer Funds</h6>
-                            <a href="{{ route('agentlist.show') }}" class="btn btn-sm btn-outline-secondary">
-                                <i class="fas fa-arrow-left me-1"></i> Back to Agents
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Card body -->
-                    <div class="card-body pt-4">
-                        <form id="transferForm" method="POST" action="{{ route('transfer.execute') }}">
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-6">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <h6 class="mb-0">Transfer Funds</h6>
+                </div>
+                <div class="card-body pt-4">
+                    <form id="transferForm" method="POST" action="{{ route('transfer.execute') }}">
                         @csrf
-                        <input type="hidden" name="agent_id" value="{{ $selectedAgent['id'] }}">
+                        <input type="hidden" name="agent_id" value="{{ auth()->id() }}">
                         <input type="hidden" name="type" value="subtract">
 
-                        <!-- Agent Balance -->
                         <div class="mb-4">
                             <label class="form-label">Agent Balance</label>
-                            <input type="text" class="form-control" value="{{ number_format($selectedAgent['endpoint'], 2) }}" readonly>
+                            <input type="text" class="form-control" value="{{ number_format(auth()->user()->endpoint, 2) }}" readonly>
                         </div>
 
-                        <!-- Amount to Transfer -->
                         <div class="mb-4">
                             <label for="transferAmount" class="form-label">Amount to Transfer</label>
-                            <input type="number" class="form-control" name="amount" id="transferAmount" min="0.01" step="0.01" max="{{ $selectedAgent['endpoint'] }}" required>
+                            <input type="number" class="form-control" name="amount" id="transferAmount" min="0.01" step="0.01" max="{{ auth()->user()->endpoint }}" required>
                         </div>
 
-                        <!-- Error Message -->
                         <div class="text-danger mb-4" id="amountError" style="display:none">
                             <i class="fas fa-exclamation-circle me-2"></i>
                             Amount exceeds available balance
                         </div>
 
-                        <!-- Remaining Balance -->
                         <div class="mb-4">
                             <label class="form-label">Remaining Balance</label>
                             <input type="text" class="form-control" id="remainingBalance" readonly>
                         </div>
 
-                        <!-- Submit Button -->
                         <div class="text-center mt-4">
                             <button type="submit" class="btn bg-gradient-primary w-100" id="submitBtn">
                                 <i class="fas fa-exchange-alt me-2"></i> Process Transfer
                             </button>
                         </div>
-                        <!-- Success message -->
+
                         <div class="alert alert-success d-none" id="successMessage">
                             <i class="fas fa-check-circle me-2"></i> Transfer processed successfully!
                         </div>
                     </form>
-
-                    </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    <x-footer />
-
-
+<x-footer />
 
 <script>
-   document.addEventListener('DOMContentLoaded', function () {
-    const agentBalance = parseFloat({{ $selectedAgent['endpoint'] }}); // changed from balance to endpoint
+document.addEventListener('DOMContentLoaded', function () {
+    const agentBalance = parseFloat("{{ auth()->user()->endpoint }}");
     const transferAmount = document.getElementById('transferAmount');
     const remainingBalance = document.getElementById('remainingBalance');
     const amountError = document.getElementById('amountError');
@@ -122,7 +105,7 @@
         }
 
         const data = {
-            agent_id: "{{ $selectedAgent['id'] }}",
+            agent_id: "{{ auth()->id() }}",
             amount: amount,
             type: 'subtract',
             _token: "{{ csrf_token() }}"
@@ -154,6 +137,4 @@
     });
 });
 </script>
-
-
 @endsection
