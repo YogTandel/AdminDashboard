@@ -382,52 +382,91 @@ class PagesController extends Controller
     public function processTransfer(Request $request)
     {
         try {
-            $request->validate([
-                'agent_id' => 'required|exists:users,id',
-                'amount'   => 'required|numeric|min:0.01',
+            $validated = $request->validate([
+                'transfer_by' => 'required|exists:users,id',
+                'amount'      => 'required|numeric|min:0.01',
+                'type'        => 'required|in:subtract,add',
             ]);
 
-            $agent         = User::findOrFail($request->agent_id);
-            $distributorId = $agent->distributor_id;
+            $transfer_by = User::findOrFail($request->transfer_by);
 
-            if (! $distributorId) {
-                return response()->json(['success' => false, 'message' => 'Distributor not assigned to this agent.']);
-            }
+            // Determine transfer_to based on role
+            $transfer_to   = null;
+            $transfer_role = $transfer_by->role; // Store the initiator's role
 
-            $distributor = User::findOrFail($distributorId);
-
-            if ($request->type === 'subtract') {
-                if ($agent->endpoint < $request->amount) {
-                    return response()->json(['success' => false, 'message' => 'Insufficient balance.']);
-                }
-
-                $agent->endpoint -= $request->amount;
-                $distributor->endpoint += $request->amount;
+            if ($transfer_by->role === 'player') {
+                // Player can only transfer to their assigned agent
+                $transfer_to = User::where('id', $transfer_by->agent_id)
+                    ->where('role', 'agent')
+                    ->firstOrFail();
+            } elseif ($transfer_by->role === 'agent') {
+                // Agent can only transfer to their assigned distributor
+                $transfer_to = User::where('id', $transfer_by->distributor_id)
+                    ->where('role', 'distributor')
+                    ->firstOrFail();
+            } elseif ($transfer_by->role === 'admin') {
+                // Admin can transfer to anyone (adjust as needed)
+                $transfer_to = User::findOrFail($request->transfer_to);
             } else {
-                $agent->endpoint += $request->amount;
-                $distributor->endpoint -= $request->amount;
-
-                if ($distributor->endpoint < 0) {
-                    return response()->json(['success' => false, 'message' => 'Distributor has insufficient endpoint.']);
-                }
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Your role cannot perform transfers',
+                ], 403);
             }
 
-            $agent->save();
-            $distributor->save();
+            // Perform the transfer calculations
+            if ($request->type === 'subtract') {
+                if ($transfer_by->endpoint < $request->amount) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Insufficient balance.',
+                    ], 422);
+                }
 
-            DB::table('transfer_to_distributor')->insert([
-                'agent_id'          => $agent->id,
-                'distributor_id'    => $distributorId,
-                'amount'            => $request->amount,
-                'remaining_balance' => $agent->endpoint,
-                'created_at'        => now(),
-                'updated_at'        => now(),
+                $transfer_by->endpoint -= $request->amount;
+                $transfer_to->endpoint += $request->amount;
+            } else {
+                if ($transfer_to->endpoint < $request->amount) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Recipient has insufficient endpoint.',
+                    ], 422);
+                }
+
+                $transfer_by->endpoint += $request->amount;
+                $transfer_to->endpoint -= $request->amount;
+            }
+
+            // MongoDB transaction
+            DB::connection('mongodb')->transaction(function () use ($transfer_by, $transfer_to, $request, $transfer_role) {
+                $transfer_by->save();
+                $transfer_to->save();
+
+                DB::connection('mongodb')->table('transfers')->insert([
+                    'transfer_by'       => $transfer_by->id,
+                    'transfer_to'       => $transfer_to->id,
+                    'type'              => $request->type,
+                    'amount'            => $request->amount,
+                    'remaining_balance' => $transfer_by->endpoint,
+                    'transfer_role'     => $transfer_role,
+                    'created_at'        => now(),
+                    'updated_at'        => now(),
+                ]);
+            });
+
+            return response()->json([
+                'success'     => true,
+                'message'     => 'Transfer successful.',
+                'new_balance' => $transfer_by->endpoint,
             ]);
-
-            return response()->json(['success' => 'Transfer successful.']);
 
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+            Log::error('Transfer failed: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Transfer failed. Please try again.',
+                'error'   => env('APP_DEBUG') ? $e->getMessage() : null,
+            ], 500);
         }
     }
 

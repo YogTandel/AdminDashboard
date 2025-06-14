@@ -12,13 +12,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('transfer', function (Blueprint $table) {
+        Schema::create('transfers', function (Blueprint $table) {
             $table->id();
             $table->string('transfer_by');
             $table->string('transfer_to');
             $table->enum('type', ['add', 'subtract']);
             $table->decimal('amount', 10, 2);
             $table->decimal('remaining_balance', 10, 2);
+            $table->enum('transfer_role', ['admin', 'distributor', 'agent', 'player']);
             $table->timestamps();
         });
     }
@@ -28,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('transfer');
+        Schema::dropIfExists('transfers');
     }
 };
