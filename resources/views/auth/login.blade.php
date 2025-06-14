@@ -80,7 +80,6 @@
                                                 <option value="admin">Admin</option>
                                                 <option value="distributor">Distributor</option>
                                                 <option value="agent">Agent</option>
-                                                <option value="player">player</option>
                                             </select>
                                         </div>
                                         <label>Name</label>
@@ -104,7 +103,8 @@
                             </div>
                         </div>
                         <div class="col-md-6 mt-5 position-relative">
-                            <div class="position-absolute" style="
+                            <div class="position-absolute"
+                                style="
                                 width: 550px;
                                 height: 550px;
                                 background-image: url('{{ asset('assets/img/curved-images/golden 1.png') }}');
