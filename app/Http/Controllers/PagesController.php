@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 use App\Models\Setting;
 use App\Models\Transaction;
 use App\Models\User;
-use App\Models\User as Agent;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -261,20 +261,20 @@ class PagesController extends Controller
         return redirect()->route('setting');
     }
 
-   // SettingController.php
+    // SettingController.php
     public function setting()
     {
         $selectedAgent = null;
-        
+
         if (session()->has('selected_agent')) {
             $selectedAgent = session('selected_agent');
         } elseif (isset($_COOKIE['selectedAgent'])) {
             $selectedAgent = json_decode($_COOKIE['selectedAgent'], true);
         }
-        
+
         return view('pages.setting', [
             'selectedAgent' => $selectedAgent,
-            'settings' => Setting::where('agent_id', $selectedAgent['id'] ?? null)->first()
+            'settings'      => Setting::where('agent_id', $selectedAgent['id'] ?? null)->first(),
         ]);
     }
 
@@ -302,11 +302,11 @@ class PagesController extends Controller
     public function updateNegativeAgent(Request $request)
     {
         $request->validate([
-            'agent_id' => 'nullable|exists:users,_id'
+            'agent_id' => 'nullable|exists:users,_id',
         ]);
 
         $agentId = $request->input('agent_id');
-        
+
         // Convert empty string to null
         if ($agentId === 'null' || $agentId === '' || $agentId === null) {
             $agentId = null;
@@ -315,15 +315,14 @@ class PagesController extends Controller
         // Update all settings (as per your current logic)
         DB::table('settings')->update([
             'is_nagative_agent' => $agentId,
-            'updated_at' => now() // Include this to track changes
+            'updated_at'        => now(), // Include this to track changes
         ]);
 
         return response()->json([
-            'status' => 'success',
-            'agent_id' => $agentId
+            'status'   => 'success',
+            'agent_id' => $agentId,
         ]);
     }
-
 
     public function deselect(Request $request)
     {
@@ -370,100 +369,98 @@ class PagesController extends Controller
 
         return response()->stream($callback, 200, $headers);
     }
+
     public function transferForm()
     {
-        $agent = auth()->user();
+        $agent = Auth::user();
 
         return view('pages.transfer.form', [
-            'agent' => $agent
+            'agent' => $agent,
         ]);
     }
 
-public function processTransfer(Request $request)
-{
-    try {
-        $request->validate([
-            'agent_id' => 'required|exists:users,id',
-            'amount' => 'required|numeric|min:0.01',
-        ]);
+    public function processTransfer(Request $request)
+    {
+        try {
+            $request->validate([
+                'agent_id' => 'required|exists:users,id',
+                'amount'   => 'required|numeric|min:0.01',
+            ]);
 
-        $agent = User::findOrFail($request->agent_id);
-        $distributorId = $agent->distributor_id;
+            $agent         = User::findOrFail($request->agent_id);
+            $distributorId = $agent->distributor_id;
 
-        if (! $distributorId) {
-            return response()->json(['success' => false, 'message' => 'Distributor not assigned to this agent.']);
-        }
-
-        $distributor = User::findOrFail($distributorId);
-
-        if ($request->type === 'subtract') {
-            if ($agent->endpoint < $request->amount) {
-                return response()->json(['success' => false, 'message' => 'Insufficient balance.']);
+            if (! $distributorId) {
+                return response()->json(['success' => false, 'message' => 'Distributor not assigned to this agent.']);
             }
 
-            $agent->endpoint -= $request->amount;
-            $distributor->endpoint += $request->amount;
-        } else {
-            $agent->endpoint += $request->amount;
-            $distributor->endpoint -= $request->amount;
+            $distributor = User::findOrFail($distributorId);
 
-            if ($distributor->endpoint < 0) {
-                return response()->json(['success' => false, 'message' => 'Distributor has insufficient endpoint.']);
+            if ($request->type === 'subtract') {
+                if ($agent->endpoint < $request->amount) {
+                    return response()->json(['success' => false, 'message' => 'Insufficient balance.']);
+                }
+
+                $agent->endpoint -= $request->amount;
+                $distributor->endpoint += $request->amount;
+            } else {
+                $agent->endpoint += $request->amount;
+                $distributor->endpoint -= $request->amount;
+
+                if ($distributor->endpoint < 0) {
+                    return response()->json(['success' => false, 'message' => 'Distributor has insufficient endpoint.']);
+                }
             }
+
+            $agent->save();
+            $distributor->save();
+
+            DB::table('transfer_to_distributor')->insert([
+                'agent_id'          => $agent->id,
+                'distributor_id'    => $distributorId,
+                'amount'            => $request->amount,
+                'remaining_balance' => $agent->endpoint,
+                'created_at'        => now(),
+                'updated_at'        => now(),
+            ]);
+
+            return response()->json(['success' => 'Transfer successful.']);
+
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
-
-        $agent->save();
-        $distributor->save();
-
-        DB::table('transfer_to_distributor')->insert([
-            'agent_id' => $agent->id,
-            'distributor_id' => $distributorId,
-            'amount' => $request->amount,
-            'remaining_balance' => $agent->endpoint,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        return response()->json(['success' => 'Transfer successful.']);
-
-    } catch (\Exception $e) {
-        return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
     }
-}
 
+    public function showTransferReport()
+    {
+        $transfers = DB::table('transfer_to_distributor')
+            ->orderBy('created_at', 'desc')
+            ->get();
 
-public function showTransferReport()
-{
-    $transfers = DB::table('transfer_to_distributor')
-        ->orderBy('created_at', 'desc')
-        ->get();
+        if ($transfers->isEmpty()) {
+            return view('pages.transfer.report', compact('transfers'));
+        }
 
-    if ($transfers->isEmpty()) {
+        // Get all unique user IDs
+        $userIds = $transfers->pluck('agent_id')
+            ->merge($transfers->pluck('distributor_id'))
+            ->unique()
+            ->filter()
+            ->map(fn($id) => (string) $id); // cast to string
+
+        // MongoDB query
+        $users = User::whereIn('_id', $userIds->all())->get()
+            ->keyBy(fn($u) => (string) $u->_id);
+
+        foreach ($transfers as $transfer) {
+            $agentId       = (string) $transfer->agent_id;
+            $distributorId = (string) ($transfer->distributor_id ?? '');
+
+            $transfer->agent_name       = $users[$agentId]->player ?? 'N/A';
+            $transfer->distributor_name = $users[$distributorId]->player ?? 'N/A';
+        }
+
         return view('pages.transfer.report', compact('transfers'));
     }
-
-    // Get all unique user IDs
-    $userIds = $transfers->pluck('agent_id')
-         ->merge($transfers->pluck('distributor_id'))
-        ->unique()
-        ->filter()
-        ->map(fn($id) => (string) $id); // cast to string
-
-    // MongoDB query
-    $users = User::whereIn('_id', $userIds->all())->get()
-        ->keyBy(fn($u) => (string) $u->_id);
-
-    foreach ($transfers as $transfer) {
-        $agentId = (string) $transfer->agent_id;
-         $distributorId = (string) ($transfer->distributor_id ?? '');
-
-        $transfer->agent_name = $users[$agentId]->player ?? 'N/A';
-         $transfer->distributor_name = $users[$distributorId]->player ?? 'N/A';
-    }
-
-    return view('pages.transfer.report', compact('transfers'));
-}
-
-
 
 }
