@@ -252,7 +252,7 @@ class AuthController extends Controller
         $credentials = $request->validate([
             'player'   => 'required|string',
             'password' => 'required|string',
-            'role'     => 'required|in:admin,distributor,agent',
+            'role'     => 'required|in:admin,distributor,agent,player',
         ]);
 
         $guard = $credentials['role'] === 'admin' ? 'admin' : 'web';

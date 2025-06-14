@@ -80,6 +80,7 @@
                                                 <option value="admin">Admin</option>
                                                 <option value="distributor">Distributor</option>
                                                 <option value="agent">Agent</option>
+                                                <option value="player">player</option>
                                             </select>
                                         </div>
                                         <label>Name</label>
