@@ -432,22 +432,38 @@ public function processTransfer(Request $request)
 }
 
 
+public function showTransferReport()
+{
+    $transfers = DB::table('transfer_to_distributor')
+        ->orderBy('created_at', 'desc')
+        ->get();
 
-    public function showTransferReport()
-    {
-        $transfers = DB::table('transfer_to_distributor')
-            ->select(
-                'agent_id',
-                'distributor_id',
-                'amount',
-                'remaining_balance',
-                'created_at',
-                'updated_at'
-            )
-            ->orderBy('created_at', 'desc')
-            ->get();
+    if ($transfers->isEmpty()) {
         return view('pages.transfer.report', compact('transfers'));
     }
+
+    // Get all unique user IDs
+    $userIds = $transfers->pluck('agent_id')
+         ->merge($transfers->pluck('distributor_id'))
+        ->unique()
+        ->filter()
+        ->map(fn($id) => (string) $id); // cast to string
+
+    // MongoDB query
+    $users = User::whereIn('_id', $userIds->all())->get()
+        ->keyBy(fn($u) => (string) $u->_id);
+
+    foreach ($transfers as $transfer) {
+        $agentId = (string) $transfer->agent_id;
+         $distributorId = (string) ($transfer->distributor_id ?? '');
+
+        $transfer->agent_name = $users[$agentId]->player ?? 'N/A';
+         $transfer->distributor_name = $users[$distributorId]->player ?? 'N/A';
+    }
+
+    return view('pages.transfer.report', compact('transfers'));
+}
+
 
 
 }

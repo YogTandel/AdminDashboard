@@ -67,4 +67,9 @@ class User extends Authenticatable
 
         return json_decode($value, true) ?? [];
     }
+
+//     public function isAdmin()
+// {
+//     return $this->role === 'admin'; // Adjust according to your role field
+// }
 }

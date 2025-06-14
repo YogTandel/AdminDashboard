@@ -10,7 +10,9 @@
         <table class="table table-bordered table-hover" style="font-size: 0.8rem; color: #212529;">
             <thead>
                 <tr>
+                    <th scope="col" class="text-dark">Agent name</th>
                     <th scope="col" class="text-dark">Agent ID</th>
+                    <th scope="col" class="text-dark">distributor name</th>
                     <th scope="col" class="text-dark">Distributor ID</th>
                     <th scope="col" class="text-dark">Amount</th>
                     <th scope="col" class="text-dark">Remaining Balance</th>
@@ -21,7 +23,9 @@
             <tbody>
                 @foreach ($transfers as $transfer)
                     <tr>
+                         <td>{{ $transfer->agent_name }}</td>
                         <td class="text-dark">{{ $transfer->agent_id }}</td>
+                        <td>{{ $transfer->distributor_name ?? 'N/A' }}</td>
                         <td>{{ $transfer->distributor_id ?? 'N/A' }}</td>
                         <td class="text-dark">{{ number_format($transfer->amount, 2) }}</td>
                         <td>{{ $transfer->remaining_balance ?? 'N/A' }}</td>
