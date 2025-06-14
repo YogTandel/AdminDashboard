@@ -6,19 +6,20 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    protected $connection = 'mongodb';
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::create('transfer_to_distributor', function (Blueprint $table) {
+        Schema::create('transfer', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('agent_id');
-            $table->decimal('amount', 10, 2);
+            $table->string('transfer_by');
+            $table->string('transfer_to');
             $table->enum('type', ['add', 'subtract']);
+            $table->decimal('amount', 10, 2);
+            $table->decimal('remaining_balance', 10, 2);
             $table->timestamps();
-
-            $table->foreign('agent_id')->references('id')->on('agents')->onDelete('cascade');
         });
     }
 
@@ -27,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('transfer_to_distributor');
+        Schema::dropIfExists('transfer');
     }
 };
