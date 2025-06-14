@@ -21,6 +21,8 @@
                                 Transferring to agent
                             @elseif(auth()->user()->role === 'agent')
                                 Transferring to distributor
+                            @elseif(auth()->user()->role === 'distributor')
+                                Transferring to admin
                             @endif
                         </p>
                     </div>
@@ -28,6 +30,11 @@
                         @php
                             $balance =
                                 auth()->user()->role === 'player' ? auth()->user()->balance : auth()->user()->endpoint;
+
+                            // Initialize variables
+                            $recipients = [];
+                            $recipientType = '';
+                            $hasRecipients = false;
 
                             // Get recipients based on role
                             if (auth()->user()->role === 'player') {
@@ -40,6 +47,11 @@
                                     ->where('status', 'Active')
                                     ->get(['id', 'player']);
                                 $recipientType = 'distributor';
+                            } elseif (auth()->user()->role === 'distributor') {
+                                $recipients = \App\Models\User::where('role', 'agent')
+                                    ->where('status', 'Active')
+                                    ->get(['id', 'player']);
+                                $recipientType = 'agent';
                             }
 
                             $hasRecipients = count($recipients) > 0;
