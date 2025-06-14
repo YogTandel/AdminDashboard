@@ -30,16 +30,24 @@
                             <input type="hidden" name="transfer_by" value="{{ auth()->id() }}">
                             <input type="hidden" name="type" value="subtract">
 
+                            @php
+                                // Get the correct balance field based on role
+                                $balance =
+                                    auth()->user()->role === 'player'
+                                        ? auth()->user()->balance
+                                        : auth()->user()->endpoint;
+                            @endphp
+
                             <div class="mb-4">
                                 <label class="form-label">Your Balance</label>
-                                <input type="text" class="form-control"
-                                    value="{{ number_format(auth()->user()->endpoint, 2) }}" readonly>
+                                <input type="text" class="form-control" value="{{ number_format($balance, 2) }}"
+                                    readonly>
                             </div>
 
                             <div class="mb-4">
                                 <label for="transferAmount" class="form-label">Amount to Transfer</label>
                                 <input type="number" class="form-control" name="amount" id="transferAmount" min="0.01"
-                                    step="0.01" max="{{ auth()->user()->endpoint }}" required>
+                                    step="0.01" max="{{ $balance }}" required>
                             </div>
 
                             <div class="text-danger mb-4" id="amountError" style="display:none">
@@ -50,7 +58,7 @@
                             <div class="mb-4">
                                 <label class="form-label">Remaining Balance After Transfer</label>
                                 <input type="text" class="form-control" id="remainingBalance"
-                                    value="{{ number_format(auth()->user()->endpoint, 2) }}" readonly>
+                                    value="{{ number_format($balance, 2) }}" readonly>
                             </div>
 
                             <div class="text-center mt-4">
@@ -74,7 +82,11 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const agentBalance = parseFloat("{{ auth()->user()->endpoint }}");
+            // Get the correct balance based on role
+            const balanceField = "{{ auth()->user()->role === 'player' ? 'balance' : 'endpoint' }}";
+            const agentBalance = parseFloat(
+                "{{ auth()->user()->role === 'player' ? auth()->user()->balance : auth()->user()->endpoint }}");
+
             const transferAmount = document.getElementById('transferAmount');
             const remainingBalance = document.getElementById('remainingBalance');
             const amountError = document.getElementById('amountError');
@@ -142,10 +154,12 @@
                             successMessage.classList.remove('d-none');
 
                             // Update balance display
-                            document.querySelector('input[readonly]').value = data.new_balance.toFixed(
-                                2);
+                            const newBalance = data.new_balance || data
+                            .balance; // Handle both field names in response
+                            document.querySelector('input[readonly]').value = parseFloat(newBalance)
+                                .toFixed(2);
                             transferAmount.value = '';
-                            remainingBalance.value = data.new_balance.toFixed(2);
+                            remainingBalance.value = parseFloat(newBalance).toFixed(2);
                         } else {
                             throw new Error(data.message || 'Transfer failed');
                         }
@@ -163,4 +177,45 @@
             });
         });
     </script>
+
+
+    {{-- <form id="transferForm" method="POST" action="{{ route('transfer.execute') }}">
+    @csrf
+    <input type="hidden" name="transfer_by" value="{{ $user->id }}">
+    <input type="hidden" name="type" value="subtract">
+
+   <div class="mb-4">
+        <label class="form-label">Your {{ $userType }} Balance</label>
+        <input type="text" class="form-control"
+            value="{{ number_format($currentBalance, 2) }}" readonly>
+    </div>
+
+    <div class="mb-4">
+        <label for="transferAmount" class="form-label">Amount to Transfer</label>
+        <input type="number" class="form-control" name="amount" id="transferAmount" min="0.01"
+            step="0.01" max="{{ $currentBalance }}" required>
+    </div>
+
+    <div class="text-danger mb-4" id="amountError" style="display:none">
+        <i class="fas fa-exclamation-circle me-2"></i>
+        <span id="errorText">Amount exceeds available balance</span>
+    </div>
+
+    <div class="mb-4">
+        <label class="form-label">Remaining Balance After Transfer</label>
+        <input type="text" class="form-control" id="remainingBalance"
+            value="{{ number_format($currentBalance, 2) }}" readonly>
+    </div>
+
+    <div class="text-center mt-4">
+        <button type="submit" class="btn bg-gradient-primary w-100" id="submitBtn">
+            <i class="fas fa-exchange-alt me-2"></i> Process Transfer
+        </button>
+    </div>
+
+    <div class="alert alert-success d-none" id="successMessage">
+        <i class="fas fa-check-circle me-2"></i>
+        <span id="successText">Transfer processed successfully!</span>
+    </div>
+</form> --}}
 @endsection
