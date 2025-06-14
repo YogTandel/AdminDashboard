@@ -28,9 +28,7 @@
                                     $recipientName = $recipient->player ?? 'N/A';
                                     echo "Transferring to distributor: {$recipientName}";
                                 } elseif (auth()->user()->role === 'distributor') {
-                                    $recipient = \App\Models\User::where('role', 'admin')
-                                        ->where('status', 'Active')
-                                        ->first();
+                                    $recipient = \App\Models\Admin::get();
                                     $recipientName = $recipient->player ?? 'N/A';
                                     echo "Transferring to admin: {$recipientName}";
                                 }
