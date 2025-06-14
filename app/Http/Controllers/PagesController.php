@@ -371,13 +371,35 @@ class PagesController extends Controller
     }
 
     public function transferForm()
-    {
-        $agent = Auth::user();
-
-        return view('pages.transfer.form', [
-            'agent' => $agent,
-        ]);
+{
+    $user = Auth::user();
+    
+    if (!$user) {
+        abort(403, 'Unauthorized access');
     }
+
+    $transferTo = null;
+    $userType = '';
+    $balanceField = 'endpoint'; // Default
+    
+    if ($user->role === 'player') {
+        $transferTo = User::where('id', $user->agent_id)->first();
+        $userType = 'Player';
+        $balanceField = 'balance'; // Player માટે balance ફીલ્ડ
+    } elseif ($user->role === 'agent') {
+        $transferTo = User::where('id', $user->distributor_id)->first();
+        $userType = 'Agent';
+        $balanceField = 'endpoint'; // Agent માટે endpoint ફીલ્ડ
+    }
+
+    return view('pages.transfer.form', [
+        'user' => $user,
+        'transferTo' => $transferTo,
+        'userType' => $userType,
+        'balanceField' => $balanceField,
+        'currentBalance' => $user->{$balanceField} // યોગ્ય ફીલ્ડમાંથી બેલેન્સ લો
+    ]);
+}
 
     public function processTransfer(Request $request)
     {
