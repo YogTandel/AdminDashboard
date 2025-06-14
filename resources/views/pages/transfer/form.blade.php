@@ -14,35 +14,32 @@
         <div class="row justify-content-center">
             <div class="col-6">
                 <div class="card">
-                   <div class="card-header pb-0">
+                    <div class="card-header pb-0">
                         <h6 class="mb-0">Transfer Funds</h6>
                         <p class="text-sm mb-0">
-                            @if ($user->role === 'player')
-                                Player ID: {{ $user->id }} | 
-                                Transferring to your agent: {{ $transferTo->name ?? 'Not assigned' }}
-                            @elseif($user->role === 'agent')
-                                Agent ID: {{ $user->id }} | 
-                                Transferring to your distributor: {{ $transferTo->name ?? 'Not assigned' }}
+                            @if (auth()->user()->role === 'player')
+                                Transferring to your assigned agent
+                            @elseif(auth()->user()->role === 'agent')
+                                Transferring to your distributor
                             @endif
                         </p>
                     </div>
-
                     <div class="card-body pt-4">
                         <form id="transferForm" method="POST" action="{{ route('transfer.execute') }}">
                             @csrf
-                            <input type="hidden" name="transfer_by" value="{{ $user->id }}">
+                            <input type="hidden" name="transfer_by" value="{{ auth()->id() }}">
                             <input type="hidden" name="type" value="subtract">
 
-                           <div class="mb-4">
-                                <label class="form-label">Your {{ $userType }} Balance</label>
+                            <div class="mb-4">
+                                <label class="form-label">Your Balance</label>
                                 <input type="text" class="form-control"
-                                    value="{{ number_format($currentBalance, 2) }}" readonly>
+                                    value="{{ number_format(auth()->user()->endpoint, 2) }}" readonly>
                             </div>
 
                             <div class="mb-4">
                                 <label for="transferAmount" class="form-label">Amount to Transfer</label>
                                 <input type="number" class="form-control" name="amount" id="transferAmount" min="0.01"
-                                    step="0.01" max="{{ $currentBalance }}" required>
+                                    step="0.01" max="{{ auth()->user()->endpoint }}" required>
                             </div>
 
                             <div class="text-danger mb-4" id="amountError" style="display:none">
@@ -53,7 +50,7 @@
                             <div class="mb-4">
                                 <label class="form-label">Remaining Balance After Transfer</label>
                                 <input type="text" class="form-control" id="remainingBalance"
-                                    value="{{ number_format($currentBalance, 2) }}" readonly>
+                                    value="{{ number_format(auth()->user()->endpoint, 2) }}" readonly>
                             </div>
 
                             <div class="text-center mt-4">
@@ -77,7 +74,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const initialBalance = parseFloat("{{ $currentBalance }}");
+            const agentBalance = parseFloat("{{ auth()->user()->endpoint }}");
             const transferAmount = document.getElementById('transferAmount');
             const remainingBalance = document.getElementById('remainingBalance');
             const amountError = document.getElementById('amountError');
@@ -87,36 +84,35 @@
             const successText = document.getElementById('successText');
 
             // Initial setup
-            if (initialBalance <= 0) {
-            submitBtn.disabled = true;
-            amountError.style.display = 'block';
-            errorText.textContent = 'You have zero balance. Transfer not allowed.';
-            transferAmount.disabled = true;
-        }
-
-            transferAmount.addEventListener('input', function() {
-            const amount = parseFloat(this.value) || 0;
-            const remaining = initialBalance - amount;
-
-            // ચેક્સ અને એરર હેન્ડલિંગ
-            if (amount > initialBalance) {
-                amountError.style.display = 'block';
-                errorText.textContent = 'Amount exceeds available balance';
+            if (agentBalance <= 0) {
                 submitBtn.disabled = true;
-                this.classList.add('is-invalid');
-            } else if (amount <= 0) {
                 amountError.style.display = 'block';
-                errorText.textContent = 'Amount must be greater than 0';
-                submitBtn.disabled = true;
-                this.classList.add('is-invalid');
-            } else {
-                amountError.style.display = 'none';
-                submitBtn.disabled = false;
-                this.classList.remove('is-invalid');
+                errorText.textContent = 'You have zero balance. Transfer not allowed.';
+                transferAmount.disabled = true;
             }
 
-            // રિમેઇનિંગ બેલેન્સ અપડેટ
-            remainingBalance.value = remaining.toFixed(2);
+            // Real-time balance calculation
+            transferAmount.addEventListener('input', function() {
+                const amount = parseFloat(this.value) || 0;
+                const remaining = agentBalance - amount;
+
+                if (amount > agentBalance) {
+                    amountError.style.display = 'block';
+                    errorText.textContent = 'Amount exceeds available balance';
+                    submitBtn.disabled = true;
+                    this.classList.add('is-invalid');
+                } else if (amount <= 0) {
+                    amountError.style.display = 'block';
+                    errorText.textContent = 'Amount must be greater than 0';
+                    submitBtn.disabled = true;
+                    this.classList.add('is-invalid');
+                } else {
+                    amountError.style.display = 'none';
+                    submitBtn.disabled = false;
+                    this.classList.remove('is-invalid');
+                }
+
+                remainingBalance.value = remaining.toFixed(2);
             });
 
             // Form submission
