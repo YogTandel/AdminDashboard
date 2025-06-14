@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    protected $connection = 'mongodb';
     /**
      * Run the migrations.
      */
@@ -16,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('transfer_by');
             $table->string('transfer_to');
-            $table->enum('type', ['add', 'subtract']);
+            $table->enum('type', ['admin', 'distributor', 'agent', 'player']);
             $table->decimal('amount', 10, 2);
             $table->decimal('remaining_balance', 10, 2);
             $table->enum('transfer_role', ['admin', 'distributor', 'agent', 'player']);

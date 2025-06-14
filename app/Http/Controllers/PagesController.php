@@ -403,45 +403,45 @@ class PagesController extends Controller
 
     public function processTransfer(Request $request)
     {
+        DB::beginTransaction();
         try {
             $validated = $request->validate([
                 'transfer_by' => 'required|exists:users,id',
-                'transfer_to' => 'required|exists:users,id', // Add this validation
+                'transfer_to' => 'required|exists:users,id',
                 'amount'      => 'required|numeric|min:0.01',
                 'type'        => 'required|in:subtract,add',
             ]);
 
             $transfer_by   = User::findOrFail($validated['transfer_by']);
-            $transfer_to   = User::findOrFail($validated['transfer_to']); // Get the selected recipient
+            $transfer_to   = User::findOrFail($validated['transfer_to']);
             $transfer_role = $transfer_by->role;
 
-            // Validate role-based transfer permissions
-            if ($transfer_by->role === 'player') {
-                // Player can only transfer to agents
-                if ($transfer_to->role !== 'agent') {
+            // Determine allowed recipients
+            $allowedRecipients = [];
+            switch ($transfer_by->role) {
+                case 'player':
+                    $allowedRecipients = ['player', 'agent', 'distributor', 'admin'];
+                    break;
+                case 'agent':
+                    $allowedRecipients = ['agent', 'distributor', 'admin'];
+                    break;
+                case 'distributor':
+                    $allowedRecipients = ['distributor', 'admin'];
+                    break;
+                default:
                     return response()->json([
                         'success' => false,
-                        'message' => 'Players can only transfer to agents',
-                    ], 422);
-                }
-            } elseif ($transfer_by->role === 'agent') {
-                // Agent can only transfer to distributors
-                if ($transfer_to->role !== 'distributor') {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Agents can only transfer to distributors',
-                    ], 422);
-                }
-            } elseif ($transfer_by->role === 'admin') {
-                // Admin can transfer to anyone (no additional checks needed)
-            } else {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Your role cannot perform transfers',
-                ], 403);
+                        'message' => 'Your role cannot perform transfers',
+                    ], 403);
             }
 
-            // Get the correct balance field name based on role
+            if (! in_array($transfer_to->role, $allowedRecipients)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'You can only transfer to: ' . implode(', ', $allowedRecipients),
+                ], 422);
+            }
+
             $balanceField = $transfer_by->role === 'player' ? 'balance' : 'endpoint';
 
             // Perform the transfer calculations
@@ -456,10 +456,19 @@ class PagesController extends Controller
                 $transfer_by->$balanceField -= $validated['amount'];
                 $transfer_to->endpoint += $validated['amount'];
             } else {
+                // For add operations, validate hierarchy
+                $roleHierarchy = ['admin' => 4, 'distributor' => 3, 'agent' => 2, 'player' => 1];
+                if ($roleHierarchy[$transfer_by->role] <= $roleHierarchy[$transfer_to->role]) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'You can only add funds to accounts with lower privileges.',
+                    ], 422);
+                }
+
                 if ($transfer_to->endpoint < $validated['amount']) {
                     return response()->json([
                         'success' => false,
-                        'message' => 'Recipient has insufficient endpoint.',
+                        'message' => 'Recipient has insufficient endpoint balance.',
                     ], 422);
                 }
 
@@ -467,21 +476,24 @@ class PagesController extends Controller
                 $transfer_to->endpoint -= $validated['amount'];
             }
 
-            DB::connection('mongodb')->transaction(function () use ($transfer_by, $transfer_to, $validated, $transfer_role, $balanceField) {
-                $transfer_by->save();
-                $transfer_to->save();
+            // Save both users
+            if (! $transfer_by->save() || ! $transfer_to->save()) {
+                throw new \Exception('Failed to save user balances');
+            }
 
-                DB::connection('mongodb')->table('transfers')->insert([
-                    'transfer_by'       => $transfer_by->id,
-                    'transfer_to'       => $transfer_to->id,
-                    'type'              => $validated['type'],
-                    'amount'            => $validated['amount'],
-                    'remaining_balance' => $transfer_by->$balanceField,
-                    'transfer_role'     => $transfer_role,
-                    'created_at'        => now(),
-                    'updated_at'        => now(),
-                ]);
-            });
+            // Create transfer record with comma-separated allowed roles
+            DB::connection('mongodb')->table('transfers')->insert([
+                'transfer_by'       => $transfer_by->id,
+                'transfer_to'       => $transfer_to->id,
+                'type'              => implode(',', $allowedRecipients),
+                'amount'            => $validated['amount'],
+                'remaining_balance' => $transfer_by->$balanceField,
+                'transfer_role'     => $transfer_role,
+                'created_at'        => now(),
+                'updated_at'        => now(),
+            ]);
+
+            DB::commit();
 
             return response()->json([
                 'success'     => true,
@@ -490,6 +502,7 @@ class PagesController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            DB::rollBack();
             Log::error('Transfer failed: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
@@ -521,7 +534,7 @@ class PagesController extends Controller
             ->keyBy(fn($u) => (string) $u->_id);
 
         foreach ($transfers as $transfer) {
-            $transfer_by       = (string) $transfer->transfer_by;
+            $transfer_by = (string) $transfer->transfer_by;
             $transfer_to = (string) ($transfer->transfer_to ?? '');
 
             $transfer->agent_name       = $users[$transfer_by]->player ?? 'N/A';
