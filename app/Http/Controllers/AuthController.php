@@ -91,16 +91,16 @@ class AuthController extends Controller
         Log::info('Attempting to create a new Plyer', ['input' => $request->except(['password', 'original_password'])]);
 
         $validate = $request->validate([
-            'player'      => 'required|string|max:255|unique:users,player',
-            'password'    => 'required|string|min:3',
-            'role'        => 'required|in:player',
-            'balance'     => 'required|numeric|min:0',
-            'distributor' => 'required|string|max:255',
-            'agent'       => 'required|string|max:255',
-            'login_status'  => 'required|in:True,False',
-            'status'      => 'required|in:Active,Inactive',
-            'winamount'   => 'required|numeric',
-            'gameHistory' => 'nullable|array',
+            'player'       => 'required|string|max:255|unique:users,player',
+            'password'     => 'required|string|min:3',
+            'role'         => 'required|in:player',
+            'balance'      => 'required|numeric|min:0',
+            'distributor'  => 'required|string|max:255',
+            'agent'        => 'required|string|max:255',
+            'login_status' => 'required|in:True,False',
+            'status'       => 'required|in:Active,Inactive',
+            'winamount'    => 'required|numeric',
+            'gameHistory'  => 'nullable|array',
         ]);
 
         try {

@@ -371,64 +371,69 @@ class PagesController extends Controller
     }
 
     public function transferForm()
-{
-    $user = Auth::user();
-    
-    if (!$user) {
-        abort(403, 'Unauthorized access');
-    }
+    {
+        $user = Auth::user();
 
-    $transferTo = null;
-    $userType = '';
-    $balanceField = 'endpoint'; // Default
-    
-    if ($user->role === 'player') {
-        $transferTo = User::where('id', $user->agent_id)->first();
-        $userType = 'Player';
-        $balanceField = 'balance'; // Player માટે balance ફીલ્ડ
-    } elseif ($user->role === 'agent') {
-        $transferTo = User::where('id', $user->distributor_id)->first();
-        $userType = 'Agent';
-        $balanceField = 'endpoint'; // Agent માટે endpoint ફીલ્ડ
-    }
+        if (! $user) {
+            abort(403, 'Unauthorized access');
+        }
 
-    return view('pages.transfer.form', [
-        'user' => $user,
-        'transferTo' => $transferTo,
-        'userType' => $userType,
-        'balanceField' => $balanceField,
-        'currentBalance' => $user->{$balanceField} // યોગ્ય ફીલ્ડમાંથી બેલેન્સ લો
-    ]);
-}
+        $transferTo   = null;
+        $userType     = '';
+        $balanceField = 'endpoint'; // Default
+
+        if ($user->role === 'player') {
+            $transferTo   = User::where('id', $user->agent_id)->first();
+            $userType     = 'Player';
+            $balanceField = 'balance'; // Player માટે balance ફીલ્ડ
+        } elseif ($user->role === 'agent') {
+            $transferTo   = User::where('id', $user->distributor_id)->first();
+            $userType     = 'Agent';
+            $balanceField = 'endpoint'; // Agent માટે endpoint ફીલ્ડ
+        }
+
+        return view('pages.transfer.form', [
+            'user'           => $user,
+            'transferTo'     => $transferTo,
+            'userType'       => $userType,
+            'balanceField'   => $balanceField,
+            'currentBalance' => $user->{$balanceField}, // યોગ્ય ફીલ્ડમાંથી બેલેન્સ લો
+        ]);
+    }
 
     public function processTransfer(Request $request)
     {
         try {
             $validated = $request->validate([
                 'transfer_by' => 'required|exists:users,id',
+                'transfer_to' => 'required|exists:users,id', // Add this validation
                 'amount'      => 'required|numeric|min:0.01',
                 'type'        => 'required|in:subtract,add',
             ]);
 
-            $transfer_by = User::findOrFail($request->transfer_by);
+            $transfer_by   = User::findOrFail($validated['transfer_by']);
+            $transfer_to   = User::findOrFail($validated['transfer_to']); // Get the selected recipient
+            $transfer_role = $transfer_by->role;
 
-            // Determine transfer_to based on role
-            $transfer_to   = null;
-            $transfer_role = $transfer_by->role; // Store the initiator's role
-
+            // Validate role-based transfer permissions
             if ($transfer_by->role === 'player') {
-                // Player can only transfer to their assigned agent
-                $transfer_to = User::where('id', $transfer_by->agent_id)
-                    ->where('role', 'agent')
-                    ->firstOrFail();
+                // Player can only transfer to agents
+                if ($transfer_to->role !== 'agent') {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Players can only transfer to agents',
+                    ], 422);
+                }
             } elseif ($transfer_by->role === 'agent') {
-                // Agent can only transfer to their assigned distributor
-                $transfer_to = User::where('id', $transfer_by->distributor_id)
-                    ->where('role', 'distributor')
-                    ->firstOrFail();
+                // Agent can only transfer to distributors
+                if ($transfer_to->role !== 'distributor') {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Agents can only transfer to distributors',
+                    ], 422);
+                }
             } elseif ($transfer_by->role === 'admin') {
-                // Admin can transfer to anyone (adjust as needed)
-                $transfer_to = User::findOrFail($request->transfer_to);
+                // Admin can transfer to anyone (no additional checks needed)
             } else {
                 return response()->json([
                     'success' => false,
@@ -436,40 +441,42 @@ class PagesController extends Controller
                 ], 403);
             }
 
+            // Get the correct balance field name based on role
+            $balanceField = $transfer_by->role === 'player' ? 'balance' : 'endpoint';
+
             // Perform the transfer calculations
-            if ($request->type === 'subtract') {
-                if ($transfer_by->endpoint < $request->amount) {
+            if ($validated['type'] === 'subtract') {
+                if ($transfer_by->$balanceField < $validated['amount']) {
                     return response()->json([
                         'success' => false,
                         'message' => 'Insufficient balance.',
                     ], 422);
                 }
 
-                $transfer_by->endpoint -= $request->amount;
-                $transfer_to->endpoint += $request->amount;
+                $transfer_by->$balanceField -= $validated['amount'];
+                $transfer_to->endpoint += $validated['amount'];
             } else {
-                if ($transfer_to->endpoint < $request->amount) {
+                if ($transfer_to->endpoint < $validated['amount']) {
                     return response()->json([
                         'success' => false,
                         'message' => 'Recipient has insufficient endpoint.',
                     ], 422);
                 }
 
-                $transfer_by->endpoint += $request->amount;
-                $transfer_to->endpoint -= $request->amount;
+                $transfer_by->$balanceField += $validated['amount'];
+                $transfer_to->endpoint -= $validated['amount'];
             }
 
-            // MongoDB transaction
-            DB::connection('mongodb')->transaction(function () use ($transfer_by, $transfer_to, $request, $transfer_role) {
+            DB::connection('mongodb')->transaction(function () use ($transfer_by, $transfer_to, $validated, $transfer_role, $balanceField) {
                 $transfer_by->save();
                 $transfer_to->save();
 
                 DB::connection('mongodb')->table('transfers')->insert([
                     'transfer_by'       => $transfer_by->id,
                     'transfer_to'       => $transfer_to->id,
-                    'type'              => $request->type,
-                    'amount'            => $request->amount,
-                    'remaining_balance' => $transfer_by->endpoint,
+                    'type'              => $validated['type'],
+                    'amount'            => $validated['amount'],
+                    'remaining_balance' => $transfer_by->$balanceField,
                     'transfer_role'     => $transfer_role,
                     'created_at'        => now(),
                     'updated_at'        => now(),
@@ -479,7 +486,7 @@ class PagesController extends Controller
             return response()->json([
                 'success'     => true,
                 'message'     => 'Transfer successful.',
-                'new_balance' => $transfer_by->endpoint,
+                'new_balance' => $transfer_by->$balanceField,
             ]);
 
         } catch (\Exception $e) {
