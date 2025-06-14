@@ -11,9 +11,9 @@
             <thead>
                 <tr>
                     <th scope="col" class="text-dark">Agent name</th>
-                    <th scope="col" class="text-dark">Agent ID</th>
+                    <th scope="col" class="text-dark">Transfer By</th>
                     <th scope="col" class="text-dark">distributor name</th>
-                    <th scope="col" class="text-dark">Distributor ID</th>
+                    <th scope="col" class="text-dark">Transfer To</th>
                     <th scope="col" class="text-dark">Amount</th>
                     <th scope="col" class="text-dark">Remaining Balance</th>
                     <th scope="col" class="text-dark">Created At</th>
@@ -24,9 +24,9 @@
                 @foreach ($transfers as $transfer)
                     <tr>
                          <td>{{ $transfer->agent_name }}</td>
-                        <td class="text-dark">{{ $transfer->agent_id }}</td>
+                        <td class="text-dark">{{ $transfer->transfer_by }}</td>
                         <td>{{ $transfer->distributor_name ?? 'N/A' }}</td>
-                        <td>{{ $transfer->distributor_id ?? 'N/A' }}</td>
+                        <td>{{ $transfer->transfer_to ?? 'N/A' }}</td>
                         <td class="text-dark">{{ number_format($transfer->amount, 2) }}</td>
                         <td>{{ $transfer->remaining_balance ?? 'N/A' }}</td>
                         <td class="text-dark">{{ \Carbon\Carbon::parse($transfer->created_at)->format('d-M-Y h:i A') }}</td>

@@ -501,7 +501,7 @@ class PagesController extends Controller
 
     public function showTransferReport()
     {
-        $transfers = DB::table('transfer_to_distributor')
+        $transfers = DB::table('transfers')
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -510,8 +510,8 @@ class PagesController extends Controller
         }
 
         // Get all unique user IDs
-        $userIds = $transfers->pluck('agent_id')
-            ->merge($transfers->pluck('distributor_id'))
+        $userIds = $transfers->pluck('transfer_by')
+            ->merge($transfers->pluck('transfer_to'))
             ->unique()
             ->filter()
             ->map(fn($id) => (string) $id); // cast to string
@@ -521,11 +521,11 @@ class PagesController extends Controller
             ->keyBy(fn($u) => (string) $u->_id);
 
         foreach ($transfers as $transfer) {
-            $agentId       = (string) $transfer->agent_id;
-            $distributorId = (string) ($transfer->distributor_id ?? '');
+            $transfer_by       = (string) $transfer->transfer_by;
+            $transfer_to = (string) ($transfer->transfer_to ?? '');
 
-            $transfer->agent_name       = $users[$agentId]->player ?? 'N/A';
-            $transfer->distributor_name = $users[$distributorId]->player ?? 'N/A';
+            $transfer->agent_name       = $users[$transfer_by]->player ?? 'N/A';
+            $transfer->distributor_name = $users[$transfer_to]->player ?? 'N/A';
         }
 
         return view('pages.transfer.report', compact('transfers'));
