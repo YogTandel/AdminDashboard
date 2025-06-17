@@ -534,44 +534,6 @@ public function processTransfer(Request $request)
         }
     }
 
- public function login(Request $request)
-    {
-        $credentials = $request->validate([
-            'player'   => 'required|string',
-            'password' => 'required|string',
-            'role'     => 'required|in:admin,distributor,agent,player',
-        ]);
-
-        $guard = $credentials['role'] === 'admin' ? 'admin' : 'web';
-
-        $loginData = [
-            'player'   => $credentials['player'],
-            'password' => $credentials['password'],
-        ];
-
-        if ($guard !== 'admin') {
-            $loginData['status'] = 'Active';
-        }
-
-        if (Auth::guard($guard)->attempt($loginData)) {
-            $request->session()->regenerate();
-
-            $user = Auth::guard($guard)->user();
-
-            if ($guard !== 'admin' && $user->role !== $credentials['role']) {
-                Auth::guard($guard)->logout();
-                return back()->withErrors([
-                    'credentials' => 'Invalid role for this user.',
-                ]);
-            }
-
-            return redirect()->route('dashboard')->with('success', 'Login successful!');
-        }
-
-        throw ValidationException::withMessages([
-            'credentials' => 'Invalid credentials',
-        ]);
-    }
 
     public function showTransferReport()
     {
