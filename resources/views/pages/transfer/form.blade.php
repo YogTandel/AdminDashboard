@@ -28,8 +28,10 @@
                                     $recipientName = $recipient->player ?? 'N/A';
                                     echo "Transferring to distributor: {$recipientName}";
                                 } elseif (auth()->user()->role === 'distributor') {
-                                    $recipient = \App\Models\Admin::where('player', 'admin')->first();
-                                    $recipientName = $recipient ? $recipient->player : 'N/A';
+                                    $recipient = \App\Models\User::where('role', 'admin')
+                                        ->where('status', 'Active')
+                                        ->first();
+                                    $recipientName = $recipient->player ?? 'N/A';
                                     echo "Transferring to admin: {$recipientName}";
                                 }
                             @endphp
@@ -37,27 +39,38 @@
                     </div>
                     <div class="card-body pt-4">
                         @php
-                            $balance = auth()->user()->role === 'player' ? auth()->user()->balance : auth()->user()->endpoint;
+                            $balance =
+                                auth()->user()->role === 'player' ? auth()->user()->balance : auth()->user()->endpoint;
                             $canTransfer = false;
                             $recipientId = null;
 
                             if (auth()->user()->role === 'player') {
                                 $recipient = \App\Models\User::find(auth()->user()->agent_id);
-                                if ($recipient && in_array($recipient->role, ['agent', 'distributor', 'admin'])) {
+                                if (
+                                    $recipient &&
+                                    in_array($recipient->role, ['agent', 'distributor', 'admin']) &&
+                                    $recipient->status === 'Active'
+                                ) {
                                     $canTransfer = true;
                                     $recipientId = $recipient->id;
                                 }
                             } elseif (auth()->user()->role === 'agent') {
                                 $recipient = \App\Models\User::find(auth()->user()->distributor_id);
-                                if ($recipient && in_array($recipient->role, ['distributor', 'admin'])) {
+                                if (
+                                    $recipient &&
+                                    in_array($recipient->role, ['distributor', 'admin']) &&
+                                    $recipient->status === 'Active'
+                                ) {
                                     $canTransfer = true;
                                     $recipientId = $recipient->id;
                                 }
                             } elseif (auth()->user()->role === 'distributor') {
-                                $recipient = \App\Models\Admin::where('player', 'admin')->first();
+                                $recipient = \App\Models\User::where('role', 'admin')
+                                    ->where('status', 'Active')
+                                    ->first();
                                 if ($recipient) {
                                     $canTransfer = true;
-                                    $recipientId = $recipient->_id;
+                                    $recipientId = $recipient->id;
                                 }
                             }
                         @endphp
@@ -70,7 +83,7 @@
                                 @elseif(auth()->user()->role === 'agent')
                                     No valid distributor/admin assigned
                                 @elseif(auth()->user()->role === 'distributor')
-                                    No admin account available
+                                    No active admin available
                                 @endif
                             </div>
                         @else
@@ -89,7 +102,7 @@
                                 <div class="mb-4">
                                     <label for="transferAmount" class="form-label">Amount to Transfer</label>
                                     <input type="number" class="form-control" name="amount" id="transferAmount"
-                                        min="100" step="100" required>
+                                        min="0.01" step="0.01" required>
                                 </div>
 
                                 <div class="mb-4">
@@ -108,6 +121,11 @@
                                         <i class="fas fa-exchange-alt me-2"></i> Transfer Funds
                                     </button>
                                 </div>
+
+                                <div class="alert alert-success d-none mt-3" id="successMessage">
+                                    <i class="fas fa-check-circle me-2"></i>
+                                    <span id="successText"></span>
+                                </div>
                             </form>
                         @endif
                     </div>
@@ -121,12 +139,16 @@
     @if ($canTransfer)
         <script>
             document.addEventListener('DOMContentLoaded', function() {
-                let currentBalanceValue = parseFloat("{{ $balance }}");
+                let currentBalanceValue = parseFloat(
+                    "{{ auth()->user()->role === 'player' ? auth()->user()->balance : auth()->user()->endpoint }}");
                 const transferAmount = document.getElementById('transferAmount');
+                const currentBalanceField = document.getElementById('currentBalance');
                 const remainingBalance = document.getElementById('remainingBalance');
                 const amountError = document.getElementById('amountError');
                 const submitBtn = document.getElementById('submitBtn');
+                const successMessage = document.getElementById('successMessage');
                 const errorText = document.getElementById('errorText');
+                const successText = document.getElementById('successText');
 
                 function updateBalanceDisplay() {
                     const amount = parseFloat(transferAmount.value) || 0;
@@ -137,9 +159,9 @@
                         errorText.textContent = 'Amount exceeds available balance';
                         submitBtn.disabled = true;
                         transferAmount.classList.add('is-invalid');
-                    } else if (amount < 100) {
+                    } else if (amount <= 0) {
                         amountError.style.display = 'block';
-                        errorText.textContent = 'Minimum transfer amount is ₹100';
+                        errorText.textContent = 'Amount must be greater than 0';
                         submitBtn.disabled = true;
                         transferAmount.classList.add('is-invalid');
                     } else {
@@ -151,6 +173,7 @@
                     remainingBalance.value = remaining.toFixed(2);
                 }
 
+                // Initial setup
                 if (currentBalanceValue <= 0) {
                     submitBtn.disabled = true;
                     amountError.style.display = 'block';
@@ -158,37 +181,46 @@
                     transferAmount.disabled = true;
                 }
 
+                // Real-time balance calculation
                 transferAmount.addEventListener('input', updateBalanceDisplay);
 
+                // Form submission
                 document.getElementById('transferForm').addEventListener('submit', function(e) {
                     e.preventDefault();
                     submitBtn.disabled = true;
-                    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Processing...';
+                    submitBtn.innerHTML =
+                        '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...';
 
                     fetch(this.action, {
-                        method: 'POST',
-                        headers: {
-                            'Accept': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                        },
-                        body: new FormData(this)
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            window.location.reload();
-                        } else {
-                            throw new Error(data.message || 'Transfer failed');
-                        }
-                    })
-                    .catch(error => {
-                        amountError.style.display = 'block';
-                        errorText.textContent = error.message;
-                    })
-                    .finally(() => {
-                        submitBtn.disabled = false;
-                        submitBtn.innerHTML = '<i class="fas fa-exchange-alt me-2"></i> Transfer Funds';
-                    });
+                            method: 'POST',
+                            headers: {
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            },
+                            body: new FormData(this)
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            if (data.success) {
+                                // Refresh the page to get updated data from server
+                                window.location.reload();
+                            } else {
+                                throw new Error(data.message || 'Transfer failed');
+                            }
+                        })
+                        .catch(error => {
+                            amountError.style.display = 'block';
+                            errorText.textContent = error.message;
+                        })
+                        .finally(() => {
+                            submitBtn.disabled = false;
+                            submitBtn.innerHTML = '<i class="fas fa-exchange-alt me-2"></i> Transfer Funds';
+                        });
                 });
             });
         </script>
