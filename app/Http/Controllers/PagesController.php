@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\Setting;
 use App\Models\Transaction;
 use App\Models\User;
+use App\Models\Admin;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -370,51 +371,72 @@ class PagesController extends Controller
         return response()->stream($callback, 200, $headers);
     }
 
-    public function transferForm()
+   public function transferForm()
     {
         $user = Auth::user();
 
-        if (! $user) {
+        if (!$user) {
             abort(403, 'Unauthorized access');
         }
 
-        $transferTo   = null;
-        $userType     = '';
-        $balanceField = 'endpoint'; // Default
+        $transferTo = null;
+        $userType = '';
+        $balanceField = 'endpoint'; // Default for distributor
 
         if ($user->role === 'player') {
-            $transferTo   = User::where('id', $user->agent_id)->first();
-            $userType     = 'Player';
-            $balanceField = 'balance'; // Player માટે balance ફીલ્ડ
+            $transferTo = User::where('id', $user->agent_id)->first();
+            $userType = 'Player';
+            $balanceField = 'balance';
         } elseif ($user->role === 'agent') {
-            $transferTo   = User::where('id', $user->distributor_id)->first();
-            $userType     = 'Agent';
-            $balanceField = 'endpoint'; // Agent માટે endpoint ફીલ્ડ
+            $transferTo = User::where('id', $user->distributor_id)->first();
+            $userType = 'Agent';
+            $balanceField = 'endpoint';
+        } elseif ($user->role === 'distributor') {
+            $transferTo = Admin::first();
+            $userType = 'Distributor';
+            $balanceField = 'endpoint';
         }
 
         return view('pages.transfer.form', [
-            'user'           => $user,
-            'transferTo'     => $transferTo,
-            'userType'       => $userType,
-            'balanceField'   => $balanceField,
-            'currentBalance' => $user->{$balanceField}, // યોગ્ય ફીલ્ડમાંથી બેલેન્સ લો
+            'user' => $user,
+            'transferTo' => $transferTo,
+            'userType' => $userType,
+            'balanceField' => $balanceField,
+            'currentBalance' => $user->{$balanceField},
         ]);
     }
 
-    public function processTransfer(Request $request)
+public function processTransfer(Request $request)
     {
         DB::beginTransaction();
         try {
             $validated = $request->validate([
                 'transfer_by' => 'required|exists:users,id',
                 'transfer_to' => 'required|exists:users,id',
-                'amount'      => 'required|numeric|min:0.01',
-                'type'        => 'required|in:subtract,add',
+                'amount' => 'required|numeric|min:100', // Minimum ₹100
+                'type' => 'required|in:subtract,add',
             ]);
 
-            $transfer_by   = User::findOrFail($validated['transfer_by']);
-            $transfer_to   = User::findOrFail($validated['transfer_to']);
+            $transfer_by = User::findOrFail($validated['transfer_by']);
+            $transfer_to = User::findOrFail($validated['transfer_to']);
             $transfer_role = $transfer_by->role;
+
+            // Distributor specific checks
+            if ($transfer_by->role === 'distributor') {
+                if ($transfer_to->role !== 'admin') {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Distributors can only transfer to admin',
+                    ], 422);
+                }
+
+                if ($transfer_to->status !== 'Active') {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Recipient admin is not active',
+                    ], 422);
+                }
+            }
 
             // Determine allowed recipients
             $allowedRecipients = [];
@@ -426,7 +448,7 @@ class PagesController extends Controller
                     $allowedRecipients = ['agent', 'distributor', 'admin'];
                     break;
                 case 'distributor':
-                    $allowedRecipients = ['distributor', 'admin'];
+                    $allowedRecipients = ['admin']; // Only admin
                     break;
                 default:
                     return response()->json([
@@ -435,7 +457,7 @@ class PagesController extends Controller
                     ], 403);
             }
 
-            if (! in_array($transfer_to->role, $allowedRecipients)) {
+            if (!in_array($transfer_to->role, $allowedRecipients)) {
                 return response()->json([
                     'success' => false,
                     'message' => 'You can only transfer to: ' . implode(', ', $allowedRecipients),
@@ -444,7 +466,7 @@ class PagesController extends Controller
 
             $balanceField = $transfer_by->role === 'player' ? 'balance' : 'endpoint';
 
-            // Perform the transfer calculations
+            // Perform transfer calculations
             if ($validated['type'] === 'subtract') {
                 if ($transfer_by->$balanceField < $validated['amount']) {
                     return response()->json([
@@ -456,7 +478,6 @@ class PagesController extends Controller
                 $transfer_by->$balanceField -= $validated['amount'];
                 $transfer_to->endpoint += $validated['amount'];
             } else {
-                // For add operations, validate hierarchy
                 $roleHierarchy = ['admin' => 4, 'distributor' => 3, 'agent' => 2, 'player' => 1];
                 if ($roleHierarchy[$transfer_by->role] <= $roleHierarchy[$transfer_to->role]) {
                     return response()->json([
@@ -477,27 +498,27 @@ class PagesController extends Controller
             }
 
             // Save both users
-            if (! $transfer_by->save() || ! $transfer_to->save()) {
+            if (!$transfer_by->save() || !$transfer_to->save()) {
                 throw new \Exception('Failed to save user balances');
             }
 
-            // Create transfer record with comma-separated allowed roles
+            // Create transfer record
             DB::connection('mongodb')->table('transfers')->insert([
-                'transfer_by'       => $transfer_by->id,
-                'transfer_to'       => $transfer_to->id,
-                'type'              => implode(',', $allowedRecipients),
-                'amount'            => $validated['amount'],
+                'transfer_by' => $transfer_by->id,
+                'transfer_to' => $transfer_to->id,
+                'type' => implode(',', $allowedRecipients),
+                'amount' => $validated['amount'],
                 'remaining_balance' => $transfer_by->$balanceField,
-                'transfer_role'     => $transfer_role,
-                'created_at'        => now(),
-                'updated_at'        => now(),
+                'transfer_role' => $transfer_role,
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
 
             DB::commit();
 
             return response()->json([
-                'success'     => true,
-                'message'     => 'Transfer successful.',
+                'success' => true,
+                'message' => 'Transfer successful.',
                 'new_balance' => $transfer_by->$balanceField,
             ]);
 
@@ -507,7 +528,7 @@ class PagesController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Transfer failed. Please try again.',
-                'error'   => env('APP_DEBUG') ? $e->getMessage() : null,
+                'error' => env('APP_DEBUG') ? $e->getMessage() : null,
             ], 500);
         }
     }

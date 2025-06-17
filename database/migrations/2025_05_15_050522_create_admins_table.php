@@ -16,6 +16,7 @@ return new class extends Migration
             $table->id();
             $table->string('player');
             $table->string('password');
+            $table->decimal('endpoint');
             $table->timestamps();
         });
 
