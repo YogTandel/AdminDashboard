@@ -28,10 +28,19 @@
                                     $recipientName = $recipient->player ?? 'N/A';
                                     echo "Transferring to distributor: {$recipientName}";
                                 } elseif (auth()->user()->role === 'distributor') {
-                                    $recipient = \App\Models\User::where('role', 'admin')
-                                        ->where('status', 'Active')
-                                        ->first();
-                                    $recipientName = $recipient->player ?? 'N/A';
+                                    // Check Admin table first
+                                    $recipient = \App\Models\Admin::where('status', 'Active')->first();
+                                    if ($recipient) {
+                                        $recipientName = $recipient->name ?? ($recipient->username ?? 'N/A');
+                                        $recipientIsAdmin = true;
+                                    } else {
+                                        // Fallback to User table for backward compatibility
+                                        $recipient = \App\Models\User::where('role', 'admin')
+                                            ->where('status', 'Active')
+                                            ->first();
+                                        $recipientName = $recipient ? $recipient->player ?? 'N/A' : 'N/A';
+                                        $recipientIsAdmin = false;
+                                    }
                                     echo "Transferring to admin: {$recipientName}";
                                 }
                             @endphp
@@ -43,6 +52,7 @@
                                 auth()->user()->role === 'player' ? auth()->user()->balance : auth()->user()->endpoint;
                             $canTransfer = false;
                             $recipientId = null;
+                            $recipientIsAdmin = false;
 
                             if (auth()->user()->role === 'player') {
                                 $recipient = \App\Models\User::find(auth()->user()->agent_id);
@@ -65,12 +75,21 @@
                                     $recipientId = $recipient->id;
                                 }
                             } elseif (auth()->user()->role === 'distributor') {
-                                $recipient = \App\Models\User::where('role', 'admin')
-                                    ->where('status', 'Active')
-                                    ->first();
+                                // Check Admin table first
+                                $recipient = \App\Models\Admin::where('status', 'Active')->first();
                                 if ($recipient) {
                                     $canTransfer = true;
                                     $recipientId = $recipient->id;
+                                    $recipientIsAdmin = true;
+                                } else {
+                                    // Fallback to User table
+                                    $recipient = \App\Models\User::where('role', 'admin')
+                                        ->where('status', 'Active')
+                                        ->first();
+                                    if ($recipient) {
+                                        $canTransfer = true;
+                                        $recipientId = $recipient->id;
+                                    }
                                 }
                             }
                         @endphp
@@ -91,6 +110,9 @@
                                 @csrf
                                 <input type="hidden" name="transfer_by" value="{{ auth()->id() }}">
                                 <input type="hidden" name="transfer_to" value="{{ $recipientId }}">
+                                @if ($recipientIsAdmin)
+                                    <input type="hidden" name="is_admin_recipient" value="1">
+                                @endif
                                 <input type="hidden" name="type" value="subtract">
 
                                 <div class="mb-4">
@@ -111,20 +133,10 @@
                                         value="{{ number_format($balance, 2) }}" readonly>
                                 </div>
 
-                                <div class="text-danger mb-4" id="amountError" style="display:none">
-                                    <i class="fas fa-exclamation-circle me-2"></i>
-                                    <span id="errorText"></span>
-                                </div>
-
                                 <div class="text-center mt-4">
                                     <button type="submit" class="btn bg-gradient-primary w-100" id="submitBtn">
                                         <i class="fas fa-exchange-alt me-2"></i> Transfer Funds
                                     </button>
-                                </div>
-
-                                <div class="alert alert-success d-none mt-3" id="successMessage">
-                                    <i class="fas fa-check-circle me-2"></i>
-                                    <span id="successText"></span>
                                 </div>
                             </form>
                         @endif
@@ -139,52 +151,26 @@
     @if ($canTransfer)
         <script>
             document.addEventListener('DOMContentLoaded', function() {
-                let currentBalanceValue = parseFloat(
-                    "{{ auth()->user()->role === 'player' ? auth()->user()->balance : auth()->user()->endpoint }}");
                 const transferAmount = document.getElementById('transferAmount');
                 const currentBalanceField = document.getElementById('currentBalance');
                 const remainingBalance = document.getElementById('remainingBalance');
-                const amountError = document.getElementById('amountError');
                 const submitBtn = document.getElementById('submitBtn');
-                const successMessage = document.getElementById('successMessage');
-                const errorText = document.getElementById('errorText');
-                const successText = document.getElementById('successText');
+                const currentBalanceValue = parseFloat(currentBalanceField.value.replace(/,/g, ''));
 
                 function updateBalanceDisplay() {
                     const amount = parseFloat(transferAmount.value) || 0;
                     const remaining = currentBalanceValue - amount;
+                    remainingBalance.value = remaining.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
 
-                    if (amount > currentBalanceValue) {
-                        amountError.style.display = 'block';
-                        errorText.textContent = 'Amount exceeds available balance';
+                    if (amount > currentBalanceValue || amount <= 0) {
                         submitBtn.disabled = true;
-                        transferAmount.classList.add('is-invalid');
-                    } else if (amount <= 0) {
-                        amountError.style.display = 'block';
-                        errorText.textContent = 'Amount must be greater than 0';
-                        submitBtn.disabled = true;
-                        transferAmount.classList.add('is-invalid');
                     } else {
-                        amountError.style.display = 'none';
                         submitBtn.disabled = false;
-                        transferAmount.classList.remove('is-invalid');
                     }
-
-                    remainingBalance.value = remaining.toFixed(2);
                 }
 
-                // Initial setup
-                if (currentBalanceValue <= 0) {
-                    submitBtn.disabled = true;
-                    amountError.style.display = 'block';
-                    errorText.textContent = 'You have zero balance. Transfer not allowed.';
-                    transferAmount.disabled = true;
-                }
-
-                // Real-time balance calculation
                 transferAmount.addEventListener('input', updateBalanceDisplay);
 
-                // Form submission
                 document.getElementById('transferForm').addEventListener('submit', function(e) {
                     e.preventDefault();
                     submitBtn.disabled = true;
@@ -199,23 +185,16 @@
                             },
                             body: new FormData(this)
                         })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error('Network response was not ok');
-                            }
-                            return response.json();
-                        })
+                        .then(response => response.json())
                         .then(data => {
                             if (data.success) {
-                                // Refresh the page to get updated data from server
                                 window.location.reload();
                             } else {
-                                throw new Error(data.message || 'Transfer failed');
+                                alert(data.message || 'Transfer failed');
                             }
                         })
                         .catch(error => {
-                            amountError.style.display = 'block';
-                            errorText.textContent = error.message;
+                            alert('An error occurred. Please try again.');
                         })
                         .finally(() => {
                             submitBtn.disabled = false;

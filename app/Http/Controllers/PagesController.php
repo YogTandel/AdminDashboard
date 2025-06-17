@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Models\Admin;
 use App\Models\Setting;
 use App\Models\Transaction;
 use App\Models\User;
@@ -385,11 +386,11 @@ class PagesController extends Controller
         if ($user->role === 'player') {
             $transferTo   = User::where('id', $user->agent_id)->first();
             $userType     = 'Player';
-            $balanceField = 'balance'; 
+            $balanceField = 'balance';
         } elseif ($user->role === 'agent') {
             $transferTo   = User::where('id', $user->distributor_id)->first();
             $userType     = 'Agent';
-            $balanceField = 'endpoint'; 
+            $balanceField = 'endpoint';
         }
 
         return view('pages.transfer.form', [
@@ -397,7 +398,7 @@ class PagesController extends Controller
             'transferTo'     => $transferTo,
             'userType'       => $userType,
             'balanceField'   => $balanceField,
-            'currentBalance' => $user->{$balanceField}, 
+            'currentBalance' => $user->{$balanceField},
         ]);
     }
 
@@ -406,18 +407,21 @@ class PagesController extends Controller
         DB::beginTransaction();
         try {
             $validated = $request->validate([
-                'transfer_by' => 'required|exists:users,id',
-                'transfer_to' => 'required|exists:users,id',
-                'amount'      => 'required|numeric|min:0.01',
-                'type'        => 'required|in:subtract,add',
+                'transfer_by'        => 'required|exists:users,id',
+                'transfer_to'        => 'required', // We'll handle validation manually
+                'amount'             => 'required|numeric|min:0.01',
+                'type'               => 'required|in:subtract,add',
+                'is_admin_recipient' => 'sometimes|boolean', // New field to identify admin recipients
             ]);
 
             $transfer_by   = User::findOrFail($validated['transfer_by']);
-            $transfer_to   = User::findOrFail($validated['transfer_to']);
             $transfer_role = $transfer_by->role;
 
-            // Determine allowed recipients
+            // Determine allowed recipients and their models
             $allowedRecipients = [];
+            $recipientModel    = null;
+            $isRecipientAdmin  = $validated['is_admin_recipient'] ?? false;
+
             switch ($transfer_by->role) {
                 case 'player':
                     $allowedRecipients = ['player', 'agent', 'distributor', 'admin'];
@@ -435,7 +439,16 @@ class PagesController extends Controller
                     ], 403);
             }
 
-            if (! in_array($transfer_to->role, $allowedRecipients)) {
+            // Find the recipient - could be User or Admin
+            if ($isRecipientAdmin) {
+                $transfer_to   = Admin::findOrFail($validated['transfer_to']);
+                $recipientRole = 'admin';
+            } else {
+                $transfer_to   = User::findOrFail($validated['transfer_to']);
+                $recipientRole = $transfer_to->role;
+            }
+
+            if (! in_array($recipientRole, $allowedRecipients)) {
                 return response()->json([
                     'success' => false,
                     'message' => 'You can only transfer to: ' . implode(', ', $allowedRecipients),
@@ -454,18 +467,19 @@ class PagesController extends Controller
                 }
 
                 $transfer_by->$balanceField -= $validated['amount'];
-                $transfer_to->endpoint += $validated['amount'];
+                $transfer_to->endpoint += $validated['amount']; // Always use endpoint for admin
             } else {
                 // For add operations, validate hierarchy
                 $roleHierarchy = ['admin' => 4, 'distributor' => 3, 'agent' => 2, 'player' => 1];
-                if ($roleHierarchy[$transfer_by->role] <= $roleHierarchy[$transfer_to->role]) {
+                if ($roleHierarchy[$transfer_by->role] <= $roleHierarchy[$recipientRole]) {
                     return response()->json([
                         'success' => false,
                         'message' => 'You can only add funds to accounts with lower privileges.',
                     ], 422);
                 }
 
-                if ($transfer_to->endpoint < $validated['amount']) {
+                $recipientBalance = $transfer_to->endpoint; // Always check endpoint for admin
+                if ($recipientBalance < $validated['amount']) {
                     return response()->json([
                         'success' => false,
                         'message' => 'Recipient has insufficient endpoint balance.',
@@ -473,18 +487,19 @@ class PagesController extends Controller
                 }
 
                 $transfer_by->$balanceField += $validated['amount'];
-                $transfer_to->endpoint -= $validated['amount'];
+                $transfer_to->endpoint -= $validated['amount']; // Always use endpoint for admin
             }
 
-            // Save both users
+            // Save both accounts
             if (! $transfer_by->save() || ! $transfer_to->save()) {
-                throw new \Exception('Failed to save user balances');
+                throw new \Exception('Failed to save balances');
             }
 
             // Create transfer record with comma-separated allowed roles
             DB::connection('mongodb')->table('transfers')->insert([
                 'transfer_by'       => $transfer_by->id,
                 'transfer_to'       => $transfer_to->id,
+                'transfer_to_model' => $isRecipientAdmin ? 'admin' : 'user',
                 'type'              => implode(',', $allowedRecipients),
                 'amount'            => $validated['amount'],
                 'remaining_balance' => $transfer_by->$balanceField,
