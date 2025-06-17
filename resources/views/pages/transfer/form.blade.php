@@ -28,10 +28,8 @@
                                     $recipientName = $recipient->player ?? 'N/A';
                                     echo "Transferring to distributor: {$recipientName}";
                                 } elseif (auth()->user()->role === 'distributor') {
-                                    $recipient = \App\Models\User::where('role', 'admin')
-                                        ->where('status', 'Active')
-                                        ->first();
-                                    $recipientName = $recipient->player ?? 'N/A';
+                                    $recipient = \App\Models\Admin::where('player', 'admin')->first();
+                                    $recipientName = $recipient ? $recipient->player : 'N/A';
                                     echo "Transferring to admin: {$recipientName}";
                                 }
                             @endphp
@@ -45,23 +43,21 @@
 
                             if (auth()->user()->role === 'player') {
                                 $recipient = \App\Models\User::find(auth()->user()->agent_id);
-                                if ($recipient && in_array($recipient->role, ['agent', 'distributor', 'admin']) && $recipient->status === 'Active') {
+                                if ($recipient && in_array($recipient->role, ['agent', 'distributor', 'admin'])) {
                                     $canTransfer = true;
                                     $recipientId = $recipient->id;
                                 }
                             } elseif (auth()->user()->role === 'agent') {
                                 $recipient = \App\Models\User::find(auth()->user()->distributor_id);
-                                if ($recipient && in_array($recipient->role, ['distributor', 'admin']) && $recipient->status === 'Active') {
+                                if ($recipient && in_array($recipient->role, ['distributor', 'admin'])) {
                                     $canTransfer = true;
                                     $recipientId = $recipient->id;
                                 }
                             } elseif (auth()->user()->role === 'distributor') {
-                                $recipient = \App\Models\User::where('role', 'admin')
-                                    ->where('status', 'Active')
-                                    ->first();
+                                $recipient = \App\Models\Admin::where('player', 'admin')->first();
                                 if ($recipient) {
                                     $canTransfer = true;
-                                    $recipientId = $recipient->id;
+                                    $recipientId = $recipient->_id;
                                 }
                             }
                         @endphp
@@ -74,7 +70,7 @@
                                 @elseif(auth()->user()->role === 'agent')
                                     No valid distributor/admin assigned
                                 @elseif(auth()->user()->role === 'distributor')
-                                    No active admin available
+                                    No admin account available
                                 @endif
                             </div>
                         @else
