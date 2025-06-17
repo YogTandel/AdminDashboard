@@ -371,7 +371,7 @@ class PagesController extends Controller
         return response()->stream($callback, 200, $headers);
     }
 
-   public function transferForm()
+public function transferForm()
     {
         $user = Auth::user();
 
@@ -392,7 +392,9 @@ class PagesController extends Controller
             $userType = 'Agent';
             $balanceField = 'endpoint';
         } elseif ($user->role === 'distributor') {
-            $transferTo = Admin::first();
+            $transferTo = User::where('role', 'admin')
+                            ->where('status', 'Active')
+                            ->first();
             $userType = 'Distributor';
             $balanceField = 'endpoint';
         }
@@ -406,73 +408,132 @@ class PagesController extends Controller
         ]);
     }
 
-public function processTransfer(Request $request)
-{
-    DB::connection('mongodb')->beginTransaction();
-    try {
-        $validated = $request->validate([
-            'transfer_by' => 'required|exists:users,_id',
-            'transfer_to' => 'required',
-            'amount' => 'required|numeric|min:100',
-            'type' => 'required|in:subtract,add'
-        ]);
+ public function processTransfer(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $validated = $request->validate([
+                'transfer_by' => 'required|exists:users,id',
+                'transfer_to' => 'required|exists:users,id',
+                'amount' => 'required|numeric|min:100', // Minimum ₹100
+                'type' => 'required|in:subtract,add',
+            ]);
 
-        $transferBy = \App\Models\User::findOrFail($validated['transfer_by']);
-        $transferTo = \App\Models\Admin::where('_id', $validated['transfer_to'])->first();
+            $transfer_by = User::findOrFail($validated['transfer_by']);
+            $transfer_to = User::findOrFail($validated['transfer_to']);
+            $transfer_role = $transfer_by->role;
 
-        if (!$transferTo) {
-            throw new \Exception('Recipient admin not found');
-        }
+            // Distributor specific checks
+            if ($transfer_by->role === 'distributor') {
+                if ($transfer_to->role !== 'admin') {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Distributors can only transfer to admin',
+                    ], 422);
+                }
 
-        $balanceField = $transferBy->role === 'player' ? 'balance' : 'endpoint';
-        
-        // Properly handle Decimal128 values
-        $amount = $validated['amount'];
-        $transferByBalance = $this->convertDecimal128($transferBy->$balanceField);
-        $transferToBalance = $this->convertDecimal128($transferTo->endpoint);
-
-        if ($validated['type'] === 'subtract') {
-            if ($transferByBalance < $amount) {
-                throw new \Exception('Insufficient balance');
+                if ($transfer_to->status !== 'Active') {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Recipient admin is not active',
+                    ], 422);
+                }
             }
-            $transferBy->$balanceField = $transferByBalance - $amount;
-            $transferTo->endpoint = $transferToBalance + $amount;
-        } else {
-            if ($transferToBalance < $amount) {
-                throw new \Exception('Recipient has insufficient balance');
+
+            // Determine allowed recipients
+            $allowedRecipients = [];
+            switch ($transfer_by->role) {
+                case 'player':
+                    $allowedRecipients = ['player', 'agent', 'distributor', 'admin'];
+                    break;
+                case 'agent':
+                    $allowedRecipients = ['agent', 'distributor', 'admin'];
+                    break;
+                case 'distributor':
+                    $allowedRecipients = ['admin']; // Only admin
+                    break;
+                default:
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Your role cannot perform transfers',
+                    ], 403);
             }
-            $transferBy->$balanceField = $transferByBalance + $amount;
-            $transferTo->endpoint = $transferToBalance - $amount;
+
+            if (!in_array($transfer_to->role, $allowedRecipients)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'You can only transfer to: ' . implode(', ', $allowedRecipients),
+                ], 422);
+            }
+
+            $balanceField = $transfer_by->role === 'player' ? 'balance' : 'endpoint';
+
+            // Perform transfer calculations
+            if ($validated['type'] === 'subtract') {
+                if ($transfer_by->$balanceField < $validated['amount']) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Insufficient balance.',
+                    ], 422);
+                }
+
+                $transfer_by->$balanceField -= $validated['amount'];
+                $transfer_to->endpoint += $validated['amount'];
+            } else {
+                $roleHierarchy = ['admin' => 4, 'distributor' => 3, 'agent' => 2, 'player' => 1];
+                if ($roleHierarchy[$transfer_by->role] <= $roleHierarchy[$transfer_to->role]) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'You can only add funds to accounts with lower privileges.',
+                    ], 422);
+                }
+
+                if ($transfer_to->endpoint < $validated['amount']) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Recipient has insufficient endpoint balance.',
+                    ], 422);
+                }
+
+                $transfer_by->$balanceField += $validated['amount'];
+                $transfer_to->endpoint -= $validated['amount'];
+            }
+
+            // Save both users
+            if (!$transfer_by->save() || !$transfer_to->save()) {
+                throw new \Exception('Failed to save user balances');
+            }
+
+            // Create transfer record
+            DB::connection('mongodb')->table('transfers')->insert([
+                'transfer_by' => $transfer_by->id,
+                'transfer_to' => $transfer_to->id,
+                'type' => implode(',', $allowedRecipients),
+                'amount' => $validated['amount'],
+                'remaining_balance' => $transfer_by->$balanceField,
+                'transfer_role' => $transfer_role,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Transfer successful.',
+                'new_balance' => $transfer_by->$balanceField,
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Transfer failed: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Transfer failed. Please try again.',
+                'error' => env('APP_DEBUG') ? $e->getMessage() : null,
+            ], 500);
         }
-
-        if (!$transferBy->save() || !$transferTo->save()) {
-            throw new \Exception('Failed to save balances');
-        }
-
-        DB::connection('mongodb')->table('transfers')->insert([
-            'transfer_by' => $transferBy->_id,
-            'transfer_to' => $transferTo->_id,
-            'amount' => $amount,
-            'created_at' => now(),
-            'updated_at' => now()
-        ]);
-
-        DB::connection('mongodb')->commit();
-
-        return response()->json([
-            'success' => true, 
-            'new_balance' => $transferBy->$balanceField
-        ]);
-
-    } catch (\Exception $e) {
-        DB::connection('mongodb')->rollBack();
-        \Log::error('Transfer Error: '.$e->getMessage());
-        return response()->json([
-            'success' => false,
-            'message' => 'Transfer failed: '.$e->getMessage()
-        ], 500);
     }
-}
 
 protected function convertDecimal128($value)
 {
