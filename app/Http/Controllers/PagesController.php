@@ -542,23 +542,20 @@ public function showTransferReport()
     $transfers = $query->get();
     if ($transfers->isEmpty()) return view('pages.transfer.report', compact('transfers'));
 
-    // 1. તમામ એડમિન્સને ફેચ કરો
     $allAdmins = Admin::all()->keyBy('_id');
     
-    // 2. તમામ યુઝર્સને ફેચ કરો
     $userIds = $transfers->pluck('transfer_by')
                 ->merge($transfers->pluck('transfer_to'))
                 ->unique();
     
     $users = User::whereIn('_id', $userIds)->get()->keyBy('_id');
 
-    // 3. ડેટા પ્રોસેસિંગ
     foreach ($transfers as $transfer) {
-        // એજન્ટ નામ
+        // agent name
         $transfer->agent_name = $users->get($transfer->transfer_by)?->player 
                             ?? 'N/A (User ID: '.$transfer->transfer_by.')';
         
-        // ડિસ્ટ્રિબ્યુટર નામ
+        // Distributor name
         if ($allAdmins->has($transfer->transfer_to)) {
             $transfer->distributor_name = $allAdmins->get($transfer->transfer_to)->player 
                                       ?? 'Admin (ID: '.$transfer->transfer_to.')';
