@@ -527,36 +527,65 @@ class PagesController extends Controller
         }
     }
 
-    public function showTransferReport()
-    {
-        $transfers = DB::table('transfers')
-            ->orderBy('created_at', 'desc')
-            ->get();
+public function showTransferReport()
+{
+    $user = auth()->user();
+    
+    $query = DB::connection('mongodb')->table('transfers')->orderBy('created_at', 'desc');
 
-        if ($transfers->isEmpty()) {
-            return view('pages.transfer.report', compact('transfers'));
-        }
+    // Role-based filtering
+    if ($user->role !== 'admin') {
+        $query->where('transfer_by', $user->id);
+    }
 
-        // Get all unique user IDs
-        $userIds = $transfers->pluck('transfer_by')
-            ->merge($transfers->pluck('transfer_to'))
-            ->unique()
-            ->filter()
-            ->map(fn($id) => (string) $id); // cast to string
+    $transfers = $query->get();
 
-        // MongoDB query
-        $users = User::whereIn('_id', $userIds->all())->get()
-            ->keyBy(fn($u) => (string) $u->_id);
-
-        foreach ($transfers as $transfer) {
-            $transfer_by = (string) $transfer->transfer_by;
-            $transfer_to = (string) ($transfer->transfer_to ?? '');
-
-            $transfer->agent_name       = $users[$transfer_by]->player ?? 'N/A';
-            $transfer->distributor_name = $users[$transfer_to]->player ?? 'N/A';
-        }
-
+    if ($transfers->isEmpty()) {
         return view('pages.transfer.report', compact('transfers'));
     }
+
+    // Process admin names
+    $adminIds = $transfers->filter(function($t) {
+        return str_starts_with($t->transfer_to, 'admin_');
+    })->map(function($t) {
+        return str_replace('admin_', '', $t->transfer_to);
+    })->unique();
+
+    $admins = [];
+    if ($adminIds->isNotEmpty()) {
+        $admins = Admin::whereIn('_id', $adminIds)->get()
+            ->keyBy('_id');
+    }
+
+    // Process user names
+    $userIds = $transfers->pluck('transfer_by')
+        ->merge($transfers->pluck('transfer_to'))
+        ->unique()
+        ->filter(function($id) {
+            return !str_starts_with($id, 'admin_');
+        });
+
+    $users = [];
+    if ($userIds->isNotEmpty()) {
+        $users = User::whereIn('_id', $userIds)->get()
+            ->keyBy('_id');
+    }
+
+    // Prepare data for view
+    foreach ($transfers as $transfer) {
+        // Sender name
+        $transfer->agent_name = $users[(string) $transfer->transfer_by]->player ?? 'N/A';
+        
+        // Recipient name
+        if (str_starts_with($transfer->transfer_to, 'admin_')) {
+            $adminId = str_replace('admin_', '', $transfer->transfer_to);
+            $transfer->distributor_name = $admins[$adminId]->player ?? 'Admin';
+        } else {
+            $transfer->distributor_name = $users[(string) $transfer->transfer_to]->player ?? 'N/A';
+        }
+    }
+
+    return view('pages.transfer.report', compact('transfers'));
+}
 
 }
