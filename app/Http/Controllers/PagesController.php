@@ -531,66 +531,40 @@ class PagesController extends Controller
 public function showTransferReport()
 {
     $user = auth()->user();
-
-    // Check if user is logged in
-    if (!$user) {
-        return redirect()->route('login')->withErrors(['error' => 'Please login to view transfer report.']);
-    }
+    if (!$user) return redirect()->route('login');
 
     $query = DB::connection('mongodb')->table('transfers')->orderBy('created_at', 'desc');
-
-    // Role-based filtering
+    
     if ($user->role !== 'admin') {
         $query->where('transfer_by', $user->id);
     }
 
     $transfers = $query->get();
+    if ($transfers->isEmpty()) return view('pages.transfer.report', compact('transfers'));
 
-    if ($transfers->isEmpty()) {
-        return view('pages.transfer.report', compact('transfers'));
-    }
-
-    // Process admin names
-    $adminIds = $transfers->filter(function($t) {
-        return str_starts_with($t->transfer_to, 'admin_');
-    })->map(function($t) {
-        try {
-            return new ObjectId(str_replace('admin_', '', $t->transfer_to));
-        } catch (\Exception $e) {
-            return null;
-        }
-    })->filter()->unique();
-
-    $admins = [];
-    if ($adminIds->isNotEmpty()) {
-        $admins = Admin::whereIn('_id', $adminIds)->get()->keyBy('_id');
-    }
-
-    // Process user names
+    // 1. તમામ એડમિન્સને ફેચ કરો
+    $allAdmins = Admin::all()->keyBy('_id');
+    
+    // 2. તમામ યુઝર્સને ફેચ કરો
     $userIds = $transfers->pluck('transfer_by')
-        ->merge($transfers->pluck('transfer_to')->filter(function ($id) {
-            return !str_starts_with($id, 'admin_');
-        }))
-        ->unique();
+                ->merge($transfers->pluck('transfer_to'))
+                ->unique();
+    
+    $users = User::whereIn('_id', $userIds)->get()->keyBy('_id');
 
-    $users = [];
-    if ($userIds->isNotEmpty()) {
-        $users = User::whereIn('_id', $userIds)->get()->keyBy('_id');
-    }
-
-    // Prepare data for view
+    // 3. ડેટા પ્રોસેસિંગ
     foreach ($transfers as $transfer) {
-        $transfer->agent_name = $users[(string) $transfer->transfer_by]->player ?? 'N/A';
-
-        if (str_starts_with($transfer->transfer_to, 'admin_')) {
-            try {
-                $adminId = new ObjectId(str_replace('admin_', '', $transfer->transfer_to));
-                $transfer->distributor_name = $admins[$adminId]->player ?? 'Admin';
-            } catch (\Exception $e) {
-                $transfer->distributor_name = 'Admin';
-            }
+        // એજન્ટ નામ
+        $transfer->agent_name = $users->get($transfer->transfer_by)?->player 
+                            ?? 'N/A (User ID: '.$transfer->transfer_by.')';
+        
+        // ડિસ્ટ્રિબ્યુટર નામ
+        if ($allAdmins->has($transfer->transfer_to)) {
+            $transfer->distributor_name = $allAdmins->get($transfer->transfer_to)->player 
+                                      ?? 'Admin (ID: '.$transfer->transfer_to.')';
         } else {
-            $transfer->distributor_name = $users[(string) $transfer->transfer_to]->player ?? 'N/A';
+            $transfer->distributor_name = $users->get($transfer->transfer_to)?->player 
+                                      ?? 'N/A (ID: '.$transfer->transfer_to.')';
         }
     }
 

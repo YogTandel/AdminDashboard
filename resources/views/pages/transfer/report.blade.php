@@ -31,7 +31,13 @@
                         <tr>
                             <td>{{ $transfer->agent_name }}</td>
                             <td>{{ $transfer->transfer_by }}</td>
-                            <td>{{ $transfer->distributor_name }}</td>
+                            <td>
+                                @if(str_contains($transfer->distributor_name, 'Admin'))
+                                    <span class="text-primary">{{ $transfer->distributor_name }}</span>
+                                @else
+                                    {{ $transfer->distributor_name }}
+                                @endif
+                            </td>                            
                             <td>{{ $transfer->transfer_to }}</td>
                             <td class="text-success">{{ number_format($transfer->amount, 2) }}</td>
                             <td>{{ number_format($transfer->remaining_balance, 2) }}</td>
