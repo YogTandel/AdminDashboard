@@ -64,6 +64,16 @@
                                 @enderror
                             </div>
 
+                            <label>ENDPOINT</label>
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control @error('endpoint') is-invalid @enderror"
+                                    placeholder="endpoint" aria-label="endpoint" name="endpoint" aria-describedby="endpoint"
+                                    value="{{ old('endpoint') }}">
+                                @error('endpoint')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
                             <label>STATUS</label>
                             <div class="input-group mb-3">
                                 <select class="form-control @error('status') is-invalid @enderror" name="status">
