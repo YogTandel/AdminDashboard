@@ -8,6 +8,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use MongoDB\BSON\ObjectId;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -530,7 +531,12 @@ class PagesController extends Controller
 public function showTransferReport()
 {
     $user = auth()->user();
-    
+
+    // Check if user is logged in
+    if (!$user) {
+        return redirect()->route('login')->withErrors(['error' => 'Please login to view transfer report.']);
+    }
+
     $query = DB::connection('mongodb')->table('transfers')->orderBy('created_at', 'desc');
 
     // Role-based filtering
@@ -548,38 +554,41 @@ public function showTransferReport()
     $adminIds = $transfers->filter(function($t) {
         return str_starts_with($t->transfer_to, 'admin_');
     })->map(function($t) {
-        return str_replace('admin_', '', $t->transfer_to);
-    })->unique();
+        try {
+            return new ObjectId(str_replace('admin_', '', $t->transfer_to));
+        } catch (\Exception $e) {
+            return null;
+        }
+    })->filter()->unique();
 
     $admins = [];
     if ($adminIds->isNotEmpty()) {
-        $admins = Admin::whereIn('_id', $adminIds)->get()
-            ->keyBy('_id');
+        $admins = Admin::whereIn('_id', $adminIds)->get()->keyBy('_id');
     }
 
     // Process user names
     $userIds = $transfers->pluck('transfer_by')
-        ->merge($transfers->pluck('transfer_to'))
-        ->unique()
-        ->filter(function($id) {
+        ->merge($transfers->pluck('transfer_to')->filter(function ($id) {
             return !str_starts_with($id, 'admin_');
-        });
+        }))
+        ->unique();
 
     $users = [];
     if ($userIds->isNotEmpty()) {
-        $users = User::whereIn('_id', $userIds)->get()
-            ->keyBy('_id');
+        $users = User::whereIn('_id', $userIds)->get()->keyBy('_id');
     }
 
     // Prepare data for view
     foreach ($transfers as $transfer) {
-        // Sender name
         $transfer->agent_name = $users[(string) $transfer->transfer_by]->player ?? 'N/A';
-        
-        // Recipient name
+
         if (str_starts_with($transfer->transfer_to, 'admin_')) {
-            $adminId = str_replace('admin_', '', $transfer->transfer_to);
-            $transfer->distributor_name = $admins[$adminId]->player ?? 'Admin';
+            try {
+                $adminId = new ObjectId(str_replace('admin_', '', $transfer->transfer_to));
+                $transfer->distributor_name = $admins[$adminId]->player ?? 'Admin';
+            } catch (\Exception $e) {
+                $transfer->distributor_name = 'Admin';
+            }
         } else {
             $transfer->distributor_name = $users[(string) $transfer->transfer_to]->player ?? 'N/A';
         }
