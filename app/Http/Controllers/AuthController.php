@@ -133,6 +133,7 @@ class AuthController extends Controller
             'password'    => 'nullable|string|min:3',
             'role'        => 'required|in:agent',
             'agent'       => 'required|string|max:255',
+            'endpoint' => 'required|numeric|min:0',
             'distributor' => 'required|string|max:255',
             'balance'     => 'required|numeric|min:0',
             'status'      => 'required|in:Active,Inactive',

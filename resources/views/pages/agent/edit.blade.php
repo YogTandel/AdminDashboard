@@ -49,6 +49,12 @@
                                     value="{{ old('agent', $agent->agent) }}">
                             </div>
 
+                            <label>ENDPOINT</label>
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" name="endpoint"
+                                    value="{{ old('endpoint', $agent->endpoint) }}">
+                            </div>
+
                             <!-- STATUS -->
                             <label>STATUS</label>
                             <div class="input-group mb-3">
