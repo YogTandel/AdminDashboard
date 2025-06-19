@@ -1,13 +1,7 @@
+
 @extends('layouts.layout')
 
 @section('page-name', 'Transfer')
-
-@if (session('success'))
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        {{ session('success') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-@endif
 
 @section('content')
     <div class="container-fluid py-4">
@@ -18,79 +12,73 @@
                         <h6 class="mb-0">Transfer Funds</h6>
                         <p class="text-sm mb-0">
                             @php
-                                $recipientName = '';
-                                if (auth()->user()->role === 'player') {
-                                    $recipient = \App\Models\User::find(auth()->user()->agent_id);
-                                    $recipientName = $recipient->player ?? 'N/A';
-                                    echo "Transferring to agent: {$recipientName}";
-                                } elseif (auth()->user()->role === 'agent') {
-                                    $recipient = \App\Models\User::find(auth()->user()->distributor_id);
-                                    $recipientName = $recipient->player ?? 'N/A';
-                                    echo "Transferring to distributor: {$recipientName}";
-                                } elseif (auth()->user()->role === 'distributor') {
-                                    $recipient = \App\Models\User::where('role', 'admin')
-                                        ->where('status', 'Active')
-                                        ->first();
-                                    $recipientName = $recipient->player ?? 'N/A';
-                                    echo "Transferring to admin: {$recipientName}";
+                                $user = auth()->user();
+                                $recipientName = 'N/A';
+                                $canTransfer = false;
+                                $recipientId = null;
+                                $recipientIsAdmin = false;
+
+                                if ($user->role === 'player') {
+                                    $recipient = $user->agent;
+                                    if ($recipient && $recipient->status === 'Active') {
+                                        $canTransfer = true;
+                                        $recipientId = $recipient->id;
+                                        $recipientName = $recipient->player ?? 'N/A';
+                                        echo "Transferring to agent: {$recipientName}";
+                                    }
+                                } elseif ($user->role === 'agent') {
+                                    $recipient = \App\Models\user::where('status', 'Active')->first();
+                                    if ($recipient) {
+                                        $canTransfer = true;
+                                        $recipientId = $recipient->id;
+                                        $recipientName = $recipient->player ?? 'N/A';
+                                        echo "Transferring to distributor: {$recipientName}";
+                                    } else {
+                                        echo "Transferring to distributor: N/A";
+                                    }
+                                } elseif ($user->role === 'distributor') {
+                                    $recipient = \App\Models\Admin::where('status', 'Active')->first();
+                                    if ($recipient) {
+                                        $canTransfer = true;
+                                        $recipientId = $recipient->id;
+                                        $recipientIsAdmin = true;
+                                        $recipientName = $recipient->name ?? ($recipient->username ?? 'N/A');
+                                        echo "Transferring to admin: {$recipientName}";
+                                    }
                                 }
                             @endphp
                         </p>
                     </div>
                     <div class="card-body pt-4">
                         @php
-                            $balance =
-                                auth()->user()->role === 'player' ? auth()->user()->balance : auth()->user()->endpoint;
-                            $canTransfer = false;
-                            $recipientId = null;
-
-                            if (auth()->user()->role === 'player') {
-                                $recipient = \App\Models\User::find(auth()->user()->agent_id);
-                                if (
-                                    $recipient &&
-                                    in_array($recipient->role, ['agent', 'distributor', 'admin']) &&
-                                    $recipient->status === 'Active'
-                                ) {
-                                    $canTransfer = true;
-                                    $recipientId = $recipient->id;
-                                }
-                            } elseif (auth()->user()->role === 'agent') {
-                                $recipient = \App\Models\User::find(auth()->user()->distributor_id);
-                                if (
-                                    $recipient &&
-                                    in_array($recipient->role, ['distributor', 'admin']) &&
-                                    $recipient->status === 'Active'
-                                ) {
-                                    $canTransfer = true;
-                                    $recipientId = $recipient->id;
-                                }
-                            } elseif (auth()->user()->role === 'distributor') {
-                                $recipient = \App\Models\User::where('role', 'admin')
-                                    ->where('status', 'Active')
-                                    ->first();
-                                if ($recipient) {
-                                    $canTransfer = true;
-                                    $recipientId = $recipient->id;
-                                }
-                            }
+                            $balance = $user->role === 'player' ? $user->balance : $user->endpoint;
                         @endphp
 
                         @if (!$canTransfer)
                             <div class="alert alert-warning">
                                 <i class="fas fa-exclamation-triangle me-2"></i>
-                                @if (auth()->user()->role === 'player')
-                                    No valid agent/distributor/admin assigned
-                                @elseif(auth()->user()->role === 'agent')
-                                    No valid distributor/admin assigned
-                                @elseif(auth()->user()->role === 'distributor')
+                                @if ($user->role === 'player')
+                                    No valid agent assigned or agent is inactive
+                                @elseif($user->role === 'agent')
+                                    @if (!$user->distributor_id)
+                                        No distributor assigned to your account
+                                    @elseif(!$recipient)
+                                        Your assigned distributor not found
+                                    @else
+                                        Your assigned distributor is inactive
+                                    @endif
+                                @elseif($user->role === 'distributor')
                                     No active admin available
                                 @endif
                             </div>
                         @else
                             <form id="transferForm" method="POST" action="{{ route('transfer.execute') }}">
                                 @csrf
-                                <input type="hidden" name="transfer_by" value="{{ auth()->id() }}">
+                                <input type="hidden" name="transfer_by" value="{{ $user->id }}">
                                 <input type="hidden" name="transfer_to" value="{{ $recipientId }}">
+                                @if ($recipientIsAdmin)
+                                    <input type="hidden" name="is_admin_recipient" value="1">
+                                @endif
                                 <input type="hidden" name="type" value="subtract">
 
                                 <div class="mb-4">
@@ -111,20 +99,10 @@
                                         value="{{ number_format($balance, 2) }}" readonly>
                                 </div>
 
-                                <div class="text-danger mb-4" id="amountError" style="display:none">
-                                    <i class="fas fa-exclamation-circle me-2"></i>
-                                    <span id="errorText"></span>
-                                </div>
-
                                 <div class="text-center mt-4">
                                     <button type="submit" class="btn bg-gradient-primary w-100" id="submitBtn">
                                         <i class="fas fa-exchange-alt me-2"></i> Transfer Funds
                                     </button>
-                                </div>
-
-                                <div class="alert alert-success d-none mt-3" id="successMessage">
-                                    <i class="fas fa-check-circle me-2"></i>
-                                    <span id="successText"></span>
                                 </div>
                             </form>
                         @endif
@@ -139,83 +117,94 @@
     @if ($canTransfer)
         <script>
             document.addEventListener('DOMContentLoaded', function() {
-                let currentBalanceValue = parseFloat(
-                    "{{ auth()->user()->role === 'player' ? auth()->user()->balance : auth()->user()->endpoint }}");
                 const transferAmount = document.getElementById('transferAmount');
                 const currentBalanceField = document.getElementById('currentBalance');
                 const remainingBalance = document.getElementById('remainingBalance');
-                const amountError = document.getElementById('amountError');
                 const submitBtn = document.getElementById('submitBtn');
-                const successMessage = document.getElementById('successMessage');
-                const errorText = document.getElementById('errorText');
-                const successText = document.getElementById('successText');
+                const form = document.getElementById('transferForm');
+                const currentBalanceValue = parseFloat(currentBalanceField.value.replace(/,/g, ''));
 
                 function updateBalanceDisplay() {
                     const amount = parseFloat(transferAmount.value) || 0;
                     const remaining = currentBalanceValue - amount;
+                    remainingBalance.value = remaining.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
 
-                    if (amount > currentBalanceValue) {
-                        amountError.style.display = 'block';
-                        errorText.textContent = 'Amount exceeds available balance';
+                    if (amount > currentBalanceValue || amount <= 0) {
                         submitBtn.disabled = true;
-                        transferAmount.classList.add('is-invalid');
-                    } else if (amount <= 0) {
-                        amountError.style.display = 'block';
-                        errorText.textContent = 'Amount must be greater than 0';
-                        submitBtn.disabled = true;
-                        transferAmount.classList.add('is-invalid');
                     } else {
-                        amountError.style.display = 'none';
                         submitBtn.disabled = false;
-                        transferAmount.classList.remove('is-invalid');
                     }
-
-                    remainingBalance.value = remaining.toFixed(2);
                 }
 
-                // Initial setup
-                if (currentBalanceValue <= 0) {
-                    submitBtn.disabled = true;
-                    amountError.style.display = 'block';
-                    errorText.textContent = 'You have zero balance. Transfer not allowed.';
-                    transferAmount.disabled = true;
-                }
-
-                // Real-time balance calculation
                 transferAmount.addEventListener('input', updateBalanceDisplay);
 
-                // Form submission
-                document.getElementById('transferForm').addEventListener('submit', function(e) {
+                form.addEventListener('submit', function(e) {
                     e.preventDefault();
                     submitBtn.disabled = true;
                     submitBtn.innerHTML =
                         '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...';
 
-                    fetch(this.action, {
+                    // Remove any existing alerts
+                    const existingAlert = document.querySelector('.transfer-alert');
+                    if (existingAlert) {
+                        existingAlert.remove();
+                    }
+
+                    fetch(form.action, {
                             method: 'POST',
                             headers: {
                                 'Accept': 'application/json',
                                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
                             },
-                            body: new FormData(this)
+                            body: new FormData(form)
                         })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error('Network response was not ok');
-                            }
-                            return response.json();
-                        })
+                        .then(response => response.json())
                         .then(data => {
                             if (data.success) {
-                                // Refresh the page to get updated data from server
-                                window.location.reload();
+                                // Create success message element
+                                const alertDiv = document.createElement('div');
+                                alertDiv.className = 'alert alert-success alert-dismissible fade show transfer-alert mt-3';
+                                alertDiv.setAttribute('role', 'alert');
+                                alertDiv.innerHTML = `
+                                    <i class="fas fa-check-circle me-2"></i> ${data.message}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                `;
+                                
+                                // Insert the alert after the form
+                                form.insertAdjacentElement('afterend', alertDiv);
+                                
+                                // Reset form
+                                transferAmount.value = '';
+                                remainingBalance.value = currentBalanceField.value;
+                                
+                                // Auto-dismiss after 5 seconds
+                                setTimeout(() => {
+                                    const bsAlert = new bootstrap.Alert(alertDiv);
+                                    bsAlert.close();
+                                }, 5000);
+
                             } else {
-                                throw new Error(data.message || 'Transfer failed');
+                                // Show error message
+                                const errorDiv = document.createElement('div');
+                                errorDiv.className = 'alert alert-danger alert-dismissible fade show transfer-alert mt-3';
+                                errorDiv.setAttribute('role', 'alert');
+                                errorDiv.innerHTML = `
+                                    <i class="fas fa-exclamation-circle me-2"></i> ${data.message || 'Transfer failed'}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                `;
+                                form.insertAdjacentElement('afterend', errorDiv);
                             }
                         })
                         .catch(error => {
-                            amountError.style.display = 'block';
-                            errorText.textContent = error.message;
+                            // Show error message
+                            const errorDiv = document.createElement('div');
+                            errorDiv.className = 'alert alert-danger alert-dismissible fade show transfer-alert mt-3';
+                            errorDiv.setAttribute('role', 'alert');
+                            errorDiv.innerHTML = `
+                                <i class="fas fa-exclamation-circle me-2"></i> An error occurred. Please try again.
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            `;
+                            form.insertAdjacentElement('afterend', errorDiv);
                         })
                         .finally(() => {
                             submitBtn.disabled = false;
@@ -226,3 +215,4 @@
         </script>
     @endif
 @endsection
+
