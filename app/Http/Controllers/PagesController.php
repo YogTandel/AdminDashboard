@@ -529,7 +529,7 @@ class PagesController extends Controller
 
     public function showTransferReport()
     {
-        $user = Auth::user();
+        $user = auth()->user();
         if (! $user) {
             return redirect()->route('login');
         }
