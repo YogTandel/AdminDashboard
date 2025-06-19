@@ -24,20 +24,20 @@ class AuthController extends Controller
         Log::info('Attempting to create a new agent', ['input' => $request->except(['password', 'original_password'])]);
 
         $validate = $request->validate([
-            'player' => 'required|string|max:255|unique:users,player',
-            'password' => 'required|string|min:3',
-            'role' => 'required|in:agent',
-            'agent' => 'required|string|max:255',
-            'endpoint' => 'required|numeric|min:0',
+            'player'      => 'required|string|max:255|unique:users,player',
+            'password'    => 'required|string|min:3',
+            'role'        => 'required|in:agent',
+            'agent'       => 'required|string|max:255',
+            'endpoint'    => 'required|numeric|min:0',
             'distributor' => 'required|string|max:255',
-            'balance' => 'required|numeric|min:0',
-            'status' => 'required|in:Active,Inactive',
+            'balance'     => 'required|numeric|min:0',
+            'status'      => 'required|in:Active,Inactive',
         ]);
 
         try {
             $validate['original_password'] = $validate['password'];
-            $validate['password'] = bcrypt($validate['password']);
-            $validate['DateOfCreation'] = now()->format('YmdHis');
+            $validate['password']          = bcrypt($validate['password']);
+            $validate['DateOfCreation']    = now()->format('YmdHis');
 
             $user = User::create($validate);
 
@@ -59,18 +59,18 @@ class AuthController extends Controller
         Log::info('Attempting to create a new Distributor', ['input' => $request->except(['password', 'original_password'])]);
 
         $validate = $request->validate([
-            'player' => 'required|string|max:255|unique:users,player',
+            'player'   => 'required|string|max:255|unique:users,player',
             'password' => 'required|string|min:3',
-            'role' => 'required|in:distributor',
-            'balance' => 'required|numeric|min:0',
-            'status' => 'required|in:Active,Inactive',
+            'role'     => 'required|in:distributor',
+            'balance'  => 'required|numeric|min:0',
+            'status'   => 'required|in:Active,Inactive',
             'endpoint' => 'required|numeric|min:0',
         ]);
 
         try {
             $validate['original_password'] = $validate['password'];
-            $validate['password'] = bcrypt($validate['password']);
-            $validate['DateOfCreation'] = now()->format('YmdHis');
+            $validate['password']          = bcrypt($validate['password']);
+            $validate['DateOfCreation']    = now()->format('YmdHis');
 
             $user = User::create($validate);
 
@@ -92,22 +92,22 @@ class AuthController extends Controller
         Log::info('Attempting to create a new Plyer', ['input' => $request->except(['password', 'original_password'])]);
 
         $validate = $request->validate([
-            'player' => 'required|string|max:255|unique:users,player',
-            'password' => 'required|string|min:3',
-            'role' => 'required|in:player',
-            'balance' => 'required|numeric|min:0',
-            'distributor' => 'required|string|max:255',
-            'agent' => 'required|string|max:255',
+            'player'       => 'required|string|max:255|unique:users,player',
+            'password'     => 'required|string|min:3',
+            'role'         => 'required|in:player',
+            'balance'      => 'required|numeric|min:0',
+            'distributor'  => 'required|string|max:255',
+            'agent'        => 'required|string|max:255',
             'login_status' => 'required|in:True,False',
-            'status' => 'required|in:Active,Inactive',
-            'winamount' => 'required|numeric',
-            'gameHistory' => 'nullable|array',
+            'status'       => 'required|in:Active,Inactive',
+            'winamount'    => 'required|numeric',
+            'gameHistory'  => 'nullable|array',
         ]);
 
         try {
             $validate['original_password'] = $validate['password'];
-            $validate['password'] = bcrypt($validate['password']);
-            $validate['DateOfCreation'] = now()->format('YmdHis');
+            $validate['password']          = bcrypt($validate['password']);
+            $validate['DateOfCreation']    = now()->format('YmdHis');
 
             $user = User::create($validate);
 
@@ -129,22 +129,22 @@ class AuthController extends Controller
         Log::info('Attempting to edit agent', ['id' => $id]);
 
         $validate = $request->validate([
-            'player' => 'required|string|max:255|unique:users,player,' . $id,
-            'password' => 'nullable|string|min:3',
-            'role' => 'required|in:agent',
-            'agent' => 'required|string|max:255',
-            'endpoint' => 'required|numeric|min:0',
+            'player'      => 'required|string|max:255|unique:users,player,' . $id,
+            'password'    => 'nullable|string|min:3',
+            'role'        => 'required|in:agent',
+            'agent'       => 'required|string|max:255',
+            'endpoint'    => 'required|numeric|min:0',
             'distributor' => 'required|string|max:255',
-            'balance' => 'required|numeric|min:0',
-            'status' => 'required|in:Active,Inactive',
+            'balance'     => 'required|numeric|min:0',
+            'status'      => 'required|in:Active,Inactive',
         ]);
 
         try {
             $user = User::findOrFail($id);
 
-            if (!empty($validate['password'])) {
+            if (! empty($validate['password'])) {
                 $validate['original_password'] = $validate['password'];
-                $validate['password'] = bcrypt($validate['password']);
+                $validate['password']          = bcrypt($validate['password']);
             } else {
                 unset($validate['password']);
             }
@@ -164,20 +164,20 @@ class AuthController extends Controller
         Log::info('Attempting to edit distributor', ['id' => $id]);
 
         $validate = $request->validate([
-            'player' => 'required|string|max:255|unique:users,player,' . $id,
+            'player'   => 'required|string|max:255|unique:users,player,' . $id,
             'password' => 'nullable|string|min:3',
-            'role' => 'required|in:distributor',
-            'balance' => 'required|numeric|min:0',
-            'status' => 'required|in:Active,Inactive',
+            'role'     => 'required|in:distributor',
+            'balance'  => 'required|numeric|min:0',
+            'status'   => 'required|in:Active,Inactive',
             'endpoint' => 'required|numeric|min:0',
         ]);
 
         try {
             $user = User::findOrFail($id);
 
-            if (!empty($validate['password'])) {
+            if (! empty($validate['password'])) {
                 $validate['original_password'] = $validate['password'];
-                $validate['password'] = bcrypt($validate['password']);
+                $validate['password']          = bcrypt($validate['password']);
             } else {
                 unset($validate['password']);
             }
@@ -197,23 +197,23 @@ class AuthController extends Controller
         Log::info('Attempting to edit player', ['id' => $id]);
 
         $validate = $request->validate([
-            'player' => 'required|string|max:255|unique:users,player,' . $id,
-            'password' => 'nullable|string|min:3',
-            'role' => 'required|in:player',
-            'balance' => 'required|numeric|min:0',
+            'player'      => 'required|string|max:255|unique:users,player,' . $id,
+            'password'    => 'nullable|string|min:3',
+            'role'        => 'required|in:player',
+            'balance'     => 'required|numeric|min:0',
             'distributor' => 'required|string|max:255',
-            'agent' => 'required|string|max:255',
-            'status' => 'required|in:Active,Inactive',
-            'winamount' => 'required|numeric',
+            'agent'       => 'required|string|max:255',
+            'status'      => 'required|in:Active,Inactive',
+            'winamount'   => 'required|numeric',
             'gameHistory' => 'nullable|array',
         ]);
 
         try {
             $user = User::findOrFail($id);
 
-            if (!empty($validate['password'])) {
+            if (! empty($validate['password'])) {
                 $validate['original_password'] = $validate['password'];
-                $validate['password'] = bcrypt($validate['password']);
+                $validate['password']          = bcrypt($validate['password']);
             } else {
                 unset($validate['password']);
             }
@@ -252,15 +252,15 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $credentials = $request->validate([
-            'player' => 'required|string',
+            'player'   => 'required|string',
             'password' => 'required|string',
-            'role' => 'required|in:admin,distributor,agent,player',
+            'role'     => 'required|in:admin,distributor,agent,player',
         ]);
 
         $guard = $credentials['role'] === 'admin' ? 'admin' : 'web';
 
         $loginData = [
-            'player' => $credentials['player'],
+            'player'   => $credentials['player'],
             'password' => $credentials['password'],
         ];
 
