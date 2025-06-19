@@ -529,18 +529,24 @@ class PagesController extends Controller
 
     public function showTransferReport()
     {
-        $user = auth()->user();
-        if (! $user) {
+        $user  = auth('web')->user();   // from users table
+        $admin = auth('admin')->user(); // from admins table
+
+        if (! $user && ! $admin) {
             return redirect()->route('login');
         }
 
         $query = DB::connection('mongodb')->table('transfers')->orderBy('created_at', 'desc');
 
-        if ($user->role !== 'admin') {
+        // If a normal user is logged in, restrict to their transfers
+        if ($user) {
             $query->where('transfer_by', $user->id);
         }
 
+        // If admin is logged in, show all transfers (no filtering)
+
         $transfers = $query->get();
+
         if ($transfers->isEmpty()) {
             return view('pages.transfer.report', compact('transfers'));
         }
@@ -554,10 +560,8 @@ class PagesController extends Controller
         $users = User::whereIn('_id', $userIds)->get()->keyBy('_id');
 
         foreach ($transfers as $transfer) {
-            // agent name
             $transfer->agent_name = $users->get($transfer->transfer_by)?->player ?? 'N/A (User ID: ' . $transfer->transfer_by . ')';
 
-            // Distributor name
             if ($allAdmins->has($transfer->transfer_to)) {
                 $transfer->distributor_name = $allAdmins->get($transfer->transfer_to)->player ?? 'Admin (ID: ' . $transfer->transfer_to . ')';
             } else {

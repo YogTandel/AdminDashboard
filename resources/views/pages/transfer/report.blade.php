@@ -5,14 +5,16 @@
 @section('content')
     <div class="container py-4">
         <h3 class="mb-4 text-dark" style="font-weight: 600; font-size: 1.2rem;">
-            @if(auth()->user()->role === 'admin')
+            @if (auth('admin')->check())
                 All Transfer History
-            @else
+            @elseif(auth('web')->check())
                 My Transfer History
+            @else
+                Transfer History
             @endif
         </h3>
 
-        @if(count($transfers) > 0)
+        @if (count($transfers) > 0)
             <div class="table-responsive">
                 <table class="table table-bordered table-hover" style="font-size: 0.8rem; color: #212529;">
                     <thead>
@@ -32,7 +34,7 @@
                                 <td>{{ $transfer->agent_name }}</td>
                                 <td>{{ $transfer->transfer_by }}</td>
                                 <td>
-                                    @if(str_contains($transfer->distributor_name, 'Admin'))
+                                    @if (str_contains($transfer->distributor_name, 'Admin'))
                                         <span class="text-primary">{{ $transfer->distributor_name }}</span>
                                     @else
                                         {{ $transfer->distributor_name }}
