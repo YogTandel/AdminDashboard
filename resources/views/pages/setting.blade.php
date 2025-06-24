@@ -4,6 +4,22 @@
 
 @section('content')
     <div class="container-fluid py-4">
+
+        {{-- Success/Error Messages --}}
+        @if(session('success'))
+            <div class="alert alert-success alert-dismissible fade show alert-success-auto" role="alert">
+                {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="alert alert-danger alert-dismissible fade show alert-danger-auto" role="alert">
+                {{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
         @if ($selectedAgent)
             <div class="alert alert-custom alert-dismissible fade show" role="alert">
                 <div class="d-flex justify-content-between align-items-center">
@@ -20,6 +36,7 @@
                 No agent selected. Please select an agent from the agent list.
             </div>
         @endif
+
         <div class="row">
             <!-- Commissions Section -->
             <div class="col-lg-6 mb-4">
@@ -31,6 +48,7 @@
                         <form action="{{ route('settings.updateCommissions') }}" method="POST">
                             @csrf
                             <input type="hidden" name="agent_id" value="{{ $selectedAgent['id'] ?? '' }}">
+
                             <div class="row mb-3">
                                 <div class="col-md-6">
                                     <label class="form-label">Agent Commission</label>
@@ -51,6 +69,7 @@
                                     </div>
                                 </div>
                             </div>
+
                             <div class="d-flex flex-wrap gap-2 mt-3">
                                 <button type="submit" class="btn bg-gradient-info mb-2">
                                     Update Commissions
@@ -59,13 +78,14 @@
                                     Release Commission
                                 </button>
                                 <button id="toggleSetToMinimumBtn" type="button" class="btn mb-2">
-                                Set To Minimum
-                            </button>
+                                    Set To Minimum
+                                </button>
                             </div>
                         </form>
                     </div>
                 </div>
             </div>
+
             <!-- Standing & Earnings Section -->
             <div class="col-lg-6 mb-4">
                 <div class="card shadow-soft border-radius-xl">
@@ -85,6 +105,7 @@
                 </div>
             </div>
         </div>
+
         <!-- Profit Section -->
         <div class="row">
             <div class="col-lg-6 mb-4">
@@ -120,19 +141,13 @@
                     </div>
                     <div class="card-body">
                         <form>
-                            <!-- Add Points -->
                             <div class="mb-4">
                                 <label class="form-label">Add Points</label>
-                                {{-- @if ($selectedAgent['endpoint'])
-                                    <input type="number" class="form-control" value={{ $selectedAgent['endpoint'] }}
-                                        placeholder="Enter Profit Percentage">
-                                @endif --}}
                                 <div class="d-grid mt-2">
                                     <button type="submit" class="btn btn-success shadow-soft">Add To Admin</button>
                                 </div>
                             </div>
 
-                            <!-- Remove Points -->
                             <div>
                                 <label class="form-label">Remove Points</label>
                                 <input type="text" class="form-control" placeholder="Enter Points to Remove">
@@ -145,8 +160,8 @@
                 </div>
             </div>
         </div>
-
     </div>
+
     <style>
         .alert-custom {
             background-color: #e7f1ff;
@@ -158,41 +173,54 @@
         }
     </style>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    function updateButtonColor(isTrue) {
+    
+    const initialValue = @json($settings->setTominimum ?? false);
+
+    function updateButtonColor(value) {
         const btn = $('#toggleSetToMinimumBtn');
-        if (isTrue) {
-            btn.removeClass('btn-danger').addClass('btn-success');
+        btn.removeClass('btn-success btn-danger');
+
+        if (value) {
+            btn.addClass('btn-success'); // Green
         } else {
-            btn.removeClass('btn-success').addClass('btn-danger');
+            btn.addClass('btn-danger'); // Red
         }
     }
 
-    $(document).ready(function () {
-        // Blade થી setTominimum value લાવો અને button color set કરો
-        let initialValue = @json($settings->setTominimum ?? false);
+    $(document).ready(function() {
+        
         updateButtonColor(initialValue);
-    });
 
-    $('#toggleSetToMinimumBtn').on('click', function () {
-        $.ajax({
-            url: "{{ route('toggle.setToMinimum') }}",
-            method: 'POST',
-            data: {
-                _token: "{{ csrf_token() }}"
-            },
-            success: function (response) {
-                // Toggle value મળ્યા પછી button color update કરો
-                updateButtonColor(response.setTominimum);
-            },
-            error: function () {
-                alert('Error toggling Set To Minimum');
-            }
+      
+        $('#toggleSetToMinimumBtn').click(function() {
+            $.ajax({
+                url: "{{ route('toggle.setToMinimum') }}",
+                method: 'POST',
+                data: {
+                    _token: "{{ csrf_token() }}"
+                },
+                success: function(response) {
+                    if(response.setTominimum !== undefined) {
+                        updateButtonColor(response.setTominimum);
+                    } else {
+                        alert('Unexpected response from server.');
+                    }
+                },
+                error: function() {
+                    alert('Error toggling Set To Minimum');
+                }
+            });
         });
+
+     
+        setTimeout(function () {
+            $('.alert-success-auto').fadeOut('slow');
+            $('.alert-danger-auto').fadeOut('slow');
+        }, 5000);
     });
 </script>
-
 
     <x-footer />
 @endsection

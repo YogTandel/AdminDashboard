@@ -279,26 +279,24 @@ class PagesController extends Controller
         ]);
     }
 
-    public function updateCommissions(Request $request)
-    {
-        $validated = $request->validate([
-            'agent_commission'       => 'required|numeric|min:0|max:100',
-            'distributor_commission' => 'required|numeric|min:0|max:100',
-            'agent_id'               => 'required|exists:users,_id',
-        ]);
+public function updateCommissions(Request $request)
+{
+    $validated = $request->validate([
+        'agent_commission'       => 'required|numeric|min:0|max:100',
+        'distributor_commission' => 'required|numeric|min:0|max:100',
+    ]);
 
-        // Update or create settings
-        Setting::update(
-            ['agent_id' => $validated['agent_id']],
-            [
-                'agentComission'       => $validated['agent_commission'],
-                'distributorComission' => $validated['distributor_commission'],
-                // Add other fields as needed
-            ]
-        );
+    DB::table('settings')->update([
+        'agentComission'        => $validated['agent_commission'],
+        'distributorComission' => $validated['distributor_commission'],
+        'updated_at'           => now(),
+    ]);
 
-        return back()->with('success', 'Commissions updated successfully');
-    }
+    return back()->with('success', 'Commissions updated successfully.');
+}
+
+
+
 
     public function updateNegativeAgent(Request $request)
     {
@@ -325,25 +323,29 @@ class PagesController extends Controller
         ]);
     }
 
-    public function toggleSetToMinimum()
+ // PagesController.php (ક્યાંક)
+public function toggleSetToMinimum(Request $request)
 {
-    
-    $current = DB::table('settings')->value('setTominimum');
+    // અહીં settings table માં પ્રથમ record હોય તેવા فرض કરો, જો ઘણા ન હોય તો ID ની જરૂર પડે
+    $setting = DB::table('settings')->first();
 
-    
-    $newValue = !$current;
+    if (!$setting) {
+        return response()->json(['error' => 'Settings not found'], 404);
+    }
 
-    // update કરો
+    $newValue = !$setting->setTominimum;
+
     DB::table('settings')->update([
         'setTominimum' => $newValue,
-        'updated_at'   => now(), 
+        'updated_at'   => now(),
     ]);
 
     return response()->json([
-        'status'        => 'success',
-        'setTominimum'  => $newValue,
+        'status' => 'success',
+        'setTominimum' => $newValue,
     ]);
 }
+
 
     public function deselect(Request $request)
     {
