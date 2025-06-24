@@ -327,16 +327,16 @@ class PagesController extends Controller
 
     public function toggleSetToMinimum()
 {
-    // હાલની value મેળવો
+    
     $current = DB::table('settings')->value('setTominimum');
 
-    // ઉલટ value તૈયાર કરો (false → true, true → false)
+    
     $newValue = !$current;
 
     // update કરો
     DB::table('settings')->update([
         'setTominimum' => $newValue,
-        'updated_at'   => now(), // અપડેટ સમય ટ્રેક કરવા માટે
+        'updated_at'   => now(), 
     ]);
 
     return response()->json([
