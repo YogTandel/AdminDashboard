@@ -167,16 +167,17 @@
             </li>
 
             <!-- Setting -->
-            <li class="nav-item">
-                <a class="nav-link {{ Request::is('setting') ? 'active' : '' }}" href="{{ route('setting') }}">
-                    <div
-                        class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                        <i class="fas fa-file-alt text-dark"></i>
-                    </div>
-                    <span class="nav-link-text ms-1">setting</span>
-                </a>
-            </li>
-
+            <!-- Setting (Only for Admin) -->
+            @if ($role === 'admin')
+                <li class="nav-item">
+                    <a class="nav-link {{ Request::is('setting') ? 'active' : '' }}" href="{{ route('setting') }}">
+                        <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+                            <i class="fas fa-cog text-dark"></i> <!-- Changed icon to cog for settings -->
+                        </div>
+                        <span class="nav-link-text ms-1">Settings</span>
+                    </a>
+                </li>
+            @endif
 
             <!-- Logout -->
             <li class="nav-item">
