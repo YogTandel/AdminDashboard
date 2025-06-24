@@ -14,17 +14,16 @@ class Setting extends Model
      * @var array<string>
      */
     protected $fillable = [
-        'agent_comission',
-        'distributor_comission',
+        'agentComission',
+        'distributorComission',
         'earning',
-        'earning_percentage',
-        'set_to_minimum',
+        'earningPercentage',
+        'setTominimum',
         'standing',
-        'custom_bet',
+        'customBet',
         'result',
-        'last_10_data',
-        'is_negative_agent',
-        'agent_id',
+        'last10data',
+        'is_nagative_agent',
     ];
 
     /**
@@ -33,14 +32,14 @@ class Setting extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'agent_comission'       => 'decimal:2',
-        'distributor_comission' => 'decimal:2',
-        'earning'               => 'decimal:2',
-        'earning_percentage'    => 'integer',
-        'set_to_minimum'        => 'boolean',
-        'standing'              => 'decimal:2',
-        'custom_bet'            => 'integer',
-        'last_10_data'          => 'array',
+        'agentComission'       => 'decimal:2',
+        'distributorComission' => 'decimal:2',
+        'earning'              => 'decimal:2',
+        'earningPercentage'    => 'integer',
+        'setTominimum'         => 'boolean',
+        'standing'             => 'decimal:2',
+        'customBet'            => 'integer',
+        'last10data'           => 'array',
     ];
 
     /**
@@ -49,12 +48,12 @@ class Setting extends Model
      * @var array
      */
     protected $attributes = [
-        'agent_comission'       => 0.0,
-        'distributor_comission' => 0.0,
-        'earning_percentage'    => 0,
-        'set_to_minimum'        => false,
-        'custom_bet'            => -1,
-        'result'                => '8',
+        'agentComission'       => 0.0,
+        'distributorComission' => 0.0,
+        'earningPercentage'    => 0,
+        'setTominimum'         => false,
+        'customBet'            => -1,
+        'result'               => '8',
     ];
 
     /**
