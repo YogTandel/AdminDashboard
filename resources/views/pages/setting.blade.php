@@ -58,9 +58,9 @@
                                 <button type="button" class="btn bg-gradient-success mb-2">
                                     Release Commission
                                 </button>
-                                <button type="button" class="btn bg-gradient-warning text-white mb-2">
-                                    Set To Minimum
-                                </button>
+                                <button id="toggleSetToMinimumBtn" type="button" class="btn mb-2">
+                                Set To Minimum
+                            </button>
                             </div>
                         </form>
                     </div>
@@ -157,6 +157,42 @@
             margin-bottom: 1rem;
         }
     </style>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    function updateButtonColor(isTrue) {
+        const btn = $('#toggleSetToMinimumBtn');
+        if (isTrue) {
+            btn.removeClass('btn-danger').addClass('btn-success');
+        } else {
+            btn.removeClass('btn-success').addClass('btn-danger');
+        }
+    }
+
+    $(document).ready(function () {
+        // Blade થી setTominimum value લાવો અને button color set કરો
+        let initialValue = @json($settings->setTominimum ?? false);
+        updateButtonColor(initialValue);
+    });
+
+    $('#toggleSetToMinimumBtn').on('click', function () {
+        $.ajax({
+            url: "{{ route('toggle.setToMinimum') }}",
+            method: 'POST',
+            data: {
+                _token: "{{ csrf_token() }}"
+            },
+            success: function (response) {
+                // Toggle value મળ્યા પછી button color update કરો
+                updateButtonColor(response.setTominimum);
+            },
+            error: function () {
+                alert('Error toggling Set To Minimum');
+            }
+        });
+    });
+</script>
+
 
     <x-footer />
 @endsection
