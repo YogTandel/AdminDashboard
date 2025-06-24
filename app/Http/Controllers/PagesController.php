@@ -279,6 +279,27 @@ class PagesController extends Controller
         ]);
     }
 
+    public function settings()
+    {
+        
+        $settings = Setting::first(); 
+        
+        
+         $selectedAgent = null;
+
+            if (session()->has('selected_agent')) {
+                $selectedAgent = session('selected_agent');
+            } elseif (isset($_COOKIE['selectedAgent'])) {
+                $selectedAgent = json_decode($_COOKIE['selectedAgent'], true);
+            } 
+        
+        return view('pages.setting', [
+            'settings' => $settings, 
+            'selectedAgent' => $selectedAgent,
+            'standing' => $settings->standing 
+        ]);
+    }
+
 public function updateCommissions(Request $request)
 {
     $validated = $request->validate([
@@ -593,5 +614,7 @@ public function toggleSetToMinimum(Request $request)
 
         return view('pages.transfer.report', compact('transfers'));
     }
+
+
 
 }

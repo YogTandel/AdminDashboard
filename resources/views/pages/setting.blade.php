@@ -94,7 +94,7 @@
                     </div>
                     <div class="card-body">
                         <div class="d-flex justify-content-between mb-3">
-                            <div><strong>Standing:</strong> <span class="text-primary">30</span></div>
+<div><strong>Standing:</strong> <span class="text-primary">{{ $settings->standing ?? 'N/A' }}</span></div>
                             <div><strong>Admin% Earning:</strong> <span class="text-success">0</span></div>
                         </div>
                         <div class="d-flex flex-wrap gap-2">

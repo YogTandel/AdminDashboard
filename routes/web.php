@@ -46,6 +46,7 @@ Route::get('/setting', [PagesController::class, 'setting'])->name('setting');
 Route::post('/settings/update-commissions', [PagesController::class, 'updateCommissions'])->name('settings.updateCommissions');
 Route::post('/update-negative-agent', [PagesController::class, 'updateNegativeAgent']);
 Route::post('/toggle-set-to-minimum', [PagesController::class, 'toggleSetToMinimum'])->name('toggle.setToMinimum');
+Route::get('/setting', [PagesController::class, 'settings'])->name('setting');
 
 // live game
 Route::get('/livegame', [PagesController::class, 'livegame'])->name('livegame');
