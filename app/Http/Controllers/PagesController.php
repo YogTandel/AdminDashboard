@@ -345,27 +345,51 @@ public function updateCommissions(Request $request)
     }
 
  // PagesController.php (ક્યાંક)
-public function toggleSetToMinimum(Request $request)
-{
-    // અહીં settings table માં પ્રથમ record હોય તેવા فرض કરો, જો ઘણા ન હોય તો ID ની જરૂર પડે
-    $setting = DB::table('settings')->first();
+    public function toggleSetToMinimum(Request $request)
+    {
+        // અહીં settings table માં પ્રથમ record હોય તેવા فرض કરો, જો ઘણા ન હોય તો ID ની જરૂર પડે
+        $setting = DB::table('settings')->first();
 
-    if (!$setting) {
-        return response()->json(['error' => 'Settings not found'], 404);
+        if (!$setting) {
+            return response()->json(['error' => 'Settings not found'], 404);
+        }
+
+        $newValue = !$setting->setTominimum;
+
+        DB::table('settings')->update([
+            'setTominimum' => $newValue,
+            'updated_at'   => now(),
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'setTominimum' => $newValue,
+        ]);
     }
 
-    $newValue = !$setting->setTominimum;
+    public function standingToEarning(Request $request)
+    {
+        // છેલ્લો inserted settings record લો
+        $setting = DB::table('settings')->latest('id')->first();
 
-    DB::table('settings')->update([
-        'setTominimum' => $newValue,
-        'updated_at'   => now(),
-    ]);
+        if (!$setting) {
+            return redirect()->back()->with('error', 'No settings record found.');
+        }
 
-    return response()->json([
-        'status' => 'success',
-        'setTominimum' => $newValue,
-    ]);
-}
+        // નવા earning ની ગણતરી
+        $newEarning = $setting->earning + $setting->standing;
+
+        // Update earning અને standing બંને
+        DB::table('settings')
+            ->where('id', $setting->id)
+            ->update([
+                'earning' => $newEarning,
+                'standing' => 0, // standing હવે 0 થાય
+                'updated_at' => now(),
+            ]);
+
+        return redirect()->back()->with('success', 'Earning updated and standing set to 0.');
+    }
 
 
     public function deselect(Request $request)
@@ -614,6 +638,9 @@ public function toggleSetToMinimum(Request $request)
 
         return view('pages.transfer.report', compact('transfers'));
     }
+
+
+
 
 
 

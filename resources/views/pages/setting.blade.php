@@ -95,11 +95,14 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between mb-3">
                             <div><strong>Standing:</strong> <span class="text-primary">{{ $settings->standing ?? 'N/A' }}</span></div>
-                            <div><strong>Admin% Earning:</strong> <span class="text-success">0</span></div>
+                            <div><strong>Admin% Earning:</strong> <span class="text-success">{{ $settings->earning }}</span></div>
                         </div>
                         <div class="d-flex flex-wrap gap-2">
-                            <button type="button" class="btn btn-primary btn-sm shadow-soft">Standing To Earning</button>
-                            <button type="button" class="btn btn-danger btn-sm shadow-soft">Earning to 0</button>
+                        <form action="{{ route('settings.standingToEarning') }}" method="POST" class="d-inline">
+                            @csrf
+                            <button type="submit" class="btn btn-primary btn-sm shadow-soft">Standing To Earning</button>
+                        </form>                           
+                        <button type="button" class="btn btn-danger btn-sm shadow-soft">Earning to 0</button>
                         </div>
                     </div>
                 </div>
