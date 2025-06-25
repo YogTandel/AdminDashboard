@@ -16,7 +16,7 @@ class PagesController extends Controller
     public function agentList()
     {
         $perPage = request()->get('per_page', 5);
-        $query   = User::query();
+        $query = User::query();
 
         // Search filter
         if (request()->has('search')) {
@@ -24,21 +24,21 @@ class PagesController extends Controller
         }
 
         // Date range filter
-        $from      = request()->input('from_date');
-        $to        = request()->input('to_date');
+        $from = request()->input('from_date');
+        $to = request()->input('to_date');
         $dateRange = request()->input('date_range');
 
         if ($dateRange) {
             $today = Carbon::today();
             if ($dateRange === '2_days_ago') {
                 $from = $today->copy()->subDays(2)->format('Ymd');
-                $to   = $today->format('Ymd');
+                $to = $today->format('Ymd');
             } elseif ($dateRange === 'this_week') {
                 $from = $today->copy()->startOfWeek()->format('Ymd');
-                $to   = $today->format('Ymd');
+                $to = $today->format('Ymd');
             } elseif ($dateRange === 'this_month') {
                 $from = $today->copy()->startOfMonth()->format('Ymd');
-                $to   = $today->format('Ymd');
+                $to = $today->format('Ymd');
             }
         }
 
@@ -60,7 +60,7 @@ class PagesController extends Controller
     public function distributor()
     {
         $perPage = request()->get('per_page', 5);
-        $query   = User::query();
+        $query = User::query();
 
         // Search filter
         if (request()->has('search')) {
@@ -68,21 +68,21 @@ class PagesController extends Controller
         }
 
         // Date range filter
-        $from      = request()->input('from_date');
-        $to        = request()->input('to_date');
+        $from = request()->input('from_date');
+        $to = request()->input('to_date');
         $dateRange = request()->input('date_range');
 
         if ($dateRange) {
             $today = Carbon::today();
             if ($dateRange === '2_days_ago') {
                 $from = $today->copy()->subDays(2)->format('Ymd');
-                $to   = $today->format('Ymd');
+                $to = $today->format('Ymd');
             } elseif ($dateRange === 'this_week') {
                 $from = $today->copy()->startOfWeek()->format('Ymd');
-                $to   = $today->format('Ymd');
+                $to = $today->format('Ymd');
             } elseif ($dateRange === 'this_month') {
                 $from = $today->copy()->startOfMonth()->format('Ymd');
-                $to   = $today->format('Ymd');
+                $to = $today->format('Ymd');
             }
         }
 
@@ -104,7 +104,7 @@ class PagesController extends Controller
     public function player()
     {
         $perPage = request()->get('per_page', 5);
-        $query   = User::query();
+        $query = User::query();
 
         // Search filter
         if (request()->has('search')) {
@@ -112,21 +112,21 @@ class PagesController extends Controller
         }
 
         // Date range filter
-        $from      = request()->input('from_date');
-        $to        = request()->input('to_date');
+        $from = request()->input('from_date');
+        $to = request()->input('to_date');
         $dateRange = request()->input('date_range');
 
         if ($dateRange) {
             $today = Carbon::today();
             if ($dateRange === '2_days_ago') {
                 $from = $today->copy()->subDays(2)->format('Ymd');
-                $to   = $today->format('Ymd');
+                $to = $today->format('Ymd');
             } elseif ($dateRange === 'this_week') {
                 $from = $today->copy()->startOfWeek()->format('Ymd');
-                $to   = $today->format('Ymd');
+                $to = $today->format('Ymd');
             } elseif ($dateRange === 'this_month') {
                 $from = $today->copy()->startOfMonth()->format('Ymd');
-                $to   = $today->format('Ymd');
+                $to = $today->format('Ymd');
             }
         }
 
@@ -155,7 +155,7 @@ class PagesController extends Controller
     public function transactionreport()
     {
         $perPage = request()->get('per_page', 15);
-        $query   = Transaction::query();
+        $query = Transaction::query();
 
         // Search filter
         if (request()->has('search')) {
@@ -163,21 +163,21 @@ class PagesController extends Controller
         }
 
         // Date range filter
-        $from      = request()->input('from_date');
-        $to        = request()->input('to_date');
+        $from = request()->input('from_date');
+        $to = request()->input('to_date');
         $dateRange = request()->input('date_range');
 
         if ($dateRange) {
             $today = Carbon::today();
             if ($dateRange === '2_days_ago') {
                 $from = $today->copy()->subDays(2)->format('Y-m-d');
-                $to   = $today->format('Y-m-d');
+                $to = $today->format('Y-m-d');
             } elseif ($dateRange === 'this_week') {
                 $from = $today->copy()->startOfWeek()->format('Y-m-d');
-                $to   = $today->format('Y-m-d');
+                $to = $today->format('Y-m-d');
             } elseif ($dateRange === 'this_month') {
                 $from = $today->copy()->startOfMonth()->format('Y-m-d');
-                $to   = $today->format('Y-m-d');
+                $to = $today->format('Y-m-d');
             }
         }
 
@@ -196,8 +196,8 @@ class PagesController extends Controller
 
     public function playerHistory(Request $request, $id)
     {
-        $from      = $request->input('from_date');
-        $to        = $request->input('to_date');
+        $from = $request->input('from_date');
+        $to = $request->input('to_date');
         $dateRange = $request->input('date_range');
 
         $player = User::where('_id', $id)
@@ -211,13 +211,13 @@ class PagesController extends Controller
                 $today = Carbon::today();
                 if ($dateRange === '2_days_ago') {
                     $from = $today->copy()->subDays(2)->format('Y-m-d');
-                    $to   = $today->format('Y-m-d');
+                    $to = $today->format('Y-m-d');
                 } elseif ($dateRange === 'this_week') {
                     $from = $today->copy()->startOfWeek()->format('Y-m-d');
-                    $to   = $today->format('Y-m-d');
+                    $to = $today->format('Y-m-d');
                 } elseif ($dateRange === 'this_month') {
                     $from = $today->copy()->startOfMonth()->format('Y-m-d');
-                    $to   = $today->format('Y-m-d');
+                    $to = $today->format('Y-m-d');
                 }
             }
 
@@ -248,11 +248,11 @@ class PagesController extends Controller
             ->firstOrFail();
 
         $selectedAgent = [
-            'id'          => $agent->id,
-            'name'        => $agent->player,
-            'balance'     => $agent->balance,
+            'id' => $agent->id,
+            'name' => $agent->player,
+            'balance' => $agent->balance,
             'distributor' => $agent->distributor,
-            'endpoint'    => $agent->endpoint,
+            'endpoint' => $agent->endpoint,
         ];
 
         // Store in session
@@ -275,46 +275,46 @@ class PagesController extends Controller
 
         return view('pages.setting', [
             'selectedAgent' => $selectedAgent,
-            'settings'      => Setting::where('agent_id', $selectedAgent['id'] ?? null)->first(),
+            'settings' => Setting::where('agent_id', $selectedAgent['id'] ?? null)->first(),
         ]);
     }
 
     public function settings()
     {
-        
-        $settings = Setting::first(); 
-        
-        
-         $selectedAgent = null;
 
-            if (session()->has('selected_agent')) {
-                $selectedAgent = session('selected_agent');
-            } elseif (isset($_COOKIE['selectedAgent'])) {
-                $selectedAgent = json_decode($_COOKIE['selectedAgent'], true);
-            } 
-        
+        $settings = Setting::first();
+
+
+        $selectedAgent = null;
+
+        if (session()->has('selected_agent')) {
+            $selectedAgent = session('selected_agent');
+        } elseif (isset($_COOKIE['selectedAgent'])) {
+            $selectedAgent = json_decode($_COOKIE['selectedAgent'], true);
+        }
+
         return view('pages.setting', [
-            'settings' => $settings, 
+            'settings' => $settings,
             'selectedAgent' => $selectedAgent,
-            'standing' => $settings->standing 
+            'standing' => $settings->standing
         ]);
     }
 
-public function updateCommissions(Request $request)
-{
-    $validated = $request->validate([
-        'agent_commission'       => 'required|numeric|min:0|max:100',
-        'distributor_commission' => 'required|numeric|min:0|max:100',
-    ]);
+    public function updateCommissions(Request $request)
+    {
+        $validated = $request->validate([
+            'agent_commission' => 'required|numeric|min:0|max:100',
+            'distributor_commission' => 'required|numeric|min:0|max:100',
+        ]);
 
-    DB::table('settings')->update([
-        'agentComission'        => $validated['agent_commission'],
-        'distributorComission' => $validated['distributor_commission'],
-        'updated_at'           => now(),
-    ]);
+        DB::table('settings')->update([
+            'agentComission' => $validated['agent_commission'],
+            'distributorComission' => $validated['distributor_commission'],
+            'updated_at' => now(),
+        ]);
 
-    return back()->with('success', 'Commissions updated successfully.');
-}
+        return back()->with('success', 'Commissions updated successfully.');
+    }
 
 
 
@@ -335,16 +335,16 @@ public function updateCommissions(Request $request)
         // Update all settings (as per your current logic)
         DB::table('settings')->update([
             'is_nagative_agent' => $agentId,
-            'updated_at'        => now(), // Include this to track changes
+            'updated_at' => now(), // Include this to track changes
         ]);
 
         return response()->json([
-            'status'   => 'success',
+            'status' => 'success',
             'agent_id' => $agentId,
         ]);
     }
 
- // PagesController.php (ક્યાંક)
+    // PagesController.php (ક્યાંક)
     public function toggleSetToMinimum(Request $request)
     {
         // અહીં settings table માં પ્રથમ record હોય તેવા فرض કરો, જો ઘણા ન હોય તો ID ની જરૂર પડે
@@ -358,7 +358,7 @@ public function updateCommissions(Request $request)
 
         DB::table('settings')->update([
             'setTominimum' => $newValue,
-            'updated_at'   => now(),
+            'updated_at' => now(),
         ]);
 
         return response()->json([
@@ -411,7 +411,7 @@ public function updateCommissions(Request $request)
             ->firstOrFail();
 
         $headers = [
-            'Content-Type'        => 'text/csv',
+            'Content-Type' => 'text/csv',
             'Content-Disposition' => 'attachment; filename="game_history_' . $player->player . '_' . date('Y-m-d') . '.csv"',
         ];
 
@@ -420,7 +420,7 @@ public function updateCommissions(Request $request)
             fputcsv($file, ['Time', 'Bet Amount', 'Win Amount', 'Net Result', 'Game Result', 'Bet Values']);
 
             foreach ($player->gameHistory as $entry) {
-                $net  = $entry['winpoint'] - $entry['playPoint'];
+                $net = $entry['winpoint'] - $entry['playPoint'];
                 $time = Carbon::createFromFormat('YmdHis', $entry['stime'])->format('Y-m-d H:i:s');
 
                 fputcsv($file, [
@@ -442,29 +442,29 @@ public function updateCommissions(Request $request)
     {
         $user = Auth::user();
 
-        if (! $user) {
+        if (!$user) {
             abort(403, 'Unauthorized access');
         }
 
-        $transferTo   = null;
-        $userType     = '';
+        $transferTo = null;
+        $userType = '';
         $balanceField = 'endpoint'; // Default
 
         if ($user->role === 'player') {
-            $transferTo   = User::where('id', $user->agent_id)->first();
-            $userType     = 'Player';
+            $transferTo = User::where('id', $user->agent_id)->first();
+            $userType = 'Player';
             $balanceField = 'balance';
         } elseif ($user->role === 'agent') {
-            $transferTo   = User::where('id', $user->distributor_id)->first();
-            $userType     = 'Agent';
+            $transferTo = User::where('id', $user->distributor_id)->first();
+            $userType = 'Agent';
             $balanceField = 'endpoint';
         }
 
         return view('pages.transfer.form', [
-            'user'           => $user,
-            'transferTo'     => $transferTo,
-            'userType'       => $userType,
-            'balanceField'   => $balanceField,
+            'user' => $user,
+            'transferTo' => $transferTo,
+            'userType' => $userType,
+            'balanceField' => $balanceField,
             'currentBalance' => $user->{$balanceField},
         ]);
     }
@@ -474,20 +474,20 @@ public function updateCommissions(Request $request)
         DB::beginTransaction();
         try {
             $validated = $request->validate([
-                'transfer_by'        => 'required|exists:users,id',
-                'transfer_to'        => 'required', // We'll handle validation manually
-                'amount'             => 'required|numeric|min:0.01',
-                'type'               => 'required|in:subtract,add',
+                'transfer_by' => 'required|exists:users,id',
+                'transfer_to' => 'required', // We'll handle validation manually
+                'amount' => 'required|numeric|min:0.01',
+                'type' => 'required|in:subtract,add',
                 'is_admin_recipient' => 'sometimes|boolean', // New field to identify admin recipients
             ]);
 
-            $transfer_by   = User::findOrFail($validated['transfer_by']);
+            $transfer_by = User::findOrFail($validated['transfer_by']);
             $transfer_role = $transfer_by->role;
 
             // Determine allowed recipients and their models
             $allowedRecipients = [];
-            $recipientModel    = null;
-            $isRecipientAdmin  = $validated['is_admin_recipient'] ?? false;
+            $recipientModel = null;
+            $isRecipientAdmin = $validated['is_admin_recipient'] ?? false;
 
             switch ($transfer_by->role) {
                 case 'player':
@@ -508,14 +508,14 @@ public function updateCommissions(Request $request)
 
             // Find the recipient - could be User or Admin
             if ($isRecipientAdmin) {
-                $transfer_to   = Admin::findOrFail($validated['transfer_to']);
+                $transfer_to = Admin::findOrFail($validated['transfer_to']);
                 $recipientRole = 'admin';
             } else {
-                $transfer_to   = User::findOrFail($validated['transfer_to']);
+                $transfer_to = User::findOrFail($validated['transfer_to']);
                 $recipientRole = $transfer_to->role;
             }
 
-            if (! in_array($recipientRole, $allowedRecipients)) {
+            if (!in_array($recipientRole, $allowedRecipients)) {
                 return response()->json([
                     'success' => false,
                     'message' => 'You can only transfer to: ' . implode(', ', $allowedRecipients),
@@ -558,28 +558,28 @@ public function updateCommissions(Request $request)
             }
 
             // Save both accounts
-            if (! $transfer_by->save() || ! $transfer_to->save()) {
+            if (!$transfer_by->save() || !$transfer_to->save()) {
                 throw new \Exception('Failed to save balances');
             }
 
             // Create transfer record with comma-separated allowed roles
             DB::connection('mongodb')->table('transfers')->insert([
-                'transfer_by'       => $transfer_by->id,
-                'transfer_to'       => $transfer_to->id,
+                'transfer_by' => $transfer_by->id,
+                'transfer_to' => $transfer_to->id,
                 'transfer_to_model' => $isRecipientAdmin ? 'admin' : 'user',
-                'type'              => implode(',', $allowedRecipients),
-                'amount'            => $validated['amount'],
+                'type' => implode(',', $allowedRecipients),
+                'amount' => $validated['amount'],
                 'remaining_balance' => $transfer_by->$balanceField,
-                'transfer_role'     => $transfer_role,
-                'created_at'        => now(),
-                'updated_at'        => now(),
+                'transfer_role' => $transfer_role,
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
 
             DB::commit();
 
             return response()->json([
-                'success'     => true,
-                'message'     => 'Transfer successful.',
+                'success' => true,
+                'message' => 'Transfer successful.',
                 'new_balance' => $transfer_by->$balanceField,
             ]);
 
@@ -589,17 +589,17 @@ public function updateCommissions(Request $request)
             return response()->json([
                 'success' => false,
                 'message' => 'Transfer failed. Please try again.',
-                'error'   => env('APP_DEBUG') ? $e->getMessage() : null,
+                'error' => env('APP_DEBUG') ? $e->getMessage() : null,
             ], 500);
         }
     }
 
     public function showTransferReport()
     {
-        $user  = auth('web')->user();   // from users table
+        $user = auth('web')->user();   // from users table
         $admin = auth('admin')->user(); // from admins table
 
-        if (! $user && ! $admin) {
+        if (!$user && !$admin) {
             return redirect()->route('login');
         }
 
