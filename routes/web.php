@@ -48,6 +48,8 @@ Route::post('/update-negative-agent', [PagesController::class, 'updateNegativeAg
 Route::post('/toggle-set-to-minimum', [PagesController::class, 'toggleSetToMinimum'])->name('toggle.setToMinimum');
 Route::get('/setting', [PagesController::class, 'settings'])->name('setting');
 Route::post('/settings/standing-to-earning', [PagesController::class, 'standingToEarning'])->name('settings.standingToEarning');
+Route::post('/settings/earning-to-zero', [PagesController::class, 'earningToZero'])->name('settings.earningToZero');
+
 
 // live game
 Route::get('/livegame', [PagesController::class, 'livegame'])->name('livegame');

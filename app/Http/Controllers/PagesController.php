@@ -391,6 +391,26 @@ class PagesController extends Controller
         return redirect()->back()->with('success', 'Earning updated and standing set to 0.');
     }
 
+    public function earningToZero(Request $request)
+{
+    // છેલ્લો inserted record fetch કરો
+    $setting = DB::table('settings')->latest('id')->first();
+
+    if (!$setting) {
+        return redirect()->back()->with('error', 'No settings record found.');
+    }
+
+    // earning ને 0 કરો
+    DB::table('settings')
+        ->where('id', $setting->id)
+        ->update([
+            'earning' => 0,
+            'updated_at' => now(),
+        ]);
+
+    return redirect()->back()->with('success', 'Earning set to 0 successfully.');
+}
+
 
     public function deselect(Request $request)
     {

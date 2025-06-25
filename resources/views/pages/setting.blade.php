@@ -102,7 +102,10 @@
                             @csrf
                             <button type="submit" class="btn btn-primary btn-sm shadow-soft">Standing To Earning</button>
                         </form>                           
-                        <button type="button" class="btn btn-danger btn-sm shadow-soft">Earning to 0</button>
+                        <form action="{{ route('settings.earningToZero') }}" method="POST" class="d-inline">
+                            @csrf
+                            <button type="submit" class="btn btn-danger btn-sm shadow-soft">Earning to 0</button>
+                        </form>
                         </div>
                     </div>
                 </div>
