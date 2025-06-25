@@ -409,7 +409,30 @@ class PagesController extends Controller
         ]);
 
     return redirect()->back()->with('success', 'Earning set to 0 successfully.');
-}
+    }
+
+    public function updateProfit(Request $request)
+{
+    $request->validate([
+        'earningPercentage' => 'required|numeric|min:0|max:100',
+    ]);
+
+    $setting = DB::table('settings')->latest('id')->first();
+
+    if (!$setting) {
+        return redirect()->back()->with('error', 'Settings record not found.');
+    }
+
+    DB::table('settings')
+        ->where('id', $setting->id)
+        ->update([
+            'earningPercentage' => $request->earningPercentage,
+            'updated_at' => now(),
+        ]);
+
+    return redirect()->back()->with('success', 'Earning percentage updated successfully.');
+    }
+
 
 
     public function deselect(Request $request)

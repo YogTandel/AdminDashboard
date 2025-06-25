@@ -49,6 +49,7 @@ Route::post('/toggle-set-to-minimum', [PagesController::class, 'toggleSetToMinim
 Route::get('/setting', [PagesController::class, 'settings'])->name('setting');
 Route::post('/settings/standing-to-earning', [PagesController::class, 'standingToEarning'])->name('settings.standingToEarning');
 Route::post('/settings/earning-to-zero', [PagesController::class, 'earningToZero'])->name('settings.earningToZero');
+Route::post('/settings/update-profit', [PagesController::class, 'updateProfit'])->name('settings.updateProfit');
 
 
 // live game

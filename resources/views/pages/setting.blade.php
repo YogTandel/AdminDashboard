@@ -120,21 +120,23 @@
                         <h6 class="mb-0">Profit Settings</h6>
                     </div>
                     <div class="card-body">
-                        <form>
-                            <div class="mb-4">
-                                <label class="form-label">Profit</label>
-                                <div class="input-group">
-                                    <span class="input-group-text">%</span>
-                                    <input type="number" class="form-control" placeholder="Enter Profit Percentage"
-                                        min="0" max="100">
-                                </div>
-                                <div class="d-grid mt-3">
-                                    <button type="submit" class="btn bg-gradient-info">
-                                        Update Earning%
-                                    </button>
-                                </div>
+                    <form action="{{ route('settings.updateProfit') }}" method="POST">
+                        @csrf
+                        <div class="mb-4">
+                            <label class="form-label">Earning %</label>
+                            <div class="input-group">
+                                <span class="input-group-text">%</span>
+                                <input type="number" name="earningPercentage" class="form-control"
+                                    placeholder="Enter Earning Percentage"
+                                    value="{{ $settings->earningPercentage ?? '' }}" min="0" max="100" step="0.01" required>
                             </div>
-                        </form>
+                            <div class="d-grid mt-3">
+                                <button type="submit" class="btn bg-gradient-info">
+                                    Update Earning%
+                                </button>
+                            </div>
+                        </div>
+                    </form>
                     </div>
                 </div>
             </div>
