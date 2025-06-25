@@ -316,9 +316,6 @@ class PagesController extends Controller
         return back()->with('success', 'Commissions updated successfully.');
     }
 
-
-
-
     public function updateNegativeAgent(Request $request)
     {
         $request->validate([
@@ -344,7 +341,7 @@ class PagesController extends Controller
         ]);
     }
 
-    // PagesController.php (ક્યાંક)
+    
     public function toggleSetToMinimum(Request $request)
     {
         // અહીં settings table માં પ્રથમ record હોય તેવા فرض કરો, જો ઘણા ન હોય તો ID ની જરૂર પડે
@@ -433,6 +430,27 @@ class PagesController extends Controller
     return redirect()->back()->with('success', 'Earning percentage updated successfully.');
     }
 
+    public function addPointsToAdmin(Request $request)
+{
+    $request->validate([
+        'add_points' => 'required|numeric|min:1',
+    ]);
+
+    // જો તમારું 'admins' table છે અને તેમાં 'endpoint' field છે
+    $admin = DB::table('admins')->first(); // પ્રથમ admin લાવો
+
+    if (!$admin) {
+        return back()->with('error', 'Admin record મળ્યો નથી.');
+    }
+
+    // value update કરો (જમણી રીતે addition સાથે)
+    DB::table('admins')->where('id', $admin->id)->update([
+        'endpoint'   => $admin->endpoint + $request->add_points,
+        'updated_at' => now()
+    ]);
+
+    return back()->with('success', 'Points added suceessfully.');
+}
 
 
     public function deselect(Request $request)
@@ -681,10 +699,6 @@ class PagesController extends Controller
 
         return view('pages.transfer.report', compact('transfers'));
     }
-
-
-
-
 
 
 }

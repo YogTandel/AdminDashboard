@@ -94,18 +94,21 @@
                     </div>
                     <div class="card-body">
                         <div class="d-flex justify-content-between mb-3">
-                            <div><strong>Standing:</strong> <span class="text-primary">{{ $settings->standing ?? 'N/A' }}</span></div>
-                            <div><strong>Admin% Earning:</strong> <span class="text-success">{{ $settings->earning }}</span></div>
+                            <div><strong>Standing:</strong> <span
+                                    class="text-primary">{{ $settings->standing ?? 'N/A' }}</span></div>
+                            <div><strong>Admin% Earning:</strong> <span class="text-success">{{ $settings->earning }}</span>
+                            </div>
                         </div>
                         <div class="d-flex flex-wrap gap-2">
-                        <form action="{{ route('settings.standingToEarning') }}" method="POST" class="d-inline">
-                            @csrf
-                            <button type="submit" class="btn btn-primary btn-sm shadow-soft">Standing To Earning</button>
-                        </form>                           
-                        <form action="{{ route('settings.earningToZero') }}" method="POST" class="d-inline">
-                            @csrf
-                            <button type="submit" class="btn btn-danger btn-sm shadow-soft">Earning to 0</button>
-                        </form>
+                            <form action="{{ route('settings.standingToEarning') }}" method="POST" class="d-inline">
+                                @csrf
+                                <button type="submit" class="btn btn-primary btn-sm shadow-soft">Standing To
+                                    Earning</button>
+                            </form>
+                            <form action="{{ route('settings.earningToZero') }}" method="POST" class="d-inline">
+                                @csrf
+                                <button type="submit" class="btn btn-danger btn-sm shadow-soft">Earning to 0</button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -120,23 +123,24 @@
                         <h6 class="mb-0">Profit Settings</h6>
                     </div>
                     <div class="card-body">
-                    <form action="{{ route('settings.updateProfit') }}" method="POST">
-                        @csrf
-                        <div class="mb-4">
-                            <label class="form-label">Earning %</label>
-                            <div class="input-group">
-                                <span class="input-group-text">%</span>
-                                <input type="number" name="earningPercentage" class="form-control"
-                                    placeholder="Enter Earning Percentage"
-                                    value="{{ $settings->earningPercentage ?? '' }}" min="0" max="100" step="0.01" required>
+                        <form action="{{ route('settings.updateProfit') }}" method="POST">
+                            @csrf
+                            <div class="mb-4">
+                                <label class="form-label">Earning %</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">%</span>
+                                    <input type="number" name="earningPercentage" class="form-control"
+                                        placeholder="Enter Earning Percentage"
+                                        value="{{ $settings->earningPercentage ?? '' }}" min="0" max="100" step="0.01"
+                                        required>
+                                </div>
+                                <div class="d-grid mt-3">
+                                    <button type="submit" class="btn bg-gradient-info">
+                                        Update Earning%
+                                    </button>
+                                </div>
                             </div>
-                            <div class="d-grid mt-3">
-                                <button type="submit" class="btn bg-gradient-info">
-                                    Update Earning%
-                                </button>
-                            </div>
-                        </div>
-                    </form>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -148,22 +152,27 @@
                         <h6 class="mb-0">Admin Points Management</h6>
                     </div>
                     <div class="card-body">
-                        <form>
+                        <form action="{{ route('admin.addPoints') }}" method="POST">
+                            @csrf
                             <div class="mb-4">
                                 <label class="form-label">Add Points</label>
+                                <input type="number" class="form-control" name="add_points"
+                                    placeholder="Enter Points to Add" required>
                                 <div class="d-grid mt-2">
                                     <button type="submit" class="btn btn-success shadow-soft">Add To Admin</button>
                                 </div>
                             </div>
-
-                            <div>
-                                <label class="form-label">Remove Points</label>
-                                <input type="text" class="form-control" placeholder="Enter Points to Remove">
-                                <div class="d-grid mt-2">
-                                    <button type="submit" class="btn btn-danger shadow-soft">Remove from Admin</button>
-                                </div>
-                            </div>
                         </form>
+
+
+
+                        <div>
+                            <label class="form-label">Remove Points</label>
+                            <input type="text" class="form-control" placeholder="Enter Points to Remove">
+                            <div class="d-grid mt-2">
+                                <button type="submit" class="btn btn-danger shadow-soft">Remove from Admin</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -181,54 +190,54 @@
         }
     </style>
 
-   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    
-    const initialValue = @json($settings->setTominimum ?? false);
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
 
-    function updateButtonColor(value) {
-        const btn = $('#toggleSetToMinimumBtn');
-        btn.removeClass('btn-success btn-danger');
+        const initialValue = @json($settings->setTominimum ?? false);
 
-        if (value) {
-            btn.addClass('btn-success'); // Green
-        } else {
-            btn.addClass('btn-danger'); // Red
+        function updateButtonColor(value) {
+            const btn = $('#toggleSetToMinimumBtn');
+            btn.removeClass('btn-success btn-danger');
+
+            if (value) {
+                btn.addClass('btn-success'); // Green
+            } else {
+                btn.addClass('btn-danger'); // Red
+            }
         }
-    }
 
-    $(document).ready(function() {
-        
-        updateButtonColor(initialValue);
+        $(document).ready(function () {
 
-      
-        $('#toggleSetToMinimumBtn').click(function() {
-            $.ajax({
-                url: "{{ route('toggle.setToMinimum') }}",
-                method: 'POST',
-                data: {
-                    _token: "{{ csrf_token() }}"
-                },
-                success: function(response) {
-                    if(response.setTominimum !== undefined) {
-                        updateButtonColor(response.setTominimum);
-                    } else {
-                        alert('Unexpected response from server.');
+            updateButtonColor(initialValue);
+
+
+            $('#toggleSetToMinimumBtn').click(function () {
+                $.ajax({
+                    url: "{{ route('toggle.setToMinimum') }}",
+                    method: 'POST',
+                    data: {
+                        _token: "{{ csrf_token() }}"
+                    },
+                    success: function (response) {
+                        if (response.setTominimum !== undefined) {
+                            updateButtonColor(response.setTominimum);
+                        } else {
+                            alert('Unexpected response from server.');
+                        }
+                    },
+                    error: function () {
+                        alert('Error toggling Set To Minimum');
                     }
-                },
-                error: function() {
-                    alert('Error toggling Set To Minimum');
-                }
+                });
             });
-        });
 
-     
-        setTimeout(function () {
-            $('.alert-success-auto').fadeOut('slow');
-            $('.alert-danger-auto').fadeOut('slow');
-        }, 5000);
-    });
-</script>
+
+            setTimeout(function () {
+                $('.alert-success-auto').fadeOut('slow');
+                $('.alert-danger-auto').fadeOut('slow');
+            }, 5000);
+        });
+    </script>
 
     <x-footer />
 @endsection
