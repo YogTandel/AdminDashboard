@@ -341,10 +341,9 @@ class PagesController extends Controller
         ]);
     }
 
-    
+
     public function toggleSetToMinimum(Request $request)
     {
-        // અહીં settings table માં પ્રથમ record હોય તેવા فرض કરો, જો ઘણા ન હોય તો ID ની જરૂર પડે
         $setting = DB::table('settings')->first();
 
         if (!$setting) {
@@ -389,69 +388,89 @@ class PagesController extends Controller
     }
 
     public function earningToZero(Request $request)
-{
-    // છેલ્લો inserted record fetch કરો
-    $setting = DB::table('settings')->latest('id')->first();
+    {
+        $setting = DB::table('settings')->latest('id')->first();
 
-    if (!$setting) {
-        return redirect()->back()->with('error', 'No settings record found.');
-    }
+        if (!$setting) {
+            return redirect()->back()->with('error', 'No settings record found.');
+        }
 
-    // earning ને 0 કરો
-    DB::table('settings')
-        ->where('id', $setting->id)
-        ->update([
-            'earning' => 0,
-            'updated_at' => now(),
-        ]);
+        DB::table('settings')
+            ->where('id', $setting->id)
+            ->update([
+                'earning' => 0,
+                'updated_at' => now(),
+            ]);
 
-    return redirect()->back()->with('success', 'Earning set to 0 successfully.');
+        return redirect()->back()->with('success', 'Earning set to 0 successfully.');
     }
 
     public function updateProfit(Request $request)
-{
-    $request->validate([
-        'earningPercentage' => 'required|numeric|min:0|max:100',
-    ]);
-
-    $setting = DB::table('settings')->latest('id')->first();
-
-    if (!$setting) {
-        return redirect()->back()->with('error', 'Settings record not found.');
-    }
-
-    DB::table('settings')
-        ->where('id', $setting->id)
-        ->update([
-            'earningPercentage' => $request->earningPercentage,
-            'updated_at' => now(),
+    {
+        $request->validate([
+            'earningPercentage' => 'required|numeric|min:0|max:100',
         ]);
 
-    return redirect()->back()->with('success', 'Earning percentage updated successfully.');
+        $setting = DB::table('settings')->latest('id')->first();
+
+        if (!$setting) {
+            return redirect()->back()->with('error', 'Settings record not found.');
+        }
+
+        DB::table('settings')
+            ->where('id', $setting->id)
+            ->update([
+                'earningPercentage' => $request->earningPercentage,
+                'updated_at' => now(),
+            ]);
+
+        return redirect()->back()->with('success', 'Earning percentage updated successfully.');
     }
 
     public function addPointsToAdmin(Request $request)
-{
-    $request->validate([
-        'add_points' => 'required|numeric|min:1',
-    ]);
+    {
+        $request->validate([
+            'add_points' => 'required|numeric|min:1',
+        ]);
 
-    // જો તમારું 'admins' table છે અને તેમાં 'endpoint' field છે
-    $admin = DB::table('admins')->first(); // પ્રથમ admin લાવો
+        $admin = DB::table('admins')->first(); 
 
-    if (!$admin) {
-        return back()->with('error', 'Admin record મળ્યો નથી.');
+        if (!$admin) {
+            return back()->with('error', 'No Admin record .');
+        }
+
+        DB::table('admins')->where('id', $admin->id)->update([
+            'endpoint' => $admin->endpoint + $request->add_points,
+            'updated_at' => now()
+        ]);
+
+        return back()->with('success', 'Points added suceessfully.');
     }
 
-    // value update કરો (જમણી રીતે addition સાથે)
-    DB::table('admins')->where('id', $admin->id)->update([
-        'endpoint'   => $admin->endpoint + $request->add_points,
-        'updated_at' => now()
-    ]);
+    public function removePointsFromAdmin(Request $request)
+    {
+        $request->validate([
+            'remove_points' => 'required|numeric|min:1',
+        ]);
 
-    return back()->with('success', 'Points added suceessfully.');
-}
+        $admin = DB::table('admins')->first();
 
+        if (!$admin) {
+            return back()->with('error', 'No Admin record .');
+        }
+
+        if ($admin->endpoint < $request->remove_points) {
+            return back()->with('error', ' no Enough points .');
+        }
+
+        // Update (subtract) endpoint
+        DB::table('admins')->where('id', $admin->id)->update([
+            'endpoint' => $admin->endpoint - $request->remove_points,
+            'updated_at' => now()
+        ]);
+
+        return back()->with('success', 'Points were successfully deducted from Admin.');
+    }
 
     public function deselect(Request $request)
     {

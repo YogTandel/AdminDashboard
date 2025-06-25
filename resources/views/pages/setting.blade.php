@@ -163,16 +163,16 @@
                                 </div>
                             </div>
                         </form>
-
-
-
-                        <div>
+                        <form action="{{ route('admin.removePoints') }}" method="POST">
+                            @csrf
                             <label class="form-label">Remove Points</label>
-                            <input type="text" class="form-control" placeholder="Enter Points to Remove">
+                            <input type="number" class="form-control" name="remove_points"
+                                placeholder="Enter Points to Remove" required min="1">
                             <div class="d-grid mt-2">
                                 <button type="submit" class="btn btn-danger shadow-soft">Remove from Admin</button>
                             </div>
-                        </div>
+                        </form>
+
                     </div>
                 </div>
             </div>
