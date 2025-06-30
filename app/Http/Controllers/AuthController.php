@@ -236,40 +236,49 @@ class AuthController extends Controller
 
 
     public function editPlayer(Request $request, $id)
-    {
-        Log::info('Attempting to edit player', ['id' => $id]);
+{
+    Log::info('Attempting to edit player', ['id' => $id]);
 
-        $validate = $request->validate([
-            'player'      => 'required|string|max:255|unique:users,player,' . $id,
-            'password'    => 'nullable|string|min:3',
-            'role'        => 'required|in:player',
-            'balance'     => 'required|numeric|min:0',
-            'distributor' => 'required|string|max:255',
-            'agent'       => 'required|string|max:255',
-            'status'      => 'required|in:Active,Inactive',
-            'winamount'   => 'required|numeric',
-            'gameHistory' => 'nullable|array',
-        ]);
+    $validate = $request->validate([
+        'player'      => 'required|string|max:255|unique:users,player,' . $id,
+        'password'    => 'nullable|string|min:3',
+        'role'        => 'required|in:player',
+        'balance'     => 'required|numeric|min:0',
+        'distributor' => 'required|string|max:255',
+        'agent'       => 'required|string|max:255',
+        'status'      => 'required|in:Active,Inactive',
+        'winamount'   => 'required|numeric',
+        'gameHistory' => 'nullable|array',
+    ]);
 
-        try {
-            $user = User::findOrFail($id);
+    try {
+        $user = User::findOrFail($id);
 
-            if (! empty($validate['password'])) {
-                $validate['original_password'] = $validate['password'];
-                $validate['password']          = bcrypt($validate['password']);
-            } else {
-                unset($validate['password']);
-            }
-
-            $user->update($validate);
-
-            Log::info('player updated', ['id' => $user->id]);
-            return redirect()->route('player.show')->with('success', 'Player updated successfully');
-        } catch (\Exception $e) {
-            Log::error('Failed to update player', ['id' => $id, 'error' => $e->getMessage()]);
-            return back()->withErrors(['error' => 'Failed to update player. Please try again.']);
+        // Password update logic
+        if (!empty($validate['password'])) {
+            $validate['original_password'] = $validate['password'];
+            $validate['password'] = bcrypt($validate['password']);
+        } else {
+            unset($validate['password']);
         }
+
+        // ✅ Ensure proper casting to avoid Mongo Decimal128 issues
+        $validate['balance'] = (float) $validate['balance'];
+        $validate['winamount'] = (float) $validate['winamount'];
+
+        $user->update($validate);
+
+        Log::info('Player updated successfully', ['id' => $user->id]);
+        return redirect()->route('player.show')->with('success', 'Player updated successfully');
+    } catch (\Exception $e) {
+        Log::error('Failed to update player', [
+            'id' => $id,
+            'error' => $e->getMessage(),
+        ]);
+        return back()->withErrors(['error' => 'Failed to update player. Please try again.']);
     }
+    }
+
 
     public function deleteAgent($id)
     {

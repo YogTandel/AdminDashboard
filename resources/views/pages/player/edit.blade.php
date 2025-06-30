@@ -13,66 +13,83 @@
                             @method('PUT')
 
                             <!-- PLAYER -->
-                            <label>PLAYER</label>
+                            <label>Player</label>
                             <div class="input-group mb-3">
-                                <input type="text" class="form-control" name="player"
-                                    value="{{ old('player', $player->player) }}">
+                                <input type="text" class="form-control @error('player') is-invalid @enderror"
+                                    name="player" value="{{ old('player', $player->player) }}" required>
+                                @error('player')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <!-- PASSWORD -->
-                            <label>PASSWORD</label>
+                            <label>Password</label>
                             <div class="input-group mb-3">
-                                <input type="password" class="form-control" name="password"
-                                    placeholder="Leave blank to keep current">
+                                <input type="password" class="form-control @error('password') is-invalid @enderror"
+                                    name="password" placeholder="Leave blank to keep current">
+                                @error('password')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <input type="hidden" name="role" value="player">
 
                             <!-- BALANCE -->
-                            <label>BALANCE</label>
+                            <label>Balance</label>
                             <div class="input-group mb-3">
-                                <input type="number" class="form-control" name="balance"
-                                    value="{{ old('balance', $player->balance) }}">
+                                <input type="number" step="0.01" class="form-control @error('balance') is-invalid @enderror"
+                                    name="balance" value="{{ old('balance', (float) $player->balance) }}" required>
+                                @error('balance')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <!-- DISTRIBUTOR -->
-                            <label>DISTRIBUTOR</label>
+                            <label>Distributor</label>
                             <div class="input-group mb-3">
-                                <input type="text" class="form-control" name="distributor"
-                                    value="{{ old('distributor', $player->distributor) }}">
+                                <input type="text" class="form-control @error('distributor') is-invalid @enderror"
+                                    name="distributor" value="{{ old('distributor', $player->distributor) }}" required>
+                                @error('distributor')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <!-- AGENT -->
-                            <label>AGENT</label>
+                            <label>Agent</label>
                             <div class="input-group mb-3">
-                                <input type="text" class="form-control" name="agent"
-                                    value="{{ old('agent', $player->agent) }}">
+                                <input type="text" class="form-control @error('agent') is-invalid @enderror"
+                                    name="agent" value="{{ old('agent', $player->agent) }}" required>
+                                @error('agent')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <!-- STATUS -->
-                            <label>STATUS</label>
+                            <label>Status</label>
                             <div class="input-group mb-3">
-                                <select class="form-control" name="status">
-                                    <option value="Active" {{ $player->status == 'Active' ? 'selected' : '' }}>
-                                        Active</option>
-                                    <option value="Inactive" {{ $player->status == 'Inactive' ? 'selected' : '' }}>
-                                        Inactive
-                                    </option>
+                                <select class="form-control @error('status') is-invalid @enderror" name="status" required>
+                                    <option value="Active" {{ $player->status == 'Active' ? 'selected' : '' }}>Active</option>
+                                    <option value="Inactive" {{ $player->status == 'Inactive' ? 'selected' : '' }}>Inactive</option>
                                 </select>
+                                @error('status')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
 
-                            <!-- Winamount -->
-                            <label>WINAMOUNT</label>
+                            <!-- WINAMOUNT -->
+                            <label>Win Amount</label>
                             <div class="input-group mb-3">
-                                <input type="text" class="form-control" name="winamount"
-                                    value="{{ old('winamount', $player->winamount) }}">
+                                <input type="number" step="0.01" class="form-control @error('winamount') is-invalid @enderror"
+                                    name="winamount" value="{{ old('winamount', (float) $player->winamount) }}" required>
+                                @error('winamount')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <input type="hidden" name="original_password">
 
                             <div class="text-center">
-                                <button type="submit"
-                                    class="btn bg-gradient-warning btn-lg btn-rounded w-100 mt-4 mb-0">
+                                <button type="submit" class="btn bg-gradient-warning btn-lg btn-rounded w-100 mt-4 mb-0">
                                     Update Player
                                 </button>
                             </div>
