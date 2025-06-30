@@ -58,48 +58,51 @@ class PagesController extends Controller
     }
 
     public function distributor()
-    {
-        $perPage = request()->get('per_page', 5);
-        $query = User::query();
+{
+    $perPage = request()->get('per_page', 5);
+    $query = User::query();
 
-        // Search filter
-        if (request()->has('search')) {
-            $query = $query->where('player', 'like', '%' . request()->search . '%');
-        }
-
-        // Date range filter
-        $from = request()->input('from_date');
-        $to = request()->input('to_date');
-        $dateRange = request()->input('date_range');
-
-        if ($dateRange) {
-            $today = Carbon::today();
-            if ($dateRange === '2_days_ago') {
-                $from = $today->copy()->subDays(2)->format('Ymd');
-                $to = $today->format('Ymd');
-            } elseif ($dateRange === 'this_week') {
-                $from = $today->copy()->startOfWeek()->format('Ymd');
-                $to = $today->format('Ymd');
-            } elseif ($dateRange === 'this_month') {
-                $from = $today->copy()->startOfMonth()->format('Ymd');
-                $to = $today->format('Ymd');
-            }
-        }
-
-        if ($from) {
-            $query->where('DateOfCreation', '>=', $from);
-        }
-
-        if ($to) {
-            $query->where('DateOfCreation', '<=', $to);
-        }
-
-        $distributors = $query->where('role', 'distributor')
-            ->paginate($perPage)
-            ->appends(request()->query());
-
-        return view('pages.distributor.list', compact('distributors', 'perPage'));
+    // Search filter
+    if (request()->has('search')) {
+        $query->where('player', 'like', '%' . request()->search . '%');
     }
+
+    // Date range filter
+    $from = request()->input('from_date');
+    $to = request()->input('to_date');
+    $dateRange = request()->input('date_range');
+
+    if ($dateRange) {
+        $today = Carbon::today();
+
+        if ($dateRange === '2_days_ago') {
+            $from = $today->copy()->subDays(2)->format('YmdHis');
+            $to = $today->copy()->endOfDay()->format('YmdHis');
+        } elseif ($dateRange === 'this_week') {
+            $from = $today->copy()->startOfWeek()->format('YmdHis');
+            $to = $today->copy()->endOfDay()->format('YmdHis');
+        } elseif ($dateRange === 'this_month') {
+            $from = $today->copy()->startOfMonth()->format('YmdHis');
+            $to = $today->copy()->endOfDay()->format('YmdHis');
+        }
+    }
+
+    // Cast from/to to float (since stored as double)
+    if ($from) {
+        $query->where('DateOfCreation', '>=', (float) $from);
+    }
+
+    if ($to) {
+        $query->where('DateOfCreation', '<=', (float) $to);
+    }
+
+    $distributors = $query->where('role', 'distributor')
+        ->paginate($perPage)
+        ->appends(request()->query());
+
+    return view('pages.distributor.list', compact('distributors', 'perPage'));
+    }
+
 
     public function player()
     {
