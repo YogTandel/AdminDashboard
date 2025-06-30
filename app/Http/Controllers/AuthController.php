@@ -19,7 +19,7 @@ class AuthController extends Controller
         return view('auth.login');
     }
 
-    public function createAgent(Request $request)
+ public function createAgent(Request $request)
 {
     Log::info('Attempting to create a new agent', ['input' => $request->except(['password', 'original_password'])]);
 
@@ -38,10 +38,10 @@ class AuthController extends Controller
         $validate['original_password'] = $validate['password'];
         $validate['password']          = bcrypt($validate['password']);
 
-        // Store DateOfCreation as float
-        $validate['DateOfCreation']    = (float) now()->format('YmdHis');
-        $validate['balance']           = (float) $validate['balance'];
-        $validate['endpoint']          = (int) $validate['endpoint'];
+        // Cast fields to proper types
+        $validate['DateOfCreation'] = (float) now()->format('YmdHis');
+        $validate['balance']        = (float) $validate['balance'];
+        $validate['endpoint']       = (float) $validate['endpoint']; // ← updated to double
 
         $user = User::create($validate);
 
@@ -57,6 +57,7 @@ class AuthController extends Controller
         return back()->withErrors(['error' => 'Failed to create agent. Please try again.']);
     }
 }
+
 
     public function createDistributor(Request $request)
     {

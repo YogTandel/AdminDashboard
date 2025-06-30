@@ -57,7 +57,7 @@ class User extends Authenticatable
         'isupdated'      => 'boolean',
         // 'login_status'   => 'boolean',
         'DateOfCreation' => 'double',
-        'endpoint'       => 'integer',
+        'endpoint'       => 'double',
     ];
 
     protected function getGameHistoryAttribute($value)
