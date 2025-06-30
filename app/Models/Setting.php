@@ -32,12 +32,12 @@ class Setting extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'agentComission'       => 'decimal:2',
-        'distributorComission' => 'decimal:2',
-        'earning'              => 'decimal:2',
-        'earningPercentage'    => 'integer',
+        'agentComission'       => 'Double',
+        'distributorComission' => 'Double',
+        'earning'              => 'Double',
+        'earningPercentage'    => 'Double',
         'setTominimum'         => 'boolean',
-        'standing'             => 'decimal:2',
+        'standing'             => 'integer',
         'customBet'            => 'integer',
         'last10data'           => 'array',
     ];
