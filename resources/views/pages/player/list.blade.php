@@ -40,7 +40,7 @@
                                 </button>
                             </form>
                             <button type="button" class="btn btn-primary mb-0" data-bs-toggle="modal"
-                                data-bs-target="#exampleModalAddAgent">
+                                data-bs-target="#exampleModalAddplayer">
                                 <i class="fas fa-plus"></i>&nbsp;&nbsp;Add Player
                             </button>
                             @include('pages.player.create')

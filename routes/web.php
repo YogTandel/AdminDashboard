@@ -30,8 +30,8 @@ Route::put('/distributor/{id}/update', [AuthController::class, 'editDistributor'
 Route::delete('/distributor/{id}/delete', [AuthController::class, 'deleteDistributor'])->name('Distributor.delete');
 
 //player
-Route::get('/player', [PagesController::class, 'player'])->name('player.show');
-Route::post('/player/store', [AuthController::class, 'createplayer'])->name('player.add');
+Route::get('/players', [PagesController::class, 'player'])->name('player.show');
+Route::post('/player/add', [AuthController::class, 'createplayer'])->name('player.add');
 Route::put('/player/{id}/update', [AuthController::class, 'editPlayer'])->name('player.update');
 Route::delete('/player/{id}/delete', [AuthController::class, 'deleteplayer'])->name('player.delete');
 Route::get('/players/{playerId}/export-history', [PagesController::class, 'exportGameHistory'])->name('export.game.history');

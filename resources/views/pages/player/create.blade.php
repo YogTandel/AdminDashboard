@@ -1,11 +1,11 @@
-<div class="modal fade" id="exampleModalAddAgent" tabindex="-1" role="dialog" aria-labelledby="exampleModalAddAgent"
+<div class="modal fade" id="exampleModalAddplayer" tabindex="-1" role="dialog" aria-labelledby="exampleModalAddplayer"
     aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-md" role="document">
         <div class="modal-content">
             <div class="modal-body p-0">
                 <div class="card card-plain">
                     <div class="card-header pb-0 text-left">
-                        <h3 class="font-weight-bolder text-primary text-gradient">Add New player</h3>
+                        <h3 class="font-weight-bolder text-primary text-gradient">Add New Player</h3>
                         <p class="mb-0">Enter player name and password to register</p>
                     </div>
                     <div class="card-body pb-3">
@@ -14,46 +14,58 @@
 
                             <label>Player</label>
                             <div class="input-group mb-3">
-                                <input type="text" class="form-control" name="player" placeholder="Player" required>
+                                <input type="text" class="form-control @error('player') is-invalid @enderror"
+                                    name="player" placeholder="Player" value="{{ old('player') }}" required>
+                                @error('player')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <label>Password</label>
                             <div class="input-group mb-3">
-                                <input type="password" class="form-control" name="password" placeholder="Password"
-                                    required>
+                                <input type="password" class="form-control @error('password') is-invalid @enderror"
+                                    name="password" placeholder="Password" required>
+                                @error('password')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <input type="hidden" name="role" value="player">
 
                             <label>Balance</label>
                             <div class="input-group mb-3">
-                                <input type="number" class="form-control" name="balance" placeholder="Balance"
-                                    required>
+                                <input type="number" step="0.01" class="form-control @error('balance') is-invalid @enderror"
+                                    name="balance" placeholder="Balance" value="{{ old('balance') }}" required>
+                                @error('balance')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <label>Distributor</label>
                             <div class="input-group mb-3">
                                 <input type="text" class="form-control @error('distributor') is-invalid @enderror"
-                                    placeholder="Distributor" aria-label="distributor" name="distributor"
-                                    aria-describedby="distributor" value="{{ old('distributor') }}">
+                                    name="distributor" placeholder="Distributor" value="{{ old('distributor') }}" required>
                                 @error('distributor')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
-                            <label>Login Status</label>
-                                <div class="input-group mb-3">
-                                    <select class="form-control" name="login_status" required>
-                                        <option value="True">True</option>
-                                        <option value="False">False</option>
-                                    </select>
-                                </div>
 
+                            <label>Login Status</label>
+                            <div class="input-group mb-3">
+                                <select class="form-control @error('login_status') is-invalid @enderror"
+                                    name="login_status" required>
+                                    <option value="True" {{ old('login_status') == 'True' ? 'selected' : '' }}>True</option>
+                                    <option value="False" {{ old('login_status') == 'False' ? 'selected' : '' }}>False</option>
+                                </select>
+                                @error('login_status')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
 
                             <label>Agent</label>
                             <div class="input-group mb-3">
                                 <input type="text" class="form-control @error('agent') is-invalid @enderror"
-                                    placeholder="Agent" aria-label="agent" name="agent" aria-describedby="agent"
-                                    value="{{ old('agent') }}">
+                                    name="agent" placeholder="Agent" value="{{ old('agent') }}" required>
                                 @error('agent')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -61,23 +73,33 @@
 
                             <label>Status</label>
                             <div class="input-group mb-3">
-                                <select class="form-control" name="status" required>
-                                    <option value="Active">Active</option>
-                                    <option value="Inactive">Inactive</option>
+                                <select class="form-control @error('status') is-invalid @enderror" name="status" required>
+                                    <option value="Active" {{ old('status') == 'Active' ? 'selected' : '' }}>Active</option>
+                                    <option value="Inactive" {{ old('status') == 'Inactive' ? 'selected' : '' }}>Inactive</option>
                                 </select>
+                                @error('status')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <label>Winamount</label>
                             <div class="input-group mb-3">
-                                <input type="number" class="form-control" name="winamount" placeholder="Winamount"
-                                    required>
+                                <input type="number" step="0.01" class="form-control @error('winamount') is-invalid @enderror"
+                                    name="winamount" placeholder="Winamount" value="{{ old('winamount') }}" required>
+                                @error('winamount')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
+
+                            {{-- Hidden default gameHistory to prevent DB issues --}}
+                            <input type="hidden" name="gameHistory[]" value="">
 
                             <input type="hidden" name="original_password" id="original_password">
 
                             <div class="text-center">
-                                <button type="submit" class="btn bg-gradient-primary btn-lg w-100 mt-4 mb-0">Save
-                                    Player</button>
+                                <button type="submit" class="btn bg-gradient-primary btn-lg w-100 mt-4 mb-0">
+                                    Save Player
+                                </button>
                             </div>
                         </form>
                     </div>

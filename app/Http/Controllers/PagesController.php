@@ -105,55 +105,58 @@ class PagesController extends Controller
 
 
     public function player()
-    {
-        $perPage = request()->get('per_page', 5);
-        $query = User::query();
+{
+    $perPage = request()->get('per_page', 5);
+    $query = User::query();
 
-        // Search filter
-        if (request()->has('search')) {
-            $query = $query->where('player', 'like', '%' . request()->search . '%');
-        }
-
-        // Date range filter
-        $from = request()->input('from_date');
-        $to = request()->input('to_date');
-        $dateRange = request()->input('date_range');
-
-        if ($dateRange) {
-            $today = Carbon::today();
-            if ($dateRange === '2_days_ago') {
-                $from = $today->copy()->subDays(2)->format('Ymd');
-                $to = $today->format('Ymd');
-            } elseif ($dateRange === 'this_week') {
-                $from = $today->copy()->startOfWeek()->format('Ymd');
-                $to = $today->format('Ymd');
-            } elseif ($dateRange === 'this_month') {
-                $from = $today->copy()->startOfMonth()->format('Ymd');
-                $to = $today->format('Ymd');
-            }
-        }
-
-        if ($from) {
-            $query->where('DateOfCreation', '>=', $from);
-        }
-
-        if ($to) {
-            $query->where('DateOfCreation', '<=', $to);
-        }
-
-        $players = $query->where('role', 'player')
-            ->paginate($perPage)
-            ->appends(request()->query());
-
-        // Debug logging (kept from your original code)
-        if ($players->count() > 0) {
-            $firstPlayer = $players->first();
-            Log::debug('gameHistory type: ' . gettype($firstPlayer->gameHistory));
-            Log::debug('gameHistory content: ', is_array($firstPlayer->gameHistory) ? $firstPlayer->gameHistory : [$firstPlayer->gameHistory]);
-        }
-
-        return view('pages.player.list', compact('players', 'perPage'));
+    // Search filter
+    if (request()->has('search')) {
+        $query->where('player', 'like', '%' . request()->search . '%');
     }
+
+    // Date range filter
+    $from = request()->input('from_date');
+    $to = request()->input('to_date');
+    $dateRange = request()->input('date_range');
+
+    if ($dateRange) {
+        $today = \Carbon\Carbon::today();
+
+        if ($dateRange === '2_days_ago') {
+            $from = $today->copy()->subDays(2)->format('YmdHis');
+            $to = $today->copy()->endOfDay()->format('YmdHis');
+        } elseif ($dateRange === 'this_week') {
+            $from = $today->copy()->startOfWeek()->format('YmdHis');
+            $to = $today->copy()->endOfDay()->format('YmdHis');
+        } elseif ($dateRange === 'this_month') {
+            $from = $today->copy()->startOfMonth()->format('YmdHis');
+            $to = $today->copy()->endOfDay()->format('YmdHis');
+        }
+    }
+
+    // Cast filters to float to match MongoDB DateOfCreation field
+    if ($from) {
+        $query->where('DateOfCreation', '>=', (float) $from);
+    }
+
+    if ($to) {
+        $query->where('DateOfCreation', '<=', (float) $to);
+    }
+
+    $players = $query->where('role', 'player')
+        ->paginate($perPage)
+        ->appends(request()->query());
+
+    // Optional debug log
+    if ($players->count() > 0) {
+        $firstPlayer = $players->first();
+        Log::debug('gameHistory type: ' . gettype($firstPlayer->gameHistory));
+        Log::debug('gameHistory content: ', is_array($firstPlayer->gameHistory) ? $firstPlayer->gameHistory : [$firstPlayer->gameHistory]);
+    }
+
+    return view('pages.player.list', compact('players', 'perPage'));
+    }
+
 
     public function transactionreport()
     {

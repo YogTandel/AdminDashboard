@@ -106,42 +106,48 @@ class AuthController extends Controller
 
 
 
-    public function createplayer(Request $request)
-    {
-        Log::info('Attempting to create a new Plyer', ['input' => $request->except(['password', 'original_password'])]);
+ public function createplayer(Request $request)
+{
+    Log::info('Attempting to create a new Player', ['input' => $request->except(['password', 'original_password'])]);
 
-        $validate = $request->validate([
-            'player'       => 'required|string|max:255|unique:users,player',
-            'password'     => 'required|string|min:3',
-            'role'         => 'required|in:player',
-            'balance'      => 'required|numeric|min:0',
-            'distributor'  => 'required|string|max:255',
-            'agent'        => 'required|string|max:255',
-            'login_status' => 'required|in:True,False',
-            'status'       => 'required|in:Active,Inactive',
-            'winamount'    => 'required|numeric',
-            'gameHistory'  => 'nullable|array',
-        ]);
+    $validate = $request->validate([
+        'player'       => 'required|string|max:255|unique:users,player',
+        'password'     => 'required|string|min:3',
+        'role'         => 'required|in:player',
+        'balance'      => 'required|numeric|min:0',
+        'distributor'  => 'required|string|max:255',
+        'agent'        => 'required|string|max:255',
+        'login_status' => 'required|in:True,False',
+        'status'       => 'required|in:Active,Inactive',
+        'winamount'    => 'required|numeric',
+        'gameHistory'  => 'nullable|array',
+    ]);
 
-        try {
-            $validate['original_password'] = $validate['password'];
-            $validate['password']          = bcrypt($validate['password']);
-            $validate['DateOfCreation']    = now()->format('YmdHis');
+    try {
+        $validate['original_password'] = $validate['password'];
+        $validate['DateOfCreation'] = (float) now()->format('YmdHis');
+        $validate['balance'] = (float) $validate['balance'];
+        $validate['winamount'] = (float) $validate['winamount'];
 
-            $user = User::create($validate);
+        $user = User::create($validate);
 
-            if ($user) {
-                Log::info('player inserted', ['id' => $user->_id ?? $user->id]);
-            } else {
-                Log::warning('player creation returned null');
-            }
-
-            return redirect()->route('player.show')->with('success', 'player added successfully');
-        } catch (\Exception $e) {
-            Log::error('Failed to create player', ['error' => $e->getMessage()]);
-            return back()->withErrors(['error' => 'Failed to create player. Please try again.']);
+        if ($user) {
+            Log::info('Player inserted', ['id' => $user->_id ?? $user->id]);
+            return redirect()->route('player.show')->with('success', 'Player added successfully');
+        } else {
+            Log::warning('Player creation returned null');
+            return back()->withErrors(['error' => 'Creation returned null']);
         }
+
+    } catch (\Exception $e) {
+        Log::error('Failed to create Player', ['error' => $e->getMessage()]);
+        return back()->withErrors(['error' => 'Failed to create player. Please try again.']);
     }
+}
+
+
+
+
 
     public function editAgent(Request $request, $id)
 {
