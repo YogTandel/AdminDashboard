@@ -25,11 +25,19 @@
 
                             <input type="hidden" name="role" value="distributor">
 
-                            <label>Balance</label>
-                            <div class="input-group mb-3">
-                                <input type="text" class="form-control" placeholder="Balance" aria-label="balance"
-                                    name="balance" aria-describedby="balance-addon">
-                            </div>
+                            <label for="balance">Balance</label>
+                                <div class="input-group mb-3">
+                                    <input type="number"
+                                        class="form-control"
+                                        placeholder="Balance"
+                                        aria-label="balance"
+                                        name="balance"
+                                        id="balance"
+                                        step="0.01"  
+                                        value="{{ old('balance', 0) }}"
+                                        aria-describedby="balance-addon">
+                                </div>
+
 
                             <label>Endpoint</label>
                             <div class="input-group mb-3">

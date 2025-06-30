@@ -56,8 +56,12 @@ class AuthController extends Controller
 
     public function createDistributor(Request $request)
     {
-        Log::info('Attempting to create a new Distributor', ['input' => $request->except(['password', 'original_password'])]);
+        // Log input (excluding sensitive fields)
+        Log::info('Attempting to create a new Distributor', [
+            'input' => $request->except(['password', 'original_password'])
+        ]);
 
+        // Validate input
         $validate = $request->validate([
             'player'   => 'required|string|max:255|unique:users,player',
             'password' => 'required|string|min:3',
@@ -68,10 +72,19 @@ class AuthController extends Controller
         ]);
 
         try {
+            // Set additional fields
             $validate['original_password'] = $validate['password'];
-            $validate['password']          = bcrypt($validate['password']);
-            $validate['DateOfCreation']    = now()->format('YmdHis');
+            $validate['password'] = bcrypt($validate['password']);
 
+            // 🕒 Store DateOfCreation as float (double) from YmdHis string
+            $dateString = now()->format('YmdHis');        // e.g., "20250630144020"
+            $validate['DateOfCreation'] = (float) $dateString;
+
+            // ✅ Cast to correct types
+            $validate['balance'] = (float) $validate['balance'];     // double
+            $validate['endpoint'] = (int) $validate['endpoint'];     // integer
+
+            // Create the user
             $user = User::create($validate);
 
             if ($user) {
@@ -86,6 +99,8 @@ class AuthController extends Controller
             return back()->withErrors(['error' => 'Failed to create Distributor. Please try again.']);
         }
     }
+
+
 
     public function createplayer(Request $request)
     {
@@ -160,37 +175,49 @@ class AuthController extends Controller
     }
 
     public function editDistributor(Request $request, $id)
-    {
-        Log::info('Attempting to edit distributor', ['id' => $id]);
+{
+    Log::info('Attempting to edit distributor', ['id' => $id]);
 
-        $validate = $request->validate([
-            'player'   => 'required|string|max:255|unique:users,player,' . $id,
-            'password' => 'nullable|string|min:3',
-            'role'     => 'required|in:distributor',
-            'balance'  => 'required|numeric|min:0',
-            'status'   => 'required|in:Active,Inactive',
-            'endpoint' => 'required|numeric|min:0',
-        ]);
+    // Validate input
+    $validate = $request->validate([
+        'player'   => 'required|string|max:255|unique:users,player,' . $id,
+        'password' => 'nullable|string|min:3',
+        'role'     => 'required|in:distributor',
+        'balance'  => 'required|numeric|min:0',
+        'status'   => 'required|in:Active,Inactive',
+        'endpoint' => 'required|numeric|min:0',
+    ]);
 
-        try {
-            $user = User::findOrFail($id);
+    try {
+        $user = User::findOrFail($id);
 
-            if (! empty($validate['password'])) {
-                $validate['original_password'] = $validate['password'];
-                $validate['password']          = bcrypt($validate['password']);
-            } else {
-                unset($validate['password']);
-            }
-
-            $user->update($validate);
-
-            Log::info('Distributor updated', ['id' => $user->id]);
-            return redirect()->route('distributor.show')->with('success', 'Distributor updated successfully');
-        } catch (\Exception $e) {
-            Log::error('Failed to update distributor', ['id' => $id, 'error' => $e->getMessage()]);
-            return back()->withErrors(['error' => 'Failed to update distributor. Please try again.']);
+        // Handle password separately
+        if (!empty($validate['password'])) {
+            $validate['original_password'] = $validate['password'];
+            $validate['password'] = bcrypt($validate['password']);
+        } else {
+            unset($validate['password']);
         }
+
+        // ✅ Cast to proper data types for MongoDB
+        $validate['balance'] = (float) $validate['balance'];     // Ensure double
+        $validate['endpoint'] = (int) $validate['endpoint'];     // Ensure integer
+
+        // Optional: Update DateOfCreation if needed
+        // $validate['DateOfCreation'] = (float) now()->format('YmdHis');
+
+        // Update user
+        $user->update($validate);
+
+        Log::info('Distributor updated', ['id' => $user->id]);
+
+        return redirect()->route('distributor.show')->with('success', 'Distributor updated successfully');
+    } catch (\Exception $e) {
+        Log::error('Failed to update distributor', ['id' => $id, 'error' => $e->getMessage()]);
+        return back()->withErrors(['error' => 'Failed to update distributor. Please try again.']);
     }
+}
+
 
     public function editPlayer(Request $request, $id)
     {

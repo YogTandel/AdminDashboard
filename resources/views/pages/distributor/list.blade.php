@@ -150,7 +150,8 @@
                                                 </td>
                                                 <td class="align-middle text-center text-sm">
                                                     <p class="text-xs font-weight-bold mb-0">
-                                                        ₹{{ number_format($distributor->balance, 2) }}</p>
+                                                        ₹{{ number_format((float) (string) $distributor->balance, 2) }}
+                                                    </p>
                                                 </td>
                                                 <td class="align-middle text-center text-sm">
                                                     <p class="text-xs font-weight-bold mb-0">{{ $distributor->endpoint }}
@@ -164,9 +165,10 @@
                                                 </td>
                                                 <td class="align-middle text-center">
                                                     <span class="text-secondary text-xs font-weight-bold">
-                                                        {{ \Carbon\Carbon::createFromFormat('YmdHis', $distributor->DateOfCreation)->format('d M Y, H:i') }}
+                                                        {{ \Carbon\Carbon::createFromFormat('YmdHis', (string) (int) $distributor->DateOfCreation)->format('d M Y, H:i') }}
                                                     </span>
                                                 </td>
+
                                                 <td class="align-middle">
                                                     <div class="d-flex align-items-center justify-content-around">
                                                         <a href="javascript:;"
