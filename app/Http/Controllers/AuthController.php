@@ -20,39 +20,43 @@ class AuthController extends Controller
     }
 
     public function createAgent(Request $request)
-    {
-        Log::info('Attempting to create a new agent', ['input' => $request->except(['password', 'original_password'])]);
+{
+    Log::info('Attempting to create a new agent', ['input' => $request->except(['password', 'original_password'])]);
 
-        $validate = $request->validate([
-            'player'      => 'required|string|max:255|unique:users,player',
-            'password'    => 'required|string|min:3',
-            'role'        => 'required|in:agent',
-            'agent'       => 'required|string|max:255',
-            'endpoint'    => 'required|numeric|min:0',
-            'distributor' => 'required|string|max:255',
-            'balance'     => 'required|numeric|min:0',
-            'status'      => 'required|in:Active,Inactive',
-        ]);
+    $validate = $request->validate([
+        'player'      => 'required|string|max:255|unique:users,player',
+        'password'    => 'required|string|min:3',
+        'role'        => 'required|in:agent',
+        'agent'       => 'required|string|max:255',
+        'endpoint'    => 'required|numeric|min:0',
+        'distributor' => 'required|string|max:255',
+        'balance'     => 'required|numeric|min:0',
+        'status'      => 'required|in:Active,Inactive',
+    ]);
 
-        try {
-            $validate['original_password'] = $validate['password'];
-            $validate['password']          = bcrypt($validate['password']);
-            $validate['DateOfCreation']    = now()->format('YmdHis');
+    try {
+        $validate['original_password'] = $validate['password'];
+        $validate['password']          = bcrypt($validate['password']);
 
-            $user = User::create($validate);
+        // Store DateOfCreation as float
+        $validate['DateOfCreation']    = (float) now()->format('YmdHis');
+        $validate['balance']           = (float) $validate['balance'];
+        $validate['endpoint']          = (int) $validate['endpoint'];
 
-            if ($user) {
-                Log::info('Agent inserted', ['id' => $user->_id ?? $user->id]);
-            } else {
-                Log::warning('Agent creation returned null');
-            }
+        $user = User::create($validate);
 
-            return redirect()->route('agentlist.show')->with('success', 'Agent added successfully');
-        } catch (\Exception $e) {
-            Log::error('Failed to create agent', ['error' => $e->getMessage()]);
-            return back()->withErrors(['error' => 'Failed to create agent. Please try again.']);
+        if ($user) {
+            Log::info('Agent inserted', ['id' => $user->_id ?? $user->id]);
+        } else {
+            Log::warning('Agent creation returned null');
         }
+
+        return redirect()->route('agent.show')->with('success', 'Agent added successfully');
+    } catch (\Exception $e) {
+        Log::error('Failed to create agent', ['error' => $e->getMessage()]);
+        return back()->withErrors(['error' => 'Failed to create agent. Please try again.']);
     }
+}
 
     public function createDistributor(Request $request)
     {
@@ -140,39 +144,45 @@ class AuthController extends Controller
     }
 
     public function editAgent(Request $request, $id)
-    {
-        Log::info('Attempting to edit agent', ['id' => $id]);
+{
+    Log::info('Attempting to edit agent', ['id' => $id]);
 
-        $validate = $request->validate([
-            'player'      => 'required|string|max:255|unique:users,player,' . $id,
-            'password'    => 'nullable|string|min:3',
-            'role'        => 'required|in:agent',
-            'agent'       => 'required|string|max:255',
-            'endpoint'    => 'required|numeric|min:0',
-            'distributor' => 'required|string|max:255',
-            'balance'     => 'required|numeric|min:0',
-            'status'      => 'required|in:Active,Inactive',
-        ]);
+    $validate = $request->validate([
+        'player'      => 'required|string|max:255|unique:users,player,' . $id,
+        'password'    => 'nullable|string|min:3',
+        'role'        => 'required|in:agent',
+        'agent'       => 'required|string|max:255',
+        'endpoint'    => 'required|numeric|min:0',
+        'distributor' => 'required|string|max:255',
+        'balance'     => 'required|numeric|min:0',
+        'status'      => 'required|in:Active,Inactive',
+    ]);
 
-        try {
-            $user = User::findOrFail($id);
+    try {
+        $user = User::findOrFail($id);
 
-            if (! empty($validate['password'])) {
-                $validate['original_password'] = $validate['password'];
-                $validate['password']          = bcrypt($validate['password']);
-            } else {
-                unset($validate['password']);
-            }
+        // ✅ Type casting to avoid BSON Decimal128 or string issues
+        $validate['balance']  = (float) $validate['balance'];
+        $validate['endpoint'] = (int) $validate['endpoint'];
 
-            $user->update($validate);
-
-            Log::info('Agent updated', ['id' => $user->id]);
-            return redirect()->route('agentlist.show')->with('success', 'Agent updated successfully');
-        } catch (\Exception $e) {
-            Log::error('Failed to update agent', ['id' => $id, 'error' => $e->getMessage()]);
-            return back()->withErrors(['error' => 'Failed to update agent. Please try again.']);
+        if (!empty($validate['password'])) {
+            $validate['original_password'] = $validate['password'];
+            $validate['password'] = bcrypt($validate['password']);
+        } else {
+            unset($validate['password']);
         }
+
+        $user->update($validate);
+
+        Log::info('Agent updated', ['id' => $user->id]);
+
+        return redirect()->route('agentlist.show')->with('success', 'Agent updated successfully');
+    } catch (\Exception $e) {
+        Log::error('Failed to update agent', ['id' => $id, 'error' => $e->getMessage()]);
+        return back()->withErrors(['error' => 'Failed to update agent. Please try again.']);
     }
+    }
+
 
     public function editDistributor(Request $request, $id)
 {

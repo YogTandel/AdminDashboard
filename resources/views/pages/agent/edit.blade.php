@@ -31,9 +31,13 @@
                             <!-- BALANCE -->
                             <label>BALANCE</label>
                             <div class="input-group mb-3">
-                                <input type="number" class="form-control" name="balance"
-                                    value="{{ old('balance', $agent->balance) }}">
+                                <input type="number"
+                                    step="0.01"
+                                    class="form-control"
+                                    name="balance"
+                                    value="{{ old('balance', isset($agent->balance) ? (float) (string) $agent->balance : 0) }}">
                             </div>
+
 
                             <!-- DISTRIBUTOR -->
                             <label>DISTRIBUTOR</label>

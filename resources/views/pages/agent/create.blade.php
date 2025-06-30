@@ -36,13 +36,21 @@
 
                             <label>BALANCE</label>
                             <div class="input-group mb-3">
-                                <input type="number" class="form-control @error('balance') is-invalid @enderror"
-                                    placeholder="Balance" aria-label="balance" name="balance" aria-describedby="balance"
-                                    value="{{ old('balance') }}">
+                                <input
+                                    type="number"
+                                    step="0.01" {{-- ✅ Allows decimal inputs like 10.50 --}}
+                                    class="form-control @error('balance') is-invalid @enderror"
+                                    placeholder="Balance"
+                                    aria-label="balance"
+                                    name="balance"
+                                    aria-describedby="balance"
+                                    value="{{ old('balance', isset($user) ? (float) $user->balance : '') }}"
+                                >
                                 @error('balance')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
+
 
                             <label>DISTRIBUTOR</label>
                             <div class="input-group mb-3">
