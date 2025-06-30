@@ -54,10 +54,10 @@
                             </div>
 
                             <label>ENDPOINT</label>
-                            <div class="input-group mb-3">
-                                <input type="text" class="form-control" name="endpoint"
-                                    value="{{ old('endpoint', $agent->endpoint) }}">
-                            </div>
+                                <div class="input-group mb-3">
+                                    <input type="number" step="0.01" class="form-control" name="endpoint"
+                                        value="{{ old('endpoint', $agent->endpoint) }}">
+                                </div>
 
                             <!-- STATUS -->
                             <label>STATUS</label>

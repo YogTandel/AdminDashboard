@@ -39,10 +39,11 @@
 
                             <!-- Endpoint -->
                             <label>Endpoint</label>
-                            <div class="input-group mb-3">
-                                <input type="number" class="form-control" name="endpoint"
-                                    value="{{ old('endpoint', $distributor->endpoint) }}">
-                            </div>
+                                <div class="input-group mb-3">
+                                    <input type="number" step="0.01" class="form-control" name="endpoint"
+                                        value="{{ old('endpoint', (float) $distributor->endpoint) }}">
+                                </div>
+
 
                             <!-- STATUS -->
                             <label>STATUS</label>

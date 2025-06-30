@@ -60,50 +60,43 @@ class AuthController extends Controller
 
 
     public function createDistributor(Request $request)
-    {
-        // Log input (excluding sensitive fields)
-        Log::info('Attempting to create a new Distributor', [
-            'input' => $request->except(['password', 'original_password'])
-        ]);
+{
+    Log::info('Attempting to create a new Distributor', [
+        'input' => $request->except(['password', 'original_password'])
+    ]);
 
-        // Validate input
-        $validate = $request->validate([
-            'player'   => 'required|string|max:255|unique:users,player',
-            'password' => 'required|string|min:3',
-            'role'     => 'required|in:distributor',
-            'balance'  => 'required|numeric|min:0',
-            'status'   => 'required|in:Active,Inactive',
-            'endpoint' => 'required|numeric|min:0',
-        ]);
+    $validate = $request->validate([
+        'player'   => 'required|string|max:255|unique:users,player',
+        'password' => 'required|string|min:3',
+        'role'     => 'required|in:distributor',
+        'balance'  => 'required|numeric|min:0',
+        'status'   => 'required|in:Active,Inactive',
+        'endpoint' => 'required|numeric|min:0',
+    ]);
 
-        try {
-            // Set additional fields
-            $validate['original_password'] = $validate['password'];
-            $validate['password'] = bcrypt($validate['password']);
+    try {
+        $validate['original_password'] = $validate['password'];
+        $validate['password'] = bcrypt($validate['password']);
 
-            // 🕒 Store DateOfCreation as float (double) from YmdHis string
-            $dateString = now()->format('YmdHis');        // e.g., "20250630144020"
-            $validate['DateOfCreation'] = (float) $dateString;
+        $validate['DateOfCreation'] = (float) now()->format('YmdHis');
+        $validate['balance'] = (float) $validate['balance'];
+        $validate['endpoint'] = (float) $validate['endpoint']; // ✅ changed to float
 
-            // ✅ Cast to correct types
-            $validate['balance'] = (float) $validate['balance'];     // double
-            $validate['endpoint'] = (int) $validate['endpoint'];     // integer
+        $user = User::create($validate);
 
-            // Create the user
-            $user = User::create($validate);
-
-            if ($user) {
-                Log::info('Distributor inserted', ['id' => $user->_id ?? $user->id]);
-            } else {
-                Log::warning('Distributor creation returned null');
-            }
-
-            return redirect()->route('distributor.show')->with('success', 'Distributor added successfully');
-        } catch (\Exception $e) {
-            Log::error('Failed to create Distributor', ['error' => $e->getMessage()]);
-            return back()->withErrors(['error' => 'Failed to create Distributor. Please try again.']);
+        if ($user) {
+            Log::info('Distributor inserted', ['id' => $user->_id ?? $user->id]);
+        } else {
+            Log::warning('Distributor creation returned null');
         }
+
+        return redirect()->route('distributor.show')->with('success', 'Distributor added successfully');
+    } catch (\Exception $e) {
+        Log::error('Failed to create Distributor', ['error' => $e->getMessage()]);
+        return back()->withErrors(['error' => 'Failed to create Distributor. Please try again.']);
     }
+    }
+
 
 
 
@@ -168,9 +161,9 @@ class AuthController extends Controller
     try {
         $user = User::findOrFail($id);
 
-        // ✅ Type casting to avoid BSON Decimal128 or string issues
+        // ✅ Ensure numeric fields match the cast type in your model
         $validate['balance']  = (float) $validate['balance'];
-        $validate['endpoint'] = (int) $validate['endpoint'];
+        $validate['endpoint'] = (float) $validate['endpoint']; // Changed from (int) to (float)
 
         if (!empty($validate['password'])) {
             $validate['original_password'] = $validate['password'];
@@ -191,11 +184,12 @@ class AuthController extends Controller
     }
 
 
-    public function editDistributor(Request $request, $id)
+
+ public function editDistributor(Request $request, $id)
 {
     Log::info('Attempting to edit distributor', ['id' => $id]);
 
-    // Validate input
+    // ✅ Validate input
     $validate = $request->validate([
         'player'   => 'required|string|max:255|unique:users,player,' . $id,
         'password' => 'nullable|string|min:3',
@@ -208,7 +202,7 @@ class AuthController extends Controller
     try {
         $user = User::findOrFail($id);
 
-        // Handle password separately
+        // ✅ Handle optional password update
         if (!empty($validate['password'])) {
             $validate['original_password'] = $validate['password'];
             $validate['password'] = bcrypt($validate['password']);
@@ -216,14 +210,10 @@ class AuthController extends Controller
             unset($validate['password']);
         }
 
-        // ✅ Cast to proper data types for MongoDB
-        $validate['balance'] = (float) $validate['balance'];     // Ensure double
-        $validate['endpoint'] = (int) $validate['endpoint'];     // Ensure integer
+        // ✅ Force casting to correct types (important for MongoDB/BSON compatibility)
+        $validate['balance'] = (float) $validate['balance'];       // Ensure double
+        $validate['endpoint'] = (float) $validate['endpoint'];     // Now cast as double (not int)
 
-        // Optional: Update DateOfCreation if needed
-        // $validate['DateOfCreation'] = (float) now()->format('YmdHis');
-
-        // Update user
         $user->update($validate);
 
         Log::info('Distributor updated', ['id' => $user->id]);
@@ -233,7 +223,8 @@ class AuthController extends Controller
         Log::error('Failed to update distributor', ['id' => $id, 'error' => $e->getMessage()]);
         return back()->withErrors(['error' => 'Failed to update distributor. Please try again.']);
     }
-}
+    }
+
 
 
     public function editPlayer(Request $request, $id)
