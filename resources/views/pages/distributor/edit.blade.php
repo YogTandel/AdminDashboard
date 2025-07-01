@@ -14,7 +14,7 @@
                             @method('PUT')
 
                             <!-- PLAYER -->
-                            <label>PLAYER</label>
+                            <label>Distributor Name</label>
                             <div class="input-group mb-3">
                                 <input type="text" class="form-control" name="player"
                                     value="{{ old('player', $distributor->player) }}">

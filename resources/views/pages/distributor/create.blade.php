@@ -11,7 +11,7 @@
                     <div class="card-body pb-3">
                         <form action="{{ route('distributor.add') }}" role="form text-left" method="POST">
                             @csrf
-                            <label>Player</label>
+                            <label>Distributor Name</label>
                             <div class="input-group mb-3">
                                 <input type="text" class="form-control" placeholder="Player" aria-label="player"
                                     name="player" aria-describedby="player-addon">
