@@ -104,7 +104,7 @@ class PagesController extends Controller
     }
 
 
-  public function player()
+ public function player()
 {
     $perPage = request()->get('per_page', 5);
     $query = User::query();
@@ -143,17 +143,19 @@ class PagesController extends Controller
         $query->where('DateOfCreation', '<=', (float) $to);
     }
 
-    // 🔥 Add with('distributorUser') here
+    // Get all players with distributor and agent relationships
     $players = $query->where('role', 'player')
-        ->with('distributorUser')
+        ->with(['distributorUser', 'agentUser'])
         ->paginate($perPage)
         ->appends(request()->query());
 
-    // ✅ Fetch all distributors for the dropdown
+    // Get all distributors and agents for dropdowns
     $distributors = User::where('role', 'distributor')->get();
+    $agents = User::where('role', 'agent')->get();
 
-    return view('pages.player.list', compact('players', 'perPage', 'distributors'));
+    return view('pages.player.list', compact('players', 'perPage', 'distributors', 'agents'));
 }
+
 
 
 

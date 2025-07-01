@@ -65,6 +65,22 @@
                                 @enderror
                             </div>
 
+                            <label>Agent</label>
+                            <div class="input-group mb-3">
+                                <select name="agent" class="form-control @error('agent') is-invalid @enderror" required>
+                                    <option value="">Select Agent</option>
+                                    @foreach ($agents as $agent)
+                                        <option value="{{ $agent->id }}" {{ old('agent') == $agent->id ? 'selected' : '' }}>
+                                            {{ $agent->player }}
+                                        </option>
+                                    @endforeach
+                                </select>
+
+                                @error('agent')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
 
                             <label>Login Status</label>
                                 <div class="input-group mb-3">
@@ -76,17 +92,6 @@
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
-
-
-
-                            <label>Agent</label>
-                            <div class="input-group mb-3">
-                                <input type="text" class="form-control @error('agent') is-invalid @enderror"
-                                    name="agent" placeholder="Agent" value="{{ old('agent') }}" required>
-                                @error('agent')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
 
                             <label>Status</label>
                             <div class="input-group mb-3">

@@ -84,6 +84,11 @@ public function distributorUser()
     return $this->belongsTo(User::class, 'distributor');
 }
 
+public function agentUser()
+{
+    return $this->belongsTo(User::class, 'agent');
+}
+
 
 //     public function isAdmin()
 // {
