@@ -46,6 +46,20 @@
                 $role = $admin ? 'admin' : ($user ? $user->role : null);
             @endphp
 
+             <!-- Distributor -->
+            @if (in_array($role, ['admin', 'distributor']))
+                <li class="nav-item">
+                    <a class="nav-link {{ Request::is('distributor') ? 'active' : '' }}"
+                        href="{{ route('distributor.show') }}">
+                        <div
+                            class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+                            <i class="fas fa-truck text-dark"></i>
+                        </div>
+                        <span class="nav-link-text ms-1">Distributor</span>
+                    </a>
+                </li>
+            @endif
+
             <!-- Agent List -->
             @if (in_array($role, ['admin', 'agent']))
                 <li class="nav-item">
@@ -75,20 +89,6 @@
                             </svg>
                         </div>
                         <span class="nav-link-text ms-1">Agent List</span>
-                    </a>
-                </li>
-            @endif
-
-            <!-- Distributor -->
-            @if (in_array($role, ['admin', 'distributor']))
-                <li class="nav-item">
-                    <a class="nav-link {{ Request::is('distributor') ? 'active' : '' }}"
-                        href="{{ route('distributor.show') }}">
-                        <div
-                            class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                            <i class="fas fa-truck text-dark"></i>
-                        </div>
-                        <span class="nav-link-text ms-1">Distributor</span>
                     </a>
                 </li>
             @endif
