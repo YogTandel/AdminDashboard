@@ -173,8 +173,8 @@
 
 
                                                 <td class="align-middle text-center text-sm">
-                                                        <p class="text-xs font-weight-bold mb-0"></p>{{ $player->agentUser?->player  }}</p>
-                                                    </td>
+                                                    <p class="text-xs font-weight-bold mb-0">{{ $player->agent }}</p>
+                                                </td>
                                                 <td class="align-middle text-center text-sm">
                                                     <span
                                                         class="badge badge-sm {{ $player->status === 'Active' ? 'bg-gradient-success' : 'bg-gradient-danger' }}">

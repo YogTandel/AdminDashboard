@@ -46,39 +46,31 @@
 
                             <!-- DISTRIBUTOR -->
                             <label>Distributor</label>
-                            <div class="input-group mb-3">
-                                <select name="distributor" class="form-control @error('distributor') is-invalid @enderror" required>
-                                    <option value="">Select Distributor</option>
-                                    @foreach ($distributors as $distributor)
-                                        <option value="{{ $distributor->id }}" 
-                                            {{ old('distributor', $player->distributor) == $distributor->id ? 'selected' : '' }}>
-                                            {{ $distributor->player }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                @error('distributor')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
+                        <div class="input-group mb-3">
+                            <select name="distributor" class="form-control @error('distributor') is-invalid @enderror" required>
+                                <option value="">Select Distributor</option>
+                                @foreach ($distributors as $distributor)
+                                    <option value="{{ $distributor->id }}" 
+                                        {{ old('distributor', $player->distributor) == $distributor->id ? 'selected' : '' }}>
+                                        {{ $distributor->player }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('distributor')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
 
 
                             <!-- AGENT -->
                             <label>Agent</label>
                             <div class="input-group mb-3">
-                                <select name="agent" class="form-control @error('agent') is-invalid @enderror" required>
-                                    <option value="">Select Agent</option>
-                                    @foreach ($agents as $agent)
-                                        <option value="{{ $agent->id }}" {{ old('agent', $player->agent) == $agent->id ? 'selected' : '' }}>
-                                            {{ $agent->player }}
-                                        </option>
-                                    @endforeach
-                                </select>
-
+                                <input type="text" class="form-control @error('agent') is-invalid @enderror"
+                                    name="agent" value="{{ old('agent', $player->agent) }}" required>
                                 @error('agent')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
-
 
                             <!-- STATUS -->
                             <label>Status</label>
