@@ -72,3 +72,8 @@ Route::get('/test-player', function () {
     $player = User::where('player', 'zeeshan')->first();
     dd($player->gameHistory);
 });
+
+
+// web.php
+Route::get('/get-agents/{distributorId}', [PagesController::class, 'getAgents']);
+

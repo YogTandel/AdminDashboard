@@ -51,19 +51,17 @@
                             </div> -->
 
                            <label>Distributor</label>
-                            <div class="input-group mb-3">
-                                <select class="form-control @error('distributor') is-invalid @enderror" name="distributor" required>
-                                    <option value="">Select Distributor</option>
-                                    @foreach ($distributors as $distributor)
-                                        <option value="{{ $distributor->id }}" {{ old('distributor') == $distributor->id ? 'selected' : '' }}>
-                                            {{ $distributor->player }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                @error('distributor')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
+                                <div class="input-group mb-3">
+                                    <select id="distributor" class="form-control @error('distributor') is-invalid @enderror" name="distributor" required>
+                                        <option value="">Select Distributor</option>
+                                        @foreach ($distributors as $distributor)
+                                            <option value="{{ $distributor->id }}">{{ $distributor->player }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('distributor')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
 
 
                             <label>Login Status</label>
@@ -80,19 +78,15 @@
 
 
                             <label>Agent</label>
-                                <div class="input-group mb-3">
-                                    <select class="form-control @error('agent') is-invalid @enderror" name="agent" required>
-                                        <option value="">-- Select Agent --</option>
-                                        @foreach ($agents as $agent)
-                                            <option value="{{ $agent->player }}" {{ old('agent') == $agent->player ? 'selected' : '' }}>
-                                                {{ $agent->player }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                    @error('agent')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
+                            <div class="input-group mb-3">
+                                <select id="agent" name="agent" class="form-control @error('agent') is-invalid @enderror" required>
+                                    <option value="">-- Select Agent --</option>
+                                    {{-- Agents will be populated via AJAX --}}
+                                </select>
+                                @error('agent')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
 
 
                             <label>Status</label>
@@ -133,3 +127,29 @@
         </div>
     </div>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $('#distributor').on('change', function () {
+
+        var distributorId = $(this).val();
+        alert(distributorId);
+        if (distributorId) {
+            $.ajax({
+                url: '/get-agents/' + distributorId,
+                type: 'GET',
+                success: function (data) {
+                    console.log(data);
+                    $('#agent').empty().append('<option value="">-- Select Agent --</option>');
+                    $.each(data, function (key, agent) {
+                        $('#agent').append('<option value="' + agent.id + '">' + agent.player + '</option>');
+                    });
+                }
+            });
+        } else {
+            $('#agent').empty().append('<option value="">-- Select Agent --</option>');
+        }
+    });
+</script>
+
+

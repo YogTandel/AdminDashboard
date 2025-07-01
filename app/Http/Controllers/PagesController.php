@@ -7,6 +7,7 @@ use App\Models\Transaction;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use MongoDB\BSON\ObjectId;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -725,6 +726,27 @@ class PagesController extends Controller
 
         return view('pages.transfer.report', compact('transfers'));
     }
+
+
+  
+
+public function getAgents($distributorId)
+{
+    try {
+        // Convert string to MongoDB ObjectId
+        $objectId = new ObjectId($distributorId);
+
+        $agents = User::where('role', 'agent')
+                      ->where('distributor', $objectId)
+                      ->get(['_id', 'player']);
+
+        return response()->json($agents);
+
+    } catch (\Exception $e) {
+        \Log::error('Error fetching agents: ' . $e->getMessage());
+        return response()->json(['error' => 'Invalid distributor ID'], 400);
+    }
+}
 
 
 }
