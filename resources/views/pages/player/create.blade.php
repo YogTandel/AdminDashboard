@@ -133,13 +133,13 @@
     $('#distributor').on('change', function () {
 
         var distributorId = $(this).val();
-        alert(distributorId);
+        // alert(distributorId);
         if (distributorId) {
             $.ajax({
                 url: '/get-agents/' + distributorId,
                 type: 'GET',
                 success: function (data) {
-                    console.log(data);
+                    // console.log(data);
                     $('#agent').empty().append('<option value="">-- Select Agent --</option>');
                     $.each(data, function (key, agent) {
                         $('#agent').append('<option value="' + agent.id + '">' + agent.player + '</option>');

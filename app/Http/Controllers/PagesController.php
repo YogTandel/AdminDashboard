@@ -743,7 +743,7 @@ public function getAgents($distributorId)
         $objectId = new ObjectId($distributorId);
 
         $agents = User::where('role', 'agent')
-                      ->where('distributor', $objectId)
+                      ->where('distributor_id', $objectId)
                       ->get(['_id', 'player']);
 
         return response()->json($agents);
