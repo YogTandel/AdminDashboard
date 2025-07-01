@@ -51,15 +51,16 @@
                             </div>
 
                             <label>Login Status</label>
-                            <div class="input-group mb-3">
-                                <select class="form-control @error('login_status') is-invalid @enderror" name="login_status" required>
-                                    <option value="True" {{ old('login_status') === 'True' ? 'selected' : '' }}>True</option>
-                                    <option value="False" {{ old('login_status') === 'False' ? 'selected' : '' }}>False</option>
-                                </select>
-                                @error('login_status')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
+                                <div class="input-group mb-3">
+                                    <select class="form-control @error('login_status') is-invalid @enderror" name="login_status" required>
+                                        <option value="True" {{ old('login_status', 'False') === 'True' ? 'selected' : '' }}>True</option>
+                                        <option value="False" {{ old('login_status', 'False') === 'False' ? 'selected' : '' }}>False</option>
+                                    </select>
+                                    @error('login_status')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
 
 
                             <label>Agent</label>

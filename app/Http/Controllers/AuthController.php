@@ -122,7 +122,9 @@ class AuthController extends Controller
         $validate['DateOfCreation'] = (float) now()->format('YmdHis');
         $validate['balance'] = (float) $validate['balance'];
         $validate['winamount'] = (int) $validate['winamount'];  
-        $validate['login_status']  = (bool) $request->input('login_status'); 
+        // $validate['login_status']  = (bool) $request->input('login_status'); 
+        $validate['login_status'] = $request->has('login_status') ? ($request->input('login_status') === 'True') : false;
+
 
 
         $user = User::create($validate);
