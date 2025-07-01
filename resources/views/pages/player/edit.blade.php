@@ -78,13 +78,14 @@
 
                             <!-- WINAMOUNT -->
                             <label>Win Amount</label>
-                            <div class="input-group mb-3">
-                                <input type="number" step="0.01" class="form-control @error('winamount') is-invalid @enderror"
-                                    name="winamount" value="{{ old('winamount', (float) $player->winamount) }}" required>
-                                @error('winamount')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
+                                <div class="input-group mb-3">
+                                    <input type="number" step="1" class="form-control @error('winamount') is-invalid @enderror"
+                                        name="winamount" value="{{ old('winamount', (int) $player->winamount) }}" required>
+                                    @error('winamount')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
 
                             <input type="hidden" name="original_password">
 

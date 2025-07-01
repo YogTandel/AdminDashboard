@@ -53,7 +53,7 @@ class User extends Authenticatable
         'password'       => 'hashed',
         'gameHistory'    => 'array',
         'balance'        => 'double',
-        'winamount'      => 'decimal:2',
+        'winamount'      => 'integer',
         'isupdated'      => 'boolean',
         // 'login_status'   => 'boolean',
         'DateOfCreation' => 'double',
@@ -73,6 +73,12 @@ class User extends Authenticatable
 {
     return $value instanceof Decimal128 ? (float) (string) $value : $value;
 }
+
+public function getWinamountAttribute($value)
+{
+    return (int)(string) $value;
+}
+
 
 //     public function isAdmin()
 // {

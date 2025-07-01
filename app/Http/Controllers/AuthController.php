@@ -100,7 +100,7 @@ class AuthController extends Controller
 
 
 
- public function createplayer(Request $request)
+    public function createplayer(Request $request)
 {
     Log::info('Attempting to create a new Player', ['input' => $request->except(['password', 'original_password'])]);
 
@@ -121,7 +121,7 @@ class AuthController extends Controller
         $validate['original_password'] = $validate['password'];
         $validate['DateOfCreation'] = (float) now()->format('YmdHis');
         $validate['balance'] = (float) $validate['balance'];
-        $validate['winamount'] = (float) $validate['winamount'];
+        $validate['winamount'] = (int) $validate['winamount']; // 👈 Cast to int32
 
         $user = User::create($validate);
 
@@ -137,7 +137,8 @@ class AuthController extends Controller
         Log::error('Failed to create Player', ['error' => $e->getMessage()]);
         return back()->withErrors(['error' => 'Failed to create player. Please try again.']);
     }
-}
+    }
+
 
 
 
@@ -231,6 +232,7 @@ class AuthController extends Controller
 {
     Log::info('Attempting to edit player', ['id' => $id]);
 
+    // Validation
     $validate = $request->validate([
         'player'      => 'required|string|max:255|unique:users,player,' . $id,
         'password'    => 'nullable|string|min:3',
@@ -246,7 +248,7 @@ class AuthController extends Controller
     try {
         $user = User::findOrFail($id);
 
-        // Password update logic
+        // Optional password update
         if (!empty($validate['password'])) {
             $validate['original_password'] = $validate['password'];
             $validate['password'] = bcrypt($validate['password']);
@@ -254,14 +256,16 @@ class AuthController extends Controller
             unset($validate['password']);
         }
 
-        // ✅ Ensure proper casting to avoid Mongo Decimal128 issues
+        // ✅ Type casting to avoid MongoDB Decimal128 issues
         $validate['balance'] = (float) $validate['balance'];
-        $validate['winamount'] = (float) $validate['winamount'];
+        $validate['winamount'] = (int) $validate['winamount'];  // 💡 cast to int32
 
+        // Update player
         $user->update($validate);
 
         Log::info('Player updated successfully', ['id' => $user->id]);
         return redirect()->route('player.show')->with('success', 'Player updated successfully');
+
     } catch (\Exception $e) {
         Log::error('Failed to update player', [
             'id' => $id,
@@ -270,6 +274,7 @@ class AuthController extends Controller
         return back()->withErrors(['error' => 'Failed to update player. Please try again.']);
     }
     }
+
 
 
     public function deleteAgent($id)
