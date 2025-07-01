@@ -63,6 +63,16 @@
                                     @enderror
                                 </div>
 
+                                <label>Agent</label>
+                            <div class="input-group mb-3">
+                                <select id="agent" name="agent" class="form-control @error('agent') is-invalid @enderror" required>
+                                    <option value="">-- Select Agent --</option>
+                                    {{-- Agents will be populated via AJAX --}}
+                                </select>
+                                @error('agent')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
 
                             <label>Login Status</label>
                                 <div class="input-group mb-3">
@@ -74,20 +84,6 @@
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
-
-
-
-                            <label>Agent</label>
-                            <div class="input-group mb-3">
-                                <select id="agent" name="agent" class="form-control @error('agent') is-invalid @enderror" required>
-                                    <option value="">-- Select Agent --</option>
-                                    {{-- Agents will be populated via AJAX --}}
-                                </select>
-                                @error('agent')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
 
                             <label>Status</label>
                             <div class="input-group mb-3">
