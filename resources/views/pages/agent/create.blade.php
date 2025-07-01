@@ -12,7 +12,7 @@
                         <form action="{{ route('agent.add') }}" method="POST" role="form text-left">
                             @csrf
 
-                            <label>PLAYER</label>
+                            <label>AGENT NAME</label>
                             <div class="input-group mb-3">
                                 <input type="text" class="form-control @error('player') is-invalid @enderror"
                                     placeholder="Enter Player" aria-label="player" name="player"
