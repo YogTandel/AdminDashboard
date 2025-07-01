@@ -82,15 +82,14 @@
                                 @enderror
                             </div>
 
-                            <label>Win Amount</label>
+                            <label>Winamount</label>
                                 <div class="input-group mb-3">
                                     <input type="number" step="1" class="form-control @error('winamount') is-invalid @enderror"
-                                        name="winamount" value="{{ old('winamount', (int) $player->winamount) }}" required>
+                                        name="winamount" placeholder="Winamount" value="{{ old('winamount') }}" required>
                                     @error('winamount')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
-
 
 
                             {{-- Hidden default gameHistory to prevent DB issues --}}

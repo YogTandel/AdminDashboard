@@ -100,7 +100,7 @@ class AuthController extends Controller
 
 
 
-    public function createplayer(Request $request)
+ public function createplayer(Request $request)
 {
     Log::info('Attempting to create a new Player', ['input' => $request->except(['password', 'original_password'])]);
 
@@ -137,7 +137,7 @@ class AuthController extends Controller
         Log::error('Failed to create Player', ['error' => $e->getMessage()]);
         return back()->withErrors(['error' => 'Failed to create player. Please try again.']);
     }
-    }
+}
 
 
 
@@ -273,7 +273,7 @@ class AuthController extends Controller
         ]);
         return back()->withErrors(['error' => 'Failed to update player. Please try again.']);
     }
-    }
+}
 
 
 
