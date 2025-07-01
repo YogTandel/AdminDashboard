@@ -47,12 +47,20 @@
                             <!-- DISTRIBUTOR -->
                             <label>Distributor</label>
                             <div class="input-group mb-3">
-                                <input type="text" class="form-control @error('distributor') is-invalid @enderror"
-                                    name="distributor" value="{{ old('distributor', $player->distributor) }}" required>
+                                <select name="distributor" class="form-control @error('distributor') is-invalid @enderror" required>
+                                    <option value="">Select Distributor</option>
+                                    @foreach ($distributors as $distributor)
+                                        <option value="{{ $distributor->id }}" 
+                                            {{ old('distributor', $player->distributor) == $distributor->id ? 'selected' : '' }}>
+                                            {{ $distributor->player }}
+                                        </option>
+                                    @endforeach
+                                </select>
                                 @error('distributor')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
+
 
                             <!-- AGENT -->
                             <label>Agent</label>

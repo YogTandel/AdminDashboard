@@ -41,14 +41,30 @@
                                 @enderror
                             </div>
 
-                            <label>Distributor</label>
+                            <!-- <label>Distributor</label>
                             <div class="input-group mb-3">
                                 <input type="text" class="form-control @error('distributor') is-invalid @enderror"
                                     name="distributor" placeholder="Distributor" value="{{ old('distributor') }}" required>
                                 @error('distributor')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
+                            </div> -->
+
+                           <label>Distributor</label>
+                            <div class="input-group mb-3">
+                                <select class="form-control @error('distributor') is-invalid @enderror" name="distributor" required>
+                                    <option value="">Select Distributor</option>
+                                    @foreach ($distributors as $distributor)
+                                        <option value="{{ $distributor->id }}" {{ old('distributor') == $distributor->id ? 'selected' : '' }}>
+                                            {{ $distributor->player }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('distributor')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
+
 
                             <label>Login Status</label>
                                 <div class="input-group mb-3">

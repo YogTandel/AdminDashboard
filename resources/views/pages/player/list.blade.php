@@ -163,7 +163,7 @@
                                                         ₹{{ number_format($player->balance, 2) }}</p>
                                                 </td>
                                                 <td class="align-middle text-center text-sm">
-                                                    <p class="text-xs font-weight-bold mb-0">{{ $player->distributor }}</p>
+                                                    <p class="text-xs font-weight-bold mb-0">{{ $player->distributorUser?->player }}</p>
                                                 </td>
                                                 <td class="align-middle text-center text-sm">
                                                     <span class="badge badge-sm {{ $player->login_status ? 'bg-gradient-success' : 'bg-gradient-danger' }}">

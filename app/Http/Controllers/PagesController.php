@@ -104,7 +104,7 @@ class PagesController extends Controller
     }
 
 
-    public function player()
+  public function player()
 {
     $perPage = request()->get('per_page', 5);
     $query = User::query();
@@ -134,7 +134,7 @@ class PagesController extends Controller
         }
     }
 
-    // Cast filters to float to match MongoDB DateOfCreation field
+    // Apply date filters
     if ($from) {
         $query->where('DateOfCreation', '>=', (float) $from);
     }
@@ -143,19 +143,18 @@ class PagesController extends Controller
         $query->where('DateOfCreation', '<=', (float) $to);
     }
 
+    // 🔥 Add with('distributorUser') here
     $players = $query->where('role', 'player')
+        ->with('distributorUser')
         ->paginate($perPage)
         ->appends(request()->query());
 
-    // Optional debug log
-    if ($players->count() > 0) {
-        $firstPlayer = $players->first();
-        Log::debug('gameHistory type: ' . gettype($firstPlayer->gameHistory));
-        Log::debug('gameHistory content: ', is_array($firstPlayer->gameHistory) ? $firstPlayer->gameHistory : [$firstPlayer->gameHistory]);
-    }
+    // ✅ Fetch all distributors for the dropdown
+    $distributors = User::where('role', 'distributor')->get();
 
-    return view('pages.player.list', compact('players', 'perPage'));
-    }
+    return view('pages.player.list', compact('players', 'perPage', 'distributors'));
+}
+
 
 
     public function transactionreport()

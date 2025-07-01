@@ -79,6 +79,11 @@ public function getWinamountAttribute($value)
     return (int)(string) $value;
 }
 
+public function distributorUser()
+{
+    return $this->belongsTo(User::class, 'distributor');
+}
+
 
 //     public function isAdmin()
 // {
