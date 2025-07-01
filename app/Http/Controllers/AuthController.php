@@ -111,7 +111,7 @@ class AuthController extends Controller
         'balance'      => 'required|numeric|min:0',
         'distributor'  => 'required|string|max:255',
         'agent'        => 'required|string|max:255',
-        'login_status' => 'required|in:True,False',
+        'login_status' => ['required', 'in:True,False'],
         'status'       => 'required|in:Active,Inactive',
         'winamount'    => 'required|numeric',
         'gameHistory'  => 'nullable|array',
@@ -121,7 +121,9 @@ class AuthController extends Controller
         $validate['original_password'] = $validate['password'];
         $validate['DateOfCreation'] = (float) now()->format('YmdHis');
         $validate['balance'] = (float) $validate['balance'];
-        $validate['winamount'] = (int) $validate['winamount']; // 👈 Cast to int32
+        $validate['winamount'] = (int) $validate['winamount'];  
+        $validate['login_status']  = (bool) $request->input('login_status'); 
+
 
         $user = User::create($validate);
 

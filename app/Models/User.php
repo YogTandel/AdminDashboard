@@ -55,7 +55,7 @@ class User extends Authenticatable
         'balance'        => 'double',
         'winamount'      => 'integer',
         'isupdated'      => 'boolean',
-        // 'login_status'   => 'boolean',
+        'login_status'   => 'boolean',
         'DateOfCreation' => 'double',
         'endpoint'       => 'double',
     ];
