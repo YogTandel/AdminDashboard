@@ -25,6 +25,7 @@ class User extends Authenticatable
         'role',
         'balance',
         'distributor',
+        'distributor_id',
         'login_status',
         'agent',
         'status',

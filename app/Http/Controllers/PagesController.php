@@ -15,48 +15,54 @@ use Illuminate\Support\Facades\Log;
 class PagesController extends Controller
 {
     public function agentList()
-    {
-        $perPage = request()->get('per_page', 5);
-        $query = User::query();
+{
+    $perPage = request()->get('per_page', 5);
+    $query = User::query();
 
-        // Search filter
-        if (request()->has('search')) {
-            $query = $query->where('player', 'like', '%' . request()->search . '%');
-        }
-
-        // Date range filter
-        $from = request()->input('from_date');
-        $to = request()->input('to_date');
-        $dateRange = request()->input('date_range');
-
-        if ($dateRange) {
-            $today = Carbon::today();
-            if ($dateRange === '2_days_ago') {
-                $from = $today->copy()->subDays(2)->format('Ymd');
-                $to = $today->format('Ymd');
-            } elseif ($dateRange === 'this_week') {
-                $from = $today->copy()->startOfWeek()->format('Ymd');
-                $to = $today->format('Ymd');
-            } elseif ($dateRange === 'this_month') {
-                $from = $today->copy()->startOfMonth()->format('Ymd');
-                $to = $today->format('Ymd');
-            }
-        }
-
-        if ($from) {
-            $query->where('DateOfCreation', '>=', $from);
-        }
-
-        if ($to) {
-            $query->where('DateOfCreation', '<=', $to);
-        }
-
-        $agents = $query->where('role', 'agent')
-            ->paginate($perPage)
-            ->appends(request()->query());
-
-        return view('pages.agent.list', compact('agents', 'perPage'));
+    // Search filter
+    if (request()->has('search')) {
+        $query = $query->where('player', 'like', '%' . request()->search . '%');
     }
+
+    // Date range filter
+    $from = request()->input('from_date');
+    $to = request()->input('to_date');
+    $dateRange = request()->input('date_range');
+
+    if ($dateRange) {
+        $today = Carbon::today();
+        if ($dateRange === '2_days_ago') {
+            $from = $today->copy()->subDays(2)->format('Ymd');
+            $to = $today->format('Ymd');
+        } elseif ($dateRange === 'this_week') {
+            $from = $today->copy()->startOfWeek()->format('Ymd');
+            $to = $today->format('Ymd');
+        } elseif ($dateRange === 'this_month') {
+            $from = $today->copy()->startOfMonth()->format('Ymd');
+            $to = $today->format('Ymd');
+        }
+    }
+
+    if ($from) {
+        $query->where('DateOfCreation', '>=', $from);
+    }
+
+    if ($to) {
+        $query->where('DateOfCreation', '<=', $to);
+    }
+
+    // Fetch agents
+    $agents = $query->where('role', 'agent')
+        ->paginate($perPage)
+        ->appends(request()->query());
+
+    // 🔥 Fetch all distributors for dropdown
+    $distributors = User::where('role', 'distributor')->get();
+
+    // Pass to view
+    return view('pages.agent.list', compact('agents', 'perPage', 'distributors'));
+}
+
 
     public function distributor()
 {

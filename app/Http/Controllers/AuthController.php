@@ -5,6 +5,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use MongoDB\BSON\ObjectId;
 use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
@@ -19,39 +20,43 @@ class AuthController extends Controller
         return view('auth.login');
     }
 
- public function createAgent(Request $request)
+public function createAgent(Request $request)
 {
     Log::info('Attempting to create a new agent', ['input' => $request->except(['password', 'original_password'])]);
 
     $validate = $request->validate([
-        'player'      => 'required|string|max:255|unique:users,player',
-        'password'    => 'required|string|min:3',
-        'role'        => 'required|in:agent',
-        'agent'       => 'required|string|max:255',
-        'endpoint'    => 'required|numeric|min:0',
-        'distributor' => 'required|string|max:255',
-        'balance'     => 'required|numeric|min:0',
-        'status'      => 'required|in:Active,Inactive',
+        'player'          => 'required|string|max:255|unique:users,player',
+        'password'        => 'required|string|min:3',
+        'role'            => 'required|in:agent',
+        'agent'           => 'required|string|max:255',
+        'endpoint'        => 'required|numeric|min:0',
+        'distributor_id'  => 'required|string',  // MongoDB ID as string
+        'distributor'     => 'required|string|max:255',  // Distributor name
+        'balance'         => 'required|numeric|min:0',
+        'status'          => 'required|in:Active,Inactive',
     ]);
 
     try {
+        // Cast distributor_id to MongoDB ObjectId before saving
+        $validate['distributor_id'] = new ObjectId($validate['distributor_id']);
+
         $validate['original_password'] = $validate['password'];
         $validate['password']          = bcrypt($validate['password']);
+        $validate['DateOfCreation']    = (float) now()->format('YmdHis');
+        $validate['balance']           = (float) $validate['balance'];
+        $validate['endpoint']          = (float) $validate['endpoint'];
 
-        // Cast fields to proper types
-        $validate['DateOfCreation'] = (float) now()->format('YmdHis');
-        $validate['balance']        = (float) $validate['balance'];
-        $validate['endpoint']       = (float) $validate['endpoint']; // ← updated to double
-
+        // Create the user document in MongoDB
         $user = User::create($validate);
 
         if ($user) {
             Log::info('Agent inserted', ['id' => $user->_id ?? $user->id]);
+            return redirect()->route('agent.show')->with('success', 'Agent added successfully');
         } else {
             Log::warning('Agent creation returned null');
+            return back()->withErrors(['error' => 'Creation returned null']);
         }
 
-        return redirect()->route('agent.show')->with('success', 'Agent added successfully');
     } catch (\Exception $e) {
         Log::error('Failed to create agent', ['error' => $e->getMessage()]);
         return back()->withErrors(['error' => 'Failed to create agent. Please try again.']);

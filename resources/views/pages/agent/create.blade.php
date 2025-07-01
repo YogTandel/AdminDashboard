@@ -52,15 +52,28 @@
                             </div>
 
 
-                            <label>DISTRIBUTOR</label>
+                            <label>Distributor</label>
                             <div class="input-group mb-3">
-                                <input type="text" class="form-control @error('distributor') is-invalid @enderror"
-                                    placeholder="Distributor" aria-label="distributor" name="distributor"
-                                    aria-describedby="distributor" value="{{ old('distributor') }}">
-                                @error('distributor')
+                                <select id="distributor_id" name="distributor_id" class="form-control @error('distributor_id') is-invalid @enderror" required>
+                                    <option value="">-- Select Distributor --</option>
+                                    @foreach ($distributors as $distributor)
+                                        <option value="{{ $distributor->_id }}" data-name="{{ $distributor->player }}">
+                                            {{ $distributor->player }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('distributor_id')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
+
+                            {{-- Hidden input for distributor name --}}
+                            <input type="hidden" name="distributor" id="distributor" value="{{ old('distributor') }}">
+                            @error('distributor')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+
+
 
                             <label>AGENT</label>
                             <div class="input-group mb-3">
@@ -113,3 +126,9 @@
         </div>
     </div>
 </div>
+<script>
+    document.getElementById('distributor_id').addEventListener('change', function () {
+        const name = this.options[this.selectedIndex].getAttribute('data-name');
+        document.getElementById('distributor').value = name ?? '';
+    });
+</script>
