@@ -55,7 +55,7 @@
                                     <select id="distributor" class="form-control @error('distributor') is-invalid @enderror" name="distributor" required>
                                         <option value="">Select Distributor</option>
                                         @foreach ($distributors as $distributor)
-                                            <option value="{{ $distributor->id }}">{{ $distributor->player }}</option>
+                                            <option value="{{ $distributor->_id }}">{{ $distributor->player }}</option>
                                         @endforeach
                                     </select>
                                     @error('distributor')
@@ -135,32 +135,34 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $('#distributor').on('change', function () {
+    var distributorId = $(this).val();
 
-        var distributorId = $(this).val();
-        // alert(distributorId);
-        if (distributorId) {
-            $.ajax({
-                url: '/get-agents/' + distributorId,
-                type: 'GET',
-                success: function (data) {
-                    // console.log(data);
-                    $('#agent').empty().append('<option value="">-- Select Agent --</option>');
-                    $.each(data, function (key, agent) {
-                        $('#agent').append('<option value="' + agent.id + '">' + agent.player + '</option>');
-                    });
-                }
-            });
-        } else {
-            $('#agent').empty().append('<option value="">-- Select Agent --</option>');
-        }
-    });
+    if (distributorId) {
+        $.ajax({
+            url: '/get-agents/' + distributorId,
+            type: 'GET',
+            success: function (data) {
+                $('#agent_id').empty().append('<option value="">-- Select Agent --</option>');
+                $.each(data, function (key, agent) {
+                    $('#agent_id').append(
+                        '<option value="' + agent._id + '" data-name="' + agent.player + '">' + agent.player + '</option>'
+                    );
+                });
+            }
+        });
+    } else {
+        $('#agent_id').empty().append('<option value="">-- Select Agent --</option>');
+    }
+});
+
+document.getElementById('agent_id').addEventListener('change', function () {
+    const selected = this.options[this.selectedIndex];
+    document.getElementById('agent_name').value = selected.getAttribute('data-name');
+});
+
+
 </script>
 
 
-<script>
-    document.getElementById('agent_id').addEventListener('change', function () {
-        const selected = this.options[this.selectedIndex];
-        document.getElementById('agent_name').value = selected.getAttribute('data-name');
-    });
-</script>
+
 

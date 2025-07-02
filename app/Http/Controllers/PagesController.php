@@ -739,12 +739,18 @@ public function player()
 public function getAgents($distributorId)
 {
     try {
-        // Convert string to MongoDB ObjectId
         $objectId = new ObjectId($distributorId);
 
         $agents = User::where('role', 'agent')
                       ->where('distributor_id', $objectId)
                       ->get(['_id', 'player']);
+
+        $agents = $agents->map(function ($agent) {
+            return [
+                '_id' => (string) $agent->_id,
+                'player' => $agent->player,
+            ];
+        });
 
         return response()->json($agents);
 
@@ -753,6 +759,7 @@ public function getAgents($distributorId)
         return response()->json(['error' => 'Invalid distributor ID'], 400);
     }
 }
+
 
 
 }
