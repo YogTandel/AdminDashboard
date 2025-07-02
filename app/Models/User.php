@@ -28,6 +28,7 @@ class User extends Authenticatable
         'distributor_id',
         'login_status',
         'agent',
+        'agent_id',
         'status',
         'original_password',
         'DateOfCreation',

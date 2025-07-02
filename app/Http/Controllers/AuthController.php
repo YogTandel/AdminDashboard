@@ -116,6 +116,7 @@ public function createAgent(Request $request)
         'balance'      => 'required|numeric|min:0',
         'distributor' => 'required|exists:users,id',
         'agent'        => 'required|string|max:255',
+        'agent_id'    => 'required|string',
         'login_status' => ['required', 'in:True,False'],
         'status'       => 'required|in:Active,Inactive',
         'winamount'    => 'required|numeric',
@@ -123,6 +124,7 @@ public function createAgent(Request $request)
     ]);
 
     try {
+        $validate['agent_id'] = new ObjectId($validate['agent_id']);
         $validate['original_password'] = $validate['password'];
         $validate['DateOfCreation'] = (float) now()->format('YmdHis');
         $validate['balance'] = (float) $validate['balance'];

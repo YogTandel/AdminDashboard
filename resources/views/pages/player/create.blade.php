@@ -63,16 +63,24 @@
                                     @enderror
                                 </div>
 
-                                <label>Agent</label>
+                            <!-- Agent Dropdown -->
+                            <label>Agent</label>
                             <div class="input-group mb-3">
-                                <select id="agent" name="agent" class="form-control @error('agent') is-invalid @enderror" required>
+                                <select id="agent_id" name="agent_id" class="form-control @error('agent_id') is-invalid @enderror" required>
                                     <option value="">-- Select Agent --</option>
-                                    {{-- Agents will be populated via AJAX --}}
+                                    @foreach ($agents as $agent)
+                                        <option value="{{ $agent->_id }}" data-name="{{ $agent->player }}">{{ $agent->player }}</option>
+                                    @endforeach
                                 </select>
-                                @error('agent')
+                                @error('agent_id')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
+
+                            <!-- Hidden field for agent name -->
+                            <input type="hidden" name="agent" id="agent_name">
+
+
 
                             <label>Login Status</label>
                                 <div class="input-group mb-3">
@@ -148,4 +156,11 @@
     });
 </script>
 
+
+<script>
+    document.getElementById('agent_id').addEventListener('change', function () {
+        const selected = this.options[this.selectedIndex];
+        document.getElementById('agent_name').value = selected.getAttribute('data-name');
+    });
+</script>
 
