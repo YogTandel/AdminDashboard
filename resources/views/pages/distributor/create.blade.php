@@ -14,13 +14,13 @@
                             <label>Distributor Name</label>
                             <div class="input-group mb-3">
                                 <input type="text" class="form-control" placeholder="Player" aria-label="player"
-                                    name="player" aria-describedby="player-addon">
+                                    name="player" aria-describedby="player-addon" required>
                             </div>
 
                             <label>Password</label>
                             <div class="input-group mb-3">
                                 <input type="password" class="form-control" placeholder="password" aria-label="password"
-                                    name="password" aria-describedby="password-addon">
+                                    name="password" aria-describedby="password-addon" required>
                             </div>
 
                             <input type="hidden" name="role" value="distributor">
@@ -35,7 +35,7 @@
                                         id="balance"
                                         step="0.01"  
                                         value="{{ old('balance', 0) }}"
-                                        aria-describedby="balance-addon">
+                                        aria-describedby="balance-addon" required>
                                 </div>
 
 
@@ -43,7 +43,7 @@
                             <div class="input-group mb-3">
                                 <input type="number" step="0.01" class="form-control @error('endpoint') is-invalid @enderror"
                                     id="endpoint" name="endpoint" placeholder="Enter endpoint"
-                                    value="{{ old('endpoint') }}" aria-describedby="endpoint-addon" aria-label="endpoint">
+                                    value="{{ old('endpoint') }}" aria-describedby="endpoint-addon" aria-label="endpoint" required>
                                 @error('endpoint')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -52,7 +52,7 @@
 
                             <label>STATUS</label>
                             <div class="input-group mb-3">
-                                <select class="form-control" name="status">
+                                <select class="form-control" name="status" required>
                                     <option value="Active">Active</option>
                                     <option value="Inactive">Inactive</option>
                                 </select>
