@@ -17,14 +17,14 @@
                             <label>Distributor Name</label>
                             <div class="input-group mb-3">
                                 <input type="text" class="form-control" name="player"
-                                    value="{{ old('player', $distributor->player) }}">
+                                    value="{{ old('player', $distributor->player) }}" required>
                             </div>
 
                             <!-- PASSWORD -->
                             <label>PASSWORD</label>
                             <div class="input-group mb-3">
                                 <input type="password" class="form-control" name="password"
-                                    placeholder="Leave blank to keep current">
+                                    placeholder="Leave blank to keep current" required>
                             </div>
 
                             <input type="hidden" name="role" value="distributor">
@@ -34,21 +34,21 @@
                             <div class="input-group mb-3">
                                 <input type="number" class="form-control" name="balance"
                                     value="{{ old('balance', (float) (string) $distributor->balance) }}"
-                                    step="0.01" placeholder="Enter balance">
+                                    step="0.01" placeholder="Enter balance" required>
                             </div>
 
                             <!-- Endpoint -->
                             <label>Endpoint</label>
                                 <div class="input-group mb-3">
                                     <input type="number" step="0.01" class="form-control" name="endpoint"
-                                        value="{{ old('endpoint', (float) $distributor->endpoint) }}">
+                                        value="{{ old('endpoint', (float) $distributor->endpoint) }}" required>
                                 </div>
 
 
                             <!-- STATUS -->
                             <label>STATUS</label>
                             <div class="input-group mb-3">
-                                <select class="form-control" name="status">
+                                <select class="form-control" name="status" required>
                                     <option value="Active" {{ $distributor->status == 'Active' ? 'selected' : '' }}>
                                         Active</option>
                                     <option value="Inactive" {{ $distributor->status == 'Inactive' ? 'selected' : '' }}>
