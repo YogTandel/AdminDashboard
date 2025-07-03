@@ -16,14 +16,14 @@
                             <label>AGENT NAME</label>
                             <div class="input-group mb-3">
                                 <input type="text" class="form-control" name="player"
-                                    value="{{ old('player', $agent->player) }}">
+                                    value="{{ old('player', $agent->player) }}" required>
                             </div>
 
                             <!-- PASSWORD -->
                             <label>PASSWORD</label>
                             <div class="input-group mb-3">
                                 <input type="password" class="form-control" name="password"
-                                    placeholder="Leave blank to keep current">
+                                    placeholder="Leave blank to keep current" required>
                             </div>
 
                             <input type="hidden" name="role" value="agent">
@@ -35,7 +35,7 @@
                                     step="0.01"
                                     class="form-control"
                                     name="balance"
-                                    value="{{ old('balance', isset($agent->balance) ? (float) (string) $agent->balance : 0) }}">
+                                    value="{{ old('balance', isset($agent->balance) ? (float) (string) $agent->balance : 0) }}" required>
                             </div>
 
 
@@ -43,26 +43,26 @@
                             <label>DISTRIBUTOR</label>
                             <div class="input-group mb-3">
                                 <input type="text" class="form-control" name="distributor"
-                                    value="{{ old('distributor', $agent->distributor) }}">
+                                    value="{{ old('distributor', $agent->distributor) }}" required>
                             </div>
 
                             <!-- AGENT -->
                             <label>AGENT</label>
                             <div class="input-group mb-3">
                                 <input type="text" class="form-control" name="agent"
-                                    value="{{ old('agent', $agent->agent) }}">
+                                    value="{{ old('agent', $agent->agent) }}" required>
                             </div>
 
                             <label>ENDPOINT</label>
                                 <div class="input-group mb-3">
                                     <input type="number" step="0.01" class="form-control" name="endpoint"
-                                        value="{{ old('endpoint', $agent->endpoint) }}">
+                                        value="{{ old('endpoint', $agent->endpoint) }}" required>
                                 </div>
 
                             <!-- STATUS -->
                             <label>STATUS</label>
                             <div class="input-group mb-3">
-                                <select class="form-control" name="status">
+                                <select class="form-control" name="status" required>
                                     <option value="Active" {{ $agent->status == 'Active' ? 'selected' : '' }}>
                                         Active</option>
                                     <option value="Inactive" {{ $agent->status == 'Inactive' ? 'selected' : '' }}>
