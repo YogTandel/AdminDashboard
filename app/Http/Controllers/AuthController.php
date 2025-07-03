@@ -223,7 +223,6 @@ public function createAgent(Request $request)
     }
 
 
-
     public function editPlayer(Request $request, $id)
 {
     Log::info('Attempting to edit player', ['id' => $id]);
@@ -270,8 +269,6 @@ public function createAgent(Request $request)
         return back()->withErrors(['error' => 'Failed to update player. Please try again.']);
     }
 }
-
-
 
     public function deleteAgent($id)
     {
