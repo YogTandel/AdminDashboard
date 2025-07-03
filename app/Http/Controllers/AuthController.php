@@ -183,8 +183,6 @@ public function createAgent(Request $request)
     }
     }
 
-
-
  public function editDistributor(Request $request, $id)
 {
     Log::info('Attempting to edit distributor', ['id' => $id]);
