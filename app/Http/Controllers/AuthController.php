@@ -63,7 +63,6 @@ public function createAgent(Request $request)
     }
 }
 
-
     public function createDistributor(Request $request)
 {
     Log::info('Attempting to create a new Distributor', [
@@ -101,8 +100,6 @@ public function createAgent(Request $request)
         return back()->withErrors(['error' => 'Failed to create Distributor. Please try again.']);
     }
     }
-
-
 
 
  public function createplayer(Request $request)
@@ -151,10 +148,6 @@ public function createAgent(Request $request)
 }
 
 
-
-
-
-
     public function editAgent(Request $request, $id)
 {
     Log::info('Attempting to edit agent', ['id' => $id]);
@@ -173,9 +166,8 @@ public function createAgent(Request $request)
     try {
         $user = User::findOrFail($id);
 
-        // ✅ Ensure numeric fields match the cast type in your model
         $validate['balance']  = (float) $validate['balance'];
-        $validate['endpoint'] = (float) $validate['endpoint']; // Changed from (int) to (float)
+        $validate['endpoint'] = (float) $validate['endpoint']; 
 
         if (!empty($validate['password'])) {
             $validate['original_password'] = $validate['password'];
@@ -201,7 +193,6 @@ public function createAgent(Request $request)
 {
     Log::info('Attempting to edit distributor', ['id' => $id]);
 
-    // ✅ Validate input
     $validate = $request->validate([
         'player'   => 'required|string|max:255|unique:users,player,' . $id,
         'password' => 'nullable|string|min:3',
@@ -214,7 +205,6 @@ public function createAgent(Request $request)
     try {
         $user = User::findOrFail($id);
 
-        // ✅ Handle optional password update
         if (!empty($validate['password'])) {
             $validate['original_password'] = $validate['password'];
             $validate['password'] = bcrypt($validate['password']);
@@ -222,9 +212,8 @@ public function createAgent(Request $request)
             unset($validate['password']);
         }
 
-        // ✅ Force casting to correct types (important for MongoDB/BSON compatibility)
-        $validate['balance'] = (float) $validate['balance'];       // Ensure double
-        $validate['endpoint'] = (float) $validate['endpoint'];     // Now cast as double (not int)
+        $validate['balance'] = (float) $validate['balance'];       
+        $validate['endpoint'] = (float) $validate['endpoint'];     
 
         $user->update($validate);
 
@@ -267,7 +256,7 @@ public function createAgent(Request $request)
             unset($validate['password']);
         }
 
-        // ✅ Type casting to avoid MongoDB Decimal128 issues
+        // Type casting to avoid MongoDB Decimal128 issues
         $validate['balance'] = (float) $validate['balance'];
         $validate['winamount'] = (int) $validate['winamount'];  // 💡 cast to int32
 

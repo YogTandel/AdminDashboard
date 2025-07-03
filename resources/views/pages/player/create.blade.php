@@ -41,15 +41,6 @@
                                 @enderror
                             </div>
 
-                            <!-- <label>Distributor</label>
-                            <div class="input-group mb-3">
-                                <input type="text" class="form-control @error('distributor') is-invalid @enderror"
-                                    name="distributor" placeholder="Distributor" value="{{ old('distributor') }}" required>
-                                @error('distributor')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div> -->
-
                            <label>Distributor</label>
                                 <div class="input-group mb-3">
                                     <select id="distributor" class="form-control @error('distributor') is-invalid @enderror" name="distributor" required>

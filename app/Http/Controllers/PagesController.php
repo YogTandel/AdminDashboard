@@ -163,9 +163,6 @@ public function player()
 }
 
 
-
-
-
     public function transactionreport()
     {
         $perPage = request()->get('per_page', 15);
@@ -733,32 +730,29 @@ public function player()
         return view('pages.transfer.report', compact('transfers'));
     }
 
+    public function getAgents($distributorId)
+    {
+        try {
+            $objectId = new ObjectId($distributorId);
 
-  
+            $agents = User::where('role', 'agent')
+                        ->where('distributor_id', $objectId)
+                        ->get(['_id', 'player']);
 
-public function getAgents($distributorId)
-{
-    try {
-        $objectId = new ObjectId($distributorId);
+            $agents = $agents->map(function ($agent) {
+                return [
+                    '_id' => (string) $agent->_id,
+                    'player' => $agent->player,
+                ];
+            });
 
-        $agents = User::where('role', 'agent')
-                      ->where('distributor_id', $objectId)
-                      ->get(['_id', 'player']);
+            return response()->json($agents);
 
-        $agents = $agents->map(function ($agent) {
-            return [
-                '_id' => (string) $agent->_id,
-                'player' => $agent->player,
-            ];
-        });
-
-        return response()->json($agents);
-
-    } catch (\Exception $e) {
-        \Log::error('Error fetching agents: ' . $e->getMessage());
-        return response()->json(['error' => 'Invalid distributor ID'], 400);
+        } catch (\Exception $e) {
+            \Log::error('Error fetching agents: ' . $e->getMessage());
+            return response()->json(['error' => 'Invalid distributor ID'], 400);
+        }
     }
-}
 
 
 
