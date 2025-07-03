@@ -104,7 +104,6 @@ public function createAgent(Request $request)
 
  public function createplayer(Request $request)
 {
-    Log::info('Attempting to create a new Player', ['input' => $request->except(['password', 'original_password'])]);
 
     $validate = $request->validate([
         'player'       => 'required|string|max:255|unique:users,player',
@@ -134,15 +133,12 @@ public function createAgent(Request $request)
         $user = User::create($validate);
 
         if ($user) {
-            Log::info('Player inserted', ['id' => $user->_id ?? $user->id]);
             return redirect()->route('player.show')->with('success', 'Player added successfully');
         } else {
-            Log::warning('Player creation returned null');
             return back()->withErrors(['error' => 'Creation returned null']);
         }
 
     } catch (\Exception $e) {
-        Log::error('Failed to create Player', ['error' => $e->getMessage()]);
         return back()->withErrors(['error' => 'Failed to create player. Please try again.']);
     }
 }
