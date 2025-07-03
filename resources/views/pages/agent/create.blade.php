@@ -16,7 +16,7 @@
                             <div class="input-group mb-3">
                                 <input type="text" class="form-control @error('player') is-invalid @enderror"
                                     placeholder="Enter Player" aria-label="player" name="player"
-                                    aria-describedby="player" value="{{ old('player') }}">
+                                    aria-describedby="player" value="{{ old('player') }}" required>
                                 @error('player')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -26,7 +26,7 @@
                             <div class="input-group mb-3">
                                 <input type="password" class="form-control @error('password') is-invalid @enderror"
                                     placeholder="password" aria-label="password" name="password"
-                                    aria-describedby="password">
+                                    aria-describedby="password" required>
                                 @error('password')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -44,7 +44,7 @@
                                     aria-label="balance"
                                     name="balance"
                                     aria-describedby="balance"
-                                    value="{{ old('balance', isset($user) ? (float) $user->balance : '') }}"
+                                    value="{{ old('balance', isset($user) ? (float) $user->balance : '') }}"required
                                 >
                                 @error('balance')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -79,7 +79,7 @@
                             <div class="input-group mb-3">
                                 <input type="text" class="form-control @error('agent') is-invalid @enderror"
                                     placeholder="Agent" aria-label="agent" name="agent" aria-describedby="agent"
-                                    value="{{ old('agent') }}">
+                                    value="{{ old('agent') }}" required>
                                 @error('agent')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -89,7 +89,7 @@
                                 <div class="input-group mb-3">
                                     <input type="number" step="0.01" class="form-control @error('endpoint') is-invalid @enderror"
                                         placeholder="Endpoint" aria-label="endpoint" name="endpoint" aria-describedby="endpoint"
-                                        value="{{ old('endpoint') }}">
+                                        value="{{ old('endpoint') }}" required>
                                     @error('endpoint')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -98,7 +98,7 @@
 
                             <label>STATUS</label>
                             <div class="input-group mb-3">
-                                <select class="form-control @error('status') is-invalid @enderror" name="status">
+                                <select class="form-control @error('status') is-invalid @enderror" name="status" required>
                                     <option value="">Select Status</option>
                                     <option value="Active" {{ old('status') == 'Active' ? 'selected' : '' }}>
                                         Active
