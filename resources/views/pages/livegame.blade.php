@@ -13,7 +13,7 @@
                 <span class="text-dark me-2" style="font-size: 1.5rem; font-weight: 700;">
                     Standing:
                 </span>
-                <span class="badge bg-dark" style="font-size: 1rem;">678</span>
+                <span class="badge bg-dark" style="font-size: 1rem;">6780</span>
             </div>
             <div class="d-flex align-items-center">
                 <span class="text-dark me-2" style="font-size: 1.5rem; font-weight: 700;">
@@ -23,7 +23,7 @@
             </div>
             <div class="d-flex align-items-center">
                 <span class="text-dark me-2" style="font-size: 1.5rem; font-weight: 700;">
-                    result:
+                    Result:
                 </span>
                 <span class="badge me-3 text-white" 
                     style="background: linear-gradient(135deg, #f093fb, #f5576c); font-size: 1rem; font-weight: 700;">
@@ -130,7 +130,7 @@
 
         <!-- Card 10 -->
         <div class="col-12 col-sm-6 col-md-1 ms-2">
-            <div class="p-3 rounded text-white" style="background: linear-gradient(135deg, #f093fb, #f5576c);">
+            <div class="p-3 rounded text-white" style="background: linear-gradient(135deg, #a18cd1, #fbc2eb);">
                 <p class="font-weight-bolder mb-3">Total</p>
                 <h5 class="text-sm">167</h5>
             </div>
