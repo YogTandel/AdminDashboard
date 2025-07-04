@@ -38,7 +38,7 @@
                             <div class="input-group mb-3">
                                 <input
                                     type="number"
-                                    step="0.01" {{-- ✅ Allows decimal inputs like 10.50 --}}
+                                    step="0.01" 
                                     class="form-control @error('balance') is-invalid @enderror"
                                     placeholder="Balance"
                                     aria-label="balance"

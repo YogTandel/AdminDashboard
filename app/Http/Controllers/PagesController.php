@@ -494,6 +494,18 @@ public function player()
         return view('pages.livegame');
     }
 
+  public function liveGamevalue()
+{
+    $setting = Setting::first();
+
+    return response()->json([
+        'standing' => $setting->standing ?? 0,
+        'earning' => $setting->earning ?? 0,
+        'result'   => $setting->result ?? '--',
+    ]);
+}
+
+
     public function exportGameHistory($playerId)
     {
         // Find player with role validation
@@ -754,6 +766,22 @@ public function player()
         }
     }
 
+public function updateCustomBet(Request $request)
+{
+    $request->validate([
+        'custom_bet' => 'required|integer|min:0|max:9',
+    ]);
 
+    // MongoDB ObjectId ના આધાર પર શોધો
+    $setting = Setting::where('_id', new ObjectId('67d942244d741e1fb4f08710'))->first();
+
+    if ($setting) {
+        $setting->customBet = (int)$request->custom_bet;
+        $setting->save();
+        return back()->with('success', 'Custom Bet successfully added!');
+    } else {
+        return back()->with('error', 'Setting not!');
+    }
+}
 
 }

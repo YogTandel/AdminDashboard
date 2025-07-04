@@ -4,47 +4,62 @@
 
 @section('content')
 
-<div class="container">
-    <div class="card-header d-flex justify-content-between align-items-center mt-3">
-        <div class="ms-5 d-flex align-items-center flex-wrap gap-4">
+    <div class="container">
+        <div class="card-header d-flex justify-content-between align-items-center mt-3">
+            <div class="ms-5 d-flex align-items-center flex-wrap gap-4">
+                <div class="w-100 mt-1">
 
-            {{-- Standing --}}
-            <div class="d-flex align-items-center">
-                <span class="text-dark me-2" style="font-size: 1.5rem; font-weight: 700;">
-                    Standing:
-                </span>
-                <span class="badge bg-dark" style="font-size: 1rem;">6780</span>
-            </div>
-            <div class="d-flex align-items-center">
-                <span class="text-dark me-2" style="font-size: 1.5rem; font-weight: 700;">
-                    Earning:
-                </span>
-                <span class="badge bg-gradient-success me-3" style="font-size: 1rem;">5000</span>
-            </div>
-            <div class="d-flex align-items-center">
-                <span class="text-dark me-2" style="font-size: 1.5rem; font-weight: 700;">
-                    Result:
-                </span>
-                <span class="badge me-3 text-white" 
-                    style="background: linear-gradient(135deg, #f093fb, #f5576c); font-size: 1rem; font-weight: 700;">
-                    78978
-                </span>
-            </div>
-            {{-- Custom Bet --}}
-            <div class="d-flex flex-column">
-                <div class="d-flex align-items-center">
-                    <span class="text-dark me-2" style="font-size: 1.5rem; font-weight: 700;">
-                        Custom Bet:
-                    </span>
-                    <input type="number" class="form-control form-control-sm" placeholder="Enter Custom Bet" style="width: 200px;" min="0" max="9" required/>
-                    <button class="btn btn-primary btn-sm mt-3 ms-2" style="width: 100px;">
-                        Submit 
-                    </button>
+                    {{-- Success Message --}}
+                    @if(session('success'))
+                        <div id="alertMessage" class="alert alert-success alert-dismissible fade show" role="alert">
+                            {{ session('success') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
+
+                    {{-- Error Message --}}
+                    @if(session('error'))
+                        <div id="alertMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
+                            {{ session('error') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
+
                 </div>
+
+                {{-- Standing --}}
+                <div class="d-flex align-items-center">
+                    <span class="text-dark me-2" style="font-size: 1.5rem; font-weight: 700;">Standing:</span>
+                    <span id="live-standing" class="badge bg-dark" style="font-size: 1rem;">--</span>
+                </div>
+
+                {{-- Earning --}}
+                <div class="d-flex align-items-center">
+                    <span class="text-dark me-2" style="font-size: 1.5rem; font-weight: 700;">Earning:</span>
+                    <span id="live-earning" class="badge bg-gradient-success me-3" style="font-size: 1rem;">--</span>
+                </div>
+
+                {{-- Result --}}
+                <div class="d-flex align-items-center">
+                    <span class="text-dark me-2" style="font-size: 1.5rem; font-weight: 700;">Result:</span>
+                    <span id="live-result" class="badge text-white me-3"
+                        style="background: linear-gradient(135deg, #f093fb, #f5576c); font-size: 1rem; font-weight: 700;">
+                        --
+                    </span>
+                </div>
+
+
+                {{-- Custom Bet --}}
+                <form action="{{ route('custom.bet.update') }}" method="POST" class="d-flex align-items-center">
+                    @csrf
+                    <span class="text-dark me-2" style="font-size: 1.5rem; font-weight: 700;">Custom Bet:</span>
+                    <input type="number" name="custom_bet" class="form-control form-control-sm"
+                        placeholder="Enter Custom Bet" style="width: 200px;" min="0" max="9" required />
+                    <button type="submit" class="btn btn-primary btn-sm ms-2 mt-2" style="width: 100px;">Submit</button>
+                </form>
             </div>
         </div>
     </div>
-</div>
 
     <div class="row g-2 container-fluid py-4">
 
@@ -149,18 +164,30 @@
                             <table class="table align-items-center mb-0" style="table-layout: fixed; width: 100%;">
                                 <thead>
                                     <tr>
-                                        <th class="text-uppercase text-dark fw-bold text-center" style="font-size: 1rem; width: 22%;">Name</th>
-                                        <th class="text-uppercase text-dark fw-bold text-center" style="font-size: 1rem;">1</th>
-                                        <th class="text-uppercase text-dark fw-bold text-center" style="font-size: 1rem;">2</th>
-                                        <th class="text-uppercase text-dark fw-bold text-center" style="font-size: 1rem;">3</th>
-                                        <th class="text-uppercase text-dark fw-bold text-center" style="font-size: 1rem;">4</th>
-                                        <th class="text-uppercase text-dark fw-bold text-center" style="font-size: 1rem;">5</th>
-                                        <th class="text-uppercase text-dark fw-bold text-center" style="font-size: 1rem;">6</th>
-                                        <th class="text-uppercase text-dark fw-bold text-center" style="font-size: 1rem;">7</th>
-                                        <th class="text-uppercase text-dark fw-bold text-center" style="font-size: 1rem;">8</th>
-                                        <th class="text-uppercase text-dark fw-bold text-center" style="font-size: 1rem;">9</th>
-                                        <th class="text-uppercase text-dark fw-bold text-center" style="font-size: 1rem;">0</th>
-                                        <th class="text-uppercase text-dark fw-bold text-center" style="font-size: 1rem;">Total</th>
+                                        <th class="text-uppercase text-dark fw-bold text-center"
+                                            style="font-size: 1rem; width: 22%;">Name</th>
+                                        <th class="text-uppercase text-dark fw-bold text-center" style="font-size: 1rem;">1
+                                        </th>
+                                        <th class="text-uppercase text-dark fw-bold text-center" style="font-size: 1rem;">2
+                                        </th>
+                                        <th class="text-uppercase text-dark fw-bold text-center" style="font-size: 1rem;">3
+                                        </th>
+                                        <th class="text-uppercase text-dark fw-bold text-center" style="font-size: 1rem;">4
+                                        </th>
+                                        <th class="text-uppercase text-dark fw-bold text-center" style="font-size: 1rem;">5
+                                        </th>
+                                        <th class="text-uppercase text-dark fw-bold text-center" style="font-size: 1rem;">6
+                                        </th>
+                                        <th class="text-uppercase text-dark fw-bold text-center" style="font-size: 1rem;">7
+                                        </th>
+                                        <th class="text-uppercase text-dark fw-bold text-center" style="font-size: 1rem;">8
+                                        </th>
+                                        <th class="text-uppercase text-dark fw-bold text-center" style="font-size: 1rem;">9
+                                        </th>
+                                        <th class="text-uppercase text-dark fw-bold text-center" style="font-size: 1rem;">0
+                                        </th>
+                                        <th class="text-uppercase text-dark fw-bold text-center" style="font-size: 1rem;">
+                                            Total</th>
                                     </tr>
                                 </thead>
                             </table>
@@ -172,5 +199,34 @@
             <x-footer />
         </div>
     </div>
+
+    
+    <script>
+        setTimeout(function () {
+            const alertEl = document.getElementById('alertMessage');
+            if (alertEl) {
+                alertEl.classList.remove('show');
+                alertEl.classList.add('fade');
+                alertEl.style.display = 'none';
+            }
+        }, 3000);
+    </script>
+ <script>
+    function fetchLiveGameValues() {
+        fetch("{{ route('live.game.values') }}")
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('live-standing').innerText = data.standing;
+                document.getElementById('live-earning').innerText = data.earning;
+                document.getElementById('live-result').innerText = data.result;
+            })
+            .catch(error => console.error('Error fetching live game values:', error));
+    }
+
+    fetchLiveGameValues(); 
+    setInterval(fetchLiveGameValues, 5000); 
+</script>
+
+
 
 @endsection

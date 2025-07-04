@@ -51,6 +51,8 @@ Route::post('/settings/earning-to-zero', [PagesController::class, 'earningToZero
 Route::post('/settings/update-profit', [PagesController::class, 'updateProfit'])->name('settings.updateProfit');
 Route::post('/admin/add-points', [PagesController::class, 'addPointsToAdmin'])->name('admin.addPoints');
 Route::post('/admin/remove-points', [PagesController::class, 'removePointsFromAdmin'])->name('admin.removePoints');
+Route::post('/custom-bet-update', [PagesController::class, 'updateCustomBet'])->name('custom.bet.update');
+Route::get('/live-game-values', [PagesController::class, 'liveGamevalue'])->name('live.game.values');
 
 
 // live game
