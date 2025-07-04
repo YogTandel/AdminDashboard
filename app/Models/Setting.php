@@ -37,7 +37,7 @@ class Setting extends Model
         'earning'              => 'Double',
         'earningPercentage'    => 'Double',
         'setTominimum'         => 'boolean',
-        'standing'             => 'integer',
+        'standing'             => 'double',
         'customBet'            => 'integer',
         'last10data'           => 'array',
     ];
