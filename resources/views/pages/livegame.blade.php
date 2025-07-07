@@ -3,6 +3,7 @@
 @section('page-name', 'Live Game')
 
 @section('content')
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <div class="container">
         <div class="card-header d-flex justify-content-between align-items-center mt-3">
@@ -62,96 +63,23 @@
     </div>
 
     <div class="row g-2 container-fluid py-4">
-
-        <!-- Card 1 -->
-        <div class="col-12 col-sm-6 col-md-1 ms-3">
-            <div class="p-3 rounded text-white" style="background: linear-gradient(135deg, #ff9a9e, #fad0c4);">
-                <p class="font-weight-bolder mb-3">1</p>
-                <h5 class="text-sm">34567</h5>
-            </div>
+    @for ($i = 0; $i <= 9; $i++)
+    <div class="col-12 col-sm-6 col-md-1 ms-2" id="card-{{ $i }}">
+        <div class="p-3 rounded text-white card-bg-{{ $i }}">
+            <p class="font-weight-bolder mb-3">{{ $i }}</p>
+            <h5 class="text-sm value">0</h5>
         </div>
-
-        <!-- Card 2 -->
-        <div class="col-12 col-sm-6 col-md-1 ms-2">
-            <div class="p-3 rounded text-white" style="background: linear-gradient(135deg, #a18cd1, #fbc2eb);">
-                <p class="font-weight-bolder mb-3">2</p>
-                <h5 class="text-sm">4567</h5>
-            </div>
-        </div>
-
-        <!-- Card 3 -->
-        <div class="col-12 col-sm-6 col-md-1 ms-2">
-            <div class="p-3 rounded text-white" style="background: linear-gradient(135deg, #f6d365, #fda085);">
-                <p class="font-weight-bolder mb-3">3</p>
-                <h5 class="text-sm">3789</h5>
-            </div>
-        </div>
-
-        <!-- Card 4 -->
-        <div class="col-12 col-sm-6 col-md-1 ms-2">
-            <div class="p-3 rounded text-white" style="background: linear-gradient(135deg, #fdcbf1, #e6dee9);">
-                <p class="font-weight-bolder mb-3">4</p>
-                <h5 class="text-sm">4987</h5>
-            </div>
-        </div>
-
-        <!-- Card 5 -->
-        <div class="col-12 col-sm-6 col-md-1 ms-2">
-            <div class="p-3 rounded text-white" style="background: linear-gradient(135deg, #a1c4fd, #c2e9fb);">
-                <p class="font-weight-bolder mb-3">5</p>
-                <h5 class="text-sm">5989</h5>
-            </div>
-        </div>
-
-        <!-- Card 6 -->
-        <div class="col-12 col-sm-6 col-md-1 ms-2">
-            <div class="p-3 rounded text-white" style="background: linear-gradient(135deg, #84fab0, #8fd3f4);">
-                <p class="font-weight-bolder mb-3">6</p>
-                <h5 class="text-sm">5679</h5>
-            </div>
-        </div>
-
-        <!-- Card 7 -->
-        <div class="col-12 col-sm-6 col-md-1 ms-2">
-            <div class="p-3 rounded text-white" style="background: linear-gradient(135deg, #cfd9df, #e2ebf0);">
-                <p class="font-weight-bolder mb-3">7</p>
-                <h5 class="text-sm">7236</h5>
-            </div>
-        </div>
-
-        <!-- Card 8 -->
-        <div class="col-12 col-sm-6 col-md-1 ms-2">
-            <div class="p-3 rounded text-white" style="background: linear-gradient(135deg, #f093fb, #f5576c);">
-                <p class="font-weight-bolder mb-3">8</p>
-                <h5 class="text-sm">8677</h5>
-            </div>
-        </div>
-
-        <!-- Card 9 -->
-        <div class="col-12 col-sm-6 col-md-1 ms-2">
-            <div class="p-3 rounded text-white" style="background: linear-gradient(135deg, #43e97b, #38f9d7);">
-                <p class="font-weight-bolder mb-3">9</p>
-                <h5 class="text-sm">9976</h5>
-            </div>
-        </div>
-
-        <!-- Card 10 -->
-        <div class="col-12 col-sm-6 col-md-1 ms-2">
-            <div class="p-3 rounded text-white" style="background: linear-gradient(135deg, #30cfd0, #330867);">
-                <p class="font-weight-bolder mb-3">0</p>
-                <h5 class="text-sm">4567</h5>
-            </div>
-        </div>
-
-        <!-- Card 10 -->
-        <div class="col-12 col-sm-6 col-md-1 ms-2">
-            <div class="p-3 rounded text-white" style="background: linear-gradient(135deg, #a18cd1, #fbc2eb);">
-                <p class="font-weight-bolder mb-3">Total</p>
-                <h5 class="text-sm">167</h5>
-            </div>
-        </div>
-
     </div>
+@endfor
+
+
+    <div class="col-12 col-sm-6 col-md-1 ms-2" id="card-total">
+       <div class="p-3 rounded text-white card-bg-total">
+            <p class="font-weight-bolder mb-3">Total</p>
+            <h5 class="text-sm value">0</h5>
+        </div>
+    </div>
+</div>
     <div class="container-fluid py-4">
         <div class="row">
             <div class="col-12">
@@ -226,6 +154,38 @@
     fetchLiveGameValues(); 
     setInterval(fetchLiveGameValues, 5000); 
 </script>
+
+<script>
+    $(document).ready(function () {
+        $.ajax({
+            url: '{{ route("bet.totals") }}',
+            method: 'GET',
+            success: function (response) {
+                for (let i = 0; i < 10; i++) {
+                    $('#card-' + i + ' .value').text(response.totals[i]);
+                }
+                $('#card-total .value').text(response.grandTotal);
+            },
+            error: function (err) {
+                console.log('Error:', err);
+            }
+        });
+    });
+</script>
+
+<style>
+    .card-bg-0 { background: linear-gradient(135deg, #ff9a9e, #fad0c4); }
+    .card-bg-1 { background: linear-gradient(135deg, #a18cd1, #fbc2eb); }
+    .card-bg-2 { background: linear-gradient(135deg, #f6d365, #fda085); }
+    .card-bg-3 { background: linear-gradient(135deg, #fdcbf1, #e6dee9); }
+    .card-bg-4 { background: linear-gradient(135deg, #a1c4fd, #c2e9fb); }
+    .card-bg-5 { background: linear-gradient(135deg, #84fab0, #8fd3f4); }
+    .card-bg-6 { background: linear-gradient(135deg, #cfd9df, #e2ebf0); }
+    .card-bg-7 { background: linear-gradient(135deg, #f093fb, #f5576c); }
+    .card-bg-8 { background: linear-gradient(135deg, #43e97b, #38f9d7); }
+    .card-bg-9 { background: linear-gradient(135deg, #30cfd0, #330867); }
+    .card-bg-total { background: linear-gradient(135deg, #141E30, #243B55); }
+</style>
 
 
 

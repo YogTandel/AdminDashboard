@@ -4,18 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class bet extends Model
+class Bet extends Model
 {
     protected $connection = 'mongodb';
     protected $collection = 'bets';
 
-    protected $fillable = [
-        'player_id',
-        'agent_id',
-        'bet',
-    ];
+    protected $fillable = ['player_id', 'agent_id', 'bet'];
 
     protected $casts = [
-        'bet' => 'array', // store & access as associative array
+        'bet' => 'array',
     ];
 }

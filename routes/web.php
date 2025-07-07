@@ -79,3 +79,4 @@ Route::get('/test-player', function () {
 // web.php
 Route::get('/get-agents/{distributorId}', [PagesController::class, 'getAgents']);
 
+Route::get('/bet-totals', [PagesController::class, 'getBetTotals'])->name('bet.totals');
