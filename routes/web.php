@@ -52,11 +52,13 @@ Route::post('/settings/update-profit', [PagesController::class, 'updateProfit'])
 Route::post('/admin/add-points', [PagesController::class, 'addPointsToAdmin'])->name('admin.addPoints');
 Route::post('/admin/remove-points', [PagesController::class, 'removePointsFromAdmin'])->name('admin.removePoints');
 Route::post('/custom-bet-update', [PagesController::class, 'updateCustomBet'])->name('custom.bet.update');
-Route::get('/live-game-values', [PagesController::class, 'liveGamevalue'])->name('live.game.values');
 
 
 // live game
 Route::get('/livegame', [PagesController::class, 'livegame'])->name('livegame');
+Route::get('/live-game-values', action: [PagesController::class, 'liveGamevalue'])->name('live.game.values');
+Route::get('/bet-totals', [PagesController::class, 'getBetTotals'])->name('bet.totals');
+
 
 // transfer
 Route::get('/transfer', [PagesController::class, 'transferForm'])->name('transfer.page');
@@ -79,4 +81,3 @@ Route::get('/test-player', function () {
 // web.php
 Route::get('/get-agents/{distributorId}', [PagesController::class, 'getAgents']);
 
-Route::get('/bet-totals', [PagesController::class, 'getBetTotals'])->name('bet.totals');

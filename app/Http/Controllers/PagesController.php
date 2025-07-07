@@ -506,6 +506,24 @@ public function player()
     ]);
 }
 
+public function getBetTotals()
+    {
+        $bets = DB::table('bets')->get();
+        $totals = array_fill(0, 10, 0);
+
+        foreach ($bets as $bet) {
+            foreach ($bet->bet ?? [] as $key => $value) {
+                $index = (int) $key;
+                $totals[$index] += (int) $value;
+            }
+        }
+
+        return response()->json([
+            'totals' => $totals,
+            'grandTotal' => array_sum($totals),
+        ]);
+    }
+
 
     public function exportGameHistory($playerId)
     {
@@ -785,22 +803,6 @@ public function updateCustomBet(Request $request)
     }
 }
 
-public function getBetTotals()
-    {
-        $bets = DB::table('bets')->get();
-        $totals = array_fill(0, 10, 0);
 
-        foreach ($bets as $bet) {
-            foreach ($bet->bet ?? [] as $key => $value) {
-                $index = (int) $key;
-                $totals[$index] += (int) $value;
-            }
-        }
-
-        return response()->json([
-            'totals' => $totals,
-            'grandTotal' => array_sum($totals),
-        ]);
-    }
 
 }
