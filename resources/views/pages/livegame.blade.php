@@ -156,7 +156,7 @@
 </script>
 
 <script>
-    $(document).ready(function () {
+    function fetchBetTotals() {
         $.ajax({
             url: '{{ route("bet.totals") }}',
             method: 'GET',
@@ -167,9 +167,14 @@
                 $('#card-total .value').text(response.grandTotal);
             },
             error: function (err) {
-                console.log('Error:', err);
+                console.error('Error fetching bet totals:', err);
             }
         });
+    }
+
+    $(document).ready(function () {
+        fetchBetTotals();            // First load
+        setInterval(fetchBetTotals, 5000); // Auto update every 5 seconds
     });
 </script>
 
