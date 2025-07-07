@@ -80,53 +80,35 @@
         </div>
     </div>
 </div>
-    <div class="container-fluid py-4">
-        <div class="row">
-            <div class="col-12">
-                <div class="card mb-4">
-                    <div class="card-header pb-0 d-flex justify-content-between align-items-center">
-                        <h6 class=" text-dark fw-bolder text-center" style="font-size: 1.5rem;">Live Player</h6>
-                    </div>
-                    <div class="card-body px-0 pt-0 pb-2 mt-2">
-                        <div class="table-responsive p-0">
-                            <table class="table align-items-center mb-0" style="table-layout: fixed; width: 100%;">
-                                <thead>
-                                    <tr>
-                                        <th class="text-uppercase text-dark fw-bold text-center"
-                                            style="font-size: 1rem; width: 22%;">Name</th>
-                                        <th class="text-uppercase text-dark fw-bold text-center" style="font-size: 1rem;">1
-                                        </th>
-                                        <th class="text-uppercase text-dark fw-bold text-center" style="font-size: 1rem;">2
-                                        </th>
-                                        <th class="text-uppercase text-dark fw-bold text-center" style="font-size: 1rem;">3
-                                        </th>
-                                        <th class="text-uppercase text-dark fw-bold text-center" style="font-size: 1rem;">4
-                                        </th>
-                                        <th class="text-uppercase text-dark fw-bold text-center" style="font-size: 1rem;">5
-                                        </th>
-                                        <th class="text-uppercase text-dark fw-bold text-center" style="font-size: 1rem;">6
-                                        </th>
-                                        <th class="text-uppercase text-dark fw-bold text-center" style="font-size: 1rem;">7
-                                        </th>
-                                        <th class="text-uppercase text-dark fw-bold text-center" style="font-size: 1rem;">8
-                                        </th>
-                                        <th class="text-uppercase text-dark fw-bold text-center" style="font-size: 1rem;">9
-                                        </th>
-                                        <th class="text-uppercase text-dark fw-bold text-center" style="font-size: 1rem;">0
-                                        </th>
-                                        <th class="text-uppercase text-dark fw-bold text-center" style="font-size: 1rem;">
-                                            Total</th>
-                                    </tr>
-                                </thead>
-                            </table>
-                        </div>
+  <div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card mb-4">
+                <div class="card-header pb-0 d-flex justify-content-between align-items-center">
+                    <h6 class="text-dark fw-bolder text-center" style="font-size: 1.5rem;">Live Player</h6>
+                </div>
+                <div class="card-body px-0 pt-0 pb-2 mt-2">
+                    <div class="table-responsive p-0">
+                        <table class="table align-items-center mb-0" style="table-layout: fixed; width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="text-uppercase text-dark fw-bold text-center" style="font-size: 1rem; width: 22%;">Name</th>
+                                    @for ($i = 1; $i <= 9; $i++)
+                                        <th class="text-uppercase text-dark fw-bold text-center" style="font-size: 1rem;">{{ $i }}</th>
+                                    @endfor
+                                    <th class="text-uppercase text-dark fw-bold text-center" style="font-size: 1rem;">0</th>
+                                    <th class="text-uppercase text-dark fw-bold text-center" style="font-size: 1rem;">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody id="player-table-body"></tbody>
+                        </table>
                     </div>
                 </div>
             </div>
-
-            <x-footer />
         </div>
+        <x-footer />
     </div>
+</div>
 
     
     <script>
@@ -192,6 +174,49 @@
     .card-bg-total { background: linear-gradient(135deg, #a18cd1, #fbc2eb); }
 </style>
 
+<script>
+    function loadPlayers() {
+        $.ajax({
+            url: "{{ route('players.live') }}",
+            type: 'GET',
+            success: function (response) {
+                let players = response.players;
+                let tableBody = '';
 
+               players.forEach(function (player) {
+                let name = player.name;
+                let betValues = player.betValues;
+                let total = player.total;
+                let stime = player.stime;
+
+                let row = `<tr>`;
+                row += `<td class="text-center text-dark fw-bold">${name}</td>`;
+
+                for (let i = 0; i < 10; i++) {
+                    row += `<td class="text-center">${betValues[i] ?? 0}</td>`;
+                }
+
+                row += `<td class="text-center fw-bold">${total}</td>`;
+                row += `</tr>`;
+
+                tableBody += row;
+            });
+
+
+                $('#player-table-body').html(tableBody);
+            },
+            error: function (err) {
+                console.error("Error fetching player data", err);
+            }
+        });
+    }
+
+    // Initial load
+    $(document).ready(function () {
+        loadPlayers();
+        // Optional: Auto refresh every 15 seconds
+        // setInterval(loadPlayers, 15000);
+    });
+</script>
 
 @endsection

@@ -58,12 +58,12 @@ Route::post('/custom-bet-update', [PagesController::class, 'updateCustomBet'])->
 Route::get('/livegame', [PagesController::class, 'livegame'])->name('livegame');
 Route::get('/live-game-values', action: [PagesController::class, 'liveGamevalue'])->name('live.game.values');
 Route::get('/bet-totals', [PagesController::class, 'getBetTotals'])->name('bet.totals');
+Route::get('/get-live-players', [PagesController::class, 'getLivePlayers'])->name('players.live');
 
 
 // transfer
 Route::get('/transfer', [PagesController::class, 'transferForm'])->name('transfer.page');
 Route::post('/transfer', [PagesController::class, 'processTransfer'])->name('transfer.execute');
-
 Route::get('/transfer-report', [PagesController::class, 'showTransferReport'])->name('transfer.report');
 
 // test-db

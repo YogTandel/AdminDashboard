@@ -524,7 +524,30 @@ public function getBetTotals()
         ]);
     }
 
+public function getLivePlayers()
+    {
+        $players = User::where('role', 'player')
+            ->where('login_status', true)
+            ->get();
 
+        $result = [];
+
+        foreach ($players as $player) {
+            $history = $player->gameHistory;
+            if (!empty($history)) {
+                $lastGame = end($history);
+                $betValues = $lastGame['betValues'] ?? [];
+
+                $result[] = [
+                    'name'       => $player->player,
+                    'betValues'  => $betValues,
+                    'total'      => array_sum($betValues),
+                ];
+            }
+        }
+
+        return response()->json(['players' => $result]);
+    }
     public function exportGameHistory($playerId)
     {
         // Find player with role validation
