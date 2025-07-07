@@ -180,11 +180,11 @@
     .card-bg-3 { background: linear-gradient(135deg, #fdcbf1, #e6dee9); }
     .card-bg-4 { background: linear-gradient(135deg, #a1c4fd, #c2e9fb); }
     .card-bg-5 { background: linear-gradient(135deg, #84fab0, #8fd3f4); }
-    .card-bg-6 { background: linear-gradient(135deg, #cfd9df, #e2ebf0); }
+    .card-bg-6 { background: linear-gradient(135deg, #cfd910df,rgb(153, 191, 211)); }
     .card-bg-7 { background: linear-gradient(135deg, #f093fb, #f5576c); }
     .card-bg-8 { background: linear-gradient(135deg, #43e97b, #38f9d7); }
     .card-bg-9 { background: linear-gradient(135deg, #30cfd0, #330867); }
-    .card-bg-total { background: linear-gradient(135deg, #141E30, #243B55); }
+    .card-bg-total { background: linear-gradient(135deg, #a18cd1, #fbc2eb); }
 </style>
 
 
