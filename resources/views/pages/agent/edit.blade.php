@@ -28,29 +28,11 @@
 
                             <input type="hidden" name="role" value="agent">
 
-                            <!-- BALANCE -->
-                            <label>BALANCE</label>
-                            <div class="input-group mb-3">
-                                <input type="number"
-                                    step="0.01"
-                                    class="form-control"
-                                    name="balance"
-                                    value="{{ old('balance', isset($agent->balance) ? (float) (string) $agent->balance : 0) }}" required>
-                            </div>
-
-
                             <!-- DISTRIBUTOR -->
                             <label>DISTRIBUTOR</label>
                             <div class="input-group mb-3">
                                 <input type="text" class="form-control" name="distributor"
                                     value="{{ old('distributor', $agent->distributor) }}" required>
-                            </div>
-
-                            <!-- AGENT -->
-                            <label>AGENT</label>
-                            <div class="input-group mb-3">
-                                <input type="text" class="form-control" name="agent"
-                                    value="{{ old('agent', $agent->agent) }}" required>
                             </div>
 
                             <label>ENDPOINT</label>

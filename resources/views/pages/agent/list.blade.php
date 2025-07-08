@@ -131,14 +131,8 @@
                                             class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                                             Role
                                         </th>
-                                        <th class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                            Balance
-                                        </th>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                             Distributor
-                                        </th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                            Agent
                                         </th>
                                         <th class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                             Status
@@ -173,17 +167,9 @@
                                                     {{ ucfirst($agent->role) }}</p>
                                             </td>
                                             <td class="text-center">
-                                                <span
-                                                    class="text-xs font-weight-bold text-dark">₹{{ number_format($agent->balance, 2) }}
-                                                </span>
-                                            </td>
-                                            <td class="text-center">
                                                 <p class="text-xs font-weight-bold mb-0 text-dark">
                                                     {{ $agent->distributor }}
                                                 </p>
-                                            </td>
-                                            <td class="text-center">
-                                                <p class="text-xs font-weight-bold mb-0 text-dark">{{ $agent->agent }}</p>
                                             </td>
                                             <td class="text-center text-dark">
                                                 <span

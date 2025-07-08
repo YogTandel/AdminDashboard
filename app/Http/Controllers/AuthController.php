@@ -28,11 +28,9 @@ public function createAgent(Request $request)
         'player'          => 'required|string|max:255|unique:users,player',
         'password'        => 'required|string|min:3',
         'role'            => 'required|in:agent',
-        'agent'           => 'required|string|max:255',
         'endpoint'        => 'required|numeric|min:0',
         'distributor_id'  => 'required|string',  // MongoDB ID as string
         'distributor'     => 'required|string|max:255',  // Distributor name
-        'balance'         => 'required|numeric|min:0',
         'status'          => 'required|in:Active,Inactive',
     ]);
 
@@ -43,7 +41,6 @@ public function createAgent(Request $request)
         $validate['original_password'] = $validate['password'];
         $validate['password']          = bcrypt($validate['password']);
         $validate['DateOfCreation']    = (float) now()->format('YmdHis');
-        $validate['balance']           = (float) $validate['balance'];
         $validate['endpoint']          = (float) $validate['endpoint'];
 
         // Create the user document in MongoDB
@@ -151,17 +148,13 @@ public function createAgent(Request $request)
         'player'      => 'required|string|max:255|unique:users,player,' . $id,
         'password'    => 'nullable|string|min:3',
         'role'        => 'required|in:agent',
-        'agent'       => 'required|string|max:255',
         'endpoint'    => 'required|numeric|min:0',
         'distributor' => 'required|string|max:255',
-        'balance'     => 'required|numeric|min:0',
         'status'      => 'required|in:Active,Inactive',
     ]);
 
     try {
         $user = User::findOrFail($id);
-
-        $validate['balance']  = (float) $validate['balance'];
         $validate['endpoint'] = (float) $validate['endpoint']; 
 
         if (!empty($validate['password'])) {

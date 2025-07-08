@@ -34,23 +34,6 @@
 
                             <input type="hidden" name="role" value="agent">
 
-                            <label>BALANCE</label>
-                            <div class="input-group mb-3">
-                                <input
-                                    type="number"
-                                    step="0.01" 
-                                    class="form-control @error('balance') is-invalid @enderror"
-                                    placeholder="Balance"
-                                    aria-label="balance"
-                                    name="balance"
-                                    aria-describedby="balance"
-                                    value="{{ old('balance', isset($user) ? (float) $user->balance : '') }}"required
-                                >
-                                @error('balance')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-
 
                             <label>Distributor</label>
                             <div class="input-group mb-3">
@@ -72,18 +55,6 @@
                             @error('distributor')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
-
-
-
-                            <label>AGENT</label>
-                            <div class="input-group mb-3">
-                                <input type="text" class="form-control @error('agent') is-invalid @enderror"
-                                    placeholder="Agent" aria-label="agent" name="agent" aria-describedby="agent"
-                                    value="{{ old('agent') }}" required>
-                                @error('agent')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
 
                             <label>ENDPOINT</label>
                                 <div class="input-group mb-3">
