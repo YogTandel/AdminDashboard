@@ -29,13 +29,7 @@
 
                             <input type="hidden" name="role" value="distributor">
 
-                            <!-- BALANCE -->
-                            <label>BALANCE</label>
-                            <div class="input-group mb-3">
-                                <input type="number" class="form-control" name="balance"
-                                    value="{{ old('balance', (float) (string) $distributor->balance) }}"
-                                    step="0.01" placeholder="Enter balance" required>
-                            </div>
+                            
 
                             <!-- Endpoint -->
                             <label>Endpoint</label>

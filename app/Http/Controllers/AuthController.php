@@ -70,21 +70,20 @@ public function createAgent(Request $request)
     ]);
 
     $validate = $request->validate([
-        'player'   => 'required|string|max:255|unique:users,player',
-        'password' => 'required|string|min:3',
-        'role'     => 'required|in:distributor',
-        'balance'  => 'required|numeric|min:0',
-        'status'   => 'required|in:Active,Inactive',
-        'endpoint' => 'required|numeric|min:0',
-    ]);
+    'player'   => 'required|string|max:255|unique:users,player',
+    'password' => 'required|string|min:3',
+    'role'     => 'required|in:distributor',
+    'status'   => 'required|in:Active,Inactive',
+    'endpoint' => 'required|numeric|min:0',
+]);
+
 
     try {
         $validate['original_password'] = $validate['password'];
         $validate['password'] = bcrypt($validate['password']);
 
         $validate['DateOfCreation'] = (float) now()->format('YmdHis');
-        $validate['balance'] = (float) $validate['balance'];
-        $validate['endpoint'] = (float) $validate['endpoint']; // ✅ changed to float
+        $validate['endpoint'] = (float) $validate['endpoint']; 
 
         $user = User::create($validate);
 
@@ -191,7 +190,6 @@ public function createAgent(Request $request)
         'player'   => 'required|string|max:255|unique:users,player,' . $id,
         'password' => 'nullable|string|min:3',
         'role'     => 'required|in:distributor',
-        'balance'  => 'required|numeric|min:0',
         'status'   => 'required|in:Active,Inactive',
         'endpoint' => 'required|numeric|min:0',
     ]);
@@ -204,9 +202,7 @@ public function createAgent(Request $request)
             $validate['password'] = bcrypt($validate['password']);
         } else {
             unset($validate['password']);
-        }
-
-        $validate['balance'] = (float) $validate['balance'];       
+        }      
         $validate['endpoint'] = (float) $validate['endpoint'];     
 
         $user->update($validate);

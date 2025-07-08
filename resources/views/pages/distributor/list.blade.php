@@ -96,10 +96,7 @@
                                             class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                                             Role
                                         </th>
-                                        <th
-                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                            Balance
-                                        </th>
+                                        
                                         <th
                                             class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                             Endpoint
@@ -148,11 +145,7 @@
                                                     <p class="text-xs font-weight-bold mb-0">
                                                         {{ $distributor->role }}</p>
                                                 </td>
-                                                <td class="align-middle text-center text-sm">
-                                                    <p class="text-xs font-weight-bold mb-0">
-                                                        ₹{{ number_format((float) (string) $distributor->balance, 2) }}
-                                                    </p>
-                                                </td>
+                                                
                                                 <td class="align-middle text-center text-sm">
                                                     <p class="text-xs font-weight-bold mb-0">{{ $distributor->endpoint }}
                                                     </p>
