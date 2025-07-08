@@ -70,20 +70,7 @@
 
                             <!-- Hidden field for agent name -->
                             <input type="hidden" name="agent" id="agent_name">
-
-
-
-                            <label>Login Status</label>
-                                <div class="input-group mb-3">
-                                    <select class="form-control @error('login_status') is-invalid @enderror" name="login_status" required>
-                                        <option value="True" {{ old('login_status', 'False') === 'True' ? 'selected' : '' }}>True</option>
-                                        <option value="False" {{ old('login_status', 'False') === 'False' ? 'selected' : '' }}>False</option>
-                                    </select>
-                                    @error('login_status')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-
+                            
                             <label>Status</label>
                             <div class="input-group mb-3">
                                 <select class="form-control @error('status') is-invalid @enderror" name="status" required>
@@ -94,16 +81,6 @@
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
-
-                            <label>Winamount</label>
-                                <div class="input-group mb-3">
-                                    <input type="number" step="1" class="form-control @error('winamount') is-invalid @enderror"
-                                        name="winamount" placeholder="Winamount" value="{{ old('winamount') }}" required>
-                                    @error('winamount')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-
 
                             {{-- Hidden default gameHistory to prevent DB issues --}}
                             <input type="hidden" name="gameHistory[]" value="">

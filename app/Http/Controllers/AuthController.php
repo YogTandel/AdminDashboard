@@ -97,47 +97,56 @@ public function createAgent(Request $request)
     }
     }
 
-
- public function createplayer(Request $request)
+  public function createplayer(Request $request)
 {
+    Log::info('Attempting to create a new player', [
+        'input' => $request->except(['password', 'original_password'])
+    ]);
 
     $validate = $request->validate([
         'player'       => 'required|string|max:255|unique:users,player',
         'password'     => 'required|string|min:3',
         'role'         => 'required|in:player',
         'balance'      => 'required|numeric|min:0',
-        'distributor' => 'required|exists:users,id',
+        'distributor'  => 'required|exists:users,id',
         'agent'        => 'required|string|max:255',
-        'agent_id'    => 'required|string',
-        'login_status' => ['required', 'in:True,False'],
+        'agent_id'     => 'required|string',
         'status'       => 'required|in:Active,Inactive',
-        'winamount'    => 'required|numeric',
         'gameHistory'  => 'nullable|array',
     ]);
 
     try {
+        // Convert agent_id to ObjectId
         $validate['agent_id'] = new ObjectId($validate['agent_id']);
+
+        // Set system-level fields
         $validate['original_password'] = $validate['password'];
+        $validate['password'] = bcrypt($validate['password']);
         $validate['DateOfCreation'] = (float) now()->format('YmdHis');
         $validate['balance'] = (float) $validate['balance'];
-        $validate['winamount'] = (int) $validate['winamount'];  
-        // $validate['login_status']  = (bool) $request->input('login_status'); 
-        $validate['login_status'] = $request->has('login_status') ? ($request->input('login_status') === 'True') : false;
 
+        // ✅ Set default login_status as false
+        $validate['login_status'] = false;
 
+        // ✅ Set default winamount as 0
+        $validate['winamount'] = 0;
 
         $user = User::create($validate);
 
         if ($user) {
+            Log::info('Player created successfully', ['id' => $user->_id ?? $user->id]);
             return redirect()->route('player.show')->with('success', 'Player added successfully');
         } else {
+            Log::warning('Player creation returned null');
             return back()->withErrors(['error' => 'Creation returned null']);
         }
 
     } catch (\Exception $e) {
+        Log::error('Failed to create player', ['error' => $e->getMessage()]);
         return back()->withErrors(['error' => 'Failed to create player. Please try again.']);
     }
 }
+
 
 
     public function editAgent(Request $request, $id)
@@ -208,13 +217,11 @@ public function createAgent(Request $request)
         return back()->withErrors(['error' => 'Failed to update distributor. Please try again.']);
     }
     }
-
-
-    public function editPlayer(Request $request, $id)
-{
+  public function editPlayer(Request $request, $id)
+  {
     Log::info('Attempting to edit player', ['id' => $id]);
 
-    // Validation
+    // Validate request (winamount removed)
     $validate = $request->validate([
         'player'      => 'required|string|max:255|unique:users,player,' . $id,
         'password'    => 'nullable|string|min:3',
@@ -223,11 +230,11 @@ public function createAgent(Request $request)
         'distributor' => 'required|exists:users,id',
         'agent'       => 'required|string|max:255',
         'status'      => 'required|in:Active,Inactive',
-        'winamount'   => 'required|numeric',
         'gameHistory' => 'nullable|array',
     ]);
 
     try {
+        // Find the user
         $user = User::findOrFail($id);
 
         // Optional password update
@@ -238,14 +245,16 @@ public function createAgent(Request $request)
             unset($validate['password']);
         }
 
-        // Type casting to avoid MongoDB Decimal128 issues
+        // Type casting
         $validate['balance'] = (float) $validate['balance'];
-        $validate['winamount'] = (int) $validate['winamount'];  // 💡 cast to int32
 
-        // Update player
+        // Preserve winamount from existing record
+        $validate['winamount'] = isset($user->winamount) ? (int) $user->winamount : 0;
+
+        // Update user
         $user->update($validate);
 
-        Log::info('Player updated successfully', ['id' => $user->id]);
+        Log::info('Player updated successfully', ['id' => $user->_id ?? $user->id]);
         return redirect()->route('player.show')->with('success', 'Player updated successfully');
 
     } catch (\Exception $e) {
@@ -256,6 +265,7 @@ public function createAgent(Request $request)
         return back()->withErrors(['error' => 'Failed to update player. Please try again.']);
     }
 }
+
 
     public function deleteAgent($id)
     {
