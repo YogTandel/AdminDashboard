@@ -197,14 +197,14 @@
         const initialValue = @json($settings->setTominimum ?? false);
 
         function updateButtonColor(value) {
-            const btn = $('#toggleSetToMinimumBtn');
-            btn.removeClass('btn-success btn-danger');
-
-            if (value) {
-                btn.addClass('btn-success'); // Green
-            } else {
-                btn.addClass('btn-danger'); // Red
-            }
+                const btn = $('#toggleSetToMinimumBtn');
+                btn.removeClass('btn-green btn-red'); 
+                
+                if (value) {
+                    btn.addClass('btn-green'); 
+                } else {
+                    btn.addClass('btn-red'); 
+                }
         }
 
         $(document).ready(function () {
