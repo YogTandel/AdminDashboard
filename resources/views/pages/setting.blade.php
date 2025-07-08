@@ -77,9 +77,6 @@
                                 <button type="button" class="btn bg-gradient-success mb-2">
                                     Release Commission
                                 </button>
-                                <button id="toggleSetToMinimumBtn" type="button" class="btn mb-2">
-                                    Set To Minimum
-                                </button>
                             </div>
                         </form>
                     </div>
@@ -99,16 +96,20 @@
                             <div><strong>Admin% Earning:</strong> <span class="text-success">{{ $settings->earning }}</span>
                             </div>
                         </div>
-                        <div class="d-flex flex-wrap gap-2">
-                            <form action="{{ route('settings.standingToEarning') }}" method="POST" class="d-inline">
+                        <div class="d-flex flex-wrap gap-3">
+                            <form action="{{ route('settings.standingToEarning') }}" method="POST">
                                 @csrf
-                                <button type="submit" class="btn btn-primary btn-sm shadow-soft">Standing To
-                                    Earning</button>
+                                <button type="submit" class="equal-btn btn-orange">Standing To Earning</button>
                             </form>
-                            <form action="{{ route('settings.earningToZero') }}" method="POST" class="d-inline">
+
+                            <form action="{{ route('settings.earningToZero') }}" method="POST">
                                 @csrf
-                                <button type="submit" class="btn btn-danger btn-sm shadow-soft">Earning to 0</button>
+                                <button type="submit" class="equal-btn btn-red">Earning to 0</button>
                             </form>
+
+                            <button id="toggleSetToMinimumBtn" type="button" class="equal-btn btn-green">
+                                Set To Minimum
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -238,6 +239,28 @@
             }, 5000);
         });
     </script>
+<style>
+    .equal-btn {
+        min-width: 160px; /* Set width same for all */
+        height: 45px;     /* Set uniform height */
+        font-weight: bold;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        text-align: center;
+    }
 
+    .btn-orange {
+        background-color: #f57c00;
+    }
+
+    .btn-green {
+        background-color: #4caf50;
+    }
+
+    .btn-red {
+        background-color: #e53935;
+    }
+</style>
     <x-footer />
 @endsection
