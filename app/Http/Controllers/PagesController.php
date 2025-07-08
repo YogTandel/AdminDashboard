@@ -206,52 +206,97 @@ public function player()
         return view('pages.transactionreport', compact('transactions', 'perPage'));
     }
 
-    public function playerHistory(Request $request, $id)
-    {
-        $from = $request->input('from_date');
-        $to = $request->input('to_date');
-        $dateRange = $request->input('date_range');
+public function playerHistory(Request $request, $id)
+{
+    $from = $request->input('from_date');
+    $to = $request->input('to_date');
+    $dateRange = $request->input('date_range');
 
-        $player = User::where('_id', $id)
-            ->where('role', 'player')
-            ->firstOrFail();
+    $player = User::where('_id', $id)
+        ->where('role', 'player')
+        ->firstOrFail();
 
-        if ($player->gameHistory && is_array($player->gameHistory)) {
-            $filteredHistory = collect($player->gameHistory);
+    if ($player->gameHistory && is_array($player->gameHistory)) {
+        $filteredHistory = collect($player->gameHistory);
 
-            if ($dateRange) {
-                $today = Carbon::today();
-                if ($dateRange === '2_days_ago') {
-                    $from = $today->copy()->subDays(2)->format('Y-m-d');
-                    $to = $today->format('Y-m-d');
-                } elseif ($dateRange === 'this_week') {
-                    $from = $today->copy()->startOfWeek()->format('Y-m-d');
-                    $to = $today->format('Y-m-d');
-                } elseif ($dateRange === 'this_month') {
-                    $from = $today->copy()->startOfMonth()->format('Y-m-d');
-                    $to = $today->format('Y-m-d');
-                }
-            }
-
-            if ($from) {
-                $filteredHistory = $filteredHistory->filter(function ($entry) use ($from) {
-                    $entryDate = Carbon::createFromFormat('YmdHis', $entry['stime'])->format('Y-m-d');
-                    return $entryDate >= $from;
-                });
-            }
-
-            if ($to) {
-                $filteredHistory = $filteredHistory->filter(function ($entry) use ($to) {
-                    $entryDate = Carbon::createFromFormat('YmdHis', $entry['stime'])->format('Y-m-d');
-                    return $entryDate <= $to;
-                });
-            }
-
-            $player->gameHistory = $filteredHistory->values()->all();
+        // Handle Quick Date Range
+        $today = \Carbon\Carbon::today();
+        if ($dateRange === '2_days_ago') {
+            $from = $today->copy()->subDays(2)->format('Y-m-d');
+            $to = $today->format('Y-m-d');
+        } elseif ($dateRange === 'this_week') {
+            $from = $today->copy()->startOfWeek()->format('Y-m-d');
+            $to = $today->format('Y-m-d');
+        } elseif ($dateRange === 'this_month') {
+            $from = $today->copy()->startOfMonth()->format('Y-m-d');
+            $to = $today->format('Y-m-d');
         }
 
-        return view('pages.player.history', compact('player'));
+        // Filter with dates
+        if ($from) {
+            $filteredHistory = $filteredHistory->filter(function ($entry) use ($from) {
+                if (isset($entry['stime'])) {
+                    try {
+                        $entryDate = \Carbon\Carbon::createFromFormat('Y/m/d H:i:s', $entry['stime'])->format('Y-m-d');
+                        return $entryDate >= $from;
+                    } catch (\Exception $e) {
+                        try {
+                            // Fallback to parse if format doesn't match
+                            $entryDate = \Carbon\Carbon::parse($entry['stime'])->format('Y-m-d');
+                            return $entryDate >= $from;
+                        } catch (\Exception $e) {
+                            return false;
+                        }
+                    }
+                }
+                return false;
+            });
+        }
+
+        if ($to) {
+            $filteredHistory = $filteredHistory->filter(function ($entry) use ($to) {
+                if (isset($entry['stime'])) {
+                    try {
+                        $entryDate = \Carbon\Carbon::createFromFormat('Y/m/d H:i:s', $entry['stime'])->format('Y-m-d');
+                        return $entryDate <= $to;
+                    } catch (\Exception $e) {
+                        try {
+                            // Fallback to parse if format doesn't match
+                            $entryDate = \Carbon\Carbon::parse($entry['stime'])->format('Y-m-d');
+                            return $entryDate <= $to;
+                        } catch (\Exception $e) {
+                            return false;
+                        }
+                    }
+                }
+                return false;
+            });
+        }
+
+        // Sort by date descending (newest first)
+        $filteredHistory = $filteredHistory->sortByDesc(function ($entry) {
+            if (isset($entry['stime'])) {
+                try {
+                    return \Carbon\Carbon::createFromFormat('Y/m/d H:i:s', $entry['stime'])->timestamp;
+                } catch (\Exception $e) {
+                    try {
+                        return \Carbon\Carbon::parse($entry['stime'])->timestamp;
+                    } catch (\Exception $e) {
+                        return 0;
+                    }
+                }
+            }
+            return 0;
+        });
+
+        // Final filtered list
+        $player->gameHistory = $filteredHistory->values()->all();
     }
+
+    return view('pages.player.history', compact('player'));
+}
+
+
 
     public function selectAgent(Request $request)
     {
