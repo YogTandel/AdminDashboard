@@ -216,6 +216,9 @@ public function playerHistory(Request $request, $id)
         ->where('role', 'player')
         ->firstOrFail();
 
+    $perPage = 10; // Records per page
+    $currentPage = $request->get('page', 1);
+        
     if ($player->gameHistory && is_array($player->gameHistory)) {
         $filteredHistory = collect($player->gameHistory);
 
@@ -289,11 +292,24 @@ public function playerHistory(Request $request, $id)
             return 0;
         });
 
-        // Final filtered list
-        $player->gameHistory = $filteredHistory->values()->all();
+        // Create paginator
+        $paginatedHistory = new \Illuminate\Pagination\LengthAwarePaginator(
+            $filteredHistory->forPage($currentPage, $perPage),
+            $filteredHistory->count(),
+            $perPage,
+            $currentPage,
+            [
+                'path' => \Illuminate\Pagination\Paginator::resolveCurrentPath(),
+                'query' => $request->query()
+            ]
+        );
+
+        $player->gameHistory = $paginatedHistory->items();
+    } else {
+        $paginatedHistory = null;
     }
 
-    return view('pages.player.history', compact('player'));
+    return view('pages.player.history', compact('player', 'paginatedHistory'));
 }
 
 

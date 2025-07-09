@@ -13,21 +13,38 @@
                         <div class="mb-3 mb-md-0">
                             <h5 class="mb-1"><i class="fas fa-history me-2"></i> Game History - {{ $player->player }}</h5>
                             <div class="d-flex align-items-center flex-wrap">
-                                <span class="badge bg-primary me-2">{{ count($player->gameHistory ?? []) }} records</span>
+                                <span class="badge bg-primary me-2">{{ $paginatedHistory ? $paginatedHistory->total() : 0 }} records</span>
                                 <span class="text-sm">Current balance: {{ number_format($player->balance, 2) }}</span>
                             </div>
                         </div>
 
-                        <!-- <div class="d-flex flex-wrap align-items-end gap-2 mt-2 mt-md-0">
+                        <div class="d-flex flex-wrap align-items-end gap-2 mt-2 mt-md-0">
+                            <!-- Show Dropdown -->
+                            <form method="GET" class="d-flex align-items-center mb-0">
+                                
+                                @if (request()->has('search'))
+                                    <input type="hidden" name="search" value="{{ request('search') }}">
+                                @endif
+                                @if (request()->has('from_date'))
+                                    <input type="hidden" name="from_date" value="{{ request('from_date') }}">
+                                @endif
+                                @if (request()->has('to_date'))
+                                    <input type="hidden" name="to_date" value="{{ request('to_date') }}">
+                                @endif
+                                @if (request()->has('date_range'))
+                                    <input type="hidden" name="date_range" value="{{ request('date_range') }}">
+                                @endif
+                            </form>
+
                             <form method="GET" action="{{ route('player.history', $player->_id) }}">
                                 <div class="d-flex justify-content-end gap-2 mb-3">
                                     <div>
                                         <label for="date_range" class="form-label mb-0">Quick Date Range</label>
                                         <select name="date_range" id="date_range" class="form-control mb-0">
                                             <option value="">Select a range</option>
-                                            <option value="2_days_ago">Last 2 Days</option>
-                                            <option value="this_week">This Week</option>
-                                            <option value="this_month">This Month</option>
+                                            <option value="2_days_ago" {{ request('date_range') == '2_days_ago' ? 'selected' : '' }}>Last 2 Days</option>
+                                            <option value="this_week" {{ request('date_range') == 'this_week' ? 'selected' : '' }}>This Week</option>
+                                            <option value="this_month" {{ request('date_range') == 'this_month' ? 'selected' : '' }}>This Month</option>
                                         </select>
                                     </div>
 
@@ -42,6 +59,9 @@
                                     </div>
 
                                     <button type="submit" class="btn btn-sm btn-primary mt-4 mb-0">Filter</button>
+                                    @if (request()->has('from_date') || request()->has('to_date') || request()->has('date_range'))
+                                        <a href="{{ route('player.history', $player->_id) }}" class="btn btn-sm btn-secondary mt-4 mb-0">Reset</a>
+                                    @endif
                                 </div>
 
                                 <div class="d-flex justify-content-center mt-3 gap-2">
@@ -51,7 +71,7 @@
                                     <a href="{{ route('player.show') }}" class="btn btn-sm btn-outline-dark">← Back</a>
                                 </div>
                             </form>
-                        </div> -->
+                        </div>
                     </div>
                 </div>
 
@@ -69,60 +89,66 @@
                                 </thead>
                                 <tbody>
                                     @foreach ($player->gameHistory as $entry)
-                                            @php
-                                                $date = null;
-                                                if (!empty($entry['stime']) && is_string($entry['stime'])) {
+                                        @php
+                                            $date = null;
+                                            if (!empty($entry['stime']) && is_string($entry['stime'])) {
+                                                try {
+                                                    $date = Carbon::createFromFormat('Y/m/d H:i:s', $entry['stime']);
+                                                } catch (\Exception $e) {
                                                     try {
-                                                        $date = Carbon::createFromFormat('Y/m/d H:i:s', $entry['stime']);
+                                                        $date = Carbon::parse($entry['stime']);
                                                     } catch (\Exception $e) {
-                                                        try {
-                                                            // જો કોઈ કારણસર format અલગ હોય તો
-                                                            $date = Carbon::parse($entry['stime']);
-                                                        } catch (\Exception $e) {
-                                                            $date = null;
-                                                        }
+                                                        $date = null;
                                                     }
                                                 }
-                                            @endphp
+                                            }
+                                        @endphp
 
-                                         <tr>
-                                            <!-- Date -->
-                                            <td>
-                                                <div class="d-flex px-2 py-1">
-                                                    <div class="d-flex flex-column justify-content-center">
-                                                        <h6 class="mb-0 text-sm">{{ $date ? $date->format('Y-m-d') : 'Invalid' }}</h6>
-                                                        <p class="text-xs text-secondary mb-0">{{ $date ? $date->format('H:i:s') : '' }}</p>
-                                                    </div>
+                                     <tr>
+                                        <!-- Date -->
+                                        <td>
+                                            <div class="d-flex px-2 py-1">
+                                                <div class="d-flex flex-column justify-content-center">
+                                                    <h6 class="mb-0 text-sm">{{ $date ? $date->format('Y-m-d') : 'Invalid' }}</h6>
+                                                    <p class="text-xs text-secondary mb-0">{{ $date ? $date->format('H:i:s') : '' }}</p>
                                                 </div>
-                                            </td>
+                                            </div>
+                                        </td>
 
-                                            <!-- Win -->
-                                            <td class="align-middle text-center text-sm">
-                                                <span class="badge badge-sm bg-gradient-success">{{ number_format($entry['winpoint']) }}</span>
-                                            </td>
+                                        <!-- Win -->
+                                        <td class="align-middle text-center text-sm">
+                                            <span class="badge badge-sm bg-gradient-success">{{ number_format($entry['winpoint']) }}</span>
+                                        </td>
 
-                                            <!-- Result -->
-                                            <td class="align-middle text-center">
-                                                <span class="badge badge-sm bg-gradient-dark">{{ $entry['result'] }}</span>
-                                            </td>
+                                        <!-- Result -->
+                                        <td class="align-middle text-center">
+                                            <span class="badge badge-sm bg-gradient-dark">{{ $entry['result'] }}</span>
+                                        </td>
 
-                                            <!-- Betvalue -->
-                                            <td class="align-middle">
-                                                <div class="progress-wrapper w-100 mx-auto">
-                                                    <div class="progress-info mb-1">
-                                                        <span class="text-xs font-weight-bold">Betvalue</span>
-                                                    </div>
-                                                    <div class="d-flex justify-content-between">
-                                                        @foreach ($entry['betValues'] as $index => $bet)
-                                                            <span class="text-xs">{{ $index + 1 }}: {{ $bet }}</span>
-                                                        @endforeach
-                                                    </div>
+                                        <!-- Betvalue -->
+                                        <td class="align-middle">
+                                            <div class="progress-wrapper w-100 mx-auto">
+                                                <div class="progress-info mb-1">
+                                                    <span class="text-xs font-weight-bold">Betvalue</span>
                                                 </div>
-                                            </td>
-                                        </tr>
+                                                <div class="d-flex justify-content-between">
+                                                    @foreach ($entry['betValues'] as $index => $bet)
+                                                        <span class="text-xs">{{ $index + 1 }}: {{ $bet }}</span>
+                                                    @endforeach
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
                                     @endforeach
                                 </tbody>
                             </table>
+                        </div>
+
+                        <!-- Pagination -->
+                        <div class="d-flex justify-content-center mt-4">
+                            @if($paginatedHistory)
+                                {{ $paginatedHistory->appends(request()->query())->links('vendor.pagination.bootstrap-4') }}
+                            @endif
                         </div>
                     @else
                         <div class="text-center p-5">
@@ -137,4 +163,35 @@
     </div>
     <x-footer />
 </div>
+
+<style>
+    .pagination {
+        display: flex;
+        padding-left: 0;
+        list-style: none;
+        border-radius: 0.25rem;
+    }
+    .page-item.active .page-link {
+        z-index: 1;
+        color: #fff;
+        background-color: #5e72e4;
+        border-color: #5e72e4;
+    }
+    .page-link {
+        position: relative;
+        display: block;
+        padding: 0.5rem 0.75rem;
+        margin-left: -1px;
+        line-height: 1.25;
+        color: #5e72e4;
+        background-color: #fff;
+        border: 1px solid #dee2e6;
+    }
+    .page-link:hover {
+        color: #3c4fe0;
+        text-decoration: none;
+        background-color: #e9ecef;
+        border-color: #dee2e6;
+    }
+</style>
 @endsection
