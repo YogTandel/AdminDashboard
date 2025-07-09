@@ -890,4 +890,8 @@ public function getAdminEndpoint()
     return response()->json(['endpoint' => $admin->endpoint ?? 'N/A']);
 }
 
+public function commissionReport(){
+    return view('pages.commissionReport');
+}
+
 }
