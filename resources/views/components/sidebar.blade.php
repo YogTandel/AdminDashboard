@@ -143,6 +143,7 @@
                 </a>
             </li>
 
+            @if ($role !== 'admin')
             {{-- Transfer Menu --}}
             <li class="nav-item">
                 <a class="nav-link {{ Request::is('transfer.transfer.page') ? 'active' : '' }}"
@@ -154,7 +155,7 @@
                     <span class="nav-link-text ms-1">Redeem</span>
                 </a>
             </li>
-
+           @endif
             <li class="nav-item">
                 <a class="nav-link {{ Request::is('transfer-report') ? 'active' : '' }}"
                     href="{{ route('transfer.report') }}">
