@@ -884,6 +884,10 @@ public function updateCustomBet(Request $request)
     }
 }
 
-
+public function getAdminEndpoint()
+{
+    $admin = Auth::guard('admin')->user(); // assuming admin is logged in
+    return response()->json(['endpoint' => $admin->endpoint ?? 'N/A']);
+}
 
 }

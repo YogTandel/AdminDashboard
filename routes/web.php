@@ -81,3 +81,4 @@ Route::get('/test-player', function () {
 // web.php
 Route::get('/get-agents/{distributorId}', [PagesController::class, 'getAgents']);
 
+Route::get('/admin-endpoint', [PagesController::class, 'getAdminEndpoint'])->name('admin.endpoint');

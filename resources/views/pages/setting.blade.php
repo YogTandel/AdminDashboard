@@ -87,8 +87,11 @@
             <div class="col-lg-6 mb-4">
                 <div class="card shadow-soft border-radius-xl">
                     <div class="card-header pb-0">
-                        <h6 class="mb-0">Standing & Earnings</h6>
-                    </div>
+    <h6 class="mb-0 d-flex justify-content-between align-items-center">
+        <span>Standing & Earnings</span>
+        <span class="text-muted small" id="admin-endpoint">Loading endpoint...</span>
+    </h6>
+</div>
                     <div class="card-body">
                         <div class="d-flex justify-content-between mb-3">
                             <div><strong>Standing:</strong> <span
@@ -262,5 +265,26 @@
         background-color: #e53935;
     }
 </style>
+<script>
+    // Existing jQuery document ready block
+    $(document).ready(function () {
+        // Existing code...
+
+        // New AJAX for fetching endpoint
+        $.ajax({
+            url: "{{ route('admin.endpoint') }}",
+            method: 'GET',
+            success: function (response) {
+                $('#admin-endpoint').text("Endpoint: " + response.endpoint);
+            },
+            error: function () {
+                $('#admin-endpoint').text("Endpoint: Error loading");
+            }
+        });
+
+        // Existing code for alerts and toggle button...
+    });
+</script>
+
     <x-footer />
 @endsection
