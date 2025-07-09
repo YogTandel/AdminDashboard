@@ -20,21 +20,17 @@
 
                         <div class="d-flex flex-wrap align-items-end gap-2 mt-2 mt-md-0">
                             <!-- Show Dropdown -->
-                            <form method="GET" class="d-flex align-items-center mb-0">
-                                
-                                @if (request()->has('search'))
-                                    <input type="hidden" name="search" value="{{ request('search') }}">
-                                @endif
-                                @if (request()->has('from_date'))
-                                    <input type="hidden" name="from_date" value="{{ request('from_date') }}">
-                                @endif
-                                @if (request()->has('to_date'))
-                                    <input type="hidden" name="to_date" value="{{ request('to_date') }}">
-                                @endif
-                                @if (request()->has('date_range'))
-                                    <input type="hidden" name="date_range" value="{{ request('date_range') }}">
-                                @endif
-                            </form>
+                            <div class="d-flex align-items-center mb-0">
+                                <label for="per_page" class="mb-0 me-2 text-sm text-dark fw-bold">Show:</label>
+                                <div class="input-group input-group-outline border-radius-lg shadow-sm">
+                                    <select name="per_page" id="per_page" class="form-select border-0 ps-3 pe-4" style="min-width: 60px;">
+                                        <option value="5" {{ request('per_page') == 5 ? 'selected' : '' }}>5</option>
+                                        <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
+                                        <option value="20" {{ request('per_page') == 20 ? 'selected' : '' }}>20</option>
+                                        <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
+                                    </select>
+                                </div>
+                            </div>
 
                             <form method="GET" action="{{ route('player.history', $player->_id) }}">
                                 <div class="d-flex justify-content-end gap-2 mb-3">
@@ -147,7 +143,7 @@
                         <!-- Pagination -->
                         <div class="d-flex justify-content-center mt-4">
                             @if($paginatedHistory)
-                                {{ $paginatedHistory->appends(request()->query())->links('vendor.pagination.bootstrap-4') }}
+                                {{ $paginatedHistory->withQueryString()->links('vendor.pagination.bootstrap-4') }}
                             @endif
                         </div>
                     @else
@@ -194,4 +190,24 @@
         border-color: #dee2e6;
     }
 </style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle per_page dropdown changes
+    document.getElementById('per_page').addEventListener('change', function() {
+        const url = new URL(window.location.href);
+        url.searchParams.set('per_page', this.value);
+        url.searchParams.delete('page'); // Reset to first page
+        window.location.href = url.toString();
+    });
+    
+    // Preserve form inputs on page refresh
+    const form = document.querySelector('form[method="GET"]');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            // No need to prevent default, let the form submit normally
+        });
+    }
+});
+</script>
 @endsection

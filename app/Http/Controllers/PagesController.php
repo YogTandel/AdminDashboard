@@ -211,14 +211,13 @@ public function playerHistory(Request $request, $id)
     $from = $request->input('from_date');
     $to = $request->input('to_date');
     $dateRange = $request->input('date_range');
+    $perPage = $request->input('per_page', 10); // Get per_page from request or default to 10
+    $currentPage = $request->get('page', 1);
 
     $player = User::where('_id', $id)
         ->where('role', 'player')
         ->firstOrFail();
 
-    $perPage = 10; // Records per page
-    $currentPage = $request->get('page', 1);
-        
     if ($player->gameHistory && is_array($player->gameHistory)) {
         $filteredHistory = collect($player->gameHistory);
 
@@ -244,7 +243,6 @@ public function playerHistory(Request $request, $id)
                         return $entryDate >= $from;
                     } catch (\Exception $e) {
                         try {
-                            // Fallback to parse if format doesn't match
                             $entryDate = \Carbon\Carbon::parse($entry['stime'])->format('Y-m-d');
                             return $entryDate >= $from;
                         } catch (\Exception $e) {
@@ -264,7 +262,6 @@ public function playerHistory(Request $request, $id)
                         return $entryDate <= $to;
                     } catch (\Exception $e) {
                         try {
-                            // Fallback to parse if format doesn't match
                             $entryDate = \Carbon\Carbon::parse($entry['stime'])->format('Y-m-d');
                             return $entryDate <= $to;
                         } catch (\Exception $e) {
