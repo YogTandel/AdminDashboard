@@ -180,6 +180,21 @@
                                                         @foreach ($distributors as $distributor)
                                                             @include('pages.distributor.edit')
                                                         @endforeach
+
+
+                                                        <a href="javascript:;" 
+                                                            class="text-success font-weight-bold text-xs me-2"
+                                                            data-bs-toggle="modal" 
+                                                            data-bs-target="#refillModal{{ $distributor->id }}"
+                                                            title="Refill Balance">
+                                                            <i class="fa-solid fa-indian-rupee-sign"></i>
+                                                        </a>
+                                                        @foreach ($distributors as $distributor)
+                                                            @include('pages.distributor.refil')
+                                                        @endforeach
+
+
+        
                                                         <form action="{{ route('Distributor.delete', $distributor->id) }}"
                                                             method="post" style="display:flex;">
                                                             @csrf

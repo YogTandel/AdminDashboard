@@ -894,4 +894,23 @@ public function commissionReport(){
     return view('pages.commissionReport');
 }
 
+public function refillBalance(Request $request)
+    {
+        $request->validate([
+            'distributor_id' => 'required|exists:admins,_id', // MongoDB ID
+            'amount' => 'required|numeric|min:1',
+        ]);
+
+        $distributor = Admin::find($request->distributor_id);
+
+        if (!$distributor) {
+            return redirect()->back()->with('error', 'Distributor not found.');
+        }
+
+        $distributor->balance += $request->amount;
+        $distributor->save();
+
+        return redirect()->back()->with('success', 'Balance refilled successfully.');
+    }
+
 }

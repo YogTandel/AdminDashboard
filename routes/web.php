@@ -83,3 +83,5 @@ Route::get('/test-player', function () {
 Route::get('/get-agents/{distributorId}', [PagesController::class, 'getAgents']);
 
 Route::get('/commission-report', [PagesController::class, 'commissionReport'])->name('commission.report');
+
+Route::post('/distributor/refill-balance', [PagesController::class, 'refillBalance'])->name('distributor.refillBalance');
