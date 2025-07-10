@@ -213,22 +213,25 @@
                                                     </a>
 
                                                     @include('pages.agent.edit')
+                                                    
+                                                    
+                                                          @php
+                                                                $user = auth()->user();
+                                                            @endphp
 
-                                                    @php
-                                                        $agent = Auth::guard('web')->user(); // Agent login check
-                                                    @endphp
+                                                            @if ($user && get_class($user) !== \App\Models\Admin::class)
+                                                                <!-- Refill icon only if NOT admin -->
+                                                                <a href="javascript:;" 
+                                                                class="text-success font-weight-bold text-xs me-2"
+                                                                data-bs-toggle="modal" 
+                                                                data-bs-target="#refillModal{{ $agent->id }}"
+                                                                title="Refill Balance">
+                                                                <i class="fa-solid fa-indian-rupee-sign"></i>
+                                                                </a>
 
-                                                    @if ($agent && $agent->role === 'agent')
-                                                        <a href="javascript:;" 
-                                                            class="text-success font-weight-bold text-xs me-2"
-                                                            data-bs-toggle="modal" 
-                                                            data-bs-target="#refillModal{{ $agent->id }}"
-                                                            title="Refill Balance">
-                                                            <i class="fa-solid fa-indian-rupee-sign"></i>
-                                                        </a>
-                                                    @endif
+                                                                @include('pages.distributor.refil', ['item' => $agent, 'type' => 'player'])
+                                                            @endif
 
-                                                    @include('pages.distributor.refil', ['item' => $agent, 'type' => 'agent'])
 
                                                     <!-- Delete Button -->
                                                     <form action="{{ route('agent.delete', $agent->id) }}" method="post"
@@ -261,7 +264,7 @@
 
                                             </td>
                                         </tr>
-                                    @empty
+                                        @empty
                                         <tr>
                                             <td colspan="11" class="text-center text-secondary text-sm">
                                                 No agents data found.
