@@ -182,19 +182,23 @@
                                                         @endforeach
 
 
-                                                        <a href="javascript:;" 
-                                                            class="text-success font-weight-bold text-xs me-2"
-                                                            data-bs-toggle="modal" 
-                                                            data-bs-target="#refillModal{{ $distributor->id }}"
-                                                            title="Refill Balance">
-                                                            <i class="fa-solid fa-indian-rupee-sign"></i>
-                                                        </a>
-                                                        @foreach ($distributors as $distributor)
-                                                            @include('pages.distributor.refil')
-                                                        @endforeach
+                                                        @php
+                                                            $admin = Auth::guard('admin')->user();
+                                                        @endphp
+
+                                                        @if ($admin)
+                                                            <a href="javascript:;" 
+                                                                class="text-success font-weight-bold text-xs me-2"
+                                                                data-bs-toggle="modal" 
+                                                                data-bs-target="#refillModal{{ $distributor->id }}"
+                                                                title="Refill Balance">
+                                                                <i class="fa-solid fa-indian-rupee-sign"></i>
+                                                            </a>
+
+                                                            @include('pages.distributor.refil', ['item' => $distributor, 'type' => 'distributor'])
+                                                        @endif
 
 
-        
                                                         <form action="{{ route('Distributor.delete', $distributor->id) }}"
                                                             method="post" style="display:flex;">
                                                             @csrf

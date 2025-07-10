@@ -894,23 +894,30 @@ public function commissionReport(){
     return view('pages.commissionReport');
 }
 
-public function refillBalance(Request $request)
+public function refill(Request $request, $type, $id)
     {
         $request->validate([
-            'distributor_id' => 'required|exists:admins,_id', // MongoDB ID
             'amount' => 'required|numeric|min:1',
         ]);
 
-        $distributor = Admin::find($request->distributor_id);
+        $amount = $request->input('amount');
 
-        if (!$distributor) {
-            return redirect()->back()->with('error', 'Distributor not found.');
+        if ($type === 'distributor') {
+            $user = User::findOrFail($id);
+        } elseif ($type === 'player') {
+            $user = User::findOrFail($id);
+        } else {
+            return redirect()->back()->with('error', 'Invalid type specified.');
         }
 
-        $distributor->balance += $request->amount;
-        $distributor->save();
+        // Update balance logic (assumes `balance` column exists)
+        $user->balance += $amount;
+        $user->save();
 
-        return redirect()->back()->with('success', 'Balance refilled successfully.');
+        return redirect()->back()->with('success', ucfirst($type).' balance refilled successfully.');
     }
+
+
+
 
 }
