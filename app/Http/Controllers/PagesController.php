@@ -906,6 +906,8 @@ public function refill(Request $request, $type, $id)
             $user = User::findOrFail($id);
         } elseif ($type === 'player') {
             $user = User::findOrFail($id);
+        }elseif ($type === 'agent') {
+            $user = User::findOrFail($id);
         } else {
             return redirect()->back()->with('error', 'Invalid type specified.');
         }

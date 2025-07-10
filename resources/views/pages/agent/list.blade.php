@@ -214,6 +214,22 @@
 
                                                     @include('pages.agent.edit')
 
+                                                    @php
+                                                        $agent = Auth::guard('web')->user(); // Agent login check
+                                                    @endphp
+
+                                                    @if ($agent && $agent->role === 'agent')
+                                                        <a href="javascript:;" 
+                                                            class="text-success font-weight-bold text-xs me-2"
+                                                            data-bs-toggle="modal" 
+                                                            data-bs-target="#refillModal{{ $agent->id }}"
+                                                            title="Refill Balance">
+                                                            <i class="fa-solid fa-indian-rupee-sign"></i>
+                                                        </a>
+                                                    @endif
+
+                                                    @include('pages.distributor.refil', ['item' => $agent, 'type' => 'agent'])
+
                                                     <!-- Delete Button -->
                                                     <form action="{{ route('agent.delete', $agent->id) }}" method="post"
                                                         style="display:flex;">
