@@ -16,152 +16,152 @@ use Illuminate\Support\Facades\Log;
 class PagesController extends Controller
 {
     public function agentList()
-{
-    $perPage = request()->get('per_page', 5);
-    $query = User::query();
+    {
+        $perPage = request()->get('per_page', 5);
+        $query = User::query();
 
-    // Search filter
-    if (request()->has('search')) {
-        $query = $query->where('player', 'like', '%' . request()->search . '%');
-    }
-
-    // Date range filter
-    $from = request()->input('from_date');
-    $to = request()->input('to_date');
-    $dateRange = request()->input('date_range');
-
-    if ($dateRange) {
-        $today = Carbon::today();
-        if ($dateRange === '2_days_ago') {
-            $from = $today->copy()->subDays(2)->format('Ymd');
-            $to = $today->format('Ymd');
-        } elseif ($dateRange === 'this_week') {
-            $from = $today->copy()->startOfWeek()->format('Ymd');
-            $to = $today->format('Ymd');
-        } elseif ($dateRange === 'this_month') {
-            $from = $today->copy()->startOfMonth()->format('Ymd');
-            $to = $today->format('Ymd');
+        // Search filter
+        if (request()->has('search')) {
+            $query = $query->where('player', 'like', '%' . request()->search . '%');
         }
+
+        // Date range filter
+        $from = request()->input('from_date');
+        $to = request()->input('to_date');
+        $dateRange = request()->input('date_range');
+
+        if ($dateRange) {
+            $today = Carbon::today();
+            if ($dateRange === '2_days_ago') {
+                $from = $today->copy()->subDays(2)->format('Ymd');
+                $to = $today->format('Ymd');
+            } elseif ($dateRange === 'this_week') {
+                $from = $today->copy()->startOfWeek()->format('Ymd');
+                $to = $today->format('Ymd');
+            } elseif ($dateRange === 'this_month') {
+                $from = $today->copy()->startOfMonth()->format('Ymd');
+                $to = $today->format('Ymd');
+            }
+        }
+
+        if ($from) {
+            $query->where('DateOfCreation', '>=', $from);
+        }
+
+        if ($to) {
+            $query->where('DateOfCreation', '<=', $to);
+        }
+
+        // Fetch agents
+        $agents = $query->where('role', 'agent')
+            ->paginate($perPage)
+            ->appends(request()->query());
+
+        // 🔥 Fetch all distributors for dropdown
+        $distributors = User::where('role', 'distributor')->get();
+
+        // Pass to view
+        return view('pages.agent.list', compact('agents', 'perPage', 'distributors'));
     }
-
-    if ($from) {
-        $query->where('DateOfCreation', '>=', $from);
-    }
-
-    if ($to) {
-        $query->where('DateOfCreation', '<=', $to);
-    }
-
-    // Fetch agents
-    $agents = $query->where('role', 'agent')
-        ->paginate($perPage)
-        ->appends(request()->query());
-
-    // 🔥 Fetch all distributors for dropdown
-    $distributors = User::where('role', 'distributor')->get();
-
-    // Pass to view
-    return view('pages.agent.list', compact('agents', 'perPage', 'distributors'));
-}
 
 
     public function distributor()
-{
-    $perPage = request()->get('per_page', 5);
-    $query = User::query();
+    {
+        $perPage = request()->get('per_page', 5);
+        $query = User::query();
 
-    // Search filter
-    if (request()->has('search')) {
-        $query->where('player', 'like', '%' . request()->search . '%');
-    }
-
-    // Date range filter
-    $from = request()->input('from_date');
-    $to = request()->input('to_date');
-    $dateRange = request()->input('date_range');
-
-    if ($dateRange) {
-        $today = Carbon::today();
-
-        if ($dateRange === '2_days_ago') {
-            $from = $today->copy()->subDays(2)->format('YmdHis');
-            $to = $today->copy()->endOfDay()->format('YmdHis');
-        } elseif ($dateRange === 'this_week') {
-            $from = $today->copy()->startOfWeek()->format('YmdHis');
-            $to = $today->copy()->endOfDay()->format('YmdHis');
-        } elseif ($dateRange === 'this_month') {
-            $from = $today->copy()->startOfMonth()->format('YmdHis');
-            $to = $today->copy()->endOfDay()->format('YmdHis');
+        // Search filter
+        if (request()->has('search')) {
+            $query->where('player', 'like', '%' . request()->search . '%');
         }
-    }
 
-    // Cast from/to to float (since stored as double)
-    if ($from) {
-        $query->where('DateOfCreation', '>=', (float) $from);
-    }
+        // Date range filter
+        $from = request()->input('from_date');
+        $to = request()->input('to_date');
+        $dateRange = request()->input('date_range');
 
-    if ($to) {
-        $query->where('DateOfCreation', '<=', (float) $to);
-    }
+        if ($dateRange) {
+            $today = Carbon::today();
 
-    $distributors = $query->where('role', 'distributor')
-        ->paginate($perPage)
-        ->appends(request()->query());
-
-    return view('pages.distributor.list', compact('distributors', 'perPage'));
-    }
-
-
-public function player()
-{
-    $perPage = request()->get('per_page', 5);
-    $query = User::query();
-
-    // Search filter
-    if (request()->has('search')) {
-        $query->where('player', 'like', '%' . request()->search . '%');
-    }
-
-    // Date range filter
-    $from = request()->input('from_date');
-    $to = request()->input('to_date');
-    $dateRange = request()->input('date_range');
-
-    if ($dateRange) {
-        $today = \Carbon\Carbon::today();
-
-        if ($dateRange === '2_days_ago') {
-            $from = $today->copy()->subDays(2)->format('YmdHis');
-            $to = $today->copy()->endOfDay()->format('YmdHis');
-        } elseif ($dateRange === 'this_week') {
-            $from = $today->copy()->startOfWeek()->format('YmdHis');
-            $to = $today->copy()->endOfDay()->format('YmdHis');
-        } elseif ($dateRange === 'this_month') {
-            $from = $today->copy()->startOfMonth()->format('YmdHis');
-            $to = $today->copy()->endOfDay()->format('YmdHis');
+            if ($dateRange === '2_days_ago') {
+                $from = $today->copy()->subDays(2)->format('YmdHis');
+                $to = $today->copy()->endOfDay()->format('YmdHis');
+            } elseif ($dateRange === 'this_week') {
+                $from = $today->copy()->startOfWeek()->format('YmdHis');
+                $to = $today->copy()->endOfDay()->format('YmdHis');
+            } elseif ($dateRange === 'this_month') {
+                $from = $today->copy()->startOfMonth()->format('YmdHis');
+                $to = $today->copy()->endOfDay()->format('YmdHis');
+            }
         }
+
+        // Cast from/to to float (since stored as double)
+        if ($from) {
+            $query->where('DateOfCreation', '>=', (float) $from);
+        }
+
+        if ($to) {
+            $query->where('DateOfCreation', '<=', (float) $to);
+        }
+
+        $distributors = $query->where('role', 'distributor')
+            ->paginate($perPage)
+            ->appends(request()->query());
+
+        return view('pages.distributor.list', compact('distributors', 'perPage'));
     }
 
-    if ($from) {
-        $query->where('DateOfCreation', '>=', (float) $from);
+
+    public function player()
+    {
+        $perPage = request()->get('per_page', 5);
+        $query = User::query();
+
+        // Search filter
+        if (request()->has('search')) {
+            $query->where('player', 'like', '%' . request()->search . '%');
+        }
+
+        // Date range filter
+        $from = request()->input('from_date');
+        $to = request()->input('to_date');
+        $dateRange = request()->input('date_range');
+
+        if ($dateRange) {
+            $today = \Carbon\Carbon::today();
+
+            if ($dateRange === '2_days_ago') {
+                $from = $today->copy()->subDays(2)->format('YmdHis');
+                $to = $today->copy()->endOfDay()->format('YmdHis');
+            } elseif ($dateRange === 'this_week') {
+                $from = $today->copy()->startOfWeek()->format('YmdHis');
+                $to = $today->copy()->endOfDay()->format('YmdHis');
+            } elseif ($dateRange === 'this_month') {
+                $from = $today->copy()->startOfMonth()->format('YmdHis');
+                $to = $today->copy()->endOfDay()->format('YmdHis');
+            }
+        }
+
+        if ($from) {
+            $query->where('DateOfCreation', '>=', (float) $from);
+        }
+
+        if ($to) {
+            $query->where('DateOfCreation', '<=', (float) $to);
+        }
+
+        // Players list with relation
+        $players = $query->where('role', 'player')
+            ->with(['agentUser'])
+            ->paginate($perPage)
+            ->appends(request()->query());
+
+        // Dropdown lists
+        $agents = User::where('role', 'agent')->get(['_id', 'player']);
+        $distributors = User::where('role', 'distributor')->get(['_id', 'player']);
+
+        return view('pages.player.list', compact('players', 'perPage', 'agents', 'distributors'));
     }
-
-    if ($to) {
-        $query->where('DateOfCreation', '<=', (float) $to);
-    }
-
-    // Players list with relation
-    $players = $query->where('role', 'player')
-        ->with(['agentUser'])
-        ->paginate($perPage)
-        ->appends(request()->query());
-
-    // Dropdown lists
-    $agents = User::where('role', 'agent')->get(['_id', 'player']);
-    $distributors = User::where('role', 'distributor')->get(['_id', 'player']);
-
-    return view('pages.player.list', compact('players', 'perPage', 'agents', 'distributors'));
-}
 
 
     public function transactionreport()
@@ -206,108 +206,108 @@ public function player()
         return view('pages.transactionreport', compact('transactions', 'perPage'));
     }
 
-public function playerHistory(Request $request, $id)
-{
-    $from = $request->input('from_date');
-    $to = $request->input('to_date');
-    $dateRange = $request->input('date_range');
-    $perPage = $request->input('per_page', 10); // Get per_page from request or default to 10
-    $currentPage = $request->get('page', 1);
+    public function playerHistory(Request $request, $id)
+    {
+        $from = $request->input('from_date');
+        $to = $request->input('to_date');
+        $dateRange = $request->input('date_range');
+        $perPage = $request->input('per_page', 10); // Get per_page from request or default to 10
+        $currentPage = $request->get('page', 1);
 
-    $player = User::where('_id', $id)
-        ->where('role', 'player')
-        ->firstOrFail();
+        $player = User::where('_id', $id)
+            ->where('role', 'player')
+            ->firstOrFail();
 
-    if ($player->gameHistory && is_array($player->gameHistory)) {
-        $filteredHistory = collect($player->gameHistory);
+        if ($player->gameHistory && is_array($player->gameHistory)) {
+            $filteredHistory = collect($player->gameHistory);
 
-        // Handle Quick Date Range
-        $today = \Carbon\Carbon::today();
-        if ($dateRange === '2_days_ago') {
-            $from = $today->copy()->subDays(2)->format('Y-m-d');
-            $to = $today->format('Y-m-d');
-        } elseif ($dateRange === 'this_week') {
-            $from = $today->copy()->startOfWeek()->format('Y-m-d');
-            $to = $today->format('Y-m-d');
-        } elseif ($dateRange === 'this_month') {
-            $from = $today->copy()->startOfMonth()->format('Y-m-d');
-            $to = $today->format('Y-m-d');
-        }
+            // Handle Quick Date Range
+            $today = \Carbon\Carbon::today();
+            if ($dateRange === '2_days_ago') {
+                $from = $today->copy()->subDays(2)->format('Y-m-d');
+                $to = $today->format('Y-m-d');
+            } elseif ($dateRange === 'this_week') {
+                $from = $today->copy()->startOfWeek()->format('Y-m-d');
+                $to = $today->format('Y-m-d');
+            } elseif ($dateRange === 'this_month') {
+                $from = $today->copy()->startOfMonth()->format('Y-m-d');
+                $to = $today->format('Y-m-d');
+            }
 
-        // Filter with dates
-        if ($from) {
-            $filteredHistory = $filteredHistory->filter(function ($entry) use ($from) {
-                if (isset($entry['stime'])) {
-                    try {
-                        $entryDate = \Carbon\Carbon::createFromFormat('Y/m/d H:i:s', $entry['stime'])->format('Y-m-d');
-                        return $entryDate >= $from;
-                    } catch (\Exception $e) {
+            // Filter with dates
+            if ($from) {
+                $filteredHistory = $filteredHistory->filter(function ($entry) use ($from) {
+                    if (isset($entry['stime'])) {
                         try {
-                            $entryDate = \Carbon\Carbon::parse($entry['stime'])->format('Y-m-d');
+                            $entryDate = \Carbon\Carbon::createFromFormat('Y/m/d H:i:s', $entry['stime'])->format('Y-m-d');
                             return $entryDate >= $from;
                         } catch (\Exception $e) {
-                            return false;
+                            try {
+                                $entryDate = \Carbon\Carbon::parse($entry['stime'])->format('Y-m-d');
+                                return $entryDate >= $from;
+                            } catch (\Exception $e) {
+                                return false;
+                            }
                         }
                     }
-                }
-                return false;
-            });
-        }
+                    return false;
+                });
+            }
 
-        if ($to) {
-            $filteredHistory = $filteredHistory->filter(function ($entry) use ($to) {
-                if (isset($entry['stime'])) {
-                    try {
-                        $entryDate = \Carbon\Carbon::createFromFormat('Y/m/d H:i:s', $entry['stime'])->format('Y-m-d');
-                        return $entryDate <= $to;
-                    } catch (\Exception $e) {
+            if ($to) {
+                $filteredHistory = $filteredHistory->filter(function ($entry) use ($to) {
+                    if (isset($entry['stime'])) {
                         try {
-                            $entryDate = \Carbon\Carbon::parse($entry['stime'])->format('Y-m-d');
+                            $entryDate = \Carbon\Carbon::createFromFormat('Y/m/d H:i:s', $entry['stime'])->format('Y-m-d');
                             return $entryDate <= $to;
                         } catch (\Exception $e) {
-                            return false;
+                            try {
+                                $entryDate = \Carbon\Carbon::parse($entry['stime'])->format('Y-m-d');
+                                return $entryDate <= $to;
+                            } catch (\Exception $e) {
+                                return false;
+                            }
+                        }
+                    }
+                    return false;
+                });
+            }
+
+            // Sort by date descending (newest first)
+            $filteredHistory = $filteredHistory->sortByDesc(function ($entry) {
+                if (isset($entry['stime'])) {
+                    try {
+                        return \Carbon\Carbon::createFromFormat('Y/m/d H:i:s', $entry['stime'])->timestamp;
+                    } catch (\Exception $e) {
+                        try {
+                            return \Carbon\Carbon::parse($entry['stime'])->timestamp;
+                        } catch (\Exception $e) {
+                            return 0;
                         }
                     }
                 }
-                return false;
+                return 0;
             });
+
+            // Create paginator
+            $paginatedHistory = new \Illuminate\Pagination\LengthAwarePaginator(
+                $filteredHistory->forPage($currentPage, $perPage),
+                $filteredHistory->count(),
+                $perPage,
+                $currentPage,
+                [
+                    'path' => \Illuminate\Pagination\Paginator::resolveCurrentPath(),
+                    'query' => $request->query()
+                ]
+            );
+
+            $player->gameHistory = $paginatedHistory->items();
+        } else {
+            $paginatedHistory = null;
         }
 
-        // Sort by date descending (newest first)
-        $filteredHistory = $filteredHistory->sortByDesc(function ($entry) {
-            if (isset($entry['stime'])) {
-                try {
-                    return \Carbon\Carbon::createFromFormat('Y/m/d H:i:s', $entry['stime'])->timestamp;
-                } catch (\Exception $e) {
-                    try {
-                        return \Carbon\Carbon::parse($entry['stime'])->timestamp;
-                    } catch (\Exception $e) {
-                        return 0;
-                    }
-                }
-            }
-            return 0;
-        });
-
-        // Create paginator
-        $paginatedHistory = new \Illuminate\Pagination\LengthAwarePaginator(
-            $filteredHistory->forPage($currentPage, $perPage),
-            $filteredHistory->count(),
-            $perPage,
-            $currentPage,
-            [
-                'path' => \Illuminate\Pagination\Paginator::resolveCurrentPath(),
-                'query' => $request->query()
-            ]
-        );
-
-        $player->gameHistory = $paginatedHistory->items();
-    } else {
-        $paginatedHistory = null;
+        return view('pages.player.history', compact('player', 'paginatedHistory'));
     }
-
-    return view('pages.player.history', compact('player', 'paginatedHistory'));
-}
 
 
 
@@ -503,7 +503,7 @@ public function playerHistory(Request $request, $id)
             'add_points' => 'required|numeric|min:1',
         ]);
 
-        $admin = DB::table('admins')->first(); 
+        $admin = DB::table('admins')->first();
 
         if (!$admin) {
             return back()->with('error', 'No Admin record .');
@@ -553,18 +553,18 @@ public function playerHistory(Request $request, $id)
         return view('pages.livegame');
     }
 
-  public function liveGamevalue()
-{
-    $setting = Setting::first();
+    public function liveGamevalue()
+    {
+        $setting = Setting::first();
 
-    return response()->json([
-        'standing' => $setting->standing ?? 0,
-        'earning' => $setting->earning ?? 0,
-        'result'   => $setting->result ?? '--',
-    ]);
-}
+        return response()->json([
+            'standing' => $setting->standing ?? 0,
+            'earning' => $setting->earning ?? 0,
+            'result' => $setting->result ?? '--',
+        ]);
+    }
 
-public function getBetTotals()
+    public function getBetTotals()
     {
         $bets = DB::table('bets')->get();
         $totals = array_fill(0, 10, 0);
@@ -582,7 +582,7 @@ public function getBetTotals()
         ]);
     }
 
-public function getLivePlayers()
+    public function getLivePlayers()
     {
         $players = User::where('role', 'player')
             ->where('login_status', true)
@@ -597,9 +597,9 @@ public function getLivePlayers()
                 $betValues = $lastGame['betValues'] ?? [];
 
                 $result[] = [
-                    'name'       => $player->player,
-                    'betValues'  => $betValues,
-                    'total'      => array_sum($betValues),
+                    'name' => $player->player,
+                    'betValues' => $betValues,
+                    'total' => array_sum($betValues),
                 ];
             }
         }
@@ -848,8 +848,8 @@ public function getLivePlayers()
             $objectId = new ObjectId($distributorId);
 
             $agents = User::where('role', 'agent')
-                        ->where('distributor_id', $objectId)
-                        ->get(['_id', 'player']);
+                ->where('distributor_id', $objectId)
+                ->get(['_id', 'player']);
 
             $agents = $agents->map(function ($agent) {
                 return [
@@ -866,35 +866,36 @@ public function getLivePlayers()
         }
     }
 
-public function updateCustomBet(Request $request)
-{
-    $request->validate([
-        'custom_bet' => 'required|integer|min:0|max:9',
-    ]);
+    public function updateCustomBet(Request $request)
+    {
+        $request->validate([
+            'custom_bet' => 'required|integer|min:0|max:9',
+        ]);
 
-    // MongoDB ObjectId ના આધાર પર શોધો
-    $setting = Setting::where('_id', new ObjectId('67d942244d741e1fb4f08710'))->first();
+        // MongoDB ObjectId ના આધાર પર શોધો
+        $setting = Setting::where('_id', new ObjectId('67d942244d741e1fb4f08710'))->first();
 
-    if ($setting) {
-        $setting->customBet = (int)$request->custom_bet;
-        $setting->save();
-        return back()->with('success', 'Custom Bet successfully added!');
-    } else {
-        return back()->with('error', 'Setting not!');
+        if ($setting) {
+            $setting->customBet = (int) $request->custom_bet;
+            $setting->save();
+            return back()->with('success', 'Custom Bet successfully added!');
+        } else {
+            return back()->with('error', 'Setting not!');
+        }
     }
-}
 
-public function getAdminEndpoint()
-{
-    $admin = Auth::guard('admin')->user(); // assuming admin is logged in
-    return response()->json(['endpoint' => $admin->endpoint ?? 'N/A']);
-}
+    public function getAdminEndpoint()
+    {
+        $admin = Auth::guard('admin')->user(); // assuming admin is logged in
+        return response()->json(['endpoint' => $admin->endpoint ?? 'N/A']);
+    }
 
-public function commissionReport(){
-    return view('pages.commissionReport');
-}
+    public function commissionReport()
+    {
+        return view('pages.commissionReport');
+    }
 
-public function refill(Request $request, $type, $id)
+    public function refill(Request $request, $type, $id)
     {
         $request->validate([
             'amount' => 'required|numeric|min:1',
@@ -906,7 +907,7 @@ public function refill(Request $request, $type, $id)
             $user = User::findOrFail($id);
         } elseif ($type === 'player') {
             $user = User::findOrFail($id);
-        }elseif ($type === 'agent') {
+        } elseif ($type === 'agent') {
             $user = User::findOrFail($id);
         } else {
             return redirect()->back()->with('error', 'Invalid type specified.');
@@ -916,7 +917,7 @@ public function refill(Request $request, $type, $id)
         $user->balance += $amount;
         $user->save();
 
-        return redirect()->back()->with('success', ucfirst($type).' balance refilled successfully.');
+        return redirect()->back()->with('success', ucfirst($type) . ' balance refilled successfully.');
     }
 
 

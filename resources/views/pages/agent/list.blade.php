@@ -213,8 +213,7 @@
                                                     </a>
 
                                                     @include('pages.agent.edit')
-                                                    
-                                                    
+                                                                                                      
                                                           @php
                                                                 $user = auth()->user();
                                                             @endphp
