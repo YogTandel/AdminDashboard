@@ -213,24 +213,6 @@
                                                     </a>
 
                                                     @include('pages.agent.edit')
-                                                                                                      
-                                                          @php
-                                                                $user = auth()->user();
-                                                            @endphp
-
-                                                            @if ($user && get_class($user) !== \App\Models\Admin::class)
-                                                                <!-- Refill icon only if NOT admin -->
-                                                                <a href="javascript:;" 
-                                                                class="text-success font-weight-bold text-xs me-2"
-                                                                data-bs-toggle="modal" 
-                                                                data-bs-target="#refillModal{{ $agent->id }}"
-                                                                title="Refill Balance">
-                                                                <i class="fa-solid fa-indian-rupee-sign"></i>
-                                                                </a>
-
-                                                                @include('pages.distributor.refil', ['item' => $agent, 'type' => 'player'])
-                                                            @endif
-
 
                                                     <!-- Delete Button -->
                                                     <form action="{{ route('agent.delete', $agent->id) }}" method="post"

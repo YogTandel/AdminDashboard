@@ -197,21 +197,7 @@
                                                             title="Copy Player">
                                                             <i class="fas fa-copy"></i>
                                                         </a>
-                                                        @php
-                                                            $agent = Auth::guard('web')->user();
-                                                        @endphp
-
-                                                        @if ($agent && $agent->role === 'agent')
-                                                            <a href="javascript:;" 
-                                                                class="text-success font-weight-bold text-xs me-2"
-                                                                data-bs-toggle="modal" 
-                                                                data-bs-target="#refillModal{{ $player->id }}"
-                                                                title="Refill Balance">
-                                                                <i class="fa-solid fa-indian-rupee-sign"></i>
-                                                            </a>
-
-                                                            @include('pages.distributor.refil', ['item' => $player, 'type' => 'player'])
-                                                        @endif
+                                                        
 
 
                                                         <a href="javascript:;"
