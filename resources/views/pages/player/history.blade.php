@@ -77,10 +77,11 @@
                             <table class="table align-items-center mb-0">
                                 <thead>
                                     <tr>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Date</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">WinPoint</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">Result</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Betvalue</th>
+                                        <th style="width: 10%;" class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-4">Date</th>
+                                        <th style="width: 10%;" class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">WinPoint</th>
+                                        <th style="width: 10%;" class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">Result</th>
+
+                                        <th  class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-1">Betvalue</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -112,9 +113,10 @@
                                         </td>
 
                                         <!-- Win -->
-                                        <td class="align-middle text-center text-sm">
-                                            <span class="badge badge-sm bg-gradient-success">{{ number_format($entry['winpoint']) }}</span>
+                                        <td class="align-middle text-center  py-1">
+                                            <span class="badge bg-success text-white">{{ number_format($entry['winpoint']) }}</span>
                                         </td>
+
 
                                         <!-- Result -->
                                         <td class="align-middle text-center">
