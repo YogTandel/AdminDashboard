@@ -228,6 +228,19 @@
                                                         </button>
                                                     </form>
 
+
+
+                                                     @if(auth()->check() && auth()->user()->role === 'distributor')
+                                                        <a href="javascript:;" class="text-success font-weight-bold text-xs me-2" 
+                                                        data-bs-toggle="modal" data-bs-target="#refillModal1{{ $agent->id }}">
+                                                            <i class="fa-solid fa-indian-rupee-sign"></i>
+                                                        </a>
+                                                    @endif
+                                                   @foreach ($agents as $agent_data)
+                                                        @include('pages.agent.refil1', ['user' => $agent_data])
+                                                    @endforeach
+
+
                                                     <!-- Transfer Icon -->
                                                     {{-- <a href="#" class="btn bg-gradient-info mb-0 text-white"
                                                         id="transfer-link">

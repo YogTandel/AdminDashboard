@@ -89,3 +89,7 @@ Route::post('/refill/{type}/{id}', [PagesController::class, 'refill'])->name('re
 
 Route::post('/admin/transfer-to-distributor', [PagesController::class, 'transferToDistributor'])
     ->name('admin.transfer.to.distributor');
+
+
+    Route::post('/distributor/transfer-to-agent', [PagesController::class, 'transferToAgent'])
+    ->name('user.transfer.to.agent');

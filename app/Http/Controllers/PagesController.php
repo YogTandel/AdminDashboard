@@ -965,5 +965,34 @@ public function transferToDistributor(Request $request,)
 
 }
 
+public function transferToAgent(Request $request)
+{
+     Log::info('TransferToAgent Request:', $request->all());
+
+    
+    // exit(0);
+    $request->validate([
+        'transfer_to' => 'required',
+        'amount' => 'required|numeric|min:0.01',
+    ]);
+
+    $distributor = Auth::user();
+    $agent = User::where('role', 'agent')
+             ->where('id', $request->transfer_to)
+             ->first();
+
+    if ($request->amount > $distributor->endpoint) {
+       
+        return back()->with('error', 'Insufficient balance.');
+    }
+
+    $distributor->endpoint -= $request->amount;
+    $agent->endpoint += $request->amount;
+
+    $distributor->save();
+    $agent->save();
+
+    return back()->with('success', 'Balance transferred successfully.');
+}
 
 }
