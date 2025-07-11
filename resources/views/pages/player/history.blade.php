@@ -77,11 +77,11 @@
                             <table class="table align-items-center mb-0">
                                 <thead>
                                     <tr>
-                                        <th style="width: 10%;" class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-4">Date</th>
-                                        <th style="width: 10%;" class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">WinPoint</th>
-                                        <th style="width: 10%;" class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">Result</th>
+                                        <th style="width: 10%;" class="text-uppercase text-secondary text-xxs font-weight-bolder ">Date</th>
+                                        <th style="width: 10%;" class="text-uppercase text-secondary text-xxs font-weight-bolder  text-center">WinPoint</th>
+                                        <th style="width: 10%;" class="text-uppercase text-secondary text-xxs font-weight-bolder  text-center">Result</th>
 
-                                        <th  class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-1">Betvalue</th>
+                                        <th  class="text-uppercase text-secondary text-xxs font-weight-bolder  ">Betvalue</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -123,19 +123,32 @@
                                             <span class="badge badge-sm bg-gradient-dark">{{ $entry['result'] }}</span>
                                         </td>
 
-                                        <!-- Betvalue -->
-                                        <td class="align-middle">
-                                            <div class="progress-wrapper w-100 mx-auto">
-                                                <div class="progress-info mb-1">
-                                                    <span class="text-xs font-weight-bold">Betvalue</span>
-                                                </div>
-                                                <div class="d-flex justify-content-between">
-                                                    @foreach ($entry['betValues'] as $index => $bet)
-                                                        <span class="text-xs">{{ $index + 1 }}: {{ $bet }}</span>
-                                                    @endforeach
-                                                </div>
+                                        <td class="align-middle" style="min-width: 100%;">
+                                        <div class="w-100">
+                                            <!-- Row 1: "Betvalue" label + index numbers -->
+                                            <div class="d-flex align-items-center mb-1">
+                                                <div class="fw-bold text-nowrap me-3 text-dark  text-xs" style="width: 80px;">Betvalue</div>
+                                                @foreach ($entry['betValues'] as $index => $bet)
+                                                    <div class="text-center me-5" style="min-width: 30px;">
+                                                        <span class="fw-bold text-dark">{{ $index + 1 }}</span>
+                                                    </div>
+                                                @endforeach
                                             </div>
-                                        </td>
+
+                                            <!-- Row 2: blank space + bet values -->
+                                            <div class="d-flex align-items-center">
+                                                <div class="me-3" style="width: 80px;"></div>
+                                                @foreach ($entry['betValues'] as $index => $bet)
+                                                    <div class="text-center me-5" style="min-width: 30px;">
+                                                        <span>{{ $bet }}</span>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    </td>
+
+
+
                                     </tr>
                                     @endforeach
                                 </tbody>
