@@ -219,6 +219,19 @@
                                                                 <i class="fas fa-trash"></i>
                                                             </button>
                                                         </form>
+                                                        
+                                                      
+                                                            @if(auth()->check() && auth()->user()->role === 'agent')
+                                                                <a href="javascript:;" class="text-success font-weight-bold text-xs me-2"
+                                                                    data-bs-toggle="modal" data-bs-target="#transferModal{{ $player->id }}">
+                                                                    <i class="fa-solid fa-indian-rupee-sign"></i>
+                                                                </a>
+                                                            @endif
+
+                                                            @include('pages.player.refil2', ['user' => $player])
+
+
+
                                                         <a href="{{ route('player.history', $player->_id) }}"
                                                             class="text-secondary font-weight-bold text-xs me-2"
                                                             data-bs-toggle="tooltip" data-bs-placement="top"

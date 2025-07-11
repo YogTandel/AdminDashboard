@@ -93,3 +93,7 @@ Route::post('/admin/transfer-to-distributor', [PagesController::class, 'transfer
 
     Route::post('/distributor/transfer-to-agent', [PagesController::class, 'transferToAgent'])
     ->name('user.transfer.to.agent');
+
+
+Route::post('/agent/transfer-to-player', [PagesController::class, 'transferToPlayer'])
+    ->name('agent.transfer.to.player');

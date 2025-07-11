@@ -995,4 +995,30 @@ public function transferToAgent(Request $request)
     return back()->with('success', 'Balance transferred successfully.');
 }
 
+public function transferToPlayer(Request $request)
+{
+    $request->validate([
+        'transfer_to' => 'required|exists:users,id',
+        'amount' => 'required|numeric|min:0.01',
+    ]);
+
+    $agent = Auth::user();
+    $player = User::where('role', 'player')->where('id', $request->transfer_to)->first();
+
+    if ($request->amount > $agent->endpoint) {
+        return back()->with('error', 'Insufficient balance.');
+    }
+
+    $agent->endpoint -= $request->amount;
+    $agent->save();
+
+    $player->balance += $request->amount;
+    $player->save();
+
+    return back()->with('success', 'Balance transferred successfully.');
+}
+
+
+
+
 }
