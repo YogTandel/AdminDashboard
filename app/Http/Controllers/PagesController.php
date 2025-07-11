@@ -895,32 +895,75 @@ class PagesController extends Controller
         return view('pages.commissionReport');
     }
 
-    public function refill(Request $request, $type, $id)
-    {
-        $request->validate([
-            'amount' => 'required|numeric|min:1',
+    // public function refill(Request $request, $type, $id)
+    // {
+    //     $request->validate([
+    //         'amount' => 'required|numeric|min:1',
+    //     ]);
+
+    //     $amount = $request->input('amount');
+
+    //     if ($type === 'distributor') {
+    //         $user = User::findOrFail($id);
+    //     } elseif ($type === 'player') {
+    //         $user = User::findOrFail($id);
+    //     } elseif ($type === 'agent') {
+    //         $user = User::findOrFail($id);
+    //     } else {
+    //         return redirect()->back()->with('error', 'Invalid type specified.');
+    //     }
+
+    //     // Update balance logic (assumes `balance` column exists)
+    //     $user->balance += $amount;
+    //     $user->save();
+
+    //     return redirect()->back()->with('success', value: ucfirst($type) . ' balance refilled successfully.');
+    // }
+
+
+public function transferToDistributor(Request $request,)
+{
+    $request->validate([
+        'transfer_to' => 'required|exists:users,id',
+        'amount' => 'required|numeric|min:0.01',
+    ]);
+
+    $admin = Auth::guard('admin')->user();
+    $distributor = User::where('id', $request->transfer_to)
+                      ->where('role', 'distributor')
+                      ->first();
+
+    if (!$distributor) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Distributor not found.',
         ]);
-
-        $amount = $request->input('amount');
-
-        if ($type === 'distributor') {
-            $user = User::findOrFail($id);
-        } elseif ($type === 'player') {
-            $user = User::findOrFail($id);
-        } elseif ($type === 'agent') {
-            $user = User::findOrFail($id);
-        } else {
-            return redirect()->back()->with('error', 'Invalid type specified.');
-        }
-
-        // Update balance logic (assumes `balance` column exists)
-        $user->balance += $amount;
-        $user->save();
-
-        return redirect()->back()->with('success', ucfirst($type) . ' balance refilled successfully.');
     }
 
+    if ($request->amount > $admin->endpoint) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Transfer amount cannot be greater than admin\'s endpoint balance.',
+        ]);
+    }
 
+    
+    $admin->endpoint -= $request->amount; 
+    $distributor->endpoint += $request->amount; 
+
+    $admin->save();
+    $distributor->save();
+
+    if ($request->ajax()) {
+    return response()->json([
+        'success' => true,
+        'message' => 'Balance transferred successfully.',
+    ]);
+} else {
+    return redirect()->back()->with('success', 'Balance transferred successfully.');
+}
+
+}
 
 
 }

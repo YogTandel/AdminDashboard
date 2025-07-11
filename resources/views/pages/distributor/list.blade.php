@@ -177,26 +177,28 @@
                                                             data-bs-target="#Editmodal{{ $distributor->id }}">
                                                             <i class="fas fa-edit"></i>
                                                         </a>
-                                                        @foreach ($distributors as $distributor)
+                                                        @foreach ($distributors as $distributor_data)
                                                             @include('pages.distributor.edit')
                                                         @endforeach
 
 
-                                                        @php
+                                                       @php
                                                             $admin = Auth::guard('admin')->user();
                                                         @endphp
-
                                                         @if ($admin)
-                                                            <a href="javascript:;" 
-                                                                class="text-success font-weight-bold text-xs me-2"
-                                                                data-bs-toggle="modal" 
-                                                                data-bs-target="#refillModal{{ $distributor->id }}"
-                                                                title="Refill Balance">
+                                                            <a href="javascript:;"
+                                                                class="text-success font-weight-bold text-xs me-2 "                                                                
+                                                                data-bs-placement="top" title="Refill Balance"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#refillModal{{ $distributor->id }}">
                                                                 <i class="fa-solid fa-indian-rupee-sign"></i>
                                                             </a>
-
-                                                            @include('pages.distributor.refil', ['item' => $distributor, 'type' => 'distributor'])
                                                         @endif
+                                                        @foreach ($distributors as $distributor_data)
+                                                            @include('pages.distributor.refil')
+                                                        @endforeach
+                                                        
+                                                        
 
 
                                                         <form action="{{ route('Distributor.delete', $distributor->id) }}"
