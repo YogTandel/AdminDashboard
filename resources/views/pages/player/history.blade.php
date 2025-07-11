@@ -128,11 +128,16 @@
                                             <!-- Row 1: "Betvalue" label + index numbers -->
                                             <div class="d-flex align-items-center mb-1">
                                                 <div class="fw-bold text-nowrap me-3 text-dark  text-xs" style="width: 80px;">Betvalue</div>
-                                                @foreach ($entry['betValues'] as $index => $bet)
+                                               @foreach ($entry['betValues'] as $index => $bet)
                                                     <div class="text-center me-5" style="min-width: 30px;">
-                                                        <span class="fw-bold text-dark">{{ $index + 1 }}</span>
+                                                        <span class="fw-bold px-2 py-1 rounded {{ $entry['result'] == ($index + 1) ? 'bg-success bg-opacity-25 text-dark' : 'text-dark' }}">
+                                                            {{ $index + 1 }}
+                                                        </span>
                                                     </div>
                                                 @endforeach
+
+
+
                                             </div>
 
                                             <!-- Row 2: blank space + bet values -->
@@ -140,9 +145,12 @@
                                                 <div class="me-3" style="width: 80px;"></div>
                                                 @foreach ($entry['betValues'] as $index => $bet)
                                                     <div class="text-center me-5" style="min-width: 30px;">
-                                                        <span>{{ $bet }}</span>
+                                                        <span class="{{ $entry['result'] == ($index + 1) ? 'fw-bold text-dark' : '' }}">
+                                                            {{ $bet }}
+                                                        </span>
                                                     </div>
                                                 @endforeach
+
                                             </div>
                                         </div>
                                     </td>
