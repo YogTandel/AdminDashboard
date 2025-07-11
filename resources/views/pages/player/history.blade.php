@@ -129,12 +129,14 @@
                                             <div class="d-flex align-items-center mb-1">
                                                 <div class="fw-bold text-nowrap me-3 text-dark  text-xs" style="width: 80px;">Betvalue</div>
                                                @foreach ($entry['betValues'] as $index => $bet)
-                                                    <div class="text-center me-5" style="min-width: 30px;">
+                                                    <div class="text-center me-4" style="min-width: 30px;">
                                                         <span class="fw-bold px-2 py-1 rounded {{ $entry['result'] == ($index + 1) ? 'bg-success bg-opacity-25 text-dark' : 'text-dark' }}">
                                                             {{ $index + 1 }}
                                                         </span>
                                                     </div>
+
                                                 @endforeach
+                                                    <div class="me-3 fw-bold text-dark text-xl " style="width: 80px;">Total</div>
 
 
 
@@ -144,13 +146,17 @@
                                             <div class="d-flex align-items-center">
                                                 <div class="me-3" style="width: 80px;"></div>
                                                 @foreach ($entry['betValues'] as $index => $bet)
-                                                    <div class="text-center me-5" style="min-width: 30px;">
+                                                    <div class="text-center me-4" style="min-width: 30px;">
                                                         <span class="{{ $entry['result'] == ($index + 1) ? 'fw-bold text-dark' : '' }}">
                                                             {{ $bet }}
                                                         </span>
                                                     </div>
                                                 @endforeach
-
+                                               <div class="d-flex align-items-center mt-1">
+                                                    <div class="text-dark fw-bold ps-2">
+                                                        {{ array_sum($entry['betValues']) }}
+                                                    </div>
+                                                </div>                                           
                                             </div>
                                         </div>
                                     </td>
