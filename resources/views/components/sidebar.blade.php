@@ -47,7 +47,7 @@
             @endphp
 
              <!-- Distributor -->
-            @if (in_array($role, ['admin', 'distributor']))
+            @if (in_array($role, ['admin', 'distributor','agent']))
                 <li class="nav-item">
                     <a class="nav-link {{ Request::is('distributor') ? 'active' : '' }}"
                         href="{{ route('distributor.show') }}">

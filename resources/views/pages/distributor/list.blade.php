@@ -198,8 +198,6 @@
                                                             @include('pages.distributor.refil')
                                                         @endforeach
                                                         
-                                                        
-
 
                                                         <form action="{{ route('Distributor.delete', $distributor->id) }}"
                                                             method="post" style="display:flex;">
