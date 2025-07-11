@@ -3,29 +3,47 @@
     <div class="container-fluid py-1 px-3">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
-                <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">Pages</a>
+                <li class="breadcrumb-item text-sm">
+                    <a class="opacity-5 text-dark" href="javascript:;">Pages</a>
                 </li>
-                <li class="breadcrumb-item text-sm text-dark active" aria-current="page">@yield('page-name', 'Dashboard')</li>
+                <li class="breadcrumb-item text-sm text-dark active" aria-current="page">
+                    @yield('page-name', 'Dashboard')
+                </li>
             </ol>
             <h6 class="font-weight-bolder mb-0">@yield('page-name', 'Dashboard')</h6>
         </nav>
 
-        <ul class="navbar-nav  justify-content-end">
-            @auth('admin')
+        <ul class="navbar-nav justify-content-end">
+            {{-- Display logged-in user info --}}
+            @php
+                $user = null;
+                $endpointType = '';
+                $endpointValue = '';
+
+                if (Auth::guard('admin')->check()) {
+                    $user = Auth::guard('admin')->user();
+                    $endpointType = 'Admin';
+                    $endpointValue = $user->endpoint ?? 'N/A';
+                } elseif (Auth::guard('web')->check()) {
+                    $user = Auth::guard('web')->user();
+                    $endpointType = 'Agent';
+                    $endpointValue = $user->endpoint ?? 'N/A';
+                }
+            @endphp
+
+            @if ($user)
                 <li class="nav-item d-flex align-items-center">
                     <a class="nav-link text-body font-weight-bold px-0">
                         <i class="ps-3 fa fa-user me-sm-1"></i>
-                        <span class="d-sm-inline d-none">{{ Auth::guard('admin')->user()->player }}</span>
+                        <span class="d-sm-inline d-none">
+                            {{ $user->player }} — endpoint: {{ $endpointValue }}
+                        </span>
                     </a>
                 </li>
-                @elseauth
-                <li class="nav-item d-flex align-items-center">
-                    <a class="nav-link text-body font-weight-bold px-0">
-                        <i class="ps-3 fa fa-user me-sm-1"></i>
-                        <span class="d-sm-inline d-none">{{ Auth::user()->player }}</span>
-                    </a>
-                </li>
-            @endauth
+            @endif
+
+
+            {{-- Logout button --}}
             @php
                 $isAdmin = Auth::guard('admin')->check();
                 $isUser = Auth::guard('web')->check();
@@ -33,9 +51,9 @@
 
             @if ($isAdmin || $isUser)
                 <li class="nav-item d-flex align-items-center">
-                    <form action="{{ $isAdmin ? route('logout') : route('logout') }}" method="POST">
+                    <form action="{{ route('logout') }}" method="POST">
                         @csrf
-                        <button type="submit" class="nav-link text-body font-weight-bold px-0">
+                        <button type="submit" class="nav-link text-body font-weight-bold px-0 bg-transparent border-0">
                             <i class="ps-3 fas fa-sign-out-alt me-sm-1"></i>
                         </button>
                     </form>
@@ -48,6 +66,8 @@
                     </a>
                 </li>
             @endif
+
+            {{-- Toggle for mobile --}}
             <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
                 <a href="javascript:;" class="nav-link text-body p-0" id="iconNavbarSidenav">
                     <div class="sidenav-toggler-inner">
@@ -58,23 +78,24 @@
                 </a>
             </li>
 
+            {{-- Notifications --}}
             <li class="nav-item dropdown px-2 pe-2 d-flex align-items-center">
                 <a href="javascript:;" class="nav-link text-body p-0" id="dropdownMenuButton" data-bs-toggle="dropdown"
                     aria-expanded="false">
                     <i class="fa fa-bell cursor-pointer"></i>
                 </a>
-                <ul class="dropdown-menu  dropdown-menu-end  px-2 py-3 me-sm-n4" aria-labelledby="dropdownMenuButton">
+                <ul class="dropdown-menu dropdown-menu-end px-2 py-3 me-sm-n4" aria-labelledby="dropdownMenuButton">
                     <li class="mb-2">
                         <a class="dropdown-item border-radius-md" href="javascript:;">
                             <div class="d-flex py-1">
                                 <div class="my-auto">
-                                    <img src="/assets/img/team-2.jpg" class="avatar avatar-sm  me-3 ">
+                                    <img src="/assets/img/team-2.jpg" class="avatar avatar-sm me-3">
                                 </div>
                                 <div class="d-flex flex-column justify-content-center">
                                     <h6 class="text-sm font-weight-normal mb-1">
                                         <span class="font-weight-bold">New message</span> from Laur
                                     </h6>
-                                    <p class="text-xs text-secondary mb-0 ">
+                                    <p class="text-xs text-secondary mb-0">
                                         <i class="fa fa-clock me-1"></i>
                                         13 minutes ago
                                     </p>
@@ -87,13 +108,13 @@
                             <div class="d-flex py-1">
                                 <div class="my-auto">
                                     <img src="/assets/img/small-logos/logo-spotify.svg"
-                                        class="avatar avatar-sm bg-gradient-dark  me-3 ">
+                                        class="avatar avatar-sm bg-gradient-dark me-3">
                                 </div>
                                 <div class="d-flex flex-column justify-content-center">
                                     <h6 class="text-sm font-weight-normal mb-1">
                                         <span class="font-weight-bold">New album</span> by Travis Scott
                                     </h6>
-                                    <p class="text-xs text-secondary mb-0 ">
+                                    <p class="text-xs text-secondary mb-0">
                                         <i class="fa fa-clock me-1"></i>
                                         1 day
                                     </p>
@@ -104,9 +125,9 @@
                     <li>
                         <a class="dropdown-item border-radius-md" href="javascript:;">
                             <div class="d-flex py-1">
-                                <div class="avatar avatar-sm bg-gradient-secondary  me-3  my-auto">
+                                <div class="avatar avatar-sm bg-gradient-secondary me-3 my-auto">
                                     <svg width="12px" height="12px" viewBox="0 0 43 36" version="1.1"
-                                        xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                                        xmlns="http://www.w3.org/2000/svg">
                                         <title>credit-card</title>
                                         <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
                                             <g transform="translate(-2169.000000, -745.000000)" fill="#FFFFFF"
@@ -129,7 +150,7 @@
                                     <h6 class="text-sm font-weight-normal mb-1">
                                         Payment successfully completed
                                     </h6>
-                                    <p class="text-xs text-secondary mb-0 ">
+                                    <p class="text-xs text-secondary mb-0">
                                         <i class="fa fa-clock me-1"></i>
                                         2 days
                                     </p>
@@ -140,6 +161,5 @@
                 </ul>
             </li>
         </ul>
-    </div>
     </div>
 </nav>
