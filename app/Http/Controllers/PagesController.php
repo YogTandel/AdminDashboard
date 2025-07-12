@@ -895,32 +895,6 @@ class PagesController extends Controller
         return view('pages.commissionReport');
     }
 
-    // public function refill(Request $request, $type, $id)
-    // {
-    //     $request->validate([
-    //         'amount' => 'required|numeric|min:1',
-    //     ]);
-
-    //     $amount = $request->input('amount');
-
-    //     if ($type === 'distributor') {
-    //         $user = User::findOrFail($id);
-    //     } elseif ($type === 'player') {
-    //         $user = User::findOrFail($id);
-    //     } elseif ($type === 'agent') {
-    //         $user = User::findOrFail($id);
-    //     } else {
-    //         return redirect()->back()->with('error', 'Invalid type specified.');
-    //     }
-
-    //     // Update balance logic (assumes `balance` column exists)
-    //     $user->balance += $amount;
-    //     $user->save();
-
-    //     return redirect()->back()->with('success', value: ucfirst($type) . ' balance refilled successfully.');
-    // }
-
-
 public function transferToDistributor(Request $request,)
 {
     $request->validate([
