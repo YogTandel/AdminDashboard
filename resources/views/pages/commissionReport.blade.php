@@ -27,28 +27,6 @@
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- Distributor & Agent List -->
-                            <div class="d-flex flex-wrap gap-2 mt-3 align-items-start flex-column w-100">
-                                <!-- Distributor Dropdown -->
-                                <div class="w-100">
-                                    <label class="form-label">Select Distributor</label>
-                                    <select id="distributorSelect" class="form-select" required>
-                                        <option value="">-- Select Distributor --</option>
-                                        <option value="dist1">Distributor A</option>
-                                        <option value="dist2">Distributor B</option>
-                                        <option value="dist3">Distributor C</option>
-                                    </select>
-                                </div>
-
-                                <!-- Connected Agent List -->
-                                <div class="w-100">
-                                    <label class="form-label">Connected Agents</label>
-                                    <ul id="agentList" class="list-group">
-                                        <li class="list-group-item text-muted">No agents found.</li>
-                                    </ul>
-                                </div>
-                            </div>
                         </form>
                     </div>
                 </div>
@@ -121,6 +99,23 @@
                 </div>
             </div>
             <!-- End Total Earnings -->
+
+            <!-- Moved Distributor Dropdown Section -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card shadow-sm border-radius-xl mb-4">
+                        <div class="card-body pt-3">
+                            <label class="form-label">Select Distributor</label>
+                            <select id="distributorSelect" class="form-select w-100" required>
+                                <option value="">-- Select Distributor --</option>
+                                <option value="dist1">Distributor A</option>
+                                <option value="dist2">Distributor B</option>
+                                <option value="dist3">Distributor C</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <!-- Dynamic Agent Summary Table Section -->
             <div class="row mt-4">
@@ -201,31 +196,16 @@
         };
 
         const distributorSelect = document.getElementById('distributorSelect');
-        const agentList = document.getElementById('agentList');
         const agentTableBody = document.getElementById('agentTableBody');
 
         distributorSelect.addEventListener('change', function() {
             const selected = this.value;
             const agents = distributorAgents[selected] || [];
 
-            // Update agent list
-            agentList.innerHTML = '';
-            if (agents.length > 0) {
-                agents.forEach(agent => {
-                    const li = document.createElement('li');
-                    li.className = 'list-group-item';
-                    li.textContent = agent.name;
-                    agentList.appendChild(li);
-                });
-            } else {
-                const li = document.createElement('li');
-                li.className = 'list-group-item text-muted';
-                li.textContent = 'No agents found.';
-                agentList.appendChild(li);
-            }
-
-            // Update agent table
+            // Clear existing table rows
             agentTableBody.innerHTML = '';
+
+            // If agents exist for selected distributor, populate table
             if (agents.length > 0) {
                 agents.forEach(agent => {
                     const tr = document.createElement('tr');
@@ -242,10 +222,12 @@
                     agentTableBody.appendChild(tr);
                 });
             } else {
+                // Fallback row if no agents
                 const tr = document.createElement('tr');
                 tr.innerHTML = `<td colspan="4" class="text-muted">No agents to display.</td>`;
                 agentTableBody.appendChild(tr);
             }
         });
     </script>
+
 @endsection

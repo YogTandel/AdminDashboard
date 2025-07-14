@@ -33,7 +33,7 @@
                                         $recipientName = $recipient->player ?? 'N/A';
                                         echo "Transferring to distributor: {$recipientName}";
                                     } else {
-                                        echo "Transferring to distributor: N/A";
+                                        echo 'Transferring to distributor: N/A';
                                     }
                                 } elseif ($user->role === 'distributor') {
                                     $recipient = \App\Models\Admin::where('status', 'Active')->first();
@@ -100,8 +100,8 @@
                                 </div>
 
                                 <div class="text-center mt-4">
-                                    <button type="submit" class="btn bg-gradient-primary w-100"
-                                        id="submitBtn" {{ $hasZeroBalance ? 'disabled' : '' }}>
+                                    <button type="submit" class="btn bg-gradient-primary w-100" id="submitBtn"
+                                        {{ $hasZeroBalance ? 'disabled' : '' }}>
                                         <i class="fas fa-exchange-alt me-2"></i> Transfer Funds
                                     </button>
                                 </div>
@@ -117,7 +117,7 @@
 
     @if ($canTransfer)
         <script>
-            document.addEventListener('DOMContentLoaded', function () {
+            document.addEventListener('DOMContentLoaded', function() {
                 const transferAmount = document.getElementById('transferAmount');
                 const currentBalanceField = document.getElementById('currentBalance');
                 const remainingBalance = document.getElementById('remainingBalance');
@@ -139,10 +139,11 @@
 
                 transferAmount.addEventListener('input', updateBalanceDisplay);
 
-                form.addEventListener('submit', function (e) {
+                form.addEventListener('submit', function(e) {
                     e.preventDefault();
                     submitBtn.disabled = true;
-                    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...';
+                    submitBtn.innerHTML =
+                        '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...';
 
                     const existingAlert = document.querySelector('.transfer-alert');
                     if (existingAlert) existingAlert.remove();
@@ -158,7 +159,8 @@
                         .then(response => response.json())
                         .then(data => {
                             const alertDiv = document.createElement('div');
-                            alertDiv.className = `alert alert-${data.success ? 'success' : 'danger'} alert-dismissible fade show transfer-alert mt-3`;
+                            alertDiv.className =
+                                `alert alert-${data.success ? 'success' : 'danger'} alert-dismissible fade show transfer-alert mt-3`;
                             alertDiv.setAttribute('role', 'alert');
                             alertDiv.innerHTML = `
                                 <i class="fas ${data.success ? 'fa-check-circle' : 'fa-exclamation-circle'} me-2"></i> ${data.message}
@@ -178,7 +180,8 @@
                         })
                         .catch(error => {
                             const errorDiv = document.createElement('div');
-                            errorDiv.className = 'alert alert-danger alert-dismissible fade show transfer-alert mt-3';
+                            errorDiv.className =
+                                'alert alert-danger alert-dismissible fade show transfer-alert mt-3';
                             errorDiv.setAttribute('role', 'alert');
                             errorDiv.innerHTML = `
                                 <i class="fas fa-exclamation-circle me-2"></i> An error occurred. Please try again.
