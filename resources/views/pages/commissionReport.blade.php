@@ -22,7 +22,7 @@
                                     <div class="input-group">
                                         <span class="input-group-text"
                                             style="pointer-events: none; background-color: #e9ecef;">%</span>
-                                        <input type="number" name="agent_commission" class="form-control"
+                                        <input type="number" id="totalEarnings" name="total_earnings" class="form-control"
                                             value="{{ $settings->winamount ?? 0.1 }}" min="0" max="100"
                                             step="0.01" readonly
                                             style="pointer-events: none; background-color: #e9ecef;">
@@ -56,9 +56,15 @@
                                     <label class="form-label">Distributor Commission</label>
                                     <div class="input-group">
                                         <span class="input-group-text">%</span>
-                                        <input type="number" name="distributor_commission"
+                                        <input type="number" id="distributorPercent" name="distributor_commission"
                                             value="{{ $settings->distributorComission ?? 0.1 }}" class="form-control"
-                                            placeholder="e.g. 0.10" min="0" max="100" step="0.01" required>
+                                            min="0" max="100" step="0.01" required>
+                                    </div>
+                                    <div class="input-group mt-1">
+                                        <span class="input-group-text"
+                                            style="pointer-events: none; background-color: #e9ecef;">₹</span>
+                                        <input type="text" id="distributorAmount" class="form-control" readonly
+                                            style="pointer-events: none; background-color: #e9ecef;">
                                     </div>
                                 </div>
                             </div>
@@ -87,9 +93,15 @@
                                     <label class="form-label">Agent Commission</label>
                                     <div class="input-group">
                                         <span class="input-group-text">%</span>
-                                        <input type="number" name="agent_commission"
-                                            value="{{ $settings->agentComission ?? 5 }}" class="form-control"
-                                            placeholder="e.g. 5" min="0" max="100" step="0.01" required>
+                                        <input type="number" id="agentPercent" name="agent_commission"
+                                            value="{{ $settings->agentComission ?? 5 }}" class="form-control" min="0"
+                                            max="100" step="0.01" required>
+                                    </div>
+                                    <div class="input-group mt-1">
+                                        <span class="input-group-text"
+                                            style="pointer-events: none; background-color: #e9ecef;">₹</span>
+                                        <input type="text" id="agentAmount" class="form-control" readonly
+                                            style="pointer-events: none; background-color: #e9ecef;">
                                     </div>
                                 </div>
                             </div>
@@ -130,10 +142,12 @@
                                 <table class="table align-items-center mb-0">
                                     <thead>
                                         <tr>
-                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                            <th
+                                                class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                                 Agent Name
                                             </th>
-                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                            <th
+                                                class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                                 Release Date
                                             </th>
                                             <th

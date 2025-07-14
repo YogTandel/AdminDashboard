@@ -183,7 +183,7 @@
                     </a>
                 </li>
             @endif
-   
+
             <!--refil report  -->
             <li class="nav-item">
                 <a class="nav-link {{ Request::is('refil-report') ? 'active' : '' }}"
@@ -192,7 +192,7 @@
                         class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="fas fa-file-alt text-dark"></i>
                     </div>
-                    <span class="nav-link-text ms-1">refil Report</span>
+                    <span class="nav-link-text ms-1">Refil Report</span>
                 </a>
             </li>
 
