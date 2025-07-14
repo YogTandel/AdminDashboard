@@ -127,7 +127,7 @@
                     <div class="card shadow-sm border-radius-xl mb-4">
                         <div class="card-body py-4 px-4">
                             <div class="d-flex flex-wrap gap-4 align-items-end">
-                                <div class="d-flex flex-column" style="min-width: 180px;">
+                                <div class="d-flex flex-column me-5" style="min-width: 250px;">
                                     <label class="form-label mb-1">Select Distributor</label>
                                     <select id="distributorSelect" class="form-select" required>
                                         <option value="">-- Select --</option>
@@ -138,19 +138,19 @@
                                 </div>
 
                                 <!-- Last Release -->
-                                <div class="d-flex flex-column" style="min-width: 130px;">
+                                <div class="d-flex flex-column" style="min-width: 140px;">
                                     <label class="form-label mb-1">Last Release</label>
                                     <div class="form-control bg-light" id="distLastRelease">2025-07-05</div>
                                 </div>
 
                                 <!-- Endpoint -->
-                                <div class="d-flex flex-column" style="min-width: 130px;">
+                                <div class="d-flex flex-column" style="min-width: 140px;">
                                     <label class="form-label mb-1">Endpoint</label>
                                     <div class="form-control bg-light" id="distEndpoint">distA-001</div>
                                 </div>
 
                                 <!-- Win Amount -->
-                                <div class="d-flex flex-column" style="min-width: 130px;">
+                                <div class="d-flex flex-column" style="min-width: 140px;">
                                     <label class="form-label mb-1">Win Amount</label>
                                     <div class="input-group">
                                         <span class="input-group-text bg-light">₹</span>
@@ -159,7 +159,7 @@
                                 </div>
 
                                 <!-- Commission -->
-                                <div class="d-flex flex-column" style="min-width: 130px;">
+                                <div class="d-flex flex-column" style="min-width: 140px;">
                                     <label class="form-label mb-1">Commission</label>
                                     <div class="input-group">
                                         <span class="input-group-text bg-light">%</span>
@@ -168,7 +168,7 @@
                                 </div>
 
                                 <!-- Release Button -->
-                                <div class="d-flex flex-column" style="min-width: 130px;">
+                                <div class="d-flex flex-column" style="min-width: 140px;">
                                     <label class="form-label mb-1 invisible">Placeholder</label>
                                     <button type="button" class="btn btn-success w-100 mb-0" id="releaseButton">
                                         Release
