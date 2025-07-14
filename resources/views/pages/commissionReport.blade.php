@@ -122,23 +122,66 @@
             <!-- End Agent Commissions -->
 
 
-            <!-- Moved Distributor Dropdown Section -->
+            <!-- Distributor Dropdown Section -->
             <div class="row">
                 <div class="col-12">
                     <div class="card shadow-sm border-radius-xl mb-4">
-                        <div class="card-body pt-3">
-                            <label class="form-label">Select Distributor</label>
-                            <select id="distributorSelect" class="form-select w-100" required>
-                                <option value="">-- Select Distributor --</option>
-                                <option value="dist1">Distributor A</option>
-                                <option value="dist2">Distributor B</option>
-                                <option value="dist3">Distributor C</option>
-                            </select>
+                        <div class="card-body py-4 px-4">
+                            <div class="d-flex flex-wrap gap-4 align-items-end">
+                                <div class="d-flex flex-column" style="min-width: 180px;">
+                                    <label class="form-label mb-1">Select Distributor</label>
+                                    <select id="distributorSelect" class="form-select" required>
+                                        <option value="">-- Select --</option>
+                                        <option value="dist1">Distributor A</option>
+                                        <option value="dist2">Distributor B</option>
+                                        <option value="dist3">Distributor C</option>
+                                    </select>
+                                </div>
+
+                                <!-- Last Release -->
+                                <div class="d-flex flex-column" style="min-width: 130px;">
+                                    <label class="form-label mb-1">Last Release</label>
+                                    <div class="form-control bg-light" id="distLastRelease">2025-07-05</div>
+                                </div>
+
+                                <!-- Endpoint -->
+                                <div class="d-flex flex-column" style="min-width: 130px;">
+                                    <label class="form-label mb-1">Endpoint</label>
+                                    <div class="form-control bg-light" id="distEndpoint">distA-001</div>
+                                </div>
+
+                                <!-- Win Amount -->
+                                <div class="d-flex flex-column" style="min-width: 130px;">
+                                    <label class="form-label mb-1">Win Amount</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light">₹</span>
+                                        <div class="form-control bg-light" id="distWinAmount">4200</div>
+                                    </div>
+                                </div>
+
+                                <!-- Commission -->
+                                <div class="d-flex flex-column" style="min-width: 130px;">
+                                    <label class="form-label mb-1">Commission</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light">%</span>
+                                        <div class="form-control bg-light" id="distCommission">4.5</div>
+                                    </div>
+                                </div>
+
+                                <!-- Release Button -->
+                                <div class="d-flex flex-column" style="min-width: 130px;">
+                                    <label class="form-label mb-1 invisible">Placeholder</label>
+                                    <button type="button" class="btn btn-success w-100 mb-0" id="releaseButton">
+                                        Release
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- End Moved Distributor Dropdown Section -->
+
+            <!-- End Distributor Dropdown Section -->
 
             <!-- Dynamic Agent Summary Table Section -->
             <div class="row mt-4">
@@ -295,6 +338,44 @@
 
         // Run on page load
         window.addEventListener('DOMContentLoaded', updateCommissionAmounts);
+    </script>
+
+    <script>
+        const distributorData = {
+            dist1: {
+                lastRelease: '2025-07-05',
+                endpoint: 'distA-001',
+                winAmount: 4200,
+                commission: 4.5
+            },
+            dist2: {
+                lastRelease: '2025-07-08',
+                endpoint: 'distB-789',
+                winAmount: 3400,
+                commission: 3.2
+            },
+            dist3: {
+                lastRelease: '2025-07-11',
+                endpoint: 'distC-123',
+                winAmount: 2800,
+                commission: 5.0
+            }
+        };
+
+        document.getElementById('distributorSelect').addEventListener('change', function() {
+            const data = distributorData[this.value];
+            if (data) {
+                document.getElementById('distLastRelease').value = data.lastRelease;
+                document.getElementById('distEndpoint').value = data.endpoint;
+                document.getElementById('distWinAmount').value = data.winAmount;
+                document.getElementById('distCommission').value = data.commission;
+            } else {
+                document.getElementById('distLastRelease').value = '';
+                document.getElementById('distEndpoint').value = '';
+                document.getElementById('distWinAmount').value = '';
+                document.getElementById('distCommission').value = '';
+            }
+        });
     </script>
 
 
