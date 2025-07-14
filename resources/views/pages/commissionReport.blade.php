@@ -129,7 +129,7 @@
                             <input type="hidden" name="agent_id">
 
                             <div class="row mb-3">
-                                <div class="col-md-6">
+                                <div class="col-md-12">
                                     <label class="form-label">Total Earnings</label>
                                     <div class="input-group">
                                         <span class="input-group-text">%</span>
