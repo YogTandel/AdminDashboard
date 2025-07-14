@@ -132,10 +132,13 @@
                                 <div class="col-md-12">
                                     <label class="form-label">Total Earnings</label>
                                     <div class="input-group">
-                                        <span class="input-group-text">%</span>
+                                        <span class="input-group-text"
+                                            style="pointer-events: none; background-color: #e9ecef;">%</span>
                                         <input type="number" name="agent_commission" class="form-control"
                                             value="{{ $settings->winamount ?? 0.1 }}" min="0" max="100"
-                                            step="0.01" readonly>
+                                            step="0.01" readonly
+                                            style="pointer-events: none; background-color: #e9ecef;">
+
                                     </div>
                                 </div>
                             </div>
