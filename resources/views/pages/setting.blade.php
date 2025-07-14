@@ -6,14 +6,14 @@
     <div class="container-fluid py-4">
 
         {{-- Success/Error Messages --}}
-        @if(session('success'))
+        @if (session('success'))
             <div class="alert alert-success alert-dismissible fade show alert-success-auto" role="alert">
                 {{ session('success') }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         @endif
 
-        @if(session('error'))
+        @if (session('error'))
             <div class="alert alert-danger alert-dismissible fade show alert-danger-auto" role="alert">
                 {{ session('error') }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -87,11 +87,11 @@
             <div class="col-lg-6 mb-4">
                 <div class="card shadow-soft border-radius-xl">
                     <div class="card-header pb-0">
-    <h6 class="mb-0 d-flex justify-content-between align-items-center">
-        <span>Standing & Earnings</span>
-        <span class="text-muted small" id="admin-endpoint">Loading endpoint...</span>
-    </h6>
-</div>
+                        <h6 class="mb-0 d-flex justify-content-between align-items-center">
+                            <span>Standing & Earnings</span>
+                            <span class="text-muted small" id="admin-endpoint">Loading endpoint...</span>
+                        </h6>
+                    </div>
                     <div class="card-body">
                         <div class="d-flex justify-content-between mb-3">
                             <div><strong>Standing:</strong> <span
@@ -135,8 +135,8 @@
                                     <span class="input-group-text">%</span>
                                     <input type="number" name="earningPercentage" class="form-control"
                                         placeholder="Enter Earning Percentage"
-                                        value="{{ $settings->earningPercentage ?? '' }}" min="0" max="100" step="0.01"
-                                        required>
+                                        value="{{ $settings->earningPercentage ?? '' }}" min="0" max="100"
+                                        step="0.01" required>
                                 </div>
                                 <div class="d-grid mt-3">
                                     <button type="submit" class="btn bg-gradient-info">
@@ -196,95 +196,96 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-
         const initialValue = @json($settings->setTominimum ?? false);
 
         function updateButtonColor(value) {
-                const btn = $('#toggleSetToMinimumBtn');
-                btn.removeClass('btn-green btn-red'); 
-                
-                if (value) {
-                    btn.addClass('btn-green'); 
-                } else {
-                    btn.addClass('btn-red'); 
-                }
+            const btn = $('#toggleSetToMinimumBtn');
+            btn.removeClass('btn-green btn-red');
+
+            if (value) {
+                btn.addClass('btn-green');
+            } else {
+                btn.addClass('btn-red');
+            }
         }
 
-        $(document).ready(function () {
+        $(document).ready(function() {
 
             updateButtonColor(initialValue);
 
 
-            $('#toggleSetToMinimumBtn').click(function () {
+            $('#toggleSetToMinimumBtn').click(function() {
                 $.ajax({
                     url: "{{ route('toggle.setToMinimum') }}",
                     method: 'POST',
                     data: {
                         _token: "{{ csrf_token() }}"
                     },
-                    success: function (response) {
+                    success: function(response) {
                         if (response.setTominimum !== undefined) {
                             updateButtonColor(response.setTominimum);
                         } else {
                             alert('Unexpected response from server.');
                         }
                     },
-                    error: function () {
+                    error: function() {
                         alert('Error toggling Set To Minimum');
                     }
                 });
             });
 
 
-            setTimeout(function () {
+            setTimeout(function() {
                 $('.alert-success-auto').fadeOut('slow');
                 $('.alert-danger-auto').fadeOut('slow');
             }, 5000);
         });
     </script>
-<style>
-    .equal-btn {
-        min-width: 160px; /* Set width same for all */
-        height: 45px;     /* Set uniform height */
-        font-weight: bold;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        text-align: center;
-    }
+    <style>
+        .equal-btn {
+            min-width: 160px;
+            /* Set width same for all */
+            height: 45px;
+            /* Set uniform height */
+            font-weight: bold;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            text-align: center;
+        }
 
-    .btn-orange {
-        background-color: #f57c00;
-    }
+        .btn-orange {
+            background-color: #f57c00;
+        }
 
-    .btn-green {
-        background-color: #4caf50;
-    }
+        .btn-green {
+            background-color: #4caf50;
+        }
 
-    .btn-red {
-        background-color: #e53935;
-    }
-</style>
-<script>
-    // Existing jQuery document ready block
-    $(document).ready(function () {
-        // Existing code...
+        .btn-red {
+            background-color: #e53935;
+        }
+    </style>
+    <script>
+        // Existing jQuery document ready block
+        $(document).ready(function() {
+            // Existing code...
 
-        // New AJAX for fetching endpoint
-        $.ajax({
-            url: "{{ route('admin.endpoint') }}",
-            method: 'GET',
-            success: function (response) {
-                $('#admin-endpoint').text("Endpoint: " + response.endpoint);
-            },
-            error: function () {
-                $('#admin-endpoint').text("Endpoint: Error loading");
-            }
+            // New AJAX for fetching endpoint
+            $.ajax({
+                url: "{{ route('admin.endpoint') }}",
+                method: 'GET',
+                success: function(response) {
+                    $('#admin-endpoint').text("Endpoint: " + response.endpoint);
+                },
+                error: function() {
+                    $('#admin-endpoint').text("Endpoint: Error loading");
+                }
+            });
+
+            // Existing code for alerts and toggle button...
         });
-
-        // Existing code for alerts and toggle button...
-    });
-</script>
+    </script>
 
     <x-footer />
 @endsection
