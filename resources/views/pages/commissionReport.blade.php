@@ -5,65 +5,6 @@
 @section('content')
     <div class="container-fluid py-4">
         <div class="row">
-            <!-- Agent Commissions -->
-            <div class="col-lg-4 mb-4">
-                <div class="card shadow-sm border-radius-xl">
-                    <div class="card-header pb-0">
-                        <h6 class="mb-0">Agent Commissions</h6>
-                    </div>
-                    <div class="card-body pt-3">
-                        <form method="POST">
-                            @csrf
-                            <input type="hidden" name="agent_id">
-
-                            <div class="row mb-3">
-                                <div class="col-md-12">
-                                    <label class="form-label">Agent Commission</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text">%</span>
-                                        <input type="number" name="agent_commission"
-                                            value="{{ $settings->agentComission ?? 5 }}" class="form-control"
-                                            placeholder="e.g. 5" min="0" max="100" step="0.01" required>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-            <!-- End Agent Commissions -->
-
-            <!-- Distributor Commissions -->
-            <div class="col-lg-4 mb-4">
-                <div class="card shadow-sm border-radius-xl">
-                    <div class="card-header pb-0">
-                        <h6 class="mb-0">Distributor Commissions</h6>
-                    </div>
-                    <div class="card-body pt-3">
-                        <form method="POST">
-                            @csrf
-                            <input type="hidden" name="agent_id">
-
-                            <div class="row mb-3">
-                                <div class="col-md-12">
-                                    <label class="form-label">Distributor Commission</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text">%</span>
-                                        <input type="number" name="distributor_commission"
-                                            value="{{ $settings->distributorComission ?? 0.1 }}" class="form-control"
-                                            placeholder="e.g. 0.10" min="0" max="100" step="0.01" required>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="d-flex flex-wrap gap-2 mt-3">
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-            <!-- End Distributor Commissions -->
-
             <!-- Total Earnings -->
             <div class="col-lg-4 mb-4">
                 <div class="card shadow-sm border-radius-xl">
@@ -99,6 +40,66 @@
             </div>
             <!-- End Total Earnings -->
 
+            <!-- Distributor Commissions -->
+            <div class="col-lg-4 mb-4">
+                <div class="card shadow-sm border-radius-xl">
+                    <div class="card-header pb-0">
+                        <h6 class="mb-0">Distributor Commissions</h6>
+                    </div>
+                    <div class="card-body pt-3">
+                        <form method="POST">
+                            @csrf
+                            <input type="hidden" name="agent_id">
+
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <label class="form-label">Distributor Commission</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">%</span>
+                                        <input type="number" name="distributor_commission"
+                                            value="{{ $settings->distributorComission ?? 0.1 }}" class="form-control"
+                                            placeholder="e.g. 0.10" min="0" max="100" step="0.01" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex flex-wrap gap-2 mt-3">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- End Distributor Commissions -->
+
+            <!-- Agent Commissions -->
+            <div class="col-lg-4 mb-4">
+                <div class="card shadow-sm border-radius-xl">
+                    <div class="card-header pb-0">
+                        <h6 class="mb-0">Agent Commissions</h6>
+                    </div>
+                    <div class="card-body pt-3">
+                        <form method="POST">
+                            @csrf
+                            <input type="hidden" name="agent_id">
+
+                            <div class="row mb-3">
+                                <div class="col-md-12">
+                                    <label class="form-label">Agent Commission</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">%</span>
+                                        <input type="number" name="agent_commission"
+                                            value="{{ $settings->agentComission ?? 5 }}" class="form-control"
+                                            placeholder="e.g. 5" min="0" max="100" step="0.01" required>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- End Agent Commissions -->
+
+
             <!-- Moved Distributor Dropdown Section -->
             <div class="row">
                 <div class="col-12">
@@ -132,6 +133,9 @@
                                             <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                                 Agent Name
                                             </th>
+                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                                Release Date
+                                            </th>
                                             <th
                                                 class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                                                 Endpoint
@@ -139,6 +143,10 @@
                                             <th
                                                 class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                                                 Win Amount
+                                            </th>
+                                            <th
+                                                class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                                Commissions
                                             </th>
                                             <th
                                                 class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
@@ -167,34 +175,45 @@
         const distributorAgents = {
             dist1: [{
                     name: 'Agent Alpha',
+                    date: '2023-08-01',
                     endpoint: 'alpha123',
-                    winAmount: 200
+                    winAmount: 200,
+                    commission: 10
                 },
                 {
                     name: 'Agent Beta',
+                    date: '2023-08-01',
                     endpoint: 'beta456',
-                    winAmount: 150
+                    winAmount: 150,
+                    commission: 10
                 }
             ],
             dist2: [{
                 name: 'Agent Charlie',
+                date: '2023-08-01',
                 endpoint: 'charlie789',
-                winAmount: 300
+                winAmount: 300,
+                commission: 10
             }],
             dist3: [{
                     name: 'Agent Delta',
+                    date: '2023-08-01',
                     endpoint: 'delta111',
-                    winAmount: 100
+                    winAmount: 100,
+                    commission: 10
                 },
                 {
                     name: 'Agent Echo',
+                    date: '2023-08-01',
                     endpoint: 'echo222',
-                    winAmount: 80
+                    winAmount: 80,
+                    commission: 10
                 },
                 {
                     name: 'Agent Foxtrot',
                     endpoint: 'fox333',
-                    winAmount: 50
+                    winAmount: 50,
+                    commission: 10
                 }
             ]
         };
@@ -215,7 +234,9 @@
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
                     <td><p class="text-xs font-weight-bold mb-0">${agent.name}</p></td>
+                    <td><p class="text-xs font-weight-bold mb-0">${agent.date}</p></td>
                     <td><p class="text-xs mb-0 text-secondary">${agent.endpoint}</p></td>
+                    <td><p class="text-xs mb-0 text-secondary">${agent.commission}</p></td>
                     <td><p class="text-xs mb-0 text-success fw-bold">₹${agent.winAmount}</p></td>
                     <td>
                         <button type="button" class="btn btn-sm btn-outline-success">
