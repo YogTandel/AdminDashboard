@@ -55,10 +55,12 @@
                                 <div class="col-md-6">
                                     <label class="form-label">Commission (%)</label>
                                     <div class="input-group">
-                                        <span class="input-group-text">%</span>
+                                        <span class="input-group-text"
+                                            style="pointer-events: none; background-color: #e9ecef;">%</span>
                                         <input type="number" id="distributorPercent" name="distributor_commission"
                                             value="{{ $settings->distributorComission ?? 0.1 }}" class="form-control"
-                                            min="0" max="100" step="0.01" required>
+                                            min="0" max="100" step="0.01" readonly
+                                            style="pointer-events: none; background-color: #e9ecef;">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -95,10 +97,12 @@
                                 <div class="col-md-6">
                                     <label class="form-label">Commission (%)</label>
                                     <div class="input-group">
-                                        <span class="input-group-text">%</span>
+                                        <span class="input-group-text"
+                                            style="pointer-events: none; background-color: #e9ecef;">%</span>
                                         <input type="number" id="agentPercent" name="agent_commission"
                                             value="{{ $settings->agentComission ?? 5 }}" class="form-control" min="0"
-                                            max="100" step="0.01" required>
+                                            max="100" step="0.01" readonly
+                                            style="pointer-events: none; background-color: #e9ecef;">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
