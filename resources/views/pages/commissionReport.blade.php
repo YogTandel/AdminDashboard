@@ -121,7 +121,6 @@
             </div>
             <!-- End Agent Commissions -->
 
-
             <!-- Distributor Dropdown Section -->
             <div class="row">
                 <div class="col-12">
@@ -234,7 +233,6 @@
             <!-- End Dynamic Agent Summary Table Section -->
         </div>
     </div>
-
 
     <script>
         const distributorAgents = {
