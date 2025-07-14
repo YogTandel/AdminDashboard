@@ -78,7 +78,6 @@
                     </div>
                 </div>
             </div>
-
             <!-- End Distributor Commissions -->
 
             <!-- Agent Commissions -->
@@ -116,7 +115,6 @@
                     </div>
                 </div>
             </div>
-
             <!-- End Agent Commissions -->
 
 
@@ -188,7 +186,6 @@
                 </div>
             </div>
             <!-- End Dynamic Agent Summary Table Section -->
-
         </div>
     </div>
 
