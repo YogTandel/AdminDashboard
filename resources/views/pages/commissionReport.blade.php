@@ -52,15 +52,18 @@
                             <input type="hidden" name="agent_id">
 
                             <div class="row mb-3">
-                                <div class="col-md-12">
-                                    <label class="form-label">Distributor Commission</label>
+                                <div class="col-md-6">
+                                    <label class="form-label">Commission (%)</label>
                                     <div class="input-group">
                                         <span class="input-group-text">%</span>
                                         <input type="number" id="distributorPercent" name="distributor_commission"
                                             value="{{ $settings->distributorComission ?? 0.1 }}" class="form-control"
                                             min="0" max="100" step="0.01" required>
                                     </div>
-                                    <div class="input-group mt-1">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Amount (₹)</label>
+                                    <div class="input-group">
                                         <span class="input-group-text"
                                             style="pointer-events: none; background-color: #e9ecef;">₹</span>
                                         <input type="text" id="distributorAmount" class="form-control" readonly
@@ -75,6 +78,7 @@
                     </div>
                 </div>
             </div>
+
             <!-- End Distributor Commissions -->
 
             <!-- Agent Commissions -->
@@ -89,15 +93,18 @@
                             <input type="hidden" name="agent_id">
 
                             <div class="row mb-3">
-                                <div class="col-md-12">
-                                    <label class="form-label">Agent Commission</label>
+                                <div class="col-md-6">
+                                    <label class="form-label">Commission (%)</label>
                                     <div class="input-group">
                                         <span class="input-group-text">%</span>
                                         <input type="number" id="agentPercent" name="agent_commission"
                                             value="{{ $settings->agentComission ?? 5 }}" class="form-control" min="0"
                                             max="100" step="0.01" required>
                                     </div>
-                                    <div class="input-group mt-1">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Amount (₹)</label>
+                                    <div class="input-group">
                                         <span class="input-group-text"
                                             style="pointer-events: none; background-color: #e9ecef;">₹</span>
                                         <input type="text" id="agentAmount" class="form-control" readonly
@@ -109,6 +116,7 @@
                     </div>
                 </div>
             </div>
+
             <!-- End Agent Commissions -->
 
 
@@ -270,24 +278,29 @@
     </script>
 
     <script>
-        function calculateCommissionAmount(percent, total) {
+        function calculateAmount(percent, total) {
             return ((percent / 100) * total).toFixed(2);
         }
 
-        function updateAmounts() {
-            const total = parseFloat(document.getElementById('totalEarnings').value) || 0;
-            const agentPercent = parseFloat(document.getElementById('agentPercent').value) || 0;
-            const distributorPercent = parseFloat(document.getElementById('distributorPercent').value) || 0;
-
-            document.getElementById('agentAmount').value = calculateCommissionAmount(agentPercent, total);
-            document.getElementById('distributorAmount').value = calculateCommissionAmount(distributorPercent, total);
+        function updateAgentAmount() {
+            const total = parseFloat(document.getElementById('totalEarnings')?.value || 0);
+            const percent = parseFloat(document.getElementById('agentPercent')?.value || 0);
+            document.getElementById('agentAmount').value = calculateAmount(percent, total);
         }
 
-        document.getElementById('agentPercent').addEventListener('input', updateAmounts);
-        document.getElementById('distributorPercent').addEventListener('input', updateAmounts);
+        function updateDistributorAmount() {
+            const total = parseFloat(document.getElementById('totalEarnings')?.value || 0);
+            const percent = parseFloat(document.getElementById('distributorPercent')?.value || 0);
+            document.getElementById('distributorAmount').value = calculateAmount(percent, total);
+        }
 
-        // Initial call
-        updateAmounts();
+        document.getElementById('agentPercent').addEventListener('input', updateAgentAmount);
+        document.getElementById('distributorPercent').addEventListener('input', updateDistributorAmount);
+
+        // Trigger on page load
+        updateAgentAmount();
+        updateDistributorAmount();
     </script>
+
 
 @endsection
