@@ -1056,4 +1056,15 @@ class PagesController extends Controller
         return view('pages.refil-report', compact('refils'));
     }
 
+    public function getSettingsData()
+{
+     $setting = Setting::first();
+
+        return response()->json([
+            
+            'earning'  => $setting->earning ?? 0,
+          
+        ]);
+}
+
 }

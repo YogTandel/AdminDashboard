@@ -8,35 +8,23 @@
             <!-- Total Earnings -->
             <div class="col-lg-4 mb-4">
                 <div class="card shadow-sm border-radius-xl">
-                    <div class="card-header pb-0">
-                        <h6 class="mb-0">Total Earnings</h6>
-                    </div>
-                    <div class="card-body pt-3">
-                        <form method="POST">
-                            @csrf
-                            <input type="hidden" name="agent_id">
-
-                            <div class="row mb-3">
-                                <div class="col-md-12">
-                                    <label class="form-label">Total Earnings</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"
-                                            style="pointer-events: none; background-color: #e9ecef;">%</span>
-                                        <input type="number" id="totalEarnings" name="total_earnings" class="form-control"
-                                            value="{{ $settings->winamount ?? 0.1 }}" min="0" max="100"
-                                            step="0.01" readonly
-                                            style="pointer-events: none; background-color: #e9ecef;">
-
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="d-flex flex-wrap gap-2 mt-3">
-
-                            </div>
-                        </form>
-                    </div>
+    <div class="card-header pb-0">
+        <h6 class="mb-0">Total Earnings</h6>
+    </div>
+    <div class="card-body pt-3">
+        <div class="row mb-3">
+            <div class="col-md-12">
+                <label class="form-label">Total Earnings</label>
+                <div class="input-group">
+                    <input type="number" id="totalEarnings"  name="total_earnings" class="form-control"
+                        value="0.1" min="0" max="100" step="0.01" readonly
+                        style="pointer-events: none; background-color: #e9ecef;">
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
             </div>
             <!-- End Total Earnings -->
 
@@ -233,7 +221,7 @@
             <!-- End Dynamic Agent Summary Table Section -->
         </div>
     </div>
-
+<!-- 
     <script>
         const distributorAgents = {
             dist1: [{
@@ -373,7 +361,22 @@
                 document.getElementById('distCommission').value = '';
             }
         });
-    </script>
+    </script> -->
+
+<script>
+    function fetchLiveGameValues() {
+        fetch("{{ route('settings.data') }}")
+            .then(response => response.json())
+            .then(data => {
+                // Set the value in the input field
+                document.getElementById('totalEarnings').value = data.earning;
+            })
+            .catch(error => console.error('Error fetching live game values:', error));
+    }
+
+    fetchLiveGameValues(); 
+    setInterval(fetchLiveGameValues, 5000); 
+</script>
 
 
 

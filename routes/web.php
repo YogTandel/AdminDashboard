@@ -102,3 +102,4 @@ Route::post('/agent/transfer-to-player', [PagesController::class, 'transferToPla
 Route::get('/refil-report', [PagesController::class, 'showRefilReport'])->name('refil.report');
 
 
+Route::get('/get-settings-data', [PagesController::class, 'getSettingsData'])->name('settings.data');
