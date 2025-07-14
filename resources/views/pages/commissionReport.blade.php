@@ -48,36 +48,6 @@
                                         <li class="list-group-item text-muted">No agents found.</li>
                                     </ul>
                                 </div>
-
-                                {{-- <div class="w-100 mt-4">
-                                    <h6>Agent Summary</h6>
-                                    <div class="table-responsive">
-                                        <table class="table align-items-center mb-0">
-                                            <thead>
-                                                <tr>
-                                                    <th
-                                                        class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                                        Agent Name</th>
-                                                    <th
-                                                        class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                                                        Endpoint</th>
-                                                    <th
-                                                        class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                                                        Win Amount</th>
-                                                    <th
-                                                        class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                                                        Action</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="agentTableBody">
-                                                <tr>
-                                                    <td colspan="4" class="text-muted">No agents to display.</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div> --}}
-
                             </div>
                         </form>
                     </div>
@@ -188,6 +158,7 @@
                     </div>
                 </div>
             </div>
+            <!-- End Dynamic Agent Summary Table Section -->
 
         </div>
     </div>
