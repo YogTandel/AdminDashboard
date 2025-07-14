@@ -168,6 +168,7 @@
             </li>
 
             <!-- relese commission report -->
+            @if ($role === 'admin')
              <li class="nav-item">
                 <a class="nav-link {{ Request::is('commission-report') ? 'active' : '' }}"
                     href="{{ route('commission.report') }}">
@@ -178,7 +179,7 @@
                     <span class="nav-link-text ms-1">relese commission Report</span>
                 </a>
             </li>
-
+            @endif
             
             <!-- Setting (Only for Admin) -->
             @if ($role === 'admin')
