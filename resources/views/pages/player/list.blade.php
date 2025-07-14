@@ -12,15 +12,15 @@
                         <div class="d-flex align-items-center gap-2 flex-wrap mt-3 me-3">
                             <!-- Show Dropdown -->
                             <form method="GET" class="d-flex align-items-center mb-0">
-                            <label for="per_page" class="mb-0 me-2 text-sm text-dark fw-bold">Show:</label>
+                                <label for="per_page" class="mb-0 me-2 text-sm text-dark fw-bold">Show:</label>
 
-                            <div class="input-group input-group-outline border-radius-lg shadow-sm">
-                                <select name="per_page" id="per_page" class="form-select border-0 ps-3 pe-4"
-                                    onchange="this.form.submit()" style="min-width: 60px;">
-                                    <option value="5" {{ request('per_page') == 5 ? 'selected' : '' }}>5</option>
-                                    <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
-                                </select>
-                            </div>
+                                <div class="input-group input-group-outline border-radius-lg shadow-sm">
+                                    <select name="per_page" id="per_page" class="form-select border-0 ps-3 pe-4"
+                                        onchange="this.form.submit()" style="min-width: 60px;">
+                                        <option value="5" {{ request('per_page') == 5 ? 'selected' : '' }}>5</option>
+                                        <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
+                                    </select>
+                                </div>
                                 @if (request()->has('search'))
                                     <input type="hidden" name="search" value="{{ request('search') }}">
                                 @endif
@@ -49,19 +49,25 @@
                     <!-- Second Row: Date Filter -->
                     <form method="GET" class="d-flex justify-content-end align-items-center flex-wrap gap-2 mt-2 me-3">
                         <!-- Date Range -->
-                        <select name="date_range" class="form-select form-select-sm" onchange="this.form.submit()" style="width: 150px;">
+                        <select name="date_range" class="form-select form-select-sm" onchange="this.form.submit()"
+                            style="width: 150px;">
                             <option value="">Date Range</option>
-                            <option value="2_days_ago" {{ request('date_range') == '2_days_ago' ? 'selected' : '' }}>Last 2 Days</option>
-                            <option value="this_week" {{ request('date_range') == 'this_week' ? 'selected' : '' }}>This Week</option>
-                            <option value="this_month" {{ request('date_range') == 'this_month' ? 'selected' : '' }}>This Month</option>
+                            <option value="2_days_ago" {{ request('date_range') == '2_days_ago' ? 'selected' : '' }}>Last 2
+                                Days</option>
+                            <option value="this_week" {{ request('date_range') == 'this_week' ? 'selected' : '' }}>This Week
+                            </option>
+                            <option value="this_month" {{ request('date_range') == 'this_month' ? 'selected' : '' }}>This
+                                Month</option>
                         </select>
 
                         <!-- From Date -->
-                        <input type="date" name="from_date" class="form-control form-control-sm" value="{{ request('from_date') }}" style="width: 150px;">
+                        <input type="date" name="from_date" class="form-control form-control-sm"
+                            value="{{ request('from_date') }}" style="width: 150px;">
 
                         <!-- To Date -->
                         <span class="text-sm mx-1">to</span>
-                        <input type="date" name="to_date" class="form-control form-control-sm" value="{{ request('to_date') }}" style="width: 150px;">
+                        <input type="date" name="to_date" class="form-control form-control-sm"
+                            value="{{ request('to_date') }}" style="width: 150px;">
 
                         <!-- Search Hidden -->
                         @if (request()->has('search'))
@@ -107,11 +113,12 @@
                                             class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                             Agent
                                         </th>
-                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        <th
+                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                             Login Status
                                         </th>
 
-                                        
+
                                         <th
                                             class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                             Status
@@ -154,7 +161,8 @@
                                                 </td>
                                                 <td>
                                                     <p class="text-xs font-weight-bold mb-0">
-                                                        {{ $player->original_password }}</p>
+                                                        {{ $player->original_password }}
+                                                    </p>
                                                 </td>
                                                 <td>
                                                     <p class="text-xs font-weight-bold mb-0">{{ $player->role }}</p>
@@ -164,13 +172,15 @@
                                                         ₹{{ number_format($player->balance, 2) }}</p>
                                                 </td>
                                                 <td class="align-middle text-center text-sm">
-                                                    <p class="text-xs font-weight-bold mb-0">{{ $player->distributorUser?->player }}</p>
+                                                    <p class="text-xs font-weight-bold mb-0">{{ $player->distributorUser?->player }}
+                                                    </p>
                                                 </td>
                                                 <td class="align-middle text-center text-sm">
                                                     <p class="text-xs font-weight-bold mb-0">{{ $player->agent }}</p>
                                                 </td>
                                                 <td class="align-middle text-center text-sm">
-                                                    <span class="badge badge-sm {{ $player->login_status ? 'bg-gradient-success' : 'bg-gradient-danger' }}">
+                                                    <span
+                                                        class="badge badge-sm {{ $player->login_status ? 'bg-gradient-success' : 'bg-gradient-danger' }}">
                                                         {{ $player->login_status ? 'True' : 'False' }}
                                                     </span>
                                                 </td>
@@ -191,51 +201,46 @@
                                                 </td>
                                                 <td class="align-middle">
                                                     <div class="d-flex align-items-center justify-content-around">
-                                                        <a href="javascript:;"
-                                                            class="text-secondary font-weight-bold text-xs me-2"
-                                                            data-bs-toggle="tooltip" data-bs-placement="top"
-                                                            title="Copy Player">
+                                                        <a href="javascript:;" class="text-secondary font-weight-bold text-xs me-2"
+                                                            data-bs-toggle="tooltip" data-bs-placement="top" title="Copy Player">
                                                             <i class="fas fa-copy"></i>
                                                         </a>
-                                                        
 
 
-                                                        <a href="javascript:;"
-                                                            class="text-secondary font-weight-bold text-xs me-2"
+
+                                                        <a href="javascript:;" class="text-secondary font-weight-bold text-xs me-2"
                                                             title="Edit Player" data-bs-toggle="modal"
                                                             data-bs-target="#editModal{{ $player->id }}">
                                                             <i class="fas fa-edit"></i>
                                                         </a>
                                                         @include('pages.player.edit')
-                                                        <form action="{{ route('player.delete', $player->id) }}"
-                                                            method="post" style="display:flex;">
+                                                        <form action="{{ route('player.delete', $player->id) }}" method="post"
+                                                            style="display:flex;">
                                                             @csrf
                                                             @method('DELETE')
                                                             <button class="text-danger font-weight-bold text-xs me-2"
-                                                                onclick="return confirm('Are you sure?')"
-                                                                data-bs-toggle="tooltip" data-bs-placement="top"
-                                                                title="Delete Player"
+                                                                onclick="return confirm('Are you sure?')" data-bs-toggle="tooltip"
+                                                                data-bs-placement="top" title="Delete Player"
                                                                 style="background: none; border: none; padding: 0;">
                                                                 <i class="fas fa-trash"></i>
                                                             </button>
                                                         </form>
-                                                        
-                                                      
-                                                            @if(auth()->check() && auth()->user()->role === 'agent')
-                                                                <a href="javascript:;" class="text-success font-weight-bold text-xs me-2"
-                                                                    data-bs-toggle="modal" data-bs-target="#transferModal{{ $player->id }}">
-                                                                    <i class="fa-solid fa-indian-rupee-sign"></i>
-                                                                </a>
-                                                            @endif
 
-                                                            @include('pages.player.refil2', ['user' => $player])
+
+                                                        @if(auth()->check() && auth()->user()->role === 'agent')
+                                                            <a href="javascript:;" class="text-success font-weight-bold text-xs me-2"
+                                                                data-bs-toggle="modal" data-bs-target="#transferModal{{ $player->id }}">
+                                                                <i class="fa-solid fa-indian-rupee-sign"></i>
+                                                            </a>
+                                                        @endif
+
+                                                        @include('pages.player.refil2', ['user' => $player])
 
 
 
                                                         <a href="{{ route('player.history', $player->_id) }}"
                                                             class="text-secondary font-weight-bold text-xs me-2"
-                                                            data-bs-toggle="tooltip" data-bs-placement="top"
-                                                            title="Player History">
+                                                            data-bs-toggle="tooltip" data-bs-placement="top" title="Player History">
                                                             <i class="fas fa-history"></i>
                                                         </a>
                                                         {{-- @include('pages.player.history') --}}

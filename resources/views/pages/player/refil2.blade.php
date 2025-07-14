@@ -1,5 +1,3 @@
-
-
 @php
     $agent = Auth::user(); // logged-in agent
     $agentBalance = number_format($agent->endpoint ?? 0, 2);
@@ -30,15 +28,16 @@
 
                             <label>Amount to Transfer</label>
                             <div class="input-group mb-3">
-                                <input type="number" name="amount" step="0.01" min="0.01"
-                                    class="form-control" required>
+                                <input type="number" name="amount" step="0.01" min="0.01" class="form-control" required>
                             </div>
 
                             <div class="alert mt-2 d-none" id="transferAlert{{ $user->id }}"></div>
 
-                            <form id="transferForm{{ $user->id }}" method="POST" action="{{ route('agent.transfer.to.player') }}">
+                            <form id="transferForm{{ $user->id }}" method="POST"
+                                action="{{ route('agent.transfer.to.player') }}">
                                 @csrf
-                                <button type="submit" id="submitBtn{{ $user->id }}" class="btn bg-gradient-success btn-lg btn-rounded w-100 mt-4 mb-0">
+                                <button type="submit" id="submitBtn{{ $user->id }}"
+                                    class="btn bg-gradient-success btn-lg btn-rounded w-100 mt-4 mb-0">
                                     <i class="fas fa-exchange-alt me-1"></i> Transfer
                                 </button>
                             </form>
