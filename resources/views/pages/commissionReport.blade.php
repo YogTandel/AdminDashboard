@@ -283,25 +283,20 @@
             return ((percent / 100) * total).toFixed(2);
         }
 
-        function updateAgentAmount() {
+        function updateCommissionAmounts() {
             const total = parseFloat(document.getElementById('totalEarnings')?.value || 0);
-            const percent = parseFloat(document.getElementById('agentPercent')?.value || 0);
-            document.getElementById('agentAmount').value = calculateAmount(percent, total);
+
+            const agentPercent = parseFloat(document.getElementById('agentPercent')?.value || 0);
+            document.getElementById('agentAmount').value = calculateAmount(agentPercent, total);
+
+            const distributorPercent = parseFloat(document.getElementById('distributorPercent')?.value || 0);
+            document.getElementById('distributorAmount').value = calculateAmount(distributorPercent, total);
         }
 
-        function updateDistributorAmount() {
-            const total = parseFloat(document.getElementById('totalEarnings')?.value || 0);
-            const percent = parseFloat(document.getElementById('distributorPercent')?.value || 0);
-            document.getElementById('distributorAmount').value = calculateAmount(percent, total);
-        }
-
-        document.getElementById('agentPercent').addEventListener('input', updateAgentAmount);
-        document.getElementById('distributorPercent').addEventListener('input', updateDistributorAmount);
-
-        // Trigger on page load
-        updateAgentAmount();
-        updateDistributorAmount();
+        // Run on page load
+        window.addEventListener('DOMContentLoaded', updateCommissionAmounts);
     </script>
+
 
 
 @endsection
