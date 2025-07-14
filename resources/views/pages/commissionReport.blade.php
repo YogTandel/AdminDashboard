@@ -269,4 +269,25 @@
         });
     </script>
 
+    <script>
+        function calculateCommissionAmount(percent, total) {
+            return ((percent / 100) * total).toFixed(2);
+        }
+
+        function updateAmounts() {
+            const total = parseFloat(document.getElementById('totalEarnings').value) || 0;
+            const agentPercent = parseFloat(document.getElementById('agentPercent').value) || 0;
+            const distributorPercent = parseFloat(document.getElementById('distributorPercent').value) || 0;
+
+            document.getElementById('agentAmount').value = calculateCommissionAmount(agentPercent, total);
+            document.getElementById('distributorAmount').value = calculateCommissionAmount(distributorPercent, total);
+        }
+
+        document.getElementById('agentPercent').addEventListener('input', updateAmounts);
+        document.getElementById('distributorPercent').addEventListener('input', updateAmounts);
+
+        // Initial call
+        updateAmounts();
+    </script>
+
 @endsection
