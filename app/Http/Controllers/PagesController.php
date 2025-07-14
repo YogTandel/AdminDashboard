@@ -888,99 +888,174 @@ class PagesController extends Controller
         return view('pages.commissionReport');
     }
 
-    public function transferToDistributor(Request $request, )
-    {
-        $request->validate([
-            'transfer_to' => 'required|exists:users,id',
-            'amount'      => 'required|numeric|min:0.01',
-        ]);
+   public function transferToDistributor(Request $request)
+{
+    $request->validate([
+        'transfer_to' => 'required|exists:users,id',
+        'amount'      => 'required|numeric|min:0.01',
+    ]);
 
-        $admin       = Auth::guard('admin')->user();
-        $distributor = User::where('id', $request->transfer_to)
-            ->where('role', 'distributor')
-            ->first();
+    $admin = Auth::guard('admin')->user();
+    $distributor = User::where('id', $request->transfer_to)
+        ->where('role', 'distributor')
+        ->first();
 
-        if (! $distributor) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Distributor not found.',
-            ]);
-        }
-
-        if ($request->amount > $admin->endpoint) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Transfer amount cannot be greater than admin\'s endpoint balance.',
-            ]);
-        }
-
-        $admin->endpoint -= $request->amount;
-        $distributor->endpoint += $request->amount;
-
-        $admin->save();
-        $distributor->save();
-
-        if ($request->ajax()) {
-            return response()->json([
-                'success' => true,
-                'message' => 'Balance transferred successfully.',
-            ]);
-        } else {
-            return redirect()->back()->with('success', 'Balance transferred successfully.');
-        }
-
+    if (! $distributor) {
+        return response()->json(['success' => false, 'message' => 'Distributor not found.']);
     }
 
+    if ($request->amount > $admin->endpoint) {
+        return response()->json(['success' => false, 'message' => 'Insufficient balance.']);
+    }
+
+    $admin->endpoint -= $request->amount;
+    $distributor->endpoint += $request->amount;
+
+    $admin->save();
+    $distributor->save();
+
+    // ✅ MongoDB insert into `refils`
+    DB::connection('mongodb')->table('refils')->insert([
+        'transfer_by'       => $admin->id,
+        'transfer_to'       => $distributor->id,
+        'transfer_to_model' => 'user',
+        'type'              => 'admin-to-distributor',
+        'amount'            => $request->amount,
+        'remaining_balance' => $admin->endpoint,
+        'transfer_role'     => 'admin',
+        'created_at'        => now(),
+        'updated_at'        => now(),
+    ]);
+
+    return redirect()->back()->with('success', 'Balance transferred successfully.');
+}
     public function transferToAgent(Request $request)
-    {
-        Log::info('TransferToAgent Request:', $request->all());
+{
+    $request->validate([
+        'transfer_to' => 'required',
+        'amount'      => 'required|numeric|min:0.01',
+    ]);
 
-        // exit(0);
-        $request->validate([
-            'transfer_to' => 'required',
-            'amount'      => 'required|numeric|min:0.01',
-        ]);
+    $distributor = Auth::user();
+    $agent = User::where('role', 'agent')->where('id', $request->transfer_to)->first();
 
-        $distributor = Auth::user();
-        $agent       = User::where('role', 'agent')
-            ->where('id', $request->transfer_to)
-            ->first();
-
-        if ($request->amount > $distributor->endpoint) {
-
-            return back()->with('error', 'Insufficient balance.');
-        }
-
-        $distributor->endpoint -= $request->amount;
-        $agent->endpoint += $request->amount;
-
-        $distributor->save();
-        $agent->save();
-
-        return back()->with('success', 'Balance transferred successfully.');
+    if (! $agent) {
+        return back()->with('error', 'Agent not found.');
     }
 
-    public function transferToPlayer(Request $request)
-    {
-        $request->validate([
-            'transfer_to' => 'required|exists:users,id',
-            'amount'      => 'required|numeric|min:0.01',
-        ]);
+    if ($request->amount > $distributor->endpoint) {
+        return back()->with('error', 'Insufficient balance.');
+    }
 
-        $agent  = Auth::user();
-        $player = User::where('role', 'player')->where('id', $request->transfer_to)->first();
+    $distributor->endpoint -= $request->amount;
+    $agent->endpoint += $request->amount;
 
-        if ($request->amount > $agent->endpoint) {
-            return back()->with('error', 'Insufficient balance.');
+    $distributor->save();
+    $agent->save();
+
+    // ✅ MongoDB insert into `refils`
+    DB::connection('mongodb')->table('refils')->insert([
+        'transfer_by'       => $distributor->id,
+        'transfer_to'       => $agent->id,
+        'transfer_to_model' => 'user',
+        'type'              => 'distributor-to-agent',
+        'amount'            => $request->amount,
+        'remaining_balance' => $distributor->endpoint,
+        'transfer_role'     => 'distributor',
+        'created_at'        => now(),
+        'updated_at'        => now(),
+    ]);
+
+    return back()->with('success', 'Balance transferred successfully.');
+}
+
+   public function transferToPlayer(Request $request)
+{
+    $request->validate([
+        'transfer_to' => 'required|exists:users,id',
+        'amount'      => 'required|numeric|min:0.01',
+    ]);
+
+    $agent = Auth::user();
+    $player = User::where('role', 'player')->where('id', $request->transfer_to)->first();
+
+    if (! $player) {
+        return back()->with('error', 'Player not found.');
+    }
+
+    if ($request->amount > $agent->endpoint) {
+        return back()->with('error', 'Insufficient balance.');
+    }
+
+    $agent->endpoint -= $request->amount;
+    $agent->save();
+
+    $player->balance += $request->amount;
+    $player->save();
+
+    // ✅ MongoDB insert into `refils`
+    DB::connection('mongodb')->table('refils')->insert([
+        'transfer_by'       => $agent->id,
+        'transfer_to'       => $player->id,
+        'transfer_to_model' => 'user',
+        'type'              => 'agent-to-player',
+        'amount'            => $request->amount,
+        'remaining_balance' => $agent->endpoint,
+        'transfer_role'     => 'agent',
+        'created_at'        => now(),
+        'updated_at'        => now(),
+    ]);
+
+    return back()->with('success', 'Balance transferred successfully.');
+}
+
+public function showRefilReport()
+{
+    $user  = auth('web')->user();
+    $admin = auth('admin')->user();
+
+    if (! $user && ! $admin) {
+        return redirect()->route('login');
+    }
+
+    $query = DB::connection('mongodb')->table('refils')->orderBy('created_at', 'desc');
+
+    if ($user) {
+        $query->where('transfer_by', $user->id);
+    }
+
+    $refils = $query->get();
+
+    if ($refils->isEmpty()) {
+        return view('pages.refil-report', compact('refils'));
+    }
+
+    // 🔍 Fetch all related users and admins
+    $allAdmins = Admin::all()->keyBy('_id');
+    $userIds   = $refils->pluck('transfer_by')->merge($refils->pluck('transfer_to'))->unique();
+    $users     = User::whereIn('_id', $userIds)->get()->keyBy('_id');
+
+    foreach ($refils as $refil) {
+        // 🧠 Transfer By Name
+        if ($users->has($refil->transfer_by)) {
+            $refil->agent_name = $users->get($refil->transfer_by)?->player ?? 'User (ID: ' . $refil->transfer_by . ')';
+        } elseif ($allAdmins->has($refil->transfer_by)) {
+            $refil->agent_name = $allAdmins->get($refil->transfer_by)?->player ?? 'Admin (ID: ' . $refil->transfer_by . ')';
+        } else {
+            $refil->agent_name = 'N/A (User ID: ' . $refil->transfer_by . ')';
         }
 
-        $agent->endpoint -= $request->amount;
-        $agent->save();
-
-        $player->balance += $request->amount;
-        $player->save();
-
-        return back()->with('success', 'Balance transferred successfully.');
+        // 🧠 Transfer To Name
+        if ($allAdmins->has($refil->transfer_to)) {
+            $refil->distributor_name = $allAdmins->get($refil->transfer_to)?->player ?? 'Admin (ID: ' . $refil->transfer_to . ')';
+        } else {
+            $refil->distributor_name = $users->get($refil->transfer_to)?->player ?? 'N/A (ID: ' . $refil->transfer_to . ')';
+        }
     }
+
+    return view('pages.refil-report', compact('refils'));
+}
+
+
 
 }

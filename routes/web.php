@@ -98,3 +98,7 @@ Route::post('/admin/transfer-to-distributor', [PagesController::class, 'transfer
 
 Route::post('/agent/transfer-to-player', [PagesController::class, 'transferToPlayer'])
     ->name('agent.transfer.to.player');
+
+Route::get('/refil-report', [PagesController::class, 'showRefilReport'])->name('refil.report');
+
+

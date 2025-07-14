@@ -23,7 +23,7 @@ return new class extends Migration
                     $table->decimal('standing', 10, 2);
                     $table->integer('custom_bet')->default(-1);
                     $table->integer('result', 10);
-                    $table->json('last_10_data')->nullable(); // ✅ changed from array() to json()
+                    $table->json('last_10_data')->nullable(); // 
                     $table->string('is_negative_agent')->nullable();
                     $table->timestamps();
             });
