@@ -57,7 +57,6 @@
                             </div>
 
                             <div class="d-flex flex-wrap gap-2 mt-3">
-
                             </div>
                         </form>
                     </div>
@@ -130,16 +129,20 @@
                                     <thead>
                                         <tr>
                                             <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                                Agent Name</th>
+                                                Agent Name
+                                            </th>
                                             <th
                                                 class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                                                Endpoint</th>
+                                                Endpoint
+                                            </th>
                                             <th
                                                 class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                                                Win Amount</th>
+                                                Win Amount
+                                            </th>
                                             <th
                                                 class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                                                Action</th>
+                                                Action
+                                            </th>
                                         </tr>
                                     </thead>
                                     <tbody id="agentTableBody">
