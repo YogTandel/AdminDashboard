@@ -103,3 +103,6 @@ Route::get('/refil-report', [PagesController::class, 'showRefilReport'])->name('
 
 
 Route::get('/get-settings-data', [PagesController::class, 'getSettingsData'])->name('settings.data');
+
+
+// Route::get('/your-page', [PagesController::class, 'showPage'])->name('your.page');

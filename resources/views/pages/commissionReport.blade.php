@@ -46,11 +46,11 @@
                                         <span class="input-group-text"
                                             style="pointer-events: none; background-color: #e9ecef;">%</span>
                                         <input type="number" id="distributorPercent" name="distributor_commission"
-                                            value="{{ $settings->distributorComission ?? 0.1 }}" class="form-control"
-                                            min="0" max="100" step="0.01" readonly
+                                            value="0.1" class="form-control" min="0" max="100" step="0.01" readonly
                                             style="pointer-events: none; background-color: #e9ecef;">
                                     </div>
                                 </div>
+
                                 <div class="col-md-6">
                                     <label class="form-label">Amount (₹)</label>
                                     <div class="input-group">
@@ -88,11 +88,11 @@
                                         <span class="input-group-text"
                                             style="pointer-events: none; background-color: #e9ecef;">%</span>
                                         <input type="number" id="agentPercent" name="agent_commission"
-                                            value="{{ $settings->agentComission ?? 5 }}" class="form-control" min="0"
-                                            max="100" step="0.01" readonly
+                                            value="5" class="form-control" min="0" max="100" step="0.01" readonly
                                             style="pointer-events: none; background-color: #e9ecef;">
                                     </div>
                                 </div>
+
                                 <div class="col-md-6">
                                     <label class="form-label">Amount (₹)</label>
                                     <div class="input-group">
@@ -368,8 +368,14 @@
         fetch("{{ route('settings.data') }}")
             .then(response => response.json())
             .then(data => {
-                // Set the value in the input field
+                // Total Earnings
                 document.getElementById('totalEarnings').value = data.earning;
+
+                // Distributor Commission
+                document.getElementById('distributorPercent').value = data.distributorComission;
+
+                // Agent Commission
+                document.getElementById('agentPercent').value = data.agentComission;
             })
             .catch(error => console.error('Error fetching live game values:', error));
     }
@@ -377,6 +383,8 @@
     fetchLiveGameValues(); 
     setInterval(fetchLiveGameValues, 5000); 
 </script>
+
+
 
 
 

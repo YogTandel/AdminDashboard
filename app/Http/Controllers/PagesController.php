@@ -1063,8 +1063,17 @@ class PagesController extends Controller
         return response()->json([
             
             'earning'  => $setting->earning ?? 0,
+            'distributorComission' => $setting->distributorComission ?? 0.1,
+            'agentComission'       => $setting->agentComission ?? 5,
           
         ]);
 }
+
+// public function showPage()
+// {
+//     $distributors = User::where('role', 'distributor')->get();
+
+//     return view('pages.commissionReport', compact('distributors'));
+// }
 
 }
