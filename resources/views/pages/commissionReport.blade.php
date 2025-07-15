@@ -136,7 +136,7 @@
                                 <!-- Endpoint -->
                                 <div class="d-flex flex-column" style="min-width: 140px;">
                                     <label class="form-label mb-1">Endpoint</label>
-                                    <div class="form-control bg-light" id="distEndpoint">distA-001</div>
+                                    <div class="form-control bg-light" id="distEndpoint">N/A</div>
                                 </div>
 
                                 <!-- Win Amount -->
@@ -144,7 +144,7 @@
                                     <label class="form-label mb-1">Win Amount</label>
                                     <div class="input-group">
                                         <span class="input-group-text bg-light">₹</span>
-                                        <div class="form-control bg-light" id="distWinAmount">4200</div>
+                                        <div class="form-control bg-light" id="distWinAmount">0</div>
                                     </div>
                                 </div>
 
@@ -153,7 +153,7 @@
                                     <label class="form-label mb-1">Commission</label>
                                     <div class="input-group">
                                         <span class="input-group-text bg-light">%</span>
-                                        <div class="form-control bg-light" id="distCommission">4.5</div>
+                                        <div class="form-control bg-light" id="distCommission">0</div>
                                     </div>
                                 </div>
 
@@ -414,6 +414,60 @@ $(document).ready(function () {
         let selectedName = $(this).find(':selected').data('name') || '';
         $('#distributor').val(selectedName);
     });
+});
+</script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+$(document).ready(function () {
+
+    // Load all distributors in dropdown
+    $.ajax({
+        url: '/ajax/distributors',
+        method: 'GET',
+        success: function (data) {
+            let $select = $('#distributor_id');
+            $select.empty().append('<option value="">-- Select --</option>');
+            data.forEach(function (item) {
+                $select.append(`<option value="${item.id}">${item.name}</option>`);
+            });
+        },
+        error: function () {
+            alert('Distributor list load failed');
+        }
+    });
+
+    // When distributor is selected, fetch its details
+    $('#distributor_id').on('change', function () {
+        let id = $(this).val();
+
+        if (!id) {
+            clearFields();
+            return;
+        }
+
+        $.ajax({
+            url: `/ajax/distributor/${id}`,
+            method: 'GET',
+            success: function (data) {
+                $('#distEndpoint').text(data.endpoint ?? 'N/A');
+                $('#distWinAmount').text(data.win_amount ?? 0);
+                $('#distCommission').text(data.commission ?? 0);
+            },
+            error: function () {
+                clearFields();
+                alert('Could not fetch distributor details');
+            }
+        });
+    });
+
+    function clearFields() {
+        $('#distEndpoint').text('N/A');
+        $('#distWinAmount').text('0');
+        $('#distCommission').text('0');
+    }
+
 });
 </script>
 

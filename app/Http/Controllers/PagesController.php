@@ -1083,7 +1083,20 @@ public function getDistributors(Request $request)
         return response()->json($data);
     }
 
+public function getDistributorDetails($id)
+    {
+        $distributor = User::where('_id', $id)->where('role', 'distributor')->first();
 
+        if (!$distributor) {
+            return response()->json(['error' => 'Distributor not found'], 404);
+        }
+
+        return response()->json([
+            'endpoint'   => $distributor->endpoint ?? 'N/A',
+            'win_amount' => $distributor->win_amount ?? 0,
+            'commission' => $distributor->commission ?? 0,
+        ]);
+    }
 
 
 }
