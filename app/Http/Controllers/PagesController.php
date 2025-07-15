@@ -1069,11 +1069,21 @@ class PagesController extends Controller
         ]);
 }
 
-// public function showPage()
-// {
-//     $distributors = User::where('role', 'distributor')->get();
+public function getDistributors(Request $request)
+    {
+        $distributors = User::where('role', 'distributor')->get();
 
-//     return view('pages.commissionReport', compact('distributors'));
-// }
+        $data = $distributors->map(function ($distributor) {
+            return [
+                'id' => (string) $distributor->_id, // For MongoDB _id
+                'name' => $distributor->player
+            ];
+        });
+
+        return response()->json($data);
+    }
+
+
+
 
 }

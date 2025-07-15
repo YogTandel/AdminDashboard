@@ -116,13 +116,15 @@
                         <div class="card-body py-4 px-4">
                             <div class="d-flex flex-wrap gap-4 align-items-end">
                                 <div class="d-flex flex-column me-5" style="min-width: 250px;">
-                                    <label class="form-label mb-1">Select Distributor</label>
-                                    <select id="distributorSelect" class="form-select" required>
-                                        <option value="">-- Select --</option>
-                                        <option value="dist1">Distributor A</option>
-                                        <option value="dist2">Distributor B</option>
-                                        <option value="dist3">Distributor C</option>
-                                    </select>
+                                    <label>Distributor</label>
+                                    <div class="input-group mb-3">
+                                        <select id="distributor_id" name="distributor_id" class="form-control" required>
+                                            <option value="">-- Select Distributor --</option>
+                                            {{-- Options will be loaded here via JS --}}
+                                        </select>
+                                    </div>
+
+                                    <input type="hidden" name="distributor" id="distributor" value="">
                                 </div>
 
                                 <!-- Last Release -->
@@ -384,8 +386,36 @@
     setInterval(fetchLiveGameValues, 5000); 
 </script>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+<script>
+$(document).ready(function () {
+    // Fetch distributor list via AJAX
+    $.ajax({
+        url: '/ajax/distributors',
+        method: 'GET',
+        success: function (data) {
+            let distributorSelect = $('#distributor_id');
+            distributorSelect.empty().append('<option value="">-- Select Distributor --</option>');
 
+            data.forEach(function (item) {
+                distributorSelect.append(
+                    `<option value="${item.id}" data-name="${item.name}">${item.name}</option>`
+                );
+            });
+        },
+        error: function () {
+            alert('Failed to load distributors.');
+        }
+    });
+
+    // When distributor is selected, store name in hidden input
+    $('#distributor_id').on('change', function () {
+        let selectedName = $(this).find(':selected').data('name') || '';
+        $('#distributor').val(selectedName);
+    });
+});
+</script>
 
 
 @endsection
