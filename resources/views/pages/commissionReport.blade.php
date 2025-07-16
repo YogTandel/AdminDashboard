@@ -56,7 +56,7 @@
                                     <div class="input-group">
                                         <span class="input-group-text"
                                             style="pointer-events: none; background-color: #e9ecef;">₹</span>
-                                        <input type="text" class="form-control" readonly 
+                                        <input type="text" id="distributoramount" class="form-control" readonly 
                                         value="{{ number_format($totalWinpointSum * 0.01, 2) }}" 
                                         style="background-color: #e9ecef; pointer-events: none;">
 
@@ -100,8 +100,8 @@
                                     <div class="input-group">
                                         <span class="input-group-text"
                                             style="pointer-events: none; background-color: #e9ecef;">₹</span>
-                                        <input type="text" class="form-control" readonly 
-                                        value="{{ number_format($totalWinpointSum * 0.05, 2) }}" 
+                                        <input type="text" id="agentamount" class="form-control" readonly 
+                                        value="" 
                                         style="background-color: #e9ecef; pointer-events: none;">
                                     </div>
                                 </div>
@@ -368,18 +368,25 @@
     </script> -->
 
 <script>
+    var totalWinpointSum={{ $totalWinpointSum  }};
+    //alert(totalWinpointSum);
     function fetchLiveGameValues() {
         fetch("{{ route('settings.data') }}")
             .then(response => response.json())
             .then(data => {
-                // Total Earnings
+        
                 document.getElementById('totalEarnings').value = data.earning;
 
-                // Distributor Commission
                 document.getElementById('distributorPercent').value = data.distributorComission;
 
-                // Agent Commission
                 document.getElementById('agentPercent').value = data.agentComission;
+
+                // document.getElementById('distributoramount').value = totalWinpointSum*(data.distributorComission/100).toFixed(2);
+                 let commission = (data.totalWinpointSum_distributor * (data.distributorComission / 100)).toFixed(2);
+                $('#distCommission').text(commission);
+                 document.getElementById('agentamount').value = totalWinpointSum*(data.agentComission/100).toFixed(2);
+
+               
             })
             .catch(error => console.error('Error fetching live game values:', error));
     }
@@ -443,7 +450,7 @@ $(document).ready(function () {
 });
 </script> -->
 
-<script>
+<!-- <script>
 var distributordata=[];    
 $(document).ready(function () {
     // Load all distributors in dropdown on page load
@@ -489,7 +496,7 @@ $(document).ready(function () {
                 let commission = ((data.totalWinpointSum_distributor) * (distributorpercentage/100)).toFixed(2);
                 $('#distCommission').text(commission);
 
-                if (id && parseFloat(commission) > 0) {
+                if (id && parseFloat(commission) >= 0) {
                     $('#releaseButton').prop('disabled', false);
                 } else {
                     $('#releaseButton').prop('disabled', true);
@@ -513,6 +520,105 @@ $(document).ready(function () {
         $('#distributor').val('');
          $('#releaseButton').prop('disabled', true);
     }
+    $('#releaseButton').prop('disabled', true);
+});
+</script> -->
+
+<script>
+var distributordata = [];
+
+$(document).ready(function () {
+    // Load all distributors in dropdown on page load
+    $.ajax({
+        url: '/ajax/distributors',
+        method: 'GET',
+        success: function (data) {
+            console.log(data);
+            let $select = $('#distributor_id');
+            $select.empty().append('<option value="">-- Select Distributor --</option>');
+            data.forEach(function (item) {
+                $select.append(`<option value="${item.id}" data-name="${item.name}">${item.name}</option>`);
+                distributordata[item.id] = item;
+            });
+        },
+        error: function () {
+            alert('Distributor list load failed');
+        }
+    });
+
+    // On distributor change
+    $('#distributor_id').on('change', function () {
+        let id = $(this).val();
+        let selectedName = $(this).find(':selected').data('name') || '';
+        $('#distributor').val(selectedName); // hidden input update
+        $('#distEndpoint').text(distributordata[id]?.endpoint ?? 'N/A');
+        $('#releaseDateBox').text(distributordata[id]?.release_date ?? 'N/A');
+
+        if (!id) {
+            clearFields();
+            return;
+        }
+
+        // Fetch distributor details (also includes agents)
+        $.ajax({
+            url: `/ajax/distributor/${id}`, 
+            method: 'GET',
+            success: function (data) {
+                console.log(data);
+                var distributorpercentage = $('#distributorPercent').val();
+                $('#distWinAmount').text(data.totalWinpointSum_distributor); 
+                let commission = ((data.totalWinpointSum_distributor) * (distributorpercentage / 100)).toFixed(2);
+                $('#distCommission').text(commission);
+
+                if (id && parseFloat(commission) >= 0) {
+                    $('#releaseButton').prop('disabled', false);
+                } else {
+                    $('#releaseButton').prop('disabled', true);
+                }
+
+                // ✅ Populate agent table from data.agent
+                const agentTableBody = $('#agentTableBody');
+                agentTableBody.empty();
+
+                if (data.agent && data.agent.length > 0) {
+                    data.agent.forEach(function (agent) {
+                        const row = `
+                            <tr>
+                                <td><p class="text-xs font-weight-bold mb-0">${agent.name}</p></td>
+                                <td><p class="text-xs font-weight-bold mb-0">${agent.date || '-'}</p></td>
+                                <td><p class="text-xs mb-0 text-secondary">${agent.endpoint}</p></td>
+                                <td><p class="text-xs mb-0 text-success fw-bold">₹${agent.winAmount}</p></td>
+                                <td><p class="text-xs mb-0 text-secondary">${agent.commission}%</p></td>
+                                <td>
+                                    <button type="button" class="btn btn-sm btn-outline-success">
+                                        Release
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                        agentTableBody.append(row);
+                    });
+                } else {
+                    agentTableBody.html('<tr><td colspan="6" class="text-muted">No agents to display.</td></tr>');
+                }
+            },
+            error: function () {
+                clearFields();
+                alert('Could not fetch distributor details');
+            }
+        });
+    });
+
+    function clearFields() {
+        $('#releaseDateBox').text('N/A');
+        $('#distEndpoint').text('N/A');
+        $('#distWinAmount').text('0');
+        $('#distCommission').text('0');
+        $('#distributor').val('');
+        $('#releaseButton').prop('disabled', true);
+        $('#agentTableBody').html('<tr><td colspan="6" class="text-muted">No agents to display.</td></tr>');
+    }
+
     $('#releaseButton').prop('disabled', true);
 });
 </script>

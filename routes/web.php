@@ -113,3 +113,6 @@ Route::get('/ajax/distributors', [PagesController::class, 'getDistributors']);
 use App\Http\Controllers\AgentController;
 Route::get('/ajax/distributor/{id}', [PagesController::class, 'getDistributorDetails']);
 
+// routes/web.php
+Route::get('/ajax/distributor/{id}/agents', [PagesController::class, 'getDistributorAgents']);
+
