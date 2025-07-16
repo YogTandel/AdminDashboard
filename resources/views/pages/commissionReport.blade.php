@@ -56,8 +56,10 @@
                                     <div class="input-group">
                                         <span class="input-group-text"
                                             style="pointer-events: none; background-color: #e9ecef;">₹</span>
-                                        <input type="text" id="distributorAmount" class="form-control" readonly
-                                            style="pointer-events: none; background-color: #e9ecef;">
+                                        <input type="text" class="form-control" readonly 
+                                        value="{{ number_format($totalWinpointSum * 0.01, 2) }}" 
+                                        style="background-color: #e9ecef; pointer-events: none;">
+
                                     </div>
                                 </div>
                             </div>
@@ -98,8 +100,9 @@
                                     <div class="input-group">
                                         <span class="input-group-text"
                                             style="pointer-events: none; background-color: #e9ecef;">₹</span>
-                                        <input type="text" id="agentAmount" class="form-control" readonly
-                                            style="pointer-events: none; background-color: #e9ecef;">
+                                        <input type="text" class="form-control" readonly 
+                                        value="{{ number_format($totalWinpointSum * 0.05, 2) }}" 
+                                        style="background-color: #e9ecef; pointer-events: none;">
                                     </div>
                                 </div>
                             </div>
@@ -130,7 +133,7 @@
                                 <!-- Last Release -->
                                 <div class="d-flex flex-column" style="min-width: 140px;">
                                     <label class="form-label mb-1">Last Release</label>
-                                    <div class="form-control bg-light" id="distLastRelease">2025-07-05</div>
+                                    <div class="form-control bg-light" id="releaseDateBox">N/A</div>
                                 </div>
 
                                 <!-- Endpoint -->
@@ -143,7 +146,6 @@
                                 <div class="d-flex flex-column" style="min-width: 140px;">
                                     <label class="form-label mb-1">Win Amount</label>
                                     <div class="input-group">
-                                        <span class="input-group-text bg-light">₹</span>
                                         <div class="form-control bg-light" id="distWinAmount">0</div>
                                     </div>
                                 </div>
@@ -152,7 +154,7 @@
                                 <div class="d-flex flex-column" style="min-width: 140px;">
                                     <label class="form-label mb-1">Commission</label>
                                     <div class="input-group">
-                                        <span class="input-group-text bg-light">%</span>
+                                        <span class="input-group-text bg-light">₹</span>
                                         <div class="form-control bg-light" id="distCommission">0</div>
                                     </div>
                                 </div>
@@ -388,49 +390,17 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-<script>
+<!-- <script>
 $(document).ready(function () {
-    // Fetch distributor list via AJAX
-    $.ajax({
-        url: '/ajax/distributors',
-        method: 'GET',
-        success: function (data) {
-            let distributorSelect = $('#distributor_id');
-            distributorSelect.empty().append('<option value="">-- Select Distributor --</option>');
-
-            data.forEach(function (item) {
-                distributorSelect.append(
-                    `<option value="${item.id}" data-name="${item.name}">${item.name}</option>`
-                );
-            });
-        },
-        error: function () {
-            alert('Failed to load distributors.');
-        }
-    });
-
-    // When distributor is selected, store name in hidden input
-    $('#distributor_id').on('change', function () {
-        let selectedName = $(this).find(':selected').data('name') || '';
-        $('#distributor').val(selectedName);
-    });
-});
-</script>
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<script>
-$(document).ready(function () {
-
-    // Load all distributors in dropdown
+    // Load all distributors in dropdown on page load
     $.ajax({
         url: '/ajax/distributors',
         method: 'GET',
         success: function (data) {
             let $select = $('#distributor_id');
-            $select.empty().append('<option value="">-- Select --</option>');
+            $select.empty().append('<option value="">-- Select Distributor --</option>');
             data.forEach(function (item) {
-                $select.append(`<option value="${item.id}">${item.name}</option>`);
+                $select.append(`<option value="${item.id}" data-name="${item.name}">${item.name}</option>`);
             });
         },
         error: function () {
@@ -438,9 +408,11 @@ $(document).ready(function () {
         }
     });
 
-    // When distributor is selected, fetch its details
+    // On distributor change
     $('#distributor_id').on('change', function () {
         let id = $(this).val();
+        let selectedName = $(this).find(':selected').data('name') || '';
+        $('#distributor').val(selectedName); // hidden input update
 
         if (!id) {
             clearFields();
@@ -448,11 +420,11 @@ $(document).ready(function () {
         }
 
         $.ajax({
-            url: `/ajax/distributor/${id}`,
+            url: `/ajax/distributor/${id}`, // Calls getDistributorDetails($id)
             method: 'GET',
             success: function (data) {
                 $('#distEndpoint').text(data.endpoint ?? 'N/A');
-                $('#distWinAmount').text(data.win_amount ?? 0);
+                $('#distWinAmount').text(data.winamount ?? 0);  // Note key is 'winamount' from your PHP code
                 $('#distCommission').text(data.commission ?? 0);
             },
             error: function () {
@@ -466,10 +438,76 @@ $(document).ready(function () {
         $('#distEndpoint').text('N/A');
         $('#distWinAmount').text('0');
         $('#distCommission').text('0');
+        $('#distributor').val('');
     }
+});
+</script> -->
 
+<script>
+var distributordata=[];    
+$(document).ready(function () {
+    // Load all distributors in dropdown on page load
+    $.ajax({
+        url: '/ajax/distributors',
+        method: 'GET',
+        success: function (data) {
+            console.log(data);
+            let $select = $('#distributor_id');
+            $select.empty().append('<option value="">-- Select Distributor --</option>');
+            data.forEach(function (item) {
+                $select.append(`<option value="${item.id}" data-name="${item.name}">${item.name}</option>`);
+                distributordata[item.id] = item;
+            });
+        },
+        error: function () {
+            alert('Distributor list load failed');
+        }
+    });
+
+    // On distributor change
+    $('#distributor_id').on('change', function () {
+        let id = $(this).val();
+        let selectedName = $(this).find(':selected').data('name') || '';
+        $('#distributor').val(selectedName); // hidden input update
+        $('#distEndpoint').text(distributordata[id].endpoint);
+        $('#releaseDateBox').text(distributordata[id].release_date);
+
+        if (!id) {
+            clearFields();
+            return;
+        }
+        
+
+        $.ajax({
+            url: `/ajax/distributor/${id}`, 
+            method: 'GET',
+            success: function (data) {
+                console.log(data);
+                var distributorpercentage=$('#distributorPercent').val();
+                //$('#distEndpoint').text(data.endpoint ?? 'N/A');
+                $('#distWinAmount').text(data.totalWinpointSum_distributor ); 
+                let commission = ((data.totalWinpointSum_distributor) * (distributorpercentage/100)).toFixed(2);
+                $('#distCommission').text(commission);
+                 
+            },
+            error: function () {
+                clearFields();
+                alert('Could not fetch distributor details');
+            }
+        });
+    });
+
+    function clearFields() {
+     
+         $('#releaseDateBox').text('N/A')
+         $('#distEndpoint').text('N/A');
+        $('#distWinAmount').text('0');
+        $('#distCommission').text('0');
+        $('#distributor').val('');
+    }
 });
 </script>
+
 
 
 @endsection

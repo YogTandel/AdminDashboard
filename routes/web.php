@@ -82,7 +82,9 @@ Route::get('/test-player', function () {
 // web.php
 Route::get('/get-agents/{distributorId}', [PagesController::class, 'getAgents']);
 
-Route::get('/commission-report', [PagesController::class, 'commissionReport'])->name('commission.report');
+Route::get('/commission-report',  [PagesController::class, 'commissionReport'])->name('commission.report');
+// For fetching commission data using distributor ID
+Route::get('/commission-report/{id}', [PagesController::class, 'commissionReportData']);
 
 
 
