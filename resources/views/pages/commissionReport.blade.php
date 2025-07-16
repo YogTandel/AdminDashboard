@@ -488,8 +488,15 @@ $(document).ready(function () {
                 $('#distWinAmount').text(data.totalWinpointSum_distributor ); 
                 let commission = ((data.totalWinpointSum_distributor) * (distributorpercentage/100)).toFixed(2);
                 $('#distCommission').text(commission);
+
+                if (id && parseFloat(commission) > 0) {
+                    $('#releaseButton').prop('disabled', false);
+                } else {
+                    $('#releaseButton').prop('disabled', true);
+                }
                  
             },
+            
             error: function () {
                 clearFields();
                 alert('Could not fetch distributor details');
@@ -504,7 +511,9 @@ $(document).ready(function () {
         $('#distWinAmount').text('0');
         $('#distCommission').text('0');
         $('#distributor').val('');
+         $('#releaseButton').prop('disabled', true);
     }
+    $('#releaseButton').prop('disabled', true);
 });
 </script>
 
