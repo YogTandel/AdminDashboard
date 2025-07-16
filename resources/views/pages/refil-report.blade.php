@@ -24,9 +24,7 @@
                     <thead>
                         <tr>
                             <th>Transfer By Name</th>
-                            <th>Transfer By ID</th>
                             <th>Transfer To Name</th>
-                            <th>Transfer To ID</th>
                             <th>Amount</th>
                             <th>Remaining Balance</th>
                             <th>Role</th>
@@ -38,7 +36,6 @@
                         @foreach ($refils as $refil)
                             <tr>
                                 <td>{{ $refil->agent_name }}</td>
-                                <td>{{ $refil->transfer_by }}</td>
                                 <td>
                                     @if (str_contains($refil->distributor_name, 'Admin'))
                                         <span class="text-primary">{{ $refil->distributor_name }}</span>
@@ -46,7 +43,6 @@
                                         {{ $refil->distributor_name }}
                                     @endif
                                 </td>
-                                <td>{{ $refil->transfer_to }}</td>
                                 <td class="text-success">{{ number_format($refil->amount, 2) }}</td>
                                 <td>{{ number_format($refil->remaining_balance, 2) }}</td>
                                 <td>{{ ucfirst($refil->transfer_role) }}</td>
