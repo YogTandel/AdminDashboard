@@ -72,25 +72,24 @@ class User extends Authenticatable
     }
 
     public function getBalanceAttribute($value)
-{
-    return $value instanceof Decimal128 ? (float) (string) $value : $value;
-}
+    {
+        return $value instanceof Decimal128 ? (float) (string) $value : $value;
+    }
 
-public function getWinamountAttribute($value)
-{
-    return (int)(string) $value;
-}
+    public function getWinamountAttribute($value)
+    {
+        return (int) (string) $value;
+    }
 
-public function distributorUser()
-{
-    return $this->belongsTo(User::class, 'distributor');
-}
+    public function distributorUser()
+    {
+        return $this->belongsTo(User::class, 'distributor');
+    }
 
-public function agentUser()
-{
-    return $this->belongsTo(User::class, 'agent');
-}
-
+    public function agentUser()
+    {
+        return $this->belongsTo(User::class, 'agent');
+    }
 
 //     public function isAdmin()
 // {

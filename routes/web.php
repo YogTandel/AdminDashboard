@@ -110,7 +110,6 @@ Route::get('/get-settings-data', [PagesController::class, 'getSettingsData'])->n
 Route::get('/ajax/distributors', [PagesController::class, 'getDistributors']);
 
 
-use App\Http\Controllers\AgentController;
 Route::get('/ajax/distributor/{id}', [PagesController::class, 'getDistributorDetails']);
 
 // routes/web.php
