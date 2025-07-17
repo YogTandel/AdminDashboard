@@ -165,6 +165,9 @@
                                         Release
                                     </button>
                                 </div>
+
+                                <input type="hidden" id="totalBet" value="0">
+                                <input type="hidden" id="distCommissionPercentage" value="0">
                             </div>
                         </div>
                     </div>
@@ -224,8 +227,8 @@
             <!-- End Dynamic Agent Summary Table Section -->
         </div>
     </div>
-    
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
         var totalWinpointSum = {{ $totalWinpointSum }};
@@ -271,7 +274,7 @@
                     data.forEach(function(item) {
                         $select.append(
                             `<option value="${item.id}" data-name="${item.name}">${item.name}</option>`
-                            );
+                        );
                         distributordata[item.id] = item;
                     });
                 },
@@ -286,7 +289,20 @@
                 let selectedName = $(this).find(':selected').data('name') || '';
                 $('#distributor').val(selectedName); // hidden input update
                 $('#distEndpoint').text(distributordata[id]?.endpoint ?? 'N/A');
-                $('#releaseDateBox').text(distributordata[id]?.release_date ?? 'N/A');
+                let releaseDateRaw = distributordata[id]?.release_date;
+                let releaseDateFormatted = 'N/A';
+                if (releaseDateRaw) {
+                    let date = new Date(releaseDateRaw);
+                    releaseDateFormatted = date.toLocaleString('en-IN', {
+                        day: '2-digit',
+                        month: 'long',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: true
+                    });
+                }
+                $('#releaseDateBox').text(releaseDateFormatted);
 
                 if (!id) {
                     clearFields();
@@ -320,7 +336,7 @@
 
                         if (data.agent && data.agent.length > 0) {
                             data.agent.forEach(function(agent) {
-                                const row = `
+                                const row = /* HTML */ `
                             <tr>
                                 <td><p class="text-xs font-weight-bold mb-0">${agent.name}</p></td>
                                 <td><p class="text-xs font-weight-bold mb-0">${agent.date || '-'}</p></td>
@@ -344,7 +360,7 @@
                         } else {
                             agentTableBody.html(
                                 '<tr><td colspan="6" class="text-muted">No agents to display.</td></tr>'
-                                );
+                            );
                         }
 
                         // Final check: only enable release button if all commissions > 0
@@ -353,6 +369,42 @@
                     error: function() {
                         clearFields();
                         alert('Could not fetch distributor details');
+                    }
+                });
+            });
+
+            $('#releaseButton').on('click', function() {
+                const distributorId = $('#distributor_id').val();
+                const commissionAmount = parseFloat($('#distCommission').text());
+                const commissionPercentage = parseFloat($('#distributorPercent').val());
+                const winAmount = parseFloat($('#distWinAmount').text());
+
+                if (!distributorId || isNaN(commissionAmount) || commissionAmount <= 0 || isNaN(
+                        commissionPercentage) || isNaN(winAmount) || winAmount <= 0) {
+                    alert('Invalid input: Check Distributor, Total Bet, or Commission %');
+                    return;
+                }
+
+                $.ajax({
+                    url: '/release-commission',
+                    method: 'POST',
+                    data: {
+                        transfer_to: distributorId,
+                        type: 'distributor',
+                        total_bet: winAmount,
+                        commission_percentage: commissionPercentage,
+                        win_amount: winAmount,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(res) {
+                        alert('Commission Released Successfully!');
+                        fetchLiveGameValues(); // Refresh live values if needed
+                        $('#releaseButton').prop('disabled', true);
+                        $('#releaseDateBox').text(res.released_at || new Date()
+                            .toLocaleString());
+                    },
+                    error: function(xhr) {
+                        alert(xhr.responseJSON?.error || 'Failed to release commission.');
                     }
                 });
             });

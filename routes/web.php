@@ -54,13 +54,11 @@ Route::post('/admin/remove-points', [PagesController::class, 'removePointsFromAd
 Route::post('/custom-bet-update', [PagesController::class, 'updateCustomBet'])->name('custom.bet.update');
 Route::get('/admin-endpoint', [PagesController::class, 'getAdminEndpoint'])->name('admin.endpoint');
 
-
 // live game
 Route::get('/livegame', [PagesController::class, 'livegame'])->name('livegame');
 Route::get('/live-game-values', action: [PagesController::class, 'liveGamevalue'])->name('live.game.values');
 Route::get('/bet-totals', [PagesController::class, 'getBetTotals'])->name('bet.totals');
 Route::get('/get-live-players', [PagesController::class, 'getLivePlayers'])->name('players.live');
-
 
 // transfer
 Route::get('/transfer', [PagesController::class, 'transferForm'])->name('transfer.page');
@@ -78,40 +76,33 @@ Route::get('/test-player', function () {
     dd($player->gameHistory);
 });
 
-
 // web.php
 Route::get('/get-agents/{distributorId}', [PagesController::class, 'getAgents']);
 
-Route::get('/commission-report',  [PagesController::class, 'commissionReport'])->name('commission.report');
+Route::get('/commission-report', [PagesController::class, 'commissionReport'])->name('commission.report');
 // For fetching commission data using distributor ID
 Route::get('/commission-report/{id}', [PagesController::class, 'commissionReportData']);
-
-
 
 //transfer admin-distributor   distributor-agent    agent-player
 
 Route::post('/admin/transfer-to-distributor', [PagesController::class, 'transferToDistributor'])
     ->name('admin.transfer.to.distributor');
 
-
-    Route::post('/distributor/transfer-to-agent', [PagesController::class, 'transferToAgent'])
+Route::post('/distributor/transfer-to-agent', [PagesController::class, 'transferToAgent'])
     ->name('user.transfer.to.agent');
-
 
 Route::post('/agent/transfer-to-player', [PagesController::class, 'transferToPlayer'])
     ->name('agent.transfer.to.player');
 
 Route::get('/refil-report', [PagesController::class, 'showRefilReport'])->name('refil.report');
 
-
 Route::get('/get-settings-data', [PagesController::class, 'getSettingsData'])->name('settings.data');
-
 
 Route::get('/ajax/distributors', [PagesController::class, 'getDistributors']);
 
-
 Route::get('/ajax/distributor/{id}', [PagesController::class, 'getDistributorDetails']);
+
+Route::post('/release-commission', [PagesController::class, 'releaseCommission']);
 
 // routes/web.php
 // Route::get('/ajax/distributor/{id}/agents', [PagesController::class, 'getDistributorAgents']);
-

@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Admin;
 use App\Models\Bet;
+use App\Models\Release;
 use App\Models\Setting;
 use App\Models\Transaction;
 use App\Models\User;
@@ -1219,6 +1220,72 @@ class PagesController extends Controller
         return response()->json([
             'totalWinpointSum_distributor' => $totalWinpointSum_distributor,
             'agent'                        => $agent_value,
+        ]);
+    }
+
+    public function releaseCommission(Request $request)
+    {
+        $request->validate([
+            'transfer_to'           => 'required|string',
+            'type'                  => 'required|in:distributor,agent,player',
+            'total_bet'             => 'required|numeric|min:0',
+            'commission_percentage' => 'required|numeric|min:0|max:100',
+            'win_amount'            => 'required|numeric|min:0',
+        ]);
+
+        $transferTo           = $request->transfer_to;
+        $type                 = $request->type;
+        $totalBet             = $request->total_bet;
+        $commissionPercentage = $request->commission_percentage;
+        $winAmount            = $request->win_amount;
+
+        // Calculate commission amount
+        $commission = ($totalBet * $commissionPercentage) / 100;
+
+        // Get system settings
+        $setting = Setting::first();
+        if (! $setting) {
+            return response()->json(['error' => 'System settings not found'], 400);
+        }
+
+        // System earning is a percentage config (not actual wallet)
+        $systemEarningPercent = $setting->earning;
+        $availableEarning     = ($winAmount * $systemEarningPercent) / 100;
+
+        if ($availableEarning < $commission) {
+            return response()->json(['error' => 'Not enough earnings in system'], 400);
+        }
+
+        // DO NOT change setting->earning because it's a config %
+        // Just log remaining from this transaction
+        $remainingBalance = $availableEarning - $commission;
+
+        // Find the user to transfer commission
+        $user = User::where('id', $transferTo)->where('role', $type)->first();
+        if (! $user) {
+            return response()->json(['error' => ucfirst($type) . ' not found'], 404);
+        }
+
+        // Add commission to their endpoint
+        $user->endpoint                = ($user->endpoint ?? 0) + $commission;
+        $user->release_commission_date = now();
+        $user->save();
+
+        // Log the release
+        Release::create([
+            'transfer_to'           => $transferTo,
+            'type'                  => $type,
+            'total_bet'             => $totalBet,
+            'commission_percentage' => $commissionPercentage,
+            'remaining_balance'     => $remainingBalance,
+            'transfer_role'         => 'admin',
+        ]);
+
+        return response()->json([
+            'success'           => true,
+            'message'           => 'Commission released successfully.',
+            'remaining_balance' => $remainingBalance,
+            'released_at'       => now()->format('Y-m-d H:i:s'),
         ]);
     }
 
