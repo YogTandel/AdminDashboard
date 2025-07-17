@@ -1149,9 +1149,9 @@ class PagesController extends Controller
 //                 ->where('distributor_id', new ObjectId($id))
 //                 ->get();
 
-//         //print_r($agents);
+//         print_r($agents);
 //         $totalWinpointSum_distributor = 0;
-//         //$releaseDates = []; // release_commission_date store કરવા માટે
+//         $releaseDates = []; // release_commission_date store કરવા માટે
 //         $agent_value=[];
 //         foreach ($agents as $agent) {
 
@@ -1164,25 +1164,25 @@ class PagesController extends Controller
 //             $players = User::where('role', 'player')
 //                ->where('agent_id', new ObjectId($agent->_id))
 //                ->get(['gameHistory']);
-//             // print_r($players);
+//              print_r($players);
 //             foreach ($players as $player) {
 //                 foreach ($player->gameHistory ?? [] as $game) {
-//                     //echo ''. $game->id .''. $game->name ;
+//                     echo ''. $game->id .''. $game->name ;
 //                     $gameTime = strtotime(str_replace('/', '-', $game['stime']));
 //                     if (!$releaseTimestamp || $gameTime > $releaseTimestamp) {
-//                       //  echo 'hello';
+//                        echo 'hello';
 //                         $totalWinpointSum_distributor += $game['winpoint'] ?? 0;
 //                     }
 //                 }
 //             }
 //         }
 
-//         // $distributor = User::find($id);
+//          $distributor = User::find($id);
 
 //         return response()->json([
 //             'totalWinpointSum_distributor' => $totalWinpointSum_distributor,
-//              //'release_dates' => $releaseDates, //
-//               //'endpoint' => $distributor->endpoint ?? 'N/A',
+//              'release_dates' => $releaseDates, //
+//               'endpoint' => $distributor->endpoint ?? 'N/A',
 //               'agent' =>$agent_value
 //         ]);
 
