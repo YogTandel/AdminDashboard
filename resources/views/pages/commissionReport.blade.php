@@ -56,8 +56,8 @@
                                     <div class="input-group">
                                         <span class="input-group-text"
                                             style="pointer-events: none; background-color: #e9ecef;">₹</span>
-                                        <input type="text" id="distributoramount" class="form-control" readonly 
-                                        value="{{ number_format($totalWinpointSum * 0.01, 2) }}" 
+                                        <input type="text" id="distributoramount" class="form-control" readonly
+                                        value="{{ number_format($totalWinpointSum * 0.01, 2) }}"
                                         style="background-color: #e9ecef; pointer-events: none;">
 
                                     </div>
@@ -100,8 +100,8 @@
                                     <div class="input-group">
                                         <span class="input-group-text"
                                             style="pointer-events: none; background-color: #e9ecef;">₹</span>
-                                        <input type="text" id="agentamount" class="form-control" readonly 
-                                        value="" 
+                                        <input type="text" id="agentamount" class="form-control" readonly
+                                        value=""
                                         style="background-color: #e9ecef; pointer-events: none;">
                                     </div>
                                 </div>
@@ -118,9 +118,9 @@
                     <div class="card shadow-sm border-radius-xl mb-4">
                         <div class="card-body py-4 px-4">
                             <div class="d-flex flex-wrap gap-4 align-items-end">
-                                <div class="d-flex flex-column me-5" style="min-width: 250px;">
+                                <div class="d-flex flex-column" style="min-width: 250px;">
                                     <label>Distributor</label>
-                                    <div class="input-group mb-3">
+                                    <div class="input-group">
                                         <select id="distributor_id" name="distributor_id" class="form-control" required>
                                             <option value="">-- Select Distributor --</option>
                                             {{-- Options will be loaded here via JS --}}
@@ -225,7 +225,7 @@
             <!-- End Dynamic Agent Summary Table Section -->
         </div>
     </div>
-<!-- 
+<!--
     <script>
         const distributorAgents = {
             dist1: [{
@@ -374,7 +374,7 @@
         fetch("{{ route('settings.data') }}")
             .then(response => response.json())
             .then(data => {
-        
+
                 document.getElementById('totalEarnings').value = data.earning;
 
                 document.getElementById('distributorPercent').value = data.distributorComission;
@@ -385,13 +385,13 @@
                  document.getElementById('distributoramount').value = totalWinpointSum * (data.distributorComission / 100).toFixed(2);
                  document.getElementById('agentamount').value = totalWinpointSum*(data.agentComission/100).toFixed(2);
 
-               
+
             })
             .catch(error => console.error('Error fetching live game values:', error));
     }
 
-    fetchLiveGameValues(); 
-    setInterval(fetchLiveGameValues, 5000); 
+    fetchLiveGameValues();
+    setInterval(fetchLiveGameValues, 5000);
 </script>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -450,7 +450,7 @@ $(document).ready(function () {
 </script> -->
 
 <!-- <script>
-var distributordata=[];    
+var distributordata=[];
 $(document).ready(function () {
     // Load all distributors in dropdown on page load
     $.ajax({
@@ -482,16 +482,16 @@ $(document).ready(function () {
             clearFields();
             return;
         }
-        
+
 
         $.ajax({
-            url: `/ajax/distributor/${id}`, 
+            url: `/ajax/distributor/${id}`,
             method: 'GET',
             success: function (data) {
                 console.log(data);
                 var distributorpercentage=$('#distributorPercent').val();
                 //$('#distEndpoint').text(data.endpoint ?? 'N/A');
-                $('#distWinAmount').text(data.totalWinpointSum_distributor ); 
+                $('#distWinAmount').text(data.totalWinpointSum_distributor );
                 let commission = ((data.totalWinpointSum_distributor) * (distributorpercentage/100)).toFixed(2);
                 $('#distCommission').text(commission);
 
@@ -500,9 +500,9 @@ $(document).ready(function () {
                 } else {
                     $('#releaseButton').prop('disabled', true);
                 }
-                 
+
             },
-            
+
             error: function () {
                 clearFields();
                 alert('Could not fetch distributor details');
@@ -511,7 +511,7 @@ $(document).ready(function () {
     });
 
     function clearFields() {
-     
+
          $('#releaseDateBox').text('N/A')
          $('#distEndpoint').text('N/A');
         $('#distWinAmount').text('0');
@@ -560,17 +560,17 @@ $(document).ready(function () {
 
         // Fetch distributor details (also includes agents)
         $.ajax({
-            url: `/ajax/distributor/${id}`, 
+            url: `/ajax/distributor/${id}`,
             method: 'GET',
             success: function (data) {
                 console.log(data);
                 var distributorpercentage = $('#distributorPercent').val();
                 var agentpercentage = $('#agentPercent').val();
-                
-                $('#distWinAmount').text(data.totalWinpointSum_distributor); 
+
+                $('#distWinAmount').text(data.totalWinpointSum_distributor);
                 let commission = ((data.totalWinpointSum_distributor) * (distributorpercentage / 100)).toFixed(2);
                 $('#distCommission').text(commission);
-                //alert(commission);    
+                //alert(commission);
                 let releaseAllowed = true;
 
                 // Check if distributor commission is valid
@@ -672,12 +672,12 @@ $(document).ready(function () {
 
         // Fetch distributor details (also includes agents)
         $.ajax({
-            url: `/ajax/distributor/${id}`, 
+            url: `/ajax/distributor/${id}`,
             method: 'GET',
             success: function (data) {
                 console.log(data);
                 var distributorpercentage = $('#distributorPercent').val();
-                $('#distWinAmount').text(data.totalWinpointSum_distributor); 
+                $('#distWinAmount').text(data.totalWinpointSum_distributor);
                 let commission = ((data.totalWinpointSum_distributor) * (distributorpercentage / 100)).toFixed(2);
                 $('#distCommission').text(commission);
 
