@@ -895,18 +895,46 @@ class PagesController extends Controller
             $releaseDate = $agent->release_commission_date ?? null;
             $releaseTimestamp = $releaseDate ? Carbon::parse($releaseDate)->timestamp : null;
 
-            $players = User::where('role', 'player')
-                ->where('agent_id', new ObjectId($agent->_id))
-                ->where('gameHistory', 'elemMatch', ['winpoint' => 0])
-                ->get(['gameHistory']);
+            // $players = User::where('role', 'player')
+            //     ->where('agent_id', new ObjectId($agent->_id))
+            //     ->get(['gameHistory']);
+            $players = User::raw(function ($collection) use ($agent) {
+                return $collection->aggregate([
+                    [
+                        '$match' => [
+                            'role' => 'player',
+                            'agent_id' => new ObjectId($agent->_id)
+                        ]
+                    ],
+                    [
+                        '$project' => [
+                            'gameHistory' => [
+                                '$filter' => [
+                                    'input' => '$gameHistory',
+                                    'as' => 'history',
+                                    'cond' => [
+                                        '$and' => [
+                                            ['$eq' => ['$$history.winpoint', 0]]
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]);
+            });
+
             // print_r($players);
+            // exit();
             foreach ($players as $player) {
                 foreach ($player->gameHistory ?? [] as $game) {
                     //echo ''. $game->id .''. $game->name ;
                     $gameTime = strtotime(str_replace('/', '-', $game['stime']));
                     if (!$releaseTimestamp || $gameTime > $releaseTimestamp) {
                         //  echo 'hello';
-                        $totalWinpointSum += $game['winpoint'] ?? 0;
+                        //$totalWinpointSum += $game['winpoint'] ?? 0;
+                        foreach ($game['betValues'] ?? [] as $betVal) 
+                            $totalWinpointSum+= $betVal;
                     }
                 }
             }
@@ -1136,22 +1164,50 @@ class PagesController extends Controller
         $agent_value = [];
 
         foreach ($agents as $agent) {
+            $totalWinpointSum_agent=0;
             $releaseDate = $agent->release_commission_date ?? null;
             $releaseTimestamp = $releaseDate ? Carbon::parse($releaseDate)->timestamp : null;
 
-            $players = User::where('role', 'player')
-                ->where('agent_id', new ObjectId($agent->_id))
-                ->get(['gameHistory']);
+            // $players = User::where('role', 'player')
+            //     ->where('agent_id', new ObjectId($agent->_id))
+            //     ->get(['gameHistory']);
 
-            $agentWinPoint = 0;
-
+            $players = User::raw(function ($collection) use ($agent) {
+                return $collection->aggregate([
+                    [
+                        '$match' => [
+                            'role' => 'player',
+                            'agent_id' => new ObjectId($agent->_id)
+                        ]
+                    ],
+                    [
+                        '$project' => [
+                            'gameHistory' => [
+                                '$filter' => [
+                                    'input' => '$gameHistory',
+                                    'as' => 'history',
+                                    'cond' => [
+                                        '$and' => [
+                                            ['$eq' => ['$$history.winpoint', 0]]
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]);
+            });
+            
             foreach ($players as $player) {
                 foreach ($player->gameHistory ?? [] as $game) {
                     $gameTime = strtotime(str_replace('/', '-', $game['stime']));
                     if (!$releaseTimestamp || $gameTime > $releaseTimestamp) {
-                        $win = $game['winpoint'] ?? 0;
-                        $agentWinPoint += $win;
-                        $totalWinpointSum_distributor += $win;
+                        foreach ($game['betValues'] ?? [] as $betVal){
+                            $totalWinpointSum_agent+= $betVal;
+                            $totalWinpointSum_distributor+= $betVal;
+                        } 
+                            
+                    
                     }
                 }
             }
@@ -1160,8 +1216,8 @@ class PagesController extends Controller
                 'name' => $agent->player,
                 'date' => optional($agent->release_commission_date)->format('Y-m-d'),
                 'endpoint' => $agent->endpoint ?? 'N/A',
-                'winAmount' => $agentWinPoint, // ← per agent win point calculated
-                'commission' => $agent->commission ?? 0
+                'winAmount' => $totalWinpointSum_agent, // ← per agent win point calculated
+                
             ];
         }
 

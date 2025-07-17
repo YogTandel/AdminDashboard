@@ -382,8 +382,7 @@
                 document.getElementById('agentPercent').value = data.agentComission;
 
                 // document.getElementById('distributoramount').value = totalWinpointSum*(data.distributorComission/100).toFixed(2);
-                 let commission = (data.totalWinpointSum_distributor * (data.distributorComission / 100)).toFixed(2);
-                $('#distCommission').text(commission);
+                 document.getElementById('distributoramount').value = totalWinpointSum * (data.distributorComission / 100).toFixed(2);
                  document.getElementById('agentamount').value = totalWinpointSum*(data.agentComission/100).toFixed(2);
 
                
@@ -566,10 +565,12 @@ $(document).ready(function () {
             success: function (data) {
                 console.log(data);
                 var distributorpercentage = $('#distributorPercent').val();
+                var agentpercentage = $('#agentPercent').val();
+                
                 $('#distWinAmount').text(data.totalWinpointSum_distributor); 
                 let commission = ((data.totalWinpointSum_distributor) * (distributorpercentage / 100)).toFixed(2);
                 $('#distCommission').text(commission);
-
+                //alert(commission);    
                 let releaseAllowed = true;
 
                 // Check if distributor commission is valid
@@ -589,7 +590,7 @@ $(document).ready(function () {
                                 <td><p class="text-xs font-weight-bold mb-0">${agent.date || '-'}</p></td>
                                 <td><p class="text-xs mb-0 text-secondary">${agent.endpoint}</p></td>
                                 <td><p class="text-xs mb-0 text-success fw-bold">₹${agent.winAmount}</p></td>
-                                <td><p class="text-xs mb-0 text-secondary">${agent.commission}%</p></td>
+                                <td><p class="text-xs mb-0 text-secondary">${agent.winAmount*(agentpercentage/100).toFixed(2)}</p></td>
                                 <td>
                                     <button type="button" class="btn btn-sm btn-success">
                                         Release
