@@ -1290,13 +1290,7 @@ class PagesController extends Controller
 
     public function relesecommissionReport(){
        $releases = Release::orderBy('created_at', 'desc')->get();
-
-        // $releases->transform(function ($item) {
-        //     $item['created_at'] = isset($item['created_at']) ? Carbon::parse($item['created_at'])->format('d-m-Y H:i:s') : '';
-        //     $item['updated_at'] = isset($item['updated_at']) ? Carbon::parse($item['updated_at'])->format('d-m-Y H:i:s') : '';
-        //     return $item;
-        // });
-
+       
         return view('pages.comissiom-report', compact('releases'));
     }
 

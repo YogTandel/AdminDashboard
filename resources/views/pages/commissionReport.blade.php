@@ -353,9 +353,9 @@
                             `;
                             agentTableBody.append(row);
 
-                            if (isDisabled) {
-                                releaseAllowed = false;
-                            }
+                            // if (isDisabled) {
+                            //     releaseAllowed = false;
+                            // }
                         });
                     } else {
                         agentTableBody.html(
