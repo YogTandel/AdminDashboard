@@ -1117,11 +1117,9 @@ class PagesController extends Controller
         $setting = Setting::first();
 
         return response()->json([
-
             'earning'              => $setting->earning ?? 0,
             'distributorComission' => $setting->distributorComission ?? 0,
             'agentComission'       => $setting->agentComission ?? 0,
-
         ]);
     }
 
