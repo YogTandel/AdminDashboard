@@ -922,10 +922,6 @@ class PagesController extends Controller
 
 
 
-    //     $players = User::where('role', 'player')
-//                    ->whereIn('agent_id', $agentIds)
-//                    ->get();
-
     public function transferToDistributor(Request $request)
     {
         $request->validate([
