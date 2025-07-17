@@ -1215,14 +1215,6 @@ public function getDistributorDetails($id)
     $agent_value = [];
 
     foreach ($agents as $agent) {
-        $agent_value[] = [
-            'name'       => $agent->player,
-            'date'       => optional($agent->release_commission_date)->format('Y-m-d'),
-            'endpoint'   => $agent->endpoint ?? 'N/A',
-            'winAmount'  => $agent->win_amount ?? 0,
-            'commission' => $agent->commission ?? 0
-        ];
-
         $releaseDate = $agent->release_commission_date ?? null;
         $releaseTimestamp = $releaseDate ? Carbon::parse($releaseDate)->timestamp : null;
 
@@ -1230,14 +1222,26 @@ public function getDistributorDetails($id)
             ->where('agent_id', new ObjectId($agent->_id))
             ->get(['gameHistory']);
 
+        $agentWinPoint = 0;
+
         foreach ($players as $player) {
             foreach ($player->gameHistory ?? [] as $game) {
                 $gameTime = strtotime(str_replace('/', '-', $game['stime']));
                 if (!$releaseTimestamp || $gameTime > $releaseTimestamp) {
-                    $totalWinpointSum_distributor += $game['winpoint'] ?? 0;
+                    $win = $game['winpoint'] ?? 0;
+                    $agentWinPoint += $win;
+                    $totalWinpointSum_distributor += $win;
                 }
             }
         }
+
+        $agent_value[] = [
+            'name'       => $agent->player,
+            'date'       => optional($agent->release_commission_date)->format('Y-m-d'),
+            'endpoint'   => $agent->endpoint ?? 'N/A',
+            'winAmount'  => $agentWinPoint, // ← per agent win point calculated
+            'commission' => $agent->commission ?? 0
+        ];
     }
 
     return response()->json([
@@ -1245,6 +1249,7 @@ public function getDistributorDetails($id)
         'agent' => $agent_value
     ]);
 }
+
 
 
 
