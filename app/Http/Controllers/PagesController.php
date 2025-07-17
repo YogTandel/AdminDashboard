@@ -897,6 +897,7 @@ class PagesController extends Controller
 
             $players = User::where('role', 'player')
                 ->where('agent_id', new ObjectId($agent->_id))
+                ->where('gameHistory', 'elemMatch', ['winpoint' => 0])
                 ->get(['gameHistory']);
             // print_r($players);
             foreach ($players as $player) {
@@ -921,32 +922,9 @@ class PagesController extends Controller
 
 
 
-    //     // Log Distributor ID
-//     Log::info('Commission Report Request for Distributor ID:', ['distributor_id' => $id]);
-
-    //     $agents = User::where('role', 'agent')
-//                 ->where('distributor_id', $id)
-//                 ->get();
-
-    //     // Log agents
-//     Log::info('Agents found for Distributor', ['agents' => $agents]);
-
-    //     $agentIds = $agents->pluck('_id')->toArray();
-
     //     $players = User::where('role', 'player')
 //                    ->whereIn('agent_id', $agentIds)
 //                    ->get();
-
-    //     // Log players
-//     Log::info('Players under agents', ['players' => $players]);
-
-    //     return response()->json([
-//         'agents' => $agents,
-//         'players' => $players
-//     ]);
-// }
-
-
 
     public function transferToDistributor(Request $request)
     {
@@ -1146,59 +1124,6 @@ class PagesController extends Controller
 
         return response()->json($data);
     }
-
-    // public function getDistributorDetails($id)
-//     {
-
-
-    //             $agents = User::where('role', 'agent')
-//                 ->where('status', 'Active')
-//                 ->where('distributor_id', new ObjectId($id))
-//                 ->get();
-
-
-
-    //         //print_r($agents);
-//         $totalWinpointSum_distributor = 0;
-//         //$releaseDates = []; // release_commission_date store કરવા માટે
-//         $agent_value=[];
-//         foreach ($agents as $agent) {
-
-    //             $agent_value[]=$agent;
-
-    //             $releaseDate = $agent->release_commission_date ?? null;
-
-    //             $releaseTimestamp = $releaseDate ? Carbon::parse($releaseDate)->timestamp : null;
-
-    //             $players = User::where('role', 'player')
-//                ->where('agent_id', new ObjectId($agent->_id))
-//                ->get(['gameHistory']);
-//             // print_r($players);
-//             foreach ($players as $player) {
-//                 foreach ($player->gameHistory ?? [] as $game) {
-//                     //echo ''. $game->id .''. $game->name ;
-//                     $gameTime = strtotime(str_replace('/', '-', $game['stime']));
-//                     if (!$releaseTimestamp || $gameTime > $releaseTimestamp) {
-//                       //  echo 'hello';
-//                         $totalWinpointSum_distributor += $game['winpoint'] ?? 0;
-//                     }
-//                 }
-//             }
-//         }
-
-    //         // $distributor = User::find($id);
-
-    //         return response()->json([
-//             'totalWinpointSum_distributor' => $totalWinpointSum_distributor,
-//              //'release_dates' => $releaseDates, // 
-//               //'endpoint' => $distributor->endpoint ?? 'N/A',
-//               'agent' =>$agent_value
-//         ]);
-
-
-    //     }
-
-    // YourController.php
 
 
 
