@@ -104,5 +104,5 @@ Route::get('/ajax/distributor/{id}', [PagesController::class, 'getDistributorDet
 
 Route::post('/release-commission', [PagesController::class, 'releaseCommission']);
 
-// routes/web.php
-// Route::get('/ajax/distributor/{id}/agents', [PagesController::class, 'getDistributorAgents']);
+Route::get('/commissionreport', [PagesController::class, 'relesecommissionReport'])->name('relesecommission-report');
+

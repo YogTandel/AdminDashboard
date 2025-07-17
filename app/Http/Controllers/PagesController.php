@@ -1099,7 +1099,7 @@ class PagesController extends Controller
         $users     = User::whereIn('_id', $userIds)->get()->keyBy('_id');
 
         foreach ($refils as $refil) {
-            // 🧠 Transfer By Name
+          
             if ($users->has($refil->transfer_by)) {
                 $refil->agent_name = $users->get($refil->transfer_by)?->player ?? 'User (ID: ' . $refil->transfer_by . ')';
             } elseif ($allAdmins->has($refil->transfer_by)) {
@@ -1108,7 +1108,6 @@ class PagesController extends Controller
                 $refil->agent_name = 'N/A (User ID: ' . $refil->transfer_by . ')';
             }
 
-            // 🧠 Transfer To Name
             if ($allAdmins->has($refil->transfer_to)) {
                 $refil->distributor_name = $allAdmins->get($refil->transfer_to)?->player ?? 'Admin (ID: ' . $refil->transfer_to . ')';
             } else {
@@ -1287,6 +1286,18 @@ class PagesController extends Controller
             'remaining_balance' => $remainingBalance,
             'released_at'       => now()->format('Y-m-d H:i:s'),
         ]);
+    }
+
+    public function relesecommissionReport(){
+       $releases = Release::orderBy('created_at', 'desc')->get();
+
+        // $releases->transform(function ($item) {
+        //     $item['created_at'] = isset($item['created_at']) ? Carbon::parse($item['created_at'])->format('d-m-Y H:i:s') : '';
+        //     $item['updated_at'] = isset($item['updated_at']) ? Carbon::parse($item['updated_at'])->format('d-m-Y H:i:s') : '';
+        //     return $item;
+        // });
+
+        return view('pages.comissiom-report', compact('releases'));
     }
 
 }
