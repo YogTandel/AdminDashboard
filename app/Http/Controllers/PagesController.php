@@ -1226,7 +1226,6 @@ class PagesController extends Controller
     {
         $request->validate([
             'transfer_to'           => 'required|string',
-            'name'                  => 'required|string',
             'type'                  => 'required|in:distributor,agent,player',
             'total_bet'             => 'required|numeric|min:0',
             'commission_percentage' => 'required|numeric|min:0|max:100',
@@ -1238,18 +1237,14 @@ class PagesController extends Controller
         $totalBet             = $request->total_bet;
         $commissionPercentage = $request->commission_percentage;
         $winAmount            = $request->win_amount;
-        $name                 = $request->name;
 
-        // Calculate commission amount
         $commission = ($totalBet * $commissionPercentage) / 100;
 
-        // Get system settings
         $setting = Setting::first();
         if (! $setting) {
             return response()->json(['error' => 'System settings not found'], 400);
         }
 
-        // System earning is a percentage config (not actual wallet)
         $systemEarningPercent = $setting->earning;
         $availableEarning     = ($winAmount * $systemEarningPercent) / 100;
 
@@ -1259,21 +1254,21 @@ class PagesController extends Controller
 
         $remainingBalance = $availableEarning - $commission;
 
-        // Find user by ID and role
         $user = User::where('id', $transferTo)->where('role', $type)->first();
         if (! $user) {
             return response()->json(['error' => ucfirst($type) . ' not found'], 404);
         }
 
-        // Add commission to their endpoint
         $user->endpoint                = ($user->endpoint ?? 0) + $commission;
         $user->release_commission_date = now();
         $user->save();
 
-        // Log the release
-        Release::create([
+        // Get name field based on role
+        $name = $user->player ?? $request->name ?? 'Unknown';
+
+        $data = Release::create([
             'transfer_to'           => $transferTo,
-            'name'                  => $name ?? $user->player,
+            'name'                  => $name,
             'type'                  => $type,
             'total_bet'             => $totalBet,
             'commission_percentage' => $commissionPercentage,
@@ -1286,6 +1281,7 @@ class PagesController extends Controller
             'message'           => 'Commission released successfully.',
             'remaining_balance' => $remainingBalance,
             'released_at'       => now()->format('Y-m-d H:i:s'),
+            'data'              => $data,
         ]);
     }
 

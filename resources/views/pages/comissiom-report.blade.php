@@ -35,7 +35,7 @@
                 <tbody>
                     @forelse ($releases as $release)
                         <tr class="text-dark">
-                            <td>{{ $release['transfer_to'] ?? 'N/A' }}</td>
+                            <td>{{ $release['name'] ?? 'N/A' }}</td>
                             <td>{{ $release['type'] ?? 'N/A' }}</td>
                             <td>₹ {{ $release['total_bet'] ?? '0' }}</td>
                             <td>{{ $release['commission_percentage'] ?? '0' }}%</td>
