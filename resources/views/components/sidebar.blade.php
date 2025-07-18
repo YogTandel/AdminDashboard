@@ -120,18 +120,6 @@
                 </a>
             </li>
 
-            <!-- Transaction Report -->
-            <li class="nav-item">
-                <a class="nav-link {{ Request::is('transactionreport') ? 'active' : '' }}"
-                    href="{{ route('transactionreport') }}">
-                    <div
-                        class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                        <i class="fas fa-file-invoice-dollar text-dark"></i>
-                    </div>
-                    <span class="nav-link-text ms-1">Transaction Report</span>
-                </a>
-            </li>
-
             <!-- Live Game -->
             <li class="nav-item">
                 <a class="nav-link {{ Request::is('livegame') ? 'active' : '' }}" href="{{ route('livegame') }}">
@@ -167,6 +155,18 @@
                 </a>
             </li>
 
+            <!--refil report  -->
+            <li class="nav-item">
+                <a class="nav-link {{ Request::is('refil-report') ? 'active' : '' }}"
+                    href="{{ route('refil.report') }}">
+                    <div
+                        class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+                        <i class="fas fa-file-alt text-dark"></i>
+                    </div>
+                    <span class="nav-link-text ms-1">Refil Report</span>
+                </a>
+            </li>
+
             <!-- relese commission report -->
             @if ($role === 'admin')
                 <li class="nav-item">
@@ -194,19 +194,6 @@
                     </a>
                 </li>
             @endif
-
-
-            <!--refil report  -->
-            <li class="nav-item">
-                <a class="nav-link {{ Request::is('refil-report') ? 'active' : '' }}"
-                    href="{{ route('refil.report') }}">
-                    <div
-                        class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                        <i class="fas fa-file-alt text-dark"></i>
-                    </div>
-                    <span class="nav-link-text ms-1">Refil Report</span>
-                </a>
-            </li>
 
             <!-- Setting (Only for Admin) -->
             @if ($role === 'admin')

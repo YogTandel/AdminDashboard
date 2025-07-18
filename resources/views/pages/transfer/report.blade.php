@@ -20,9 +20,7 @@
                     <thead>
                         <tr>
                             <th scope="col" class="text-dark">transfer by Name</th>
-                            <th scope="col" class="text-dark">transfer by ID</th>
                             <th scope="col" class="text-dark">transfer to Name</th>
-                            <th scope="col" class="text-dark">transfer to ID</th>
                             <th scope="col" class="text-dark">Amount</th>
                             <th scope="col" class="text-dark">Remaining Balance</th>
                             <th scope="col" class="text-dark">Date</th>
@@ -32,7 +30,6 @@
                         @foreach ($transfers as $transfer)
                             <tr>
                                 <td>{{ $transfer->agent_name }}</td>
-                                <td>{{ $transfer->transfer_by }}</td>
                                 <td>
                                     @if (str_contains($transfer->distributor_name, 'Admin'))
                                         <span class="text-primary">{{ $transfer->distributor_name }}</span>
@@ -40,7 +37,6 @@
                                         {{ $transfer->distributor_name }}
                                     @endif
                                 </td>
-                                <td>{{ $transfer->transfer_to }}</td>
                                 <td class="text-success">{{ number_format($transfer->amount, 2) }}</td>
                                 <td>{{ number_format($transfer->remaining_balance, 2) }}</td>
                                 <td>{{ \Carbon\Carbon::parse($transfer->created_at)->format('d-M-Y h:i A') }}</td>

@@ -26,11 +26,10 @@
                         <th>Transfer To</th>
                         <th>Type</th>
                         <th>Total Bet</th>
-                        <th>Commission (%)</th>
+                        <th> %</th>
                         <th>Remaining Balance</th>
                         <th>Transfer Role</th>
                         <th>Created At</th>
-                        <th>Updated At</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -43,7 +42,6 @@
                             <td>₹ {{ $release['remaining_balance'] ?? '0' }}</td>
                             <td>{{ $release['transfer_role'] ?? 'N/A' }}</td>
                             <td>{{ $release['created_at'] }}</td>
-                            <td>{{ $release['updated_at'] }}</td>
                         </tr>
                     @empty
                         <tr>
