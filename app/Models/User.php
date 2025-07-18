@@ -90,9 +90,4 @@ class User extends Authenticatable
     {
         return $this->belongsTo(User::class, 'agent');
     }
-
-//     public function isAdmin()
-// {
-//     return $this->role === 'admin'; // Adjust according to your role field
-// }
 }

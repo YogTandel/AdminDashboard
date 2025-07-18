@@ -109,3 +109,5 @@ Route::get('/commissionreport', [PagesController::class, 'relesecommissionReport
 Route::post('/distributor/status-update/{id}', [PagesController::class, 'updateStatus']);
 
 Route::get('/dashboard', [PagesController::class, 'index'])->name('dashboard');
+
+Route::post('/agent/toggle-status/{id}', [PagesController::class, 'toggleStatus'])->name('agent.toggleStatus');

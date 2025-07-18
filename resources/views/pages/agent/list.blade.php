@@ -116,34 +116,40 @@
                             <table class="table align-items-center mb-0">
                                 <thead>
                                     <tr>
-                                        <th class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity- text-center">
+                                        <th
+                                            class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity- text-center">
                                             No
                                         </th>
                                         <th
-                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">
+                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                             Name
                                         </th>
                                         <th
-                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2 text-center">
+                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2 ">
                                             Password
                                         </th>
                                         <th
                                             class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2 text-center">
                                             Role
                                         </th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">
+                                        <th
+                                            class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">
                                             Distributor
                                         </th>
-                                        <th class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">
+                                        <th
+                                            class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">
                                             Status
                                         </th>
-                                        <th class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">
+                                        <th
+                                            class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">
                                             endpoint
                                         </th>
-                                        <th class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">
+                                        <th
+                                            class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">
                                             Created At
                                         </th>
-                                        <th class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">
+                                        <th
+                                            class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">
                                             Action
                                         </th>
                                     </tr>
@@ -168,18 +174,16 @@
                                             </td>
                                             <td class="text-center">
                                                 <p class="text-xs font-weight-bold mb-0 text-dark">
-                                                    {{ $agent->distributor }}
-                                                </p>
+                                                    {{ $agent->distributor }}</p>
                                             </td>
                                             <td class="text-center text-dark">
-                                                <span
+                                                <span id="status-badge-{{ $agent->id }}"
                                                     class="badge badge-sm {{ $agent->status === 'Active' ? 'bg-gradient-success' : 'bg-gradient-danger' }}">
                                                     {{ strtoupper($agent->status) }}
                                                 </span>
                                             </td>
                                             <td class="text-center">
-                                                <p class="text-xs font-weight-bold mb-0 text-dark">
-                                                    {{ $agent->endpoint }}
+                                                <p class="text-xs font-weight-bold mb-0 text-dark">{{ $agent->endpoint }}
                                                 </p>
                                             </td>
                                             <td class="text-center text-dark">
@@ -190,31 +194,28 @@
                                             <td class="text-center">
                                                 <div class="d-flex justify-content-center gap-2 align-items-center">
                                                     <!-- Radio Button -->
-                                                    
-                                                        <div class="form-check form-switch">
-                                                            <input class="form-check-input agent-radio" 
-                                                                type="radio" 
-                                                                name="agent_select" 
-                                                                id="agentSwitch{{ $agent->id }}" 
-                                                                value="{{ $agent->id }}"
-                                                                data-agent-id="{{ $agent->id }}"
-                                                                data-agent-name="{{ $agent->player }}"
-                                                                data-agent-balance="{{ $agent->balance }}"
-                                                                data-agent-distributor="{{ $agent->distributor }}"
-                                                                data-agent-endpoint="{{ $agent->endpoint }}"
-                                                                data-bs-toggle="tooltip"
-                                                                title="Select agent {{ $agent->player }}">
-                                                        </div>
+                                                    <div class="form-check form-switch">
+                                                        <input class="form-check-input agent-radio" type="radio"
+                                                            name="agent_select" id="agentSwitch{{ $agent->id }}"
+                                                            value="{{ $agent->id }}"
+                                                            data-agent-id="{{ $agent->id }}"
+                                                            data-agent-name="{{ $agent->player }}"
+                                                            data-agent-balance="{{ $agent->balance }}"
+                                                            data-agent-distributor="{{ $agent->distributor }}"
+                                                            data-agent-endpoint="{{ $agent->endpoint }}"
+                                                            data-bs-toggle="tooltip"
+                                                            title="Select agent {{ $agent->player }}">
+                                                    </div>
 
+                                                    <!-- Copy -->
+                                                    <a href="javascript:;"
+                                                        onclick="copyToClipboard(`{{ $agent->player }} - {{ $agent->original_password }}`)"
+                                                        class="text-secondary font-weight-bold text-xs ms-2 me-2"
+                                                        data-bs-toggle="tooltip" title="Copy agent">
+                                                        <i class="fas fa-copy" style="cursor: pointer;"></i>
+                                                    </a>
 
-                                                        <a href="javascript:;" onclick="copyToClipboard(`{{ $agent->player }} - {{ $agent->original_password }}`)"
-                                                            class="text-secondary font-weight-bold text-xs ms-2 me-2"
-                                                            data-bs-toggle="tooltip" title="Copy agent">
-                                                            <i class="fas fa-copy" style="cursor: pointer;"></i>
-                                                        </a>
-
-
-                                                    <!-- Edit Icon -->
+                                                    <!-- Edit -->
                                                     <a href="javascript:;"
                                                         class="text-secondary font-weight-bold text-xs me-2"
                                                         title="Edit Agent" data-bs-toggle="modal"
@@ -224,57 +225,52 @@
 
                                                     @include('pages.agent.edit')
 
-                                                    <!-- Delete Button -->
+                                                    <!-- Delete -->
                                                     <form action="{{ route('agent.delete', $agent->id) }}" method="post"
                                                         style="display:flex;">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button class="text-danger font-weight-bold text-xs me-2"
                                                             onclick="return confirm('Are you sure?')"
-                                                            data-bs-toggle="tooltip" data-bs-placement="top"
-                                                            title="Delete Agent"
+                                                            data-bs-toggle="tooltip" title="Delete Agent"
                                                             style="background: none; border: none; padding: 0;">
                                                             <i class="fas fa-trash"></i>
                                                         </button>
                                                     </form>
 
-
-
-                                                     @if(auth()->check() && auth()->user()->role === 'distributor')
-                                                        <a href="javascript:;" class="text-success font-weight-bold text-xs me-2" 
-                                                        data-bs-toggle="modal" data-bs-target="#refillModal1{{ $agent->id }}">
+                                                    @if (auth()->check() && auth()->user()->role === 'distributor')
+                                                        <a href="javascript:;"
+                                                            class="text-success font-weight-bold text-xs me-2"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#refillModal1{{ $agent->id }}">
                                                             <i class="fa-solid fa-indian-rupee-sign"></i>
                                                         </a>
                                                     @endif
-                                                   @foreach ($agents as $agent_data)
-                                                        @include('pages.agent.refil1', ['user' => $agent_data])
+                                                    @foreach ($agents as $agent_data)
+                                                        @include('pages.agent.refil1', [
+                                                            'user' => $agent_data,
+                                                        ])
                                                     @endforeach
 
-
-                                                    <!-- Transfer Icon -->
-                                                    {{-- <a href="#" class="btn bg-gradient-info mb-0 text-white"
-                                                        id="transfer-link">
-                                                        <i class="fas fa-exchange-alt"></i>
-                                                    </a> --}}
-
-                                                    <!-- Block/Unblock Icon -->
-                                                    <a href="javascript:;"
-                                                        class="text-danger font-weight-bold text-xs toggle-status"
-                                                        data-bs-toggle="tooltip" data-bs-placement="top"
-                                                        title="Block/Unblock Agent">
-                                                        <i class="fas fa-ban"></i>
+                                                    <!-- Block/Unblock -->
+                                                    <a href="javascript:;" class="font-weight-bold text-xs toggle-status"
+                                                        data-bs-toggle="tooltip"
+                                                        title="{{ $agent->status === 'Active' ? 'Block Agent' : 'Unblock Agent' }}"
+                                                        data-agent-id="{{ $agent->id }}"
+                                                        id="toggle-status-{{ $agent->id }}">
+                                                        <i
+                                                            class="fas {{ $agent->status === 'Active' ? 'fa-ban text-danger' : 'fa-check text-success' }}"></i>
                                                     </a>
                                                 </div>
-
                                             </td>
                                         </tr>
-                                        @empty
+                                    @empty
                                         <tr>
-                                            <td colspan="11" class="text-center text-secondary text-sm">
-                                                No agents data found.
-                                            </td>
+                                            <td colspan="11" class="text-center text-secondary text-sm">No agents data
+                                                found.</td>
                                         </tr>
                                     @endforelse
+
                                 </tbody>
                             </table>
                         </div>
@@ -303,151 +299,216 @@
             }
         });
     </script>
-    
+
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Password copy functionality (existing)
-        const form = document.querySelector('form[action="{{ route('agent.add') }}"]');
-        if (form) {
-            form.addEventListener('submit', function() {
-                const password = form.querySelector('input[name="password"]');
-                const originalPassword = form.querySelector('input[name="original_password"]');
-                if (password && originalPassword) {
-                    originalPassword.value = password.value;
-                }
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.toggle-status').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const agentId = this.dataset.agentId;
+                    const badge = document.querySelector(`#status-badge-${agentId}`);
+                    const parentLink = this;
+
+                    fetch(`/agent/toggle-status/${agentId}`, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json',
+                            },
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            const newStatus = data.status;
+
+                            // Swap icon (force DOM update)
+                            const newIconHtml = newStatus === 'Active' ?
+                                '<i class="fas fa-check text-success"></i>' :
+                                '<i class="fas fa-ban text-danger"></i>';
+                            parentLink.innerHTML = newIconHtml;
+
+                            // Update tooltip title
+                            parentLink.setAttribute('title', newStatus === 'Active' ?
+                                'Block Agent' : 'Unblock Agent');
+
+                            // Update badge
+                            if (badge) {
+                                badge.textContent = newStatus.toUpperCase();
+                                badge.classList.remove('bg-gradient-success',
+                                    'bg-gradient-danger');
+                                badge.classList.add(
+                                    newStatus === 'Active' ? 'bg-gradient-success' :
+                                    'bg-gradient-danger'
+                                );
+                            }
+
+                            // Optional: refresh tooltip if needed
+                            if (parentLink._tooltip) {
+                                parentLink._tooltip.setContent({
+                                    '.tooltip-inner': parentLink.getAttribute('title')
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            alert('Something went wrong.');
+                            console.error(error);
+                        });
+                });
             });
-        }
-
-        // Improved Agent Selection/Deselection
-        let selectedAgent = JSON.parse(sessionStorage.getItem('selectedAgent')) || null;
-        const radioButtons = document.querySelectorAll('.agent-radio');
-        const sidebarContent = document.getElementById('sidebar-setting-content');
-
-        // Initialize radio buttons state
-        radioButtons.forEach(radio => {
-            const agentId = radio.getAttribute('data-agent-id');
-            radio.checked = (selectedAgent && selectedAgent.id === agentId);
         });
+    </script>
 
-        // Handle radio button clicks
-        radioButtons.forEach(radio => {
-            radio.addEventListener('click', async function() {
-                const clickedAgentId = this.getAttribute('data-agent-id');
-                
-                // If deselecting current agent
-                if (this.checked && selectedAgent && clickedAgentId === selectedAgent.id) {
-                    await handleDeselect(this);
-                } 
-                // Selecting a new agent
-                else {
-                    await handleSelect(this, clickedAgentId);
-                }
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Password copy functionality (existing)
+            const form = document.querySelector('form[action="{{ route('agent.add') }}"]');
+            if (form) {
+                form.addEventListener('submit', function() {
+                    const password = form.querySelector('input[name="password"]');
+                    const originalPassword = form.querySelector('input[name="original_password"]');
+                    if (password && originalPassword) {
+                        originalPassword.value = password.value;
+                    }
+                });
+            }
+
+            // Improved Agent Selection/Deselection
+            let selectedAgent = JSON.parse(sessionStorage.getItem('selectedAgent')) || null;
+            const radioButtons = document.querySelectorAll('.agent-radio');
+            const sidebarContent = document.getElementById('sidebar-setting-content');
+
+            // Initialize radio buttons state
+            radioButtons.forEach(radio => {
+                const agentId = radio.getAttribute('data-agent-id');
+                radio.checked = (selectedAgent && selectedAgent.id === agentId);
             });
+
+            // Handle radio button clicks
+            radioButtons.forEach(radio => {
+                radio.addEventListener('click', async function() {
+                    const clickedAgentId = this.getAttribute('data-agent-id');
+
+                    // If deselecting current agent
+                    if (this.checked && selectedAgent && clickedAgentId === selectedAgent.id) {
+                        await handleDeselect(this);
+                    }
+                    // Selecting a new agent
+                    else {
+                        await handleSelect(this, clickedAgentId);
+                    }
+                });
+            });
+
+            // Deselect handler
+            async function handleDeselect(radioElement) {
+                try {
+                    // Uncheck the radio
+                    radioElement.checked = false;
+
+                    // Clear UI
+                    if (sidebarContent) {
+                        sidebarContent.innerHTML = '';
+                    }
+
+                    // Clear storage
+                    sessionStorage.removeItem('selectedAgent');
+                    selectedAgent = null;
+
+                    // Send deselect request
+                    const response = await fetch("{{ route('agent.deselect') }}", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': "{{ csrf_token() }}"
+                        },
+                        body: JSON.stringify({})
+                    });
+
+                    if (!response.ok) throw new Error('Deselect failed');
+
+                    // Only send negative agent update after successful deselect
+                    await fetch("/update-negative-agent", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': "{{ csrf_token() }}"
+                        },
+                        body: JSON.stringify({
+                            agent_id: null
+                        })
+                    });
+
+                    console.log('Agent deselected successfully');
+                } catch (error) {
+                    console.error('Error deselecting agent:', error);
+                    // Revert UI if error occurs
+                    radioElement.checked = true;
+                }
+            }
+
+            // Select handler
+            async function handleSelect(radioElement, agentId) {
+                try {
+                    // Uncheck all other radios
+                    radioButtons.forEach(rb => {
+                        if (rb !== radioElement) rb.checked = false;
+                    });
+
+                    // Store new selection
+                    const agentData = {
+                        id: agentId,
+                        name: radioElement.getAttribute('data-agent-name'),
+                        balance: radioElement.getAttribute('data-agent-balance'),
+                        distributor: radioElement.getAttribute('data-agent-distributor'),
+                        endpoint: radioElement.getAttribute('data-agent-endpoint')
+                    };
+
+                    sessionStorage.setItem('selectedAgent', JSON.stringify(agentData));
+                    selectedAgent = agentData;
+
+                    // First update UI
+                    if (sidebarContent) {
+                        const sidebarResponse = await fetch('/setting/sidebar/' + agentId);
+                        if (!sidebarResponse.ok) throw new Error('Sidebar load failed');
+                        sidebarContent.innerHTML = await sidebarResponse.text();
+                    }
+
+                    // Then send select request
+                    const selectResponse = await fetch("{{ route('agent.select') }}", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': "{{ csrf_token() }}"
+                        },
+                        body: JSON.stringify({
+                            agent_id: agentId
+                        })
+                    });
+
+                    if (!selectResponse.ok) throw new Error('Select failed');
+
+                    // Finally update negative agent
+                    await fetch("/update-negative-agent", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': "{{ csrf_token() }}"
+                        },
+                        body: JSON.stringify({
+                            agent_id: agentId
+                        })
+                    });
+
+                    console.log('Agent selected successfully');
+                } catch (error) {
+                    console.error('Error selecting agent:', error);
+                    // Revert UI if error occurs
+                    radioButtons.forEach(rb => rb.checked = false);
+                    if (sidebarContent) sidebarContent.innerHTML =
+                        '<p class="text-danger">Error loading agent settings</p>';
+                }
+            }
         });
-
-        // Deselect handler
-        async function handleDeselect(radioElement) {
-            try {
-                // Uncheck the radio
-                radioElement.checked = false;
-                
-                // Clear UI
-                if (sidebarContent) {
-                    sidebarContent.innerHTML = '';
-                }
-                
-                // Clear storage
-                sessionStorage.removeItem('selectedAgent');
-                selectedAgent = null;
-                
-                // Send deselect request
-                const response = await fetch("{{ route('agent.deselect') }}", {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': "{{ csrf_token() }}"
-                    },
-                    body: JSON.stringify({})
-                });
-
-                if (!response.ok) throw new Error('Deselect failed');
-
-                // Only send negative agent update after successful deselect
-                await fetch("/update-negative-agent", {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': "{{ csrf_token() }}"
-                    },
-                    body: JSON.stringify({ agent_id: null })
-                });
-
-                console.log('Agent deselected successfully');
-            } catch (error) {
-                console.error('Error deselecting agent:', error);
-                // Revert UI if error occurs
-                radioElement.checked = true;
-            }
-        }
-
-        // Select handler
-        async function handleSelect(radioElement, agentId) {
-            try {
-                // Uncheck all other radios
-                radioButtons.forEach(rb => {
-                    if (rb !== radioElement) rb.checked = false;
-                });
-
-                // Store new selection
-                const agentData = {
-                    id: agentId,
-                    name: radioElement.getAttribute('data-agent-name'),
-                    balance: radioElement.getAttribute('data-agent-balance'),
-                    distributor: radioElement.getAttribute('data-agent-distributor'),
-                    endpoint: radioElement.getAttribute('data-agent-endpoint')
-                };
-                
-                sessionStorage.setItem('selectedAgent', JSON.stringify(agentData));
-                selectedAgent = agentData;
-
-                // First update UI
-                if (sidebarContent) {
-                    const sidebarResponse = await fetch('/setting/sidebar/' + agentId);
-                    if (!sidebarResponse.ok) throw new Error('Sidebar load failed');
-                    sidebarContent.innerHTML = await sidebarResponse.text();
-                }
-
-                // Then send select request
-                const selectResponse = await fetch("{{ route('agent.select') }}", {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': "{{ csrf_token() }}"
-                    },
-                    body: JSON.stringify({ agent_id: agentId })
-                });
-
-                if (!selectResponse.ok) throw new Error('Select failed');
-
-                // Finally update negative agent
-                await fetch("/update-negative-agent", {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': "{{ csrf_token() }}"
-                    },
-                    body: JSON.stringify({ agent_id: agentId })
-                });
-
-                console.log('Agent selected successfully');
-            } catch (error) {
-                console.error('Error selecting agent:', error);
-                // Revert UI if error occurs
-                radioButtons.forEach(rb => rb.checked = false);
-                if (sidebarContent) sidebarContent.innerHTML = '<p class="text-danger">Error loading agent settings</p>';
-            }
-        }
-    });
     </script>
 
     <!-- Transfer -->
@@ -482,15 +543,15 @@
 
     <!--copy script -->
     <script>
-    function copyToClipboard(text) {
-        navigator.clipboard.writeText(text)
-            .then(() => {
-                alert("Copied: " + text);
-            })
-            .catch(err => {
-                console.error("Failed to copy: ", err);
-            });
-    }
-</script>
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text)
+                .then(() => {
+                    alert("Copied: " + text);
+                })
+                .catch(err => {
+                    console.error("Failed to copy: ", err);
+                });
+        }
+    </script>
 
 @endsection
