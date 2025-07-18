@@ -136,9 +136,18 @@
                                                                 <i class="fas fa-trash"></i>
                                                             </button>
                                                         </form>
-                                                        <a href="javascript:;" class="text-danger font-weight-bold text-xs toggle-status" title="Block/Unblock Agent">
-                                                            <i class="fas fa-ban"></i>
-                                                        </a>
+                                                        <td>
+                                                            @if ($distributor->status === 'Active')
+                                                            <a href="javascript:void(0);" onclick="toggleStatus('{{ $distributor->_id }}', 'Inactive')" title="Block">
+                                                                <i class="fas fa-user-lock text-danger" style="cursor: pointer;"></i>
+                                                            </a>
+                                                        @else
+                                                            <a href="javascript:void(0);" onclick="toggleStatus('{{ $distributor->_id }}', 'Active')" title="Unblock">
+                                                                <i class="fas fa-user-check text-success" style="cursor: pointer;"></i>
+                                                            </a>
+                                                        @endif
+
+                                                        </td>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -182,5 +191,32 @@
         });
     }
 </script>
+<script>
+    function toggleStatus(distributorId, newStatus) {
+        fetch(`/distributor/status-update/${distributorId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({ status: newStatus })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Status updated successfully!');
+                location.reload(); // Reload to reflect updated status and icon
+            } else {
+                alert('Something went wrong!');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Request failed.');
+        });
+    }
+</script>
 @endpush
+
+
 

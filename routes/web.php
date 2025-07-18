@@ -106,3 +106,6 @@ Route::post('/release-commission', [PagesController::class, 'releaseCommission']
 
 Route::get('/commissionreport', [PagesController::class, 'relesecommissionReport'])->name('relesecommission-report');
 
+Route::post('/distributor/status-update/{id}', [PagesController::class, 'updateStatus']);
+
+Route::get('/dashboard', [PagesController::class, 'index'])->name('dashboard');
