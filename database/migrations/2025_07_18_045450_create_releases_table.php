@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    protected $connection = 'mongodb';
     /**
      * Run the migrations.
      */
@@ -15,6 +14,7 @@ return new class extends Migration
         Schema::create('releases', function (Blueprint $table) {
             $table->id();
             $table->string('transfer_to');
+            $table->string('name');
             $table->enum('type', ['admin', 'distributor', 'agent', 'player']);
             $table->decimal('total_bet', 12, 2);
             $table->decimal('commission_percentage', 5, 2);
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('release');
+        Schema::dropIfExists('releases');
     }
 };

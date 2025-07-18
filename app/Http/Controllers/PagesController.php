@@ -1099,7 +1099,7 @@ class PagesController extends Controller
         $users     = User::whereIn('_id', $userIds)->get()->keyBy('_id');
 
         foreach ($refils as $refil) {
-          
+
             if ($users->has($refil->transfer_by)) {
                 $refil->agent_name = $users->get($refil->transfer_by)?->player ?? 'User (ID: ' . $refil->transfer_by . ')';
             } elseif ($allAdmins->has($refil->transfer_by)) {
@@ -1273,6 +1273,7 @@ class PagesController extends Controller
         // Log the release
         Release::create([
             'transfer_to'           => $transferTo,
+            'name'                  => $user->player,
             'type'                  => $type,
             'total_bet'             => $totalBet,
             'commission_percentage' => $commissionPercentage,
@@ -1288,9 +1289,10 @@ class PagesController extends Controller
         ]);
     }
 
-    public function relesecommissionReport(){
-       $releases = Release::orderBy('created_at', 'desc')->get();
-       
+    public function relesecommissionReport()
+    {
+        $releases = Release::orderBy('created_at', 'desc')->get();
+
         return view('pages.comissiom-report', compact('releases'));
     }
 
