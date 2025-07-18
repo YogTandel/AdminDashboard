@@ -153,17 +153,18 @@
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    <div class="d-flex px-2 py-1">
-                                                        <div class="d-flex flex-column justify-content-center">
-                                                            <h6 class="mb-0 text-sm">{{ $player->player }}</h6>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <p class="text-xs font-weight-bold mb-0">
-                                                        {{ $player->original_password }}
-                                                    </p>
-                                                </td>
+    <div class="d-flex px-2 py-1">
+        <div class="d-flex flex-column justify-content-center">
+            <h6 id="name-{{ $player->id }}" class="mb-0 text-sm">{{ $player->player }}</h6>
+        </div>
+    </div>
+</td>
+<td>
+    <p id="password-{{ $player->id }}" class="text-xs font-weight-bold mb-0">
+        {{ $player->original_password }}
+    </p>
+</td>
+
                                                 <td>
                                                     <p class="text-xs font-weight-bold mb-0">{{ $player->role }}</p>
                                                 </td>
@@ -201,11 +202,11 @@
                                                 </td>
                                                 <td class="align-middle">
                                                     <div class="d-flex align-items-center justify-content-around">
-                                                        <a href="javascript:;" class="text-secondary font-weight-bold text-xs me-2"
-                                                            data-bs-toggle="tooltip" data-bs-placement="top" title="Copy Player">
-                                                            <i class="fas fa-copy"></i>
+                                                        <a href="javascript:void(0);" onclick="copyPlayerToClipboard('{{ $player->_id }}')" 
+                                                            class="text-secondary font-weight-bold text-xs" 
+                                                            data-bs-toggle="tooltip" title="Copy Player Credentials">
+                                                            <i class="fas fa-copy me-3" style="cursor: pointer;"></i>
                                                         </a>
-
 
 
                                                         <a href="javascript:;" class="text-secondary font-weight-bold text-xs me-2"
@@ -263,4 +264,28 @@
             <x-footer />
         </div>
     </div>
+   @push('scripts')
+<script>
+    function copyPlayerToClipboard(id) {
+        const name = document.getElementById('name-' + id)?.innerText.trim();
+        const password = document.getElementById('password-' + id)?.innerText.trim();
+
+        if (!name || !password) {
+            alert("Name or password missing");
+            return;
+        }
+
+        const text = `Name: ${name}\nPassword: ${password}`;
+
+        navigator.clipboard.writeText(text).then(() => {
+            alert("Copied to clipboard!");
+        }).catch((err) => {
+            console.error("Clipboard write failed", err);
+            alert("Failed to copy.");
+        });
+    }
+</script>
+@endpush
+
+
 @endsection
