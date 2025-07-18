@@ -47,15 +47,21 @@
                     </div>
                     <!-- Second Row: Date Filter -->
                     <form method="GET" class="d-flex justify-content-end align-items-center flex-wrap gap-2 mt-2 me-3">
-                        <select name="date_range" class="form-select form-select-sm" onchange="this.form.submit()" style="width: 150px;">
+                        <select name="date_range" class="form-select form-select-sm" onchange="this.form.submit()"
+                            style="width: 150px;">
                             <option value="">Date Range</option>
-                            <option value="2_days_ago" {{ request('date_range') == '2_days_ago' ? 'selected' : '' }}>Last 2 Days</option>
-                            <option value="this_week" {{ request('date_range') == 'this_week' ? 'selected' : '' }}>This Week</option>
-                            <option value="this_month" {{ request('date_range') == 'this_month' ? 'selected' : '' }}>This Month</option>
+                            <option value="2_days_ago" {{ request('date_range') == '2_days_ago' ? 'selected' : '' }}>Last 2
+                                Days</option>
+                            <option value="this_week" {{ request('date_range') == 'this_week' ? 'selected' : '' }}>This Week
+                            </option>
+                            <option value="this_month" {{ request('date_range') == 'this_month' ? 'selected' : '' }}>This
+                                Month</option>
                         </select>
-                        <input type="date" name="from_date" class="form-control form-control-sm" value="{{ request('from_date') }}" style="width: 150px;">
+                        <input type="date" name="from_date" class="form-control form-control-sm"
+                            value="{{ request('from_date') }}" style="width: 150px;">
                         <span class="text-sm mx-1">to</span>
-                        <input type="date" name="to_date" class="form-control form-control-sm" value="{{ request('to_date') }}" style="width: 150px;">
+                        <input type="date" name="to_date" class="form-control form-control-sm"
+                            value="{{ request('to_date') }}" style="width: 150px;">
                         @if (request()->has('search'))
                             <input type="hidden" name="search" value="{{ request('search') }}">
                         @endif
@@ -70,47 +76,83 @@
                             <table class="table align-items-center mb-0">
                                 <thead>
                                     <tr>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">No</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Name</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Password</th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Role</th>
-                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Endpoint</th>
-                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
-                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">DateOfCreation</th>
-                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Action</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">No
+                                        </th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Name
+                                        </th>
+                                        <th
+                                            class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                            Password</th>
+                                        <th
+                                            class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                            Role</th>
+                                        <th
+                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                            Endpoint</th>
+                                        <th
+                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                            Status</th>
+                                        <th
+                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                            DateOfCreation</th>
+                                        <th
+                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                            Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @if ($distributors->isEmpty())
-                                        <tr><td colspan="8" class="text-center">No agents data found.</td></tr>
+                                        <tr>
+                                            <td colspan="8" class="text-center">No agents data found.</td>
+                                        </tr>
                                     @else
                                         @foreach ($distributors as $index => $distributor)
                                             <tr>
-                                                <td><h6 class="mb-0 text-sm">{{ $index + 1 }}</h6></td>
-                                                <td><h6 class="mb-0 text-sm" id="name-{{ $distributor->id }}">{{ $distributor->player }}</h6></td>
-                                                <td><p class="text-xs font-weight-bold mb-0" id="password-{{ $distributor->id }}">{{ $distributor->original_password }}</p></td>
-                                                <td><p class="text-xs font-weight-bold mb-0">{{ $distributor->role }}</p></td>
-                                                <td class="align-middle text-center text-sm"><p class="text-xs font-weight-bold mb-0">{{ $distributor->endpoint }}</p></td>
+                                                <td>
+                                                    <h6 class="mb-0 text-sm">{{ $index + 1 }}</h6>
+                                                </td>
+                                                <td>
+                                                    <h6 class="mb-0 text-sm" id="name-{{ $distributor->id }}">
+                                                        {{ $distributor->player }}</h6>
+                                                </td>
+                                                <td>
+                                                    <p class="text-xs font-weight-bold mb-0"
+                                                        id="password-{{ $distributor->id }}">
+                                                        {{ $distributor->original_password }}</p>
+                                                </td>
+                                                <td>
+                                                    <p class="text-xs font-weight-bold mb-0">{{ $distributor->role }}</p>
+                                                </td>
                                                 <td class="align-middle text-center text-sm">
-                                                    <span class="badge badge-sm {{ $distributor->status === 'Active' ? 'bg-gradient-success' : 'bg-gradient-danger' }}">
-                                                        {{ $distributor->status }}
+                                                    <p class="text-xs font-weight-bold mb-0">{{ $distributor->endpoint }}
+                                                    </p>
+                                                </td>
+                                                <td class="align-middle text-center text-sm">
+                                                    <span id="status-badge-{{ $distributor->id }}"
+                                                        class="badge badge-sm {{ $distributor->status === 'Active' ? 'bg-gradient-success' : 'bg-gradient-danger' }}">
+                                                        {{ strtoupper($distributor->status) }}
                                                     </span>
                                                 </td>
                                                 <td class="align-middle text-center">
                                                     <span class="text-secondary text-xs font-weight-bold">
-                                                        {{ \Carbon\Carbon::createFromFormat('YmdHis', (string)(int) $distributor->DateOfCreation)->format('d M Y, H:i') }}
+                                                        {{ \Carbon\Carbon::createFromFormat('YmdHis', (string) (int) $distributor->DateOfCreation)->format('d M Y, H:i') }}
                                                     </span>
                                                 </td>
                                                 <td class="align-middle">
                                                     <div class="d-flex align-items-center justify-content-around">
-                                                        <a href="javascript:;" onclick="copyToClipboard({{ $distributor->id }})"
-                                                           class="text-secondary font-weight-bold text-xs me-2"
-                                                           data-bs-toggle="tooltip" title="Copy distributor">
-                                                           <i class="fas fa-copy" onclick="copyToClipboard('{{ $distributor->_id }}')" style="cursor: pointer;"></i>
+                                                        <a href="javascript:;"
+                                                            onclick="copyToClipboard({{ $distributor->id }})"
+                                                            class="text-secondary font-weight-bold text-xs me-2"
+                                                            data-bs-toggle="tooltip" title="Copy distributor">
+                                                            <i class="fas fa-copy"
+                                                                onclick="copyToClipboard('{{ $distributor->_id }}')"
+                                                                style="cursor: pointer;"></i>
                                                         </a>
-                                                        <a href="javascript:;" class="text-secondary font-weight-bold text-xs me-2"
-                                                           data-bs-toggle="modal" data-bs-target="#Editmodal{{ $distributor->id }}"
-                                                           title="Edit Distributor">
+                                                        <a href="javascript:;"
+                                                            class="text-secondary font-weight-bold text-xs me-2"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#Editmodal{{ $distributor->id }}"
+                                                            title="Edit Distributor">
                                                             <i class="fas fa-edit"></i>
                                                         </a>
                                                         @foreach ($distributors as $distributor_data)
@@ -118,38 +160,37 @@
                                                         @endforeach
                                                         @php $admin = Auth::guard('admin')->user(); @endphp
                                                         @if ($admin)
-                                                            <a href="javascript:;" class="text-success font-weight-bold text-xs me-2"
-                                                               data-bs-toggle="modal" data-bs-target="#refillModal{{ $distributor->id }}"
-                                                               title="Refill Balance">
+                                                            <a href="javascript:;"
+                                                                class="text-success font-weight-bold text-xs me-2"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#refillModal{{ $distributor->id }}"
+                                                                title="Refill Balance">
                                                                 <i class="fa-solid fa-indian-rupee-sign"></i>
                                                             </a>
                                                         @endif
                                                         @foreach ($distributors as $distributor_data)
                                                             @include('pages.distributor.refil')
                                                         @endforeach
-                                                        <form action="{{ route('Distributor.delete', $distributor->id) }}" method="post" style="display:flex;">
+                                                        <form action="{{ route('Distributor.delete', $distributor->id) }}"
+                                                            method="post" style="display:flex;">
                                                             @csrf @method('DELETE')
                                                             <button class="text-danger font-weight-bold text-xs me-2"
-                                                                    onclick="return confirm('Are you sure?')"
-                                                                    style="background: none; border: none; padding: 0;"
-                                                                    title="Delete Agent">
+                                                                onclick="return confirm('Are you sure?')"
+                                                                style="background: none; border: none; padding: 0;"
+                                                                title="Delete Agent">
                                                                 <i class="fas fa-trash"></i>
                                                             </button>
                                                         </form>
-                                                        <td>
-                                                            @if ($distributor->status === 'Active')
-                                                            <a href="javascript:void(0);" onclick="toggleStatus('{{ $distributor->_id }}', 'Inactive')" title="Block">
-                                                                <i class="fas fa-user-lock text-danger" style="cursor: pointer;"></i>
-                                                            </a>
-                                                        @else
-                                                            <a href="javascript:void(0);" onclick="toggleStatus('{{ $distributor->_id }}', 'Active')" title="Unblock">
-                                                                <i class="fas fa-user-check text-success" style="cursor: pointer;"></i>
-                                                            </a>
-                                                        @endif
-
-                                                        </td>
+                                                        <a href="javascript:;"
+                                                            class="font-weight-bold text-xs distributor-toggle-status"
+                                                            data-bs-toggle="tooltip"
+                                                            title="{{ $distributor->status === 'Active' ? 'Block Distributor' : 'Unblock Distributor' }}"
+                                                            data-distributor-id="{{ $distributor->id }}"
+                                                            id="toggle-status-{{ $distributor->id }}">
+                                                            <i
+                                                                class="fas {{ $distributor->status === 'Active' ? 'fa-ban text-danger' : 'fa-check text-success' }}"></i>
+                                                        </a>
                                                     </div>
-                                                </td>
                                             </tr>
                                         @endforeach
                                     @endif
@@ -165,58 +206,72 @@
             <x-footer />
         </div>
     </div>
-@endsection
 
 
-@push('scripts')
-<script>
-    function copyToClipboard(distributorId) {
-        console.log("Icon clicked", distributorId); // Debug line
+    <script>
+        function copyToClipboard(distributorId) {
+            console.log("Icon clicked", distributorId); // Debug line
 
-        const name = document.getElementById('name-' + distributorId)?.innerText.trim();
-        const password = document.getElementById('password-' + distributorId)?.innerText.trim();
+            const name = document.getElementById('name-' + distributorId)?.innerText.trim();
+            const password = document.getElementById('password-' + distributorId)?.innerText.trim();
 
-        if (!name || !password) {
-            console.error('Name or password not found');
-            return;
-        }
-
-        const textToCopy = `Name: ${name}\nPassword: ${password}`;
-
-        navigator.clipboard.writeText(textToCopy).then(() => {
-            alert('Copied successfully!');
-        }).catch((err) => {
-            console.error('Copy failed:', err);
-            alert('Copy failed. Check clipboard permission.');
-        });
-    }
-</script>
-<script>
-    function toggleStatus(distributorId, newStatus) {
-        fetch(`/distributor/status-update/${distributorId}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            },
-            body: JSON.stringify({ status: newStatus })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Status updated successfully!');
-                location.reload(); // Reload to reflect updated status and icon
-            } else {
-                alert('Something went wrong!');
+            if (!name || !password) {
+                console.error('Name or password not found');
+                return;
             }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Request failed.');
+
+            const textToCopy = `Name: ${name}\nPassword: ${password}`;
+
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                alert('Copied successfully!');
+            }).catch((err) => {
+                console.error('Copy failed:', err);
+                alert('Copy failed. Check clipboard permission.');
+            });
+        }
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.distributor-toggle-status').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const distributorId = this.dataset.distributorId;
+                    const icon = this.querySelector('i');
+                    const statusBadge = document.getElementById(`status-badge-${distributorId}`);
+                    const tooltipTitle = this;
+
+                    fetch(`/distributor/toggle-status/${distributorId}`, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json',
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.status === 'Active') {
+                                icon.classList.remove('fa-check', 'text-success');
+                                icon.classList.add('fa-ban', 'text-danger');
+                                tooltipTitle.setAttribute('title', 'Block Distributor');
+                                statusBadge.classList.remove('bg-gradient-danger');
+                                statusBadge.classList.add('bg-gradient-success');
+                            } else {
+                                icon.classList.remove('fa-ban', 'text-danger');
+                                icon.classList.add('fa-check', 'text-success');
+                                tooltipTitle.setAttribute('title', 'Unblock Distributor');
+                                statusBadge.classList.remove('bg-gradient-success');
+                                statusBadge.classList.add('bg-gradient-danger');
+                            }
+
+                            statusBadge.innerText = data.status.toUpperCase();
+                        })
+                        .catch(error => {
+                            alert('Something went wrong.');
+                            console.error(error);
+                        });
+                });
+            });
         });
-    }
-</script>
-@endpush
-
-
-
+    </script>
+@endsection

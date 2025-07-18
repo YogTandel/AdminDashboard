@@ -178,7 +178,7 @@
                                             </td>
                                             <td class="text-center text-dark">
                                                 <span id="status-badge-{{ $agent->id }}"
-                                                    class="badge badge-sm {{ $agent->status === 'Active' ? 'bg-gradient-success' : 'bg-gradient-danger' }}">
+                                                    class="badge {{ $agent->status === 'Active' ? 'bg-gradient-success' : 'bg-gradient-danger' }}">
                                                     {{ strtoupper($agent->status) }}
                                                 </span>
                                             </td>
@@ -256,8 +256,7 @@
                                                     <a href="javascript:;" class="font-weight-bold text-xs toggle-status"
                                                         data-bs-toggle="tooltip"
                                                         title="{{ $agent->status === 'Active' ? 'Block Agent' : 'Unblock Agent' }}"
-                                                        data-agent-id="{{ $agent->id }}"
-                                                        id="toggle-status-{{ $agent->id }}">
+                                                        data-agent-id="{{ $agent->id }}">
                                                         <i
                                                             class="fas {{ $agent->status === 'Active' ? 'fa-ban text-danger' : 'fa-check text-success' }}"></i>
                                                     </a>
@@ -305,8 +304,9 @@
             document.querySelectorAll('.toggle-status').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const agentId = this.dataset.agentId;
-                    const badge = document.querySelector(`#status-badge-${agentId}`);
-                    const parentLink = this;
+                    const icon = this.querySelector('i');
+                    const statusBadge = document.getElementById(`status-badge-${agentId}`);
+                    const tooltipTitle = this;
 
                     fetch(`/agent/toggle-status/${agentId}`, {
                             method: 'POST',
@@ -314,39 +314,25 @@
                                 'X-CSRF-TOKEN': '{{ csrf_token() }}',
                                 'Accept': 'application/json',
                                 'Content-Type': 'application/json',
-                            },
+                            }
                         })
                         .then(response => response.json())
                         .then(data => {
-                            const newStatus = data.status;
-
-                            // Swap icon (force DOM update)
-                            const newIconHtml = newStatus === 'Active' ?
-                                '<i class="fas fa-check text-success"></i>' :
-                                '<i class="fas fa-ban text-danger"></i>';
-                            parentLink.innerHTML = newIconHtml;
-
-                            // Update tooltip title
-                            parentLink.setAttribute('title', newStatus === 'Active' ?
-                                'Block Agent' : 'Unblock Agent');
-
-                            // Update badge
-                            if (badge) {
-                                badge.textContent = newStatus.toUpperCase();
-                                badge.classList.remove('bg-gradient-success',
-                                    'bg-gradient-danger');
-                                badge.classList.add(
-                                    newStatus === 'Active' ? 'bg-gradient-success' :
-                                    'bg-gradient-danger'
-                                );
+                            if (data.status === 'Active') {
+                                icon.classList.remove('fa-check', 'text-success');
+                                icon.classList.add('fa-ban', 'text-danger');
+                                tooltipTitle.setAttribute('title', 'Block Agent');
+                                statusBadge.classList.remove('bg-gradient-danger');
+                                statusBadge.classList.add('bg-gradient-success');
+                            } else {
+                                icon.classList.remove('fa-ban', 'text-danger');
+                                icon.classList.add('fa-check', 'text-success');
+                                tooltipTitle.setAttribute('title', 'Unblock Agent');
+                                statusBadge.classList.remove('bg-gradient-success');
+                                statusBadge.classList.add('bg-gradient-danger');
                             }
 
-                            // Optional: refresh tooltip if needed
-                            if (parentLink._tooltip) {
-                                parentLink._tooltip.setContent({
-                                    '.tooltip-inner': parentLink.getAttribute('title')
-                                });
-                            }
+                            statusBadge.innerText = data.status.toUpperCase();
                         })
                         .catch(error => {
                             alert('Something went wrong.');

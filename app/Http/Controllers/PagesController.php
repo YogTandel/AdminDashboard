@@ -1348,5 +1348,17 @@ class PagesController extends Controller
             'message' => 'Agent status updated successfully.',
         ]);
     }
+    public function distoggleStatus($id)
+    {
+        $distributor = User::where('_id', $id)->where('role', 'distributor')->firstOrFail();
+
+        $distributor->status = $distributor->status === 'Active' ? 'Inactive' : 'Active';
+        $distributor->save();
+
+        return response()->json([
+            'status'  => $distributor->status,
+            'message' => 'Distributor status updated.',
+        ]);
+    }
 
 }
