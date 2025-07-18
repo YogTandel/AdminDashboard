@@ -105,7 +105,7 @@
                                                     <div class="d-flex align-items-center justify-content-around">
                                                         <a href="javascript:;" onclick="copyToClipboard({{ $distributor->id }})"
                                                            class="text-secondary font-weight-bold text-xs me-2"
-                                                           data-bs-toggle="tooltip" title="Copy Agent">
+                                                           data-bs-toggle="tooltip" title="Copy distributor">
                                                            <i class="fas fa-copy" onclick="copyToClipboard('{{ $distributor->_id }}')" style="cursor: pointer;"></i>
                                                         </a>
                                                         <a href="javascript:;" class="text-secondary font-weight-bold text-xs me-2"

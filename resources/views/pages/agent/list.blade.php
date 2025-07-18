@@ -116,34 +116,34 @@
                             <table class="table align-items-center mb-0">
                                 <thead>
                                     <tr>
-                                        <th class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        <th class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity- text-center">
                                             No
                                         </th>
                                         <th
-                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">
                                             Name
                                         </th>
                                         <th
-                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2 text-center">
                                             Password
                                         </th>
                                         <th
-                                            class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                            class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2 text-center">
                                             Role
                                         </th>
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">
                                             Distributor
                                         </th>
-                                        <th class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        <th class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">
                                             Status
                                         </th>
-                                        <th class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        <th class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">
                                             endpoint
                                         </th>
-                                        <th class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        <th class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">
                                             Created At
                                         </th>
-                                        <th class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        <th class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">
                                             Action
                                         </th>
                                     </tr>
@@ -203,6 +203,13 @@
                                                                 data-agent-distributor="{{ $agent->distributor }}"
                                                                 data-agent-endpoint="{{ $agent->endpoint }}">
                                                         </div>
+
+                                                        <a href="javascript:;" onclick="copyToClipboard(`{{ $agent->player }} - {{ $agent->original_password }}`)"
+                                                            class="text-secondary font-weight-bold text-xs ms-2 me-2"
+                                                            data-bs-toggle="tooltip" title="Copy agent">
+                                                            <i class="fas fa-copy" style="cursor: pointer;"></i>
+                                                        </a>
+
 
                                                     <!-- Edit Icon -->
                                                     <a href="javascript:;"
@@ -469,4 +476,18 @@
             });
         });
     </script>
+
+    <!--copy script -->
+    <script>
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text)
+            .then(() => {
+                alert("Copied: " + text);
+            })
+            .catch(err => {
+                console.error("Failed to copy: ", err);
+            });
+    }
+</script>
+
 @endsection
