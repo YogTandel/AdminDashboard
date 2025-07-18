@@ -1226,6 +1226,7 @@ class PagesController extends Controller
     {
         $request->validate([
             'transfer_to'           => 'required|string',
+            'name'                  => 'required|string',
             'type'                  => 'required|in:distributor,agent,player',
             'total_bet'             => 'required|numeric|min:0',
             'commission_percentage' => 'required|numeric|min:0|max:100',
@@ -1237,6 +1238,7 @@ class PagesController extends Controller
         $totalBet             = $request->total_bet;
         $commissionPercentage = $request->commission_percentage;
         $winAmount            = $request->win_amount;
+        $name                 = $request->name;
 
         // Calculate commission amount
         $commission = ($totalBet * $commissionPercentage) / 100;
@@ -1255,11 +1257,9 @@ class PagesController extends Controller
             return response()->json(['error' => 'Not enough earnings in system'], 400);
         }
 
-        // DO NOT change setting->earning because it's a config %
-        // Just log remaining from this transaction
         $remainingBalance = $availableEarning - $commission;
 
-        // Find the user to transfer commission
+        // Find user by ID and role
         $user = User::where('id', $transferTo)->where('role', $type)->first();
         if (! $user) {
             return response()->json(['error' => ucfirst($type) . ' not found'], 404);
@@ -1273,7 +1273,7 @@ class PagesController extends Controller
         // Log the release
         Release::create([
             'transfer_to'           => $transferTo,
-            'name'                  => $user->player,
+            'name'                  => $name ?? $user->player,
             'type'                  => $type,
             'total_bet'             => $totalBet,
             'commission_percentage' => $commissionPercentage,

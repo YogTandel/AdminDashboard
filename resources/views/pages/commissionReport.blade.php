@@ -375,6 +375,7 @@
 
             $('#releaseButton').on('click', function() {
                 const distributorId = $('#distributor_id').val();
+                const distributorName = $('#distributor').val(); // ✅ grab from hidden input
                 const commissionAmount = parseFloat($('#distCommission').text());
                 const commissionPercentage = parseFloat($('#distributorPercent').val());
                 const winAmount = parseFloat($('#distWinAmount').text());
@@ -390,6 +391,7 @@
                     method: 'POST',
                     data: {
                         transfer_to: distributorId,
+                        name: distributorName,
                         type: 'distributor',
                         total_bet: winAmount,
                         commission_percentage: commissionPercentage,
@@ -401,7 +403,7 @@
                         fetchLiveGameValues(); // Refresh live values if needed
                         $('#releaseButton').prop('disabled', true);
                         $('#releaseDateBox').text(res.released_at || new Date()
-                        .toLocaleString());
+                            .toLocaleString());
                     },
                     error: function(xhr) {
                         alert(xhr.responseJSON?.error || 'Failed to release commission.');
