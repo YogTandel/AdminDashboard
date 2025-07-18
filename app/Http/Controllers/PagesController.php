@@ -1306,19 +1306,19 @@ class PagesController extends Controller
         return response()->json(['success' => false]);
     }
 
-    public function index()
+public function index()
 {
     $totalAgents = User::where('role', 'agent')->count();
-    $activeAgents = User::where('role', 'agent')->where('status', 'active')->count();
-    $deactiveAgents = User::where('role', 'agent')->where('status', 'inactive')->count();
+    $activeAgents = User::where('role', 'agent')->where('status', 'Active')->count();
+    $deactiveAgents = User::where('role', 'agent')->where('status', 'Inactive')->count();
 
     $totalDistributors = User::where('role', 'distributor')->count();
-    $activeDistributors = User::where('role', 'distributor')->where('status', 'active')->count();
-    $deactiveDistributors = User::where('role', 'distributor')->where('status', 'inactive')->count();
+    $activeDistributors = User::where('role', 'distributor')->where('status', 'Active')->count();
+    $deactiveDistributors = User::where('role', 'distributor')->where('status', 'Inactive')->count();
 
     $totalPlayers = User::where('role', 'player')->count();
-    $activePlayers = User::where('role', 'player')->where('status', 'active')->count();
-    $deactivePlayers = User::where('role', 'player')->where('status', 'inactive')->count();
+    $activePlayers = User::where('role', 'player')->where('status', 'Active')->count();
+    $deactivePlayers = User::where('role', 'player')->where('status', 'Inactive')->count();
 
     $totalChips = User::sum('chips');
     $totalKata = User::sum('kata');
@@ -1331,6 +1331,7 @@ class PagesController extends Controller
         'totalChips', 'totalKata', 'totalBulk'
     ));
 }
+
 
 
 }
