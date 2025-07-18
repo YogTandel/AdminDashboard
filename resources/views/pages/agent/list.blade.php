@@ -201,8 +201,11 @@
                                                                 data-agent-name="{{ $agent->player }}"
                                                                 data-agent-balance="{{ $agent->balance }}"
                                                                 data-agent-distributor="{{ $agent->distributor }}"
-                                                                data-agent-endpoint="{{ $agent->endpoint }}">
+                                                                data-agent-endpoint="{{ $agent->endpoint }}"
+                                                                data-bs-toggle="tooltip"
+                                                                title="Select agent {{ $agent->player }}">
                                                         </div>
+
 
                                                         <a href="javascript:;" onclick="copyToClipboard(`{{ $agent->player }} - {{ $agent->original_password }}`)"
                                                             class="text-secondary font-weight-bold text-xs ms-2 me-2"
