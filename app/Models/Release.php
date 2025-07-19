@@ -10,6 +10,7 @@ class Release extends Model
 
     protected $fillable = [
         'transfer_to',
+        'name',
         'type',
         'total_bet',
         'commission_percentage',
