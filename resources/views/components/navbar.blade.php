@@ -31,6 +31,10 @@
                 }
             @endphp
 
+                <div class="d-flex align-items-center">
+                    <span class="text-dark me-2" style="font-size: 1.5rem; font-weight: 700;">Profit:</span>
+                    <span id="live-earning" class="badge bg-gradient-success me-3" style="font-size: 1rem;">--</span>
+                </div>
             @if ($user)
                 <li class="nav-item d-flex align-items-center">
                     <a class="nav-link text-body font-weight-bold px-0">
