@@ -1176,10 +1176,6 @@ class PagesController extends Controller
             $releaseDate            = $agent->release_commission_date ?? null;
             $releaseTimestamp       = $releaseDate ? Carbon::parse($releaseDate)->timestamp : null;
 
-            // $players = User::where('role', 'player')
-            //     ->where('agent_id', new ObjectId($agent->_id))
-            //     ->get(['gameHistory']);
-
             $players = User::raw(function ($collection) use ($agent) {
                 return $collection->aggregate([
                     [
@@ -1220,6 +1216,7 @@ class PagesController extends Controller
             }
 
             $agent_value[] = [
+                'id'        => (string) $agent->_id,
                 'name'      => $agent->player,
                 'date'      => optional($agent->release_commission_date)->format('Y-m-d'),
                 'endpoint'  => $agent->endpoint ?? 'N/A',
@@ -1236,13 +1233,20 @@ class PagesController extends Controller
 
     public function releaseCommission(Request $request)
     {
-        $request->validate([
-            'transfer_to'           => 'required|string',
-            'type'                  => 'required|in:distributor,agent,player',
-            'total_bet'             => 'required|numeric|min:0',
-            'commission_percentage' => 'required|numeric|min:0|max:100',
-            'win_amount'            => 'required|numeric|min:0',
-        ]);
+        $rules = [
+            'transfer_to' => 'required|string',
+            'type'        => 'required|in:distributor,agent,player',
+            'total_bet'   => 'required|numeric|min:0',
+            'win_amount'  => 'required|numeric|min:0',
+        ];
+
+        if ($request->type === 'distributor') {
+            $rules['commission_percentage'] = 'required|numeric|min:0|max:100';
+        } else {
+            $rules['commission_percentage'] = 'required|numeric|min:0'; // agent: commission is currency
+        }
+
+        $request->validate($rules);
 
         $transferTo           = $request->transfer_to;
         $type                 = $request->type;
@@ -1250,58 +1254,58 @@ class PagesController extends Controller
         $commissionPercentage = $request->commission_percentage;
         $winAmount            = $request->win_amount;
 
-        // Calculate commission amount (in currency)
-        $commission = ($totalBet * $commissionPercentage) / 100;
+        $commission = ($type === 'distributor')
+        ? ($totalBet * $commissionPercentage) / 100
+        : $commissionPercentage;
 
-        // Fetch system earning settings
         $setting = Setting::first();
         if (! $setting) {
             return response()->json(['error' => 'System settings not found'], 400);
         }
 
         $systemEarningPercent = $setting->earning;
-
-        // Calculate available earning from win amount (in currency)
-        $availableEarning = ($winAmount * $systemEarningPercent) / 100;
+        $availableEarning     = ($winAmount * $systemEarningPercent) / 100;
 
         if ($availableEarning < $commission) {
             return response()->json(['error' => 'Not enough earnings in system'], 400);
         }
 
-        // Convert commission (currency) into its equivalent percentage
-        $commissionPercentageValue = ($commission / $winAmount) * 100;
-
-        // Calculate new earning percentage after deducting commission
-        $newSystemEarningPercent = $systemEarningPercent - $commissionPercentageValue;
-
-        if ($newSystemEarningPercent < 0) {
-            return response()->json(['error' => 'System earning cannot go below zero'], 400);
-        }
-
-        // Update the setting earning to new percentage
-        $setting->earning = $newSystemEarningPercent;
-        $setting->save();
-
-        // Calculate remaining balance after commission deduction (in currency)
-        $remainingBalance = ($winAmount * $newSystemEarningPercent) / 100;
-
-        // Fetch user by id and role
         $user = User::where('id', $transferTo)->where('role', $type)->first();
         if (! $user) {
+            Log::error('Agent not found', [
+                'transfer_to' => $transferTo,
+                'type'        => $type,
+            ]);
             return response()->json(['error' => ucfirst($type) . ' not found'], 404);
         }
 
-        // Add commission to user's endpoint
-        // If endpoint stores percentage, use $commissionPercentageValue instead
-        $user->endpoint = ($user->endpoint ?? 0) + $commissionPercentageValue;
+        if ($type === 'agent') {
+            $user->endpoint            = ($user->endpoint ?? 0) + $commission;
+            $commissionPercentageValue = ($commission / $winAmount) * 100;
+            $newSystemEarningPercent   = $systemEarningPercent - $commissionPercentageValue;
+
+            if ($newSystemEarningPercent < 0) {
+                return response()->json(['error' => 'System earning cannot go below zero'], 400);
+            }
+
+            $setting->earning = $newSystemEarningPercent;
+            $setting->save();
+
+        } elseif ($type === 'distributor') {
+            $commissionPercentageValue = ($commission / $winAmount) * 100;
+            $user->endpoint            = ($user->endpoint ?? 0) + $commissionPercentageValue;
+            // System earning not reduced for distributor
+        }
 
         $user->release_commission_date = now();
         $user->save();
 
-        // Get name field based on role or request fallback
+        $remainingBalance = ($type === 'agent')
+        ? ($winAmount * $setting->earning) / 100
+        : ($winAmount * $systemEarningPercent) / 100;
+
         $name = $user->player ?? $request->name ?? 'Unknown';
 
-        // Save release record
         $data = Release::create([
             'transfer_to'           => $transferTo,
             'name'                  => $name,
@@ -1313,12 +1317,11 @@ class PagesController extends Controller
         ]);
 
         return response()->json([
-            'success'                    => true,
-            'message'                    => 'Commission released successfully.',
-            'remaining_balance'          => $remainingBalance,
-            'new_system_earning_percent' => $newSystemEarningPercent,
-            'released_at'                => now()->format('Y-m-d H:i:s'),
-            'data'                       => $data,
+            'success'           => true,
+            'message'           => 'Commission released successfully.',
+            'remaining_balance' => $remainingBalance,
+            'released_at'       => now()->format('Y-m-d H:i:s'),
+            'data'              => $data,
         ]);
     }
 
