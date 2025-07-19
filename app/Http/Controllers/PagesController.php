@@ -791,62 +791,62 @@ class PagesController extends Controller
         }
     }
 
- public function showTransferReport()
-{
-    $user  = auth('web')->user();   // from users table
-    $admin = auth('admin')->user(); // from admins table
+    public function showTransferReport()
+    {
+        $user  = auth('web')->user();   // from users table
+        $admin = auth('admin')->user(); // from admins table
 
-    if (!$user && !$admin) {
-        return redirect()->route('login');
-    }
+        if (! $user && ! $admin) {
+            return redirect()->route('login');
+        }
 
-    $query = DB::connection('mongodb')->table('transfers')->orderBy('created_at', 'desc');
+        $query = DB::connection('mongodb')->table('transfers')->orderBy('created_at', 'desc');
 
-    // If a normal user is logged in, restrict to their transfers
-    if ($user) {
-        $query->where('transfer_by', $user->id);
-    }
+        // If a normal user is logged in, restrict to their transfers
+        if ($user) {
+            $query->where('transfer_by', $user->id);
+        }
 
-    $transfers = $query->get();
+        $transfers = $query->get();
 
-    if ($transfers->isEmpty()) {
-        return view('pages.transfer.report', compact('transfers'));
-    }
+        if ($transfers->isEmpty()) {
+            return view('pages.transfer.report', compact('transfers'));
+        }
 
-    // Convert MongoDB IDs to strings for array keys
-    $allAdmins = Admin::all()->mapWithKeys(function ($admin) {
-        return [(string)$admin->_id => $admin];
-    });
-
-    $userIds = $transfers->pluck('transfer_by')
-        ->merge($transfers->pluck('transfer_to'))
-        ->unique()
-        ->map(function ($id) {
-            return (string)$id;
+        // Convert MongoDB IDs to strings for array keys
+        $allAdmins = Admin::all()->mapWithKeys(function ($admin) {
+            return [(string) $admin->_id => $admin];
         });
 
-    $users = User::whereIn('_id', $userIds)->get()->mapWithKeys(function ($user) {
-        return [(string)$user->_id => $user];
-    });
+        $userIds = $transfers->pluck('transfer_by')
+            ->merge($transfers->pluck('transfer_to'))
+            ->unique()
+            ->map(function ($id) {
+                return (string) $id;
+            });
 
-    foreach ($transfers as $transfer) {
-        // Convert transfer IDs to strings for comparison
-        $transferBy = (string)$transfer->transfer_by;
-        $transferTo = (string)$transfer->transfer_to;
+        $users = User::whereIn('_id', $userIds)->get()->mapWithKeys(function ($user) {
+            return [(string) $user->_id => $user];
+        });
 
-        // Set agent name
-        $transfer->agent_name = $users[$transferBy]->player ?? 'N/A (User ID: ' . $transferBy . ')';
+        foreach ($transfers as $transfer) {
+            // Convert transfer IDs to strings for comparison
+            $transferBy = (string) $transfer->transfer_by;
+            $transferTo = (string) $transfer->transfer_to;
 
-        // Set distributor name
-        if (isset($allAdmins[$transferTo])) {
-            $transfer->distributor_name = $allAdmins[$transferTo]->player ?? 'Admin';
-        } else {
-            $transfer->distributor_name = $users[$transferTo]->player ?? 'N/A (ID: ' . $transferTo . ')';
+            // Set agent name
+            $transfer->agent_name = $users[$transferBy]->player ?? 'N/A (User ID: ' . $transferBy . ')';
+
+            // Set distributor name
+            if (isset($allAdmins[$transferTo])) {
+                $transfer->distributor_name = $allAdmins[$transferTo]->player ?? 'Admin';
+            } else {
+                $transfer->distributor_name = $users[$transferTo]->player ?? 'N/A (ID: ' . $transferTo . ')';
+            }
         }
-    }
 
-    return view('pages.transfer.report', compact('transfers'));
-}
+        return view('pages.transfer.report', compact('transfers'));
+    }
 
     public function getAgents($distributorId)
     {
@@ -1250,34 +1250,58 @@ class PagesController extends Controller
         $commissionPercentage = $request->commission_percentage;
         $winAmount            = $request->win_amount;
 
+        // Calculate commission amount (in currency)
         $commission = ($totalBet * $commissionPercentage) / 100;
 
+        // Fetch system earning settings
         $setting = Setting::first();
         if (! $setting) {
             return response()->json(['error' => 'System settings not found'], 400);
         }
 
         $systemEarningPercent = $setting->earning;
-        $availableEarning     = ($winAmount * $systemEarningPercent) / 100;
+
+        // Calculate available earning from win amount (in currency)
+        $availableEarning = ($winAmount * $systemEarningPercent) / 100;
 
         if ($availableEarning < $commission) {
             return response()->json(['error' => 'Not enough earnings in system'], 400);
         }
 
-        $remainingBalance = $availableEarning - $commission;
+        // Convert commission (currency) into its equivalent percentage
+        $commissionPercentageValue = ($commission / $winAmount) * 100;
 
+        // Calculate new earning percentage after deducting commission
+        $newSystemEarningPercent = $systemEarningPercent - $commissionPercentageValue;
+
+        if ($newSystemEarningPercent < 0) {
+            return response()->json(['error' => 'System earning cannot go below zero'], 400);
+        }
+
+        // Update the setting earning to new percentage
+        $setting->earning = $newSystemEarningPercent;
+        $setting->save();
+
+        // Calculate remaining balance after commission deduction (in currency)
+        $remainingBalance = ($winAmount * $newSystemEarningPercent) / 100;
+
+        // Fetch user by id and role
         $user = User::where('id', $transferTo)->where('role', $type)->first();
         if (! $user) {
             return response()->json(['error' => ucfirst($type) . ' not found'], 404);
         }
 
-        $user->endpoint                = ($user->endpoint ?? 0) + $commission;
+        // Add commission to user's endpoint
+        // If endpoint stores percentage, use $commissionPercentageValue instead
+        $user->endpoint = ($user->endpoint ?? 0) + $commissionPercentageValue;
+
         $user->release_commission_date = now();
         $user->save();
 
-        // Get name field based on role
+        // Get name field based on role or request fallback
         $name = $user->player ?? $request->name ?? 'Unknown';
 
+        // Save release record
         $data = Release::create([
             'transfer_to'           => $transferTo,
             'name'                  => $name,
@@ -1289,11 +1313,12 @@ class PagesController extends Controller
         ]);
 
         return response()->json([
-            'success'           => true,
-            'message'           => 'Commission released successfully.',
-            'remaining_balance' => $remainingBalance,
-            'released_at'       => now()->format('Y-m-d H:i:s'),
-            'data'              => $data,
+            'success'                    => true,
+            'message'                    => 'Commission released successfully.',
+            'remaining_balance'          => $remainingBalance,
+            'new_system_earning_percent' => $newSystemEarningPercent,
+            'released_at'                => now()->format('Y-m-d H:i:s'),
+            'data'                       => $data,
         ]);
     }
 

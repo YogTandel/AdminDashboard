@@ -16,7 +16,7 @@ class Setting extends Model
     protected $fillable = [
         'agentComission',
         'distributorComission',
-        'earning',
+        'earning' => 'float',
         'earningPercentage',
         'setTominimum',
         'standing',
