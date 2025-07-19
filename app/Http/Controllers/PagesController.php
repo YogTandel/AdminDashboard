@@ -791,50 +791,62 @@ class PagesController extends Controller
         }
     }
 
-    public function showTransferReport()
-    {
-        $user  = auth('web')->user();   // from users table
-        $admin = auth('admin')->user(); // from admins table
+ public function showTransferReport()
+{
+    $user  = auth('web')->user();   // from users table
+    $admin = auth('admin')->user(); // from admins table
 
-        if (! $user && ! $admin) {
-            return redirect()->route('login');
-        }
+    if (!$user && !$admin) {
+        return redirect()->route('login');
+    }
 
-        $query = DB::connection('mongodb')->table('transfers')->orderBy('created_at', 'desc');
+    $query = DB::connection('mongodb')->table('transfers')->orderBy('created_at', 'desc');
 
-        // If a normal user is logged in, restrict to their transfers
-        if ($user) {
-            $query->where('transfer_by', $user->id);
-        }
+    // If a normal user is logged in, restrict to their transfers
+    if ($user) {
+        $query->where('transfer_by', $user->id);
+    }
 
-        // If admin is logged in, show all transfers (no filtering)
+    $transfers = $query->get();
 
-        $transfers = $query->get();
-
-        if ($transfers->isEmpty()) {
-            return view('pages.transfer.report', compact('transfers'));
-        }
-
-        $allAdmins = Admin::all()->keyBy('_id');
-
-        $userIds = $transfers->pluck('transfer_by')
-            ->merge($transfers->pluck('transfer_to'))
-            ->unique();
-
-        $users = User::whereIn('_id', $userIds)->get()->keyBy('_id');
-
-        foreach ($transfers as $transfer) {
-            $transfer->agent_name = $users->get($transfer->transfer_by)?->player ?? 'N/A (User ID: ' . $transfer->transfer_by . ')';
-
-            if ($allAdmins->has($transfer->transfer_to)) {
-                $transfer->distributor_name = $allAdmins->get($transfer->transfer_to)->player ?? 'Admin (ID: ' . $transfer->transfer_to . ')';
-            } else {
-                $transfer->distributor_name = $users->get($transfer->transfer_to)?->player ?? 'N/A (ID: ' . $transfer->transfer_to . ')';
-            }
-        }
-
+    if ($transfers->isEmpty()) {
         return view('pages.transfer.report', compact('transfers'));
     }
+
+    // Convert MongoDB IDs to strings for array keys
+    $allAdmins = Admin::all()->mapWithKeys(function ($admin) {
+        return [(string)$admin->_id => $admin];
+    });
+
+    $userIds = $transfers->pluck('transfer_by')
+        ->merge($transfers->pluck('transfer_to'))
+        ->unique()
+        ->map(function ($id) {
+            return (string)$id;
+        });
+
+    $users = User::whereIn('_id', $userIds)->get()->mapWithKeys(function ($user) {
+        return [(string)$user->_id => $user];
+    });
+
+    foreach ($transfers as $transfer) {
+        // Convert transfer IDs to strings for comparison
+        $transferBy = (string)$transfer->transfer_by;
+        $transferTo = (string)$transfer->transfer_to;
+
+        // Set agent name
+        $transfer->agent_name = $users[$transferBy]->player ?? 'N/A (User ID: ' . $transferBy . ')';
+
+        // Set distributor name
+        if (isset($allAdmins[$transferTo])) {
+            $transfer->distributor_name = $allAdmins[$transferTo]->player ?? 'Admin';
+        } else {
+            $transfer->distributor_name = $users[$transferTo]->player ?? 'N/A (ID: ' . $transferTo . ')';
+        }
+    }
+
+    return view('pages.transfer.report', compact('transfers'));
+}
 
     public function getAgents($distributorId)
     {
