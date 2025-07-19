@@ -34,7 +34,7 @@ class Setting extends Model
     protected $casts = [
         'agentComission'       => 'Double',
         'distributorComission' => 'Double',
-        'earning'              => 'Double',
+        'earning'              => 'decimal:2',
         'earningPercentage'    => 'Double',
         'setTominimum'         => 'boolean',
         'standing'             => 'double',
