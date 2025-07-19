@@ -4,6 +4,12 @@
 
 @section('content')
     <div class="container-fluid py-4">
+        <!-- Loading Spinner -->
+        <div id="loadingSpinner" class="d-none" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 9999; display: flex; justify-content: center; align-items: center;">
+            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
 
         {{-- Success/Error Messages --}}
         @if (session('success'))
@@ -45,7 +51,7 @@
                         <h6 class="mb-0">Commissions</h6>
                     </div>
                     <div class="card-body pt-3">
-                        <form action="{{ route('settings.updateCommissions') }}" method="POST">
+                        <form action="{{ route('settings.updateCommissions') }}" method="POST" id="commissionForm">
                             @csrf
                             <input type="hidden" name="agent_id" value="{{ $selectedAgent['id'] ?? '' }}">
 
@@ -100,12 +106,12 @@
                             </div>
                         </div>
                         <div class="d-flex flex-wrap gap-3">
-                            <form action="{{ route('settings.standingToEarning') }}" method="POST">
+                            <form action="{{ route('settings.standingToEarning') }}" method="POST" id="standingToEarningForm">
                                 @csrf
                                 <button type="submit" class="equal-btn btn-orange">Standing To Earning</button>
                             </form>
 
-                            <form action="{{ route('settings.earningToZero') }}" method="POST">
+                            <form action="{{ route('settings.earningToZero') }}" method="POST" id="earningToZeroForm">
                                 @csrf
                                 <button type="submit" class="equal-btn btn-red">Earning to 0</button>
                             </form>
@@ -127,7 +133,7 @@
                         <h6 class="mb-0">Profit Settings</h6>
                     </div>
                     <div class="card-body">
-                        <form action="{{ route('settings.updateProfit') }}" method="POST">
+                        <form action="{{ route('settings.updateProfit') }}" method="POST" id="profitForm">
                             @csrf
                             <div class="mb-4">
                                 <label class="form-label">Earning %</label>
@@ -156,7 +162,7 @@
                         <h6 class="mb-0">Admin Points Management</h6>
                     </div>
                     <div class="card-body">
-                        <form action="{{ route('admin.addPoints') }}" method="POST">
+                        <form action="{{ route('admin.addPoints') }}" method="POST" id="addPointsForm">
                             @csrf
                             <div class="mb-4">
                                 <label class="form-label">Add Points</label>
@@ -167,7 +173,7 @@
                                 </div>
                             </div>
                         </form>
-                        <form action="{{ route('admin.removePoints') }}" method="POST">
+                        <form action="{{ route('admin.removePoints') }}" method="POST" id="removePointsForm">
                             @csrf
                             <label class="form-label">Remove Points</label>
                             <input type="number" class="form-control" name="remove_points"
@@ -176,7 +182,6 @@
                                 <button type="submit" class="btn btn-danger shadow-soft">Remove from Admin</button>
                             </div>
                         </form>
-
                     </div>
                 </div>
             </div>
@@ -192,61 +197,10 @@
             border-radius: 0.25rem;
             margin-bottom: 1rem;
         }
-    </style>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        const initialValue = @json($settings->setTominimum ?? false);
-
-        function updateButtonColor(value) {
-            const btn = $('#toggleSetToMinimumBtn');
-            btn.removeClass('btn-green btn-red');
-
-            if (value) {
-                btn.addClass('btn-green');
-            } else {
-                btn.addClass('btn-red');
-            }
-        }
-
-        $(document).ready(function() {
-
-            updateButtonColor(initialValue);
-
-
-            $('#toggleSetToMinimumBtn').click(function() {
-                $.ajax({
-                    url: "{{ route('toggle.setToMinimum') }}",
-                    method: 'POST',
-                    data: {
-                        _token: "{{ csrf_token() }}"
-                    },
-                    success: function(response) {
-                        if (response.setTominimum !== undefined) {
-                            updateButtonColor(response.setTominimum);
-                        } else {
-                            alert('Unexpected response from server.');
-                        }
-                    },
-                    error: function() {
-                        alert('Error toggling Set To Minimum');
-                    }
-                });
-            });
-
-
-            setTimeout(function() {
-                $('.alert-success-auto').fadeOut('slow');
-                $('.alert-danger-auto').fadeOut('slow');
-            }, 5000);
-        });
-    </script>
-    <style>
         .equal-btn {
             min-width: 160px;
-            /* Set width same for all */
             height: 45px;
-            /* Set uniform height */
             font-weight: bold;
             color: white;
             border: none;
@@ -266,24 +220,104 @@
             background-color: #e53935;
         }
     </style>
-    <script>
-        // Existing jQuery document ready block
-        $(document).ready(function() {
-            // Existing code...
 
-            // New AJAX for fetching endpoint
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // Show loading spinner
+        function showLoader() {
+            $('#loadingSpinner').removeClass('d-none').addClass('d-flex');
+        }
+        
+        // Hide loading spinner
+        function hideLoader() {
+            $('#loadingSpinner').removeClass('d-flex').addClass('d-none');
+        }
+
+        const initialValue = @json($settings->setTominimum ?? false);
+
+        function updateButtonColor(value) {
+            const btn = $('#toggleSetToMinimumBtn');
+            btn.removeClass('btn-green btn-red');
+
+            if (value) {
+                btn.addClass('btn-green');
+            } else {
+                btn.addClass('btn-red');
+            }
+        }
+
+        $(document).ready(function() {
+            updateButtonColor(initialValue);
+
+            // Form submissions with loader
+            $('#commissionForm').on('submit', function() {
+                showLoader();
+            });
+
+            $('#standingToEarningForm').on('submit', function() {
+                showLoader();
+            });
+
+            $('#earningToZeroForm').on('submit', function() {
+                showLoader();
+            });
+
+            $('#profitForm').on('submit', function() {
+                showLoader();
+            });
+
+            $('#addPointsForm').on('submit', function() {
+                showLoader();
+            });
+
+            $('#removePointsForm').on('submit', function() {
+                showLoader();
+            });
+
+            // Toggle Set To Minimum button
+            $('#toggleSetToMinimumBtn').click(function() {
+                showLoader();
+                $.ajax({
+                    url: "{{ route('toggle.setToMinimum') }}",
+                    method: 'POST',
+                    data: {
+                        _token: "{{ csrf_token() }}"
+                    },
+                    success: function(response) {
+                        if (response.setTominimum !== undefined) {
+                            updateButtonColor(response.setTominimum);
+                        } else {
+                            alert('Unexpected response from server.');
+                        }
+                        hideLoader();
+                    },
+                    error: function() {
+                        alert('Error toggling Set To Minimum');
+                        hideLoader();
+                    }
+                });
+            });
+
+            // Fetch endpoint
+            showLoader();
             $.ajax({
                 url: "{{ route('admin.endpoint') }}",
                 method: 'GET',
                 success: function(response) {
                     $('#admin-endpoint').text("Endpoint: " + response.endpoint);
+                    hideLoader();
                 },
                 error: function() {
                     $('#admin-endpoint').text("Endpoint: Error loading");
+                    hideLoader();
                 }
             });
 
-            // Existing code for alerts and toggle button...
+            // Auto-dismiss alerts
+            setTimeout(function() {
+                $('.alert-success-auto').fadeOut('slow');
+                $('.alert-danger-auto').fadeOut('slow');
+            }, 5000);
         });
     </script>
 
