@@ -4,13 +4,6 @@
 
 @section('content')
     <div class="container-fluid py-4">
-        <!-- Loading Spinner -->
-        <div id="loadingSpinner" class="d-none" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 9999; display: flex; justify-content: center; align-items: center;">
-            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-        </div>
-
         <div class="row">
             <!-- Total Earnings -->
             <div class="col-lg-4 mb-4">
@@ -31,6 +24,7 @@
                         </div>
                     </div>
                 </div>
+
             </div>
             <!-- End Total Earnings -->
 
@@ -238,33 +232,27 @@
 
     <script>
         var totalWinpointSum = {{ $totalWinpointSum }};
-        
-        // Show loading spinner
-        function showLoader() {
-            $('#loadingSpinner').removeClass('d-none').addClass('d-flex');
-        }
-        
-        // Hide loading spinner
-        function hideLoader() {
-            $('#loadingSpinner').removeClass('d-flex').addClass('d-none');
-        }
-
+        //alert(totalWinpointSum);
         function fetchLiveGameValues() {
-            showLoader();
             fetch("{{ route('settings.data') }}")
                 .then(response => response.json())
                 .then(data => {
+
                     document.getElementById('totalEarnings').value = data.earning;
+
                     document.getElementById('distributorPercent').value = data.distributorComission;
+
                     document.getElementById('agentPercent').value = data.agentComission;
-                    document.getElementById('distributoramount').value = totalWinpointSum * (data.distributorComission / 100).toFixed(2);
-                    document.getElementById('agentamount').value = totalWinpointSum * (data.agentComission / 100).toFixed(2);
-                    hideLoader();
+
+                    // document.getElementById('distributoramount').value = totalWinpointSum*(data.distributorComission/100).toFixed(2);
+                    document.getElementById('distributoramount').value = totalWinpointSum * (data.distributorComission /
+                        100).toFixed(2);
+                    document.getElementById('agentamount').value = totalWinpointSum * (data.agentComission / 100)
+                        .toFixed(2);
+
+
                 })
-                .catch(error => {
-                    console.error('Error fetching live game values:', error);
-                    hideLoader();
-                });
+                .catch(error => console.error('Error fetching live game values:', error));
         }
 
         fetchLiveGameValues();
@@ -276,7 +264,6 @@
 
         $(document).ready(function() {
             // Load all distributors in dropdown on page load
-            showLoader();
             $.ajax({
                 url: '/ajax/distributors',
                 method: 'GET',
@@ -290,11 +277,9 @@
                         );
                         distributordata[item.id] = item;
                     });
-                    hideLoader();
                 },
                 error: function() {
                     alert('Distributor list load failed');
-                    hideLoader();
                 }
             });
 
@@ -325,7 +310,6 @@
                 }
 
                 // Fetch distributor details (also includes agents)
-                showLoader();
                 $.ajax({
                     url: `/ajax/distributor/${id}`,
                     method: 'GET',
@@ -381,19 +365,17 @@
                         }
 
                         $('#releaseButton').prop('disabled', !releaseAllowed);
-                        hideLoader();
                     },
                     error: function() {
                         clearFields();
                         alert('Could not fetch distributor details');
-                        hideLoader();
                     }
                 });
             });
 
             $('#releaseButton').on('click', function() {
                 const distributorId = $('#distributor_id').val();
-                const distributorName = $('#distributor').val();
+                const distributorName = $('#distributor').val(); // ✅ grab from hidden input
                 const commissionAmount = parseFloat($('#distCommission').text());
                 const commissionPercentage = parseFloat($('#distributorPercent').val());
                 const winAmount = parseFloat($('#distWinAmount').text());
@@ -404,11 +386,6 @@
                     return;
                 }
 
-                if (!confirm('Are you sure you want to release this commission?')) {
-                    return;
-                }
-
-                showLoader();
                 $.ajax({
                     url: '/release-commission',
                     method: 'POST',
@@ -423,15 +400,13 @@
                     },
                     success: function(res) {
                         alert('Commission Released Successfully!');
-                        fetchLiveGameValues();
+                        fetchLiveGameValues(); // Refresh live values if needed
                         $('#releaseButton').prop('disabled', true);
                         $('#releaseDateBox').text(res.released_at || new Date()
                             .toLocaleString());
-                        hideLoader();
                     },
                     error: function(xhr) {
                         alert(xhr.responseJSON?.error || 'Failed to release commission.');
-                        hideLoader();
                     }
                 });
             });
@@ -449,4 +424,6 @@
             $('#releaseButton').prop('disabled', true);
         });
     </script>
+
+
 @endsection
