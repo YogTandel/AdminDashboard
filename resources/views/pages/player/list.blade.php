@@ -3,6 +3,11 @@
 @section('page-name', 'Player List')
 
 @section('content')
+    <!-- Loader Container -->
+    <div id="loader" class="loader-container">
+        <div class="loader"></div>
+    </div>
+
     <div class="container-fluid py-4">
         <div class="row">
             <div class="col-12">
@@ -13,7 +18,6 @@
                             <!-- Show Dropdown -->
                             <form method="GET" class="d-flex align-items-center mb-0">
                                 <label for="per_page" class="mb-0 me-2 text-sm text-dark fw-bold">Show:</label>
-
                                 <div class="input-group input-group-outline border-radius-lg shadow-sm">
                                     <select name="per_page" id="per_page" class="form-select border-0 ps-3 pe-4"
                                         onchange="this.form.submit()" style="min-width: 60px;">
@@ -117,8 +121,6 @@
                                             class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                             Login Status
                                         </th>
-
-
                                         <th
                                             class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                             Status
@@ -153,18 +155,17 @@
                                                     </div>
                                                 </td>
                                                 <td>
-    <div class="d-flex px-2 py-1">
-        <div class="d-flex flex-column justify-content-center">
-            <h6 id="name-{{ $player->id }}" class="mb-0 text-sm">{{ $player->player }}</h6>
-        </div>
-    </div>
-</td>
-<td>
-    <p id="password-{{ $player->id }}" class="text-xs font-weight-bold mb-0">
-        {{ $player->original_password }}
-    </p>
-</td>
-
+                                                    <div class="d-flex px-2 py-1">
+                                                        <div class="d-flex flex-column justify-content-center">
+                                                            <h6 id="name-{{ $player->id }}" class="mb-0 text-sm">{{ $player->player }}</h6>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <p id="password-{{ $player->id }}" class="text-xs font-weight-bold mb-0">
+                                                        {{ $player->original_password }}
+                                                    </p>
+                                                </td>
                                                 <td>
                                                     <p class="text-xs font-weight-bold mb-0">{{ $player->role }}</p>
                                                 </td>
@@ -185,7 +186,6 @@
                                                         {{ $player->login_status ? 'True' : 'False' }}
                                                     </span>
                                                 </td>
-
                                                 <td class="align-middle text-center text-sm">
                                                     <span
                                                         class="badge badge-sm {{ $player->status === 'Active' ? 'bg-gradient-success' : 'bg-gradient-danger' }}">
@@ -207,8 +207,6 @@
                                                             data-bs-toggle="tooltip" title="Copy Player Credentials">
                                                             <i class="fas fa-copy me-3" style="cursor: pointer;"></i>
                                                         </a>
-
-
                                                         <a href="javascript:;" class="text-secondary font-weight-bold text-xs me-2"
                                                             title="Edit Player" data-bs-toggle="modal"
                                                             data-bs-target="#editModal{{ $player->id }}">
@@ -226,25 +224,18 @@
                                                                 <i class="fas fa-trash"></i>
                                                             </button>
                                                         </form>
-
-
                                                         @if(auth()->check() && auth()->user()->role === 'agent')
                                                             <a href="javascript:;" class="text-success font-weight-bold text-xs me-2"
                                                                 data-bs-toggle="modal" data-bs-target="#transferModal{{ $player->id }}">
                                                                 <i class="fa-solid fa-indian-rupee-sign"></i>
                                                             </a>
                                                         @endif
-
                                                         @include('pages.player.refil2', ['user' => $player])
-
-
-
                                                         <a href="{{ route('player.history', $player->_id) }}"
                                                             class="text-secondary font-weight-bold text-xs me-2"
                                                             data-bs-toggle="tooltip" data-bs-placement="top" title="Player History">
                                                             <i class="fas fa-history"></i>
                                                         </a>
-                                                        {{-- @include('pages.player.history') --}}
                                                     </div>
                                                 </td>
                                             </tr>
@@ -260,32 +251,96 @@
                     </div>
                 </div>
             </div>
-
             <x-footer />
         </div>
     </div>
-   @push('scripts')
-<script>
-    function copyPlayerToClipboard(id) {
-        const name = document.getElementById('name-' + id)?.innerText.trim();
-        const password = document.getElementById('password-' + id)?.innerText.trim();
 
-        if (!name || !password) {
-            alert("Name or password missing");
-            return;
+    <style>
+        /* Loader Styles */
+        .loader-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            display: none;
         }
 
-        const text = `Name: ${name}\nPassword: ${password}`;
+        .loader {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
 
-        navigator.clipboard.writeText(text).then(() => {
-            alert("Copied to clipboard!");
-        }).catch((err) => {
-            console.error("Clipboard write failed", err);
-            alert("Failed to copy.");
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+
+    @push('scripts')
+    <script>
+        // Show loader when page is loading
+        document.addEventListener('DOMContentLoaded', function() {
+            // Show loader immediately when page starts loading
+            document.getElementById('loader').style.display = 'flex';
+            
+            // Hide loader when page is fully loaded
+            window.addEventListener('load', function() {
+                document.getElementById('loader').style.display = 'none';
+            });
+
+            // Show loader during AJAX requests
+            $(document).ajaxStart(function() {
+                document.getElementById('loader').style.display = 'flex';
+            });
+
+            $(document).ajaxStop(function() {
+                document.getElementById('loader').style.display = 'none';
+            });
+
+            $(document).ajaxError(function() {
+                document.getElementById('loader').style.display = 'none';
+            });
         });
-    }
-</script>
-@endpush
 
+        // Show loader when page is being refreshed
+        window.addEventListener('beforeunload', function() {
+            document.getElementById('loader').style.display = 'flex';
+        });
 
+        function copyPlayerToClipboard(id) {
+            const name = document.getElementById('name-' + id)?.innerText.trim();
+            const password = document.getElementById('password-' + id)?.innerText.trim();
+
+            if (!name || !password) {
+                alert("Name or password missing");
+                return;
+            }
+
+            const text = `Name: ${name}\nPassword: ${password}`;
+
+            // Show loader during copy operation
+            document.getElementById('loader').style.display = 'flex';
+
+            navigator.clipboard.writeText(text).then(() => {
+                alert("Copied to clipboard!");
+            }).catch((err) => {
+                console.error("Clipboard write failed", err);
+                alert("Failed to copy.");
+            }).finally(() => {
+                // Hide loader after copy operation
+                document.getElementById('loader').style.display = 'none';
+            });
+        }
+    </script>
+    @endpush
 @endsection

@@ -1,38 +1,34 @@
 @extends('layouts.layout')
 
+@section('page-name', 'Dashboard')
+
 @section('content')
-    <!-- Toast Container -->
-    <div class="position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 1080">
-        @if (session('success'))
-            <div class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive"
-                aria-atomic="true">
-                <div class="d-flex">
-                    <div class="toast-body">
-                        {{ session('success') }}
-                    </div>
-                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
-                        aria-label="Close"></button>
-                </div>
-            </div>
-        @endif
-        @if (session('error'))
-            <div class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive"
-                aria-atomic="true">
-                <div class="d-flex">
-                    <div class="toast-body">
-                        {{ session('error') }}
-                    </div>
-                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
-                        aria-label="Close"></button>
-                </div>
-            </div>
-        @endif
+
+{{-- 🔵 Loader --}}
+<div id="loader" style="
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.5s ease;
+">
+    <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+        <span class="visually-hidden">Loading...</span>
     </div>
-    <!-- End Toast Container -->
+</div>
 
-    <div class="row g-3 container-fluid py-4">
 
-        <!-- Card 1 -->
+<div id="mainContent" style="display: none;">
+    <div class="container-fluid py-4">
+        <div class="row g-3">
+         
+           <!-- Card 1 -->
         <div class="col-12 col-sm-6 col-md-3">
             <div class="p-3 bg-primary rounded">
                 <p class="text-white font-weight-bolder mb-3">Total Agent</p>
@@ -127,6 +123,27 @@
                 <h5 class="text-white text-sm">{{ $totalBulk }}</h5>
             </div>
         </div>
-
+        </div>
     </div>
+</div>
+
 @endsection
+
+
+@section('scripts')
+<script>
+    window.addEventListener('load', function () {
+        setTimeout(() => {
+            const loader = document.getElementById('loader');
+            const content = document.getElementById('mainContent');
+
+            loader.style.opacity = '0';
+
+            
+            setTimeout(() => {
+                loader.remove(); 
+                content.style.display = 'block';
+            }, 500); 
+        }, 1000); 
+    });
+</script>

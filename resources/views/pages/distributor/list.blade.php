@@ -3,6 +3,11 @@
 @section('page-name', 'Distributor List')
 
 @section('content')
+    <!-- Loader Container -->
+    <div id="loader" class="loader-container">
+        <div class="loader"></div>
+    </div>
+
     <div class="container-fluid py-4">
         <div class="row">
             <div class="col-12">
@@ -207,8 +212,67 @@
         </div>
     </div>
 
+    <style>
+        /* Loader Styles */
+        .loader-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            display: none;
+        }
+
+        .loader {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
 
     <script>
+        // Show loader when page is loading
+        document.addEventListener('DOMContentLoaded', function() {
+            // Show loader immediately when page starts loading
+            document.getElementById('loader').style.display = 'flex';
+            
+            // Hide loader when page is fully loaded
+            window.addEventListener('load', function() {
+                document.getElementById('loader').style.display = 'none';
+            });
+
+            // Show loader during AJAX requests
+            $(document).ajaxStart(function() {
+                document.getElementById('loader').style.display = 'flex';
+            });
+
+            $(document).ajaxStop(function() {
+                document.getElementById('loader').style.display = 'none';
+            });
+
+            $(document).ajaxError(function() {
+                document.getElementById('loader').style.display = 'none';
+            });
+        });
+
+        // Show loader when page is being refreshed
+        window.addEventListener('beforeunload', function() {
+            document.getElementById('loader').style.display = 'flex';
+        });
+
         function copyToClipboard(distributorId) {
             console.log("Icon clicked", distributorId); // Debug line
 
@@ -229,9 +293,8 @@
                 alert('Copy failed. Check clipboard permission.');
             });
         }
-    </script>
 
-    <script>
+        // Toggle status functionality with loader
         document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.distributor-toggle-status').forEach(btn => {
                 btn.addEventListener('click', function() {
@@ -239,6 +302,9 @@
                     const icon = this.querySelector('i');
                     const statusBadge = document.getElementById(`status-badge-${distributorId}`);
                     const tooltipTitle = this;
+
+                    // Show loader
+                    document.getElementById('loader').style.display = 'flex';
 
                     fetch(`/distributor/toggle-status/${distributorId}`, {
                             method: 'POST',
@@ -269,6 +335,10 @@
                         .catch(error => {
                             alert('Something went wrong.');
                             console.error(error);
+                        })
+                        .finally(() => {
+                            // Hide loader
+                            document.getElementById('loader').style.display = 'none';
                         });
                 });
             });
