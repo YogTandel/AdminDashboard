@@ -52,13 +52,13 @@
 
                 {{-- Custom Bet --}}
                 <form action="{{ route('custom.bet.update') }}" method="POST" class="d-flex align-items-center">
-    @csrf
-    <span class="text-dark me-2" style="font-size: 1.5rem; font-weight: 700;">Custom Bet:</span>
-    <input type="number" name="custom_bet" class="form-control form-control-sm"
-           placeholder="Enter Custom Bet" style="width: 200px;" 
-           min="0" max="9" required value="{{ old('custom_bet') }}" />
-    <button type="submit" class="btn btn-primary btn-sm ms-2 mt-2" style="width: 100px;">Submit</button>
-</form>
+                    @csrf
+                    <span class="text-dark me-2" style="font-size: 1.5rem; font-weight: 700;">Custom Bet:</span>
+                    <input type="number" name="custom_bet" class="form-control form-control-sm"
+                        placeholder="Enter Custom Bet" style="width: 200px;" min="0" max="9" required
+                        value="{{ old('custom_bet') }}" />
+                    <button type="submit" class="btn btn-primary btn-sm ms-2 mt-2" style="width: 100px;">Submit</button>
+                </form>
             </div>
         </div>
     </div>
@@ -67,16 +67,15 @@
         @for ($i = 0; $i <= 9; $i++)
             <div class="col-12 col-sm-6 col-md-1 ms-2" id="card-{{ $i }}">
                 <div class="p-3 rounded text-white card-bg-{{ $i }}">
-                    <p class="font-weight-bolder mb-3">{{ $i }}</p>
+                    <p class="font-weight-bolder mb-3" style="font-size: 1.5rem; font-weight: 800;">{{ $i }}</p>
                     <h5 class="text-sm value">0</h5>
                 </div>
             </div>
         @endfor
 
-
         <div class="col-12 col-sm-6 col-md-1 ms-2" id="card-total">
             <div class="p-3 rounded text-white card-bg-total">
-                <p class="font-weight-bolder mb-3">Total</p>
+                <p class="font-weight-bolder mb-3" style="font-size: 1.5rem; font-weight: 800;">Total</p>
                 <h5 class="text-sm value">0</h5>
             </div>
         </div>
@@ -96,8 +95,8 @@
                                         <th class="text-uppercase text-dark fw-bold text-center"
                                             style="font-size: 1rem; width: 22%;">Name</th>
                                         @for ($i = 1; $i <= 9; $i++)
-                                            <th class="text-uppercase text-dark fw-bold text-center"
-                                                style="font-size: 1rem;">{{ $i }}</th>
+                                            <th class="text-uppercase text-dark fw-bold text-center" style="font-size: 1rem;">
+                                                {{ $i }}</th>
                                         @endfor
                                         <th class="text-uppercase text-dark fw-bold text-center" style="font-size: 1rem;">0
                                         </th>
@@ -117,7 +116,7 @@
 
 
     <script>
-        setTimeout(function() {
+        setTimeout(function () {
             const alertEl = document.getElementById('alertMessage');
             if (alertEl) {
                 alertEl.classList.remove('show');
@@ -147,19 +146,19 @@
             $.ajax({
                 url: '{{ route('bet.totals') }}',
                 method: 'GET',
-                success: function(response) {
+                success: function (response) {
                     for (let i = 0; i < 10; i++) {
                         $('#card-' + i + ' .value').text(response.totals[i]);
                     }
                     $('#card-total .value').text(response.grandTotal);
                 },
-                error: function(err) {
+                error: function (err) {
                     console.error('Error fetching bet totals:', err);
                 }
             });
         }
 
-        $(document).ready(function() {
+        $(document).ready(function () {
             fetchBetTotals(); // First load
             setInterval(fetchBetTotals, 5000); // Auto update every 5 seconds
         });
@@ -216,24 +215,24 @@
             $.ajax({
                 url: "{{ route('players.live') }}",
                 type: 'GET',
-                success: function(response) {
+                success: function (response) {
                     let players = response.players;
                     let tableBody = '';
 
-                    players.forEach(function(player) {
+                    players.forEach(function (player) {
                         let name = player.name;
                         let betValues = player.betValues;
                         let total = player.total;
                         let stime = player.stime;
 
                         let row = `<tr>`;
-                        row += `<td class="text-center text-dark fw-bold">${name}</td>`;
+                        row += `<td class="text-center text-dark fw-bold">${ name }</td>`;
 
                         for (let i = 0; i < 10; i++) {
-                            row += `<td class="text-center">${betValues[i] ?? 0}</td>`;
+                            row += `<td class="text-center">${ betValues[i] ?? 0 }</td>`;
                         }
 
-                        row += `<td class="text-center fw-bold">${total}</td>`;
+                        row += `<td class="text-center fw-bold">${ total }</td>`;
                         row += `</tr>`;
 
                         tableBody += row;
@@ -242,14 +241,14 @@
 
                     $('#player-table-body').html(tableBody);
                 },
-                error: function(err) {
+                error: function (err) {
                     console.error("Error fetching player data", err);
                 }
             });
         }
 
         // Initial load
-        $(document).ready(function() {
+        $(document).ready(function () {
             loadPlayers();
             // Optional: Auto refresh every 15 seconds
             // setInterval(loadPlayers, 15000);
