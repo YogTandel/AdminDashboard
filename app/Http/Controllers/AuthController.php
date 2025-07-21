@@ -174,6 +174,11 @@ public function createAgent(Request $request)
 
         $user->update($validate);
 
+         if($validate['status']=="Inactive")
+        {
+             User::where('agent_id', new ObjectId($id))->update(['status' => 'Inactive']);
+
+        }
         Log::info('Agent updated', ['id' => $user->id]);
 
         return redirect()->route('agentlist.show')->with('success', 'Agent updated successfully');
@@ -208,6 +213,11 @@ public function createAgent(Request $request)
 
         $user->update($validate);
 
+        if($validate['status']=="Inactive")
+        {
+             User::where('distributor', new ObjectId($id))->update(['status' => 'Inactive']);
+
+        }
         Log::info('Distributor updated', ['id' => $user->id]);
 
         return redirect()->route('distributor.show')->with('success', 'Distributor updated successfully');
@@ -270,22 +280,24 @@ public function createAgent(Request $request)
     {
         $agent = User::where('id', $id)->where('role', 'agent')->firstOrFail();
         $agent->forceDelete();
+        User::where('agent_id', new ObjectId($id))
+        ->update(['status' => 'Inactive']);
         return redirect()->route('agentlist.show')->with('success', 'Agent deleted successfully');
     }
 
     public function deleteDistributor($id)
-{
-    
-    $distributor = User::where('distributor', $id)->where('role', 'distributor')->firstOrFail();
-    $distributor->forceDelete();
+    {
+        
+        $distributor = User::where('distributor', $id)->where('role', 'distributor')->firstOrFail();
+        $distributor->forceDelete();
 
-    User::where('distributor', $id)
-        ->update(['status' => 'inactive']);
+        User::where('distributor', new ObjectId($id))
+            ->update(['status' => 'Inactive']);
 
 
 
-    return redirect()->route('distributor.show')->with('success', 'Distributor deleted successfully and agents deactivated.');
-}
+        return redirect()->route('distributor.show')->with('success', 'Distributor deleted successfully and agents deactivated.');
+    }
 
 
     public function deleteplayer($id)
