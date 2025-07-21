@@ -87,9 +87,9 @@
                             <option value="">Date Range</option>
                             <option value="2_days_ago" {{ request('date_range') == '2_days_ago' ? 'selected' : '' }}>Last 2
                                 Days</option>
-                            <option value="this_week" {{ request('date_range') == 'this_week' ? 'selected' : '' }}>This Week
+                            <option value="this_week" {{ request('date_range') == 'this_week' ? 'selected' : '' }}>last Week
                             </option>
-                            <option value="this_month" {{ request('date_range') == 'this_month' ? 'selected' : '' }}>This
+                            <option value="this_month" {{ request('date_range') == 'this_month' ? 'selected' : '' }}>last
                                 Month</option>
                         </select>
 
@@ -290,7 +290,7 @@
         </div>
     </div>
 
-    <style>
+    <!-- <style>
         /* Loader Styles */
         .loader-container {
             position: fixed;
@@ -319,7 +319,7 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-    </style>
+    </style> -->
 
     <script>
         // Show loader when page is loading
