@@ -1438,7 +1438,10 @@ class PagesController extends Controller
             $query->where(function ($q) use ($searchTerm) {
                 $q->where('name', 'LIKE', "%{$searchTerm}%")
                     ->orWhere('type', 'LIKE', "%{$searchTerm}%")
-                    ->orWhere('transfer_role', 'LIKE', "%{$searchTerm}%");
+                    ->orWhere('transfer_role', 'LIKE', "%{$searchTerm}%")
+                    ->orWhere('total_bet', 'LIKE', "%{$searchTerm}%")
+                    ->orWhere('commission_percentage', 'LIKE', "%{$searchTerm}%")
+                    ->orWhere('remaining_balance', 'LIKE', "%{$searchTerm}%");
             });
         }
 

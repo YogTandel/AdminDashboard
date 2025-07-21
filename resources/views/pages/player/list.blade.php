@@ -255,7 +255,7 @@
         </div>
     </div>
 
-    <style>
+    <!-- <style>
         /* Loader Styles */
         .loader-container {
             position: fixed;
@@ -284,7 +284,7 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-    </style>
+    </style> -->
 
     @push('scripts')
     <script>
@@ -329,17 +329,17 @@
             const text = `Name: ${name}\nPassword: ${password}`;
 
             // Show loader during copy operation
-            document.getElementById('loader').style.display = 'flex';
+            // document.getElementById('loader').style.display = 'flex';
 
-            navigator.clipboard.writeText(text).then(() => {
-                alert("Copied to clipboard!");
-            }).catch((err) => {
-                console.error("Clipboard write failed", err);
-                alert("Failed to copy.");
-            }).finally(() => {
-                // Hide loader after copy operation
-                document.getElementById('loader').style.display = 'none';
-            });
+            // navigator.clipboard.writeText(text).then(() => {
+            //     alert("Copied to clipboard!");
+            // }).catch((err) => {
+            //     console.error("Clipboard write failed", err);
+            //     alert("Failed to copy.");
+            // }).finally(() => {
+            //     // Hide loader after copy operation
+            //     document.getElementById('loader').style.display = 'none';
+            // });
         }
     </script>
     @endpush
