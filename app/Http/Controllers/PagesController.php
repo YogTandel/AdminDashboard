@@ -792,62 +792,111 @@ class PagesController extends Controller
         }
     }
 
-    public function showTransferReport()
-    {
-        $user  = auth('web')->user();   // from users table
-        $admin = auth('admin')->user(); // from admins table
+    public function showTransferReport(Request $request)
+{
+    $user = auth('web')->user();
+    $admin = auth('admin')->user();
 
-        if (! $user && ! $admin) {
-            return redirect()->route('login');
-        }
+    if (!$user && !$admin) {
+        return redirect()->route('login');
+    }
 
-        $query = DB::connection('mongodb')->table('transfers')->orderBy('created_at', 'desc');
+    // Get per_page value or default to 10
+    $perPage = $request->get('per_page', 10);
 
-        // If a normal user is logged in, restrict to their transfers
-        if ($user) {
-            $query->where('transfer_by', $user->id);
-        }
+    // Start query
+    $query = DB::connection('mongodb')->table('transfers')->orderBy('created_at', 'desc');
 
-        $transfers = $query->get();
+    // If a normal user is logged in, restrict to their transfers
+    if ($user) {
+        $query->where('transfer_by', $user->id);
+    }
 
-        if ($transfers->isEmpty()) {
-            return view('pages.transfer.report', compact('transfers'));
-        }
-
-        // Convert MongoDB IDs to strings for array keys
-        $allAdmins = Admin::all()->mapWithKeys(function ($admin) {
-            return [(string) $admin->_id => $admin];
+    // Apply search filter if search term exists
+    if ($request->has('search') && !empty($request->search)) {
+        $searchTerm = $request->search;
+        $query->where(function($q) use ($searchTerm) {
+            $q->where('amount', 'LIKE', "%{$searchTerm}%")
+              ->orWhere('remaining_balance', 'LIKE', "%{$searchTerm}%");
         });
+    }
 
-        $userIds = $transfers->pluck('transfer_by')
-            ->merge($transfers->pluck('transfer_to'))
-            ->unique()
-            ->map(function ($id) {
-                return (string) $id;
-            });
-
-        $users = User::whereIn('_id', $userIds)->get()->mapWithKeys(function ($user) {
-            return [(string) $user->_id => $user];
-        });
-
-        foreach ($transfers as $transfer) {
-            // Convert transfer IDs to strings for comparison
-            $transferBy = (string) $transfer->transfer_by;
-            $transferTo = (string) $transfer->transfer_to;
-
-            // Set agent name
-            $transfer->agent_name = $users[$transferBy]->player ?? 'N/A (User ID: ' . $transferBy . ')';
-
-            // Set distributor name
-            if (isset($allAdmins[$transferTo])) {
-                $transfer->distributor_name = $allAdmins[$transferTo]->player ?? 'Admin';
-            } else {
-                $transfer->distributor_name = $users[$transferTo]->player ?? 'N/A (ID: ' . $transferTo . ')';
-            }
+    // Apply date range filter
+    if ($request->has('date_range') && !empty($request->date_range)) {
+        switch ($request->date_range) {
+            case '2_days_ago':
+                $query->where('created_at', '>=', now()->subDays(2));
+                break;
+            case 'this_week':
+                // Last Week (previous 7 days)
+                $query->whereBetween('created_at', [now()->subWeek(), now()]);
+                break;
+            case 'this_month':
+                // Last Month (previous 30 days)
+                $query->whereBetween('created_at', [now()->subMonth(), now()]);
+                break;
         }
+    }
 
+    // Apply custom date range filter
+    if ($request->has('from_date') && !empty($request->from_date)) {
+        $query->where('created_at', '>=', Carbon::parse($request->from_date)->startOfDay());
+    }
+
+    if ($request->has('to_date') && !empty($request->to_date)) {
+        $query->where('created_at', '<=', Carbon::parse($request->to_date)->endOfDay());
+    }
+
+    // Paginate the results
+    $transfers = $query->paginate($perPage);
+
+    // Append all query parameters to pagination links
+    $transfers->appends([
+        'per_page' => $perPage,
+        'search' => $request->search,
+        'date_range' => $request->date_range,
+        'from_date' => $request->from_date,
+        'to_date' => $request->to_date
+    ]);
+
+    if ($transfers->isEmpty()) {
         return view('pages.transfer.report', compact('transfers'));
     }
+
+    // Convert MongoDB IDs to strings for array keys
+    $allAdmins = Admin::all()->mapWithKeys(function ($admin) {
+        return [(string) $admin->_id => $admin];
+    });
+
+    $userIds = $transfers->pluck('transfer_by')
+        ->merge($transfers->pluck('transfer_to'))
+        ->unique()
+        ->map(function ($id) {
+            return (string) $id;
+        });
+
+    $users = User::whereIn('_id', $userIds)->get()->mapWithKeys(function ($user) {
+        return [(string) $user->_id => $user];
+    });
+
+    foreach ($transfers as $transfer) {
+        // Convert transfer IDs to strings for comparison
+        $transferBy = (string) $transfer->transfer_by;
+        $transferTo = (string) $transfer->transfer_to;
+
+        // Set agent name
+        $transfer->agent_name = $users[$transferBy]->player ?? 'N/A (User ID: ' . $transferBy . ')';
+
+        // Set distributor name
+        if (isset($allAdmins[$transferTo])) {
+            $transfer->distributor_name = $allAdmins[$transferTo]->player ?? 'Admin';
+        } else {
+            $transfer->distributor_name = $users[$transferTo]->player ?? 'N/A (ID: ' . $transferTo . ')';
+        }
+    }
+
+    return view('pages.transfer.report', compact('transfers'));
+}
 
     public function getAgents($distributorId)
     {

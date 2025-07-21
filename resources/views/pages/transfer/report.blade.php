@@ -8,7 +8,7 @@
         <div class="loader"></div>
     </div>
 
-    <div class="container py-4">
+    <div class="container py-1">
         <h3 class="mb-4 text-dark" style="font-weight: 600; font-size: 1.2rem;">
             @if (auth('admin')->check())
                 All Transfer History
@@ -19,8 +19,81 @@
             @endif
         </h3>
 
+        <div class="d-flex justify-content-between align-items-center flex-wrap mb-2">
+            <h6 class="mb-0 ms-4 mt-3 text-bolder">redeem report</h6>
+            <div class="d-flex align-items-center gap-2 flex-wrap mt-3 me-3">
+                <!-- Show Dropdown -->
+                <form method="GET" class="d-flex align-items-center mb-0">
+                    <label for="per_page" class="mb-0 me-2 text-sm text-dark fw-bold">Show:</label>
+
+                    <div class="input-group input-group-outline border-radius-lg shadow-sm">
+                        <select name="per_page" id="per_page" class="form-select border-0 ps-3 pe-4"
+                            onchange="this.form.submit()" style="min-width: 60px;">
+                            <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
+                            <option value="15" {{ request('per_page') == 15 ? 'selected' : '' }}>15</option>
+                        </select>
+                    </div>
+                    @if (request()->has('search'))
+                        <input type="hidden" name="search" value="{{ request('search') }}">
+                    @endif
+                </form>
+
+                <!-- Search -->
+                <form action="" method="GET" class="d-flex align-items-center">
+                    <div class="input-group input-group-outline rounded-pill me-2 shadow-sm">
+                        <span class="input-group-text bg-transparent border-0 text-secondary">
+                            <i class="fas fa-search"></i>
+                        </span>
+                        <label class="form-label"></label>
+                        <input type="search" name="search" class="form-control border-0"
+                            onfocus="this.parentElement.classList.add('is-focused')"
+                            onfocusout="this.parentElement.classList.remove('is-focused')">
+                    </div>
+                    <button type="submit" class="btn bg-gradient-warning rounded-pill shadow-sm mb-0">
+                        Search
+                    </button>
+                </form>
+            </div>
+        </div>
+        <form action="{{ route('transfer.report') }}" method="GET"
+            class="d-flex justify-content-end align-items-center flex-wrap gap-2 mt-2 me-3">
+            <!-- Date Range -->
+            <select name="date_range" class="form-select form-select-sm" onchange="this.form.submit()"
+                style="width: 150px;">
+                <option value="">Date Range</option>
+                <option value="2_days_ago" {{ request('date_range') == '2_days_ago' ? 'selected' : '' }}>Last 2
+                    Days</option>
+                <option value="this_week" {{ request('date_range') == 'this_week' ? 'selected' : '' }}>last Week
+                </option>
+                <option value="this_month" {{ request('date_range') == 'this_month' ? 'selected' : '' }}>last
+                    Month</option>
+            </select>
+
+            <!-- From Date -->
+            <input type="date" name="from_date" class="form-control form-control-sm" value="{{ request('from_date') }}"
+                style="width: 150px;">
+
+            <!-- To Date -->
+            <span class="text-sm mx-1">to</span>
+            <input type="date" name="to_date" class="form-control form-control-sm" value="{{ request('to_date') }}"
+                style="width: 150px;">
+
+            <!-- Search Hidden -->
+            @if (request()->has('search'))
+                <input type="hidden" name="search" value="{{ request('search') }}">
+            @endif
+
+            <!-- Filter Button -->
+            <button type="submit" class="btn btn-sm btn-primary  mb-0">Filter</button>
+
+            <!-- Reset Button -->
+            @if (request()->has('from_date') || request()->has('to_date') || request()->has('date_range'))
+                <a href="{{ route('transfer.report') }}" class="btn btn-secondary btn-sm px-3 mt-3">Reset</a>
+            @endif
+        </form>
+
         @if (count($transfers) > 0)
-            <div class="table-responsive">
+            <div class="table-responsive mt-2">
                 <table class="table table-bordered table-hover" style="font-size: 0.8rem; color: #212529;">
                     <thead>
                         <tr>
@@ -81,25 +154,30 @@
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
     </style>
 
     <script>
         // Show loader when page is loading
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Show loader immediately when page starts loading
             document.getElementById('loader').style.display = 'flex';
-            
+
             // Hide loader when page is fully loaded
-            window.addEventListener('load', function() {
+            window.addEventListener('load', function () {
                 document.getElementById('loader').style.display = 'none';
             });
         });
 
         // Show loader when page is being refreshed
-        window.addEventListener('beforeunload', function() {
+        window.addEventListener('beforeunload', function () {
             document.getElementById('loader').style.display = 'flex';
         });
     </script>
