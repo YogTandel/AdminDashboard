@@ -273,12 +273,10 @@ class AuthController extends Controller
     public function deleteDistributor($id)
     {
 
-        $distributor = User::where('distributor', $id)->where('role', 'distributor')->firstOrFail();
+        $distributor = User::where('id', $id)->where('role', 'distributor')->firstOrFail();
         $distributor->forceDelete();
-
         User::where('distributor', $id)
             ->update(['status' => 'inactive']);
-
         return redirect()->route('distributor.show')->with('success', 'Distributor deleted successfully and agents deactivated.');
     }
 

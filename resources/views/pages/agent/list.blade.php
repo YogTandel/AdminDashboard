@@ -330,7 +330,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Show loader immediately when page starts loading
             document.getElementById('loader').style.display = 'flex';
-            
+
             // Hide loader when page is fully loaded
             window.addEventListener('load', function() {
                 document.getElementById('loader').style.display = 'none';
@@ -377,7 +377,7 @@
                     const icon = this.querySelector('i');
                     const statusBadge = document.getElementById(`status-badge-${agentId}`);
                     const tooltipTitle = this;
-                    
+
                     // Show loader
                     document.getElementById('loader').style.display = 'flex';
 
@@ -435,7 +435,7 @@
             radioButtons.forEach(radio => {
                 radio.addEventListener('click', async function() {
                     const clickedAgentId = this.getAttribute('data-agent-id');
-                    
+
                     // Show loader
                     document.getElementById('loader').style.display = 'flex';
 
@@ -447,7 +447,7 @@
                     else {
                         await handleSelect(this, clickedAgentId);
                     }
-                    
+
                     // Hide loader
                     document.getElementById('loader').style.display = 'none';
                 });
