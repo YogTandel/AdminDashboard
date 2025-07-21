@@ -35,14 +35,14 @@
                             <input type="hidden" name="role" value="player">
 
                             <!-- BALANCE -->
-                            <label>Balance</label>
+                            <!-- <label>Balance</label>
                             <div class="input-group mb-3">
                                 <input type="number" step="0.01" class="form-control @error('balance') is-invalid @enderror"
                                     name="balance" value="{{ old('balance', (float) $player->balance) }}" required>
                                 @error('balance')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
-                            </div>
+                            </div> -->
 
                             <!-- DISTRIBUTOR -->
                             <label>Distributor</label>
@@ -63,14 +63,14 @@
 
 
                             <!-- AGENT -->
-                            <label>Agent</label>
+                            <!-- <label>Agent</label>
                             <div class="input-group mb-3">
                                 <input type="text" class="form-control @error('agent') is-invalid @enderror"
                                     name="agent" value="{{ old('agent', $player->agent) }}" required>
                                 @error('agent')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
-                            </div>
+                            </div> -->
 
                             <!-- STATUS -->
                             <label>Status</label>
