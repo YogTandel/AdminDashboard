@@ -28,7 +28,7 @@
                             
 
 
-                            <label for="endpoint">Endpoint</label>
+                            <!-- <label for="endpoint">Endpoint</label>
                             <div class="input-group mb-3">
                                 <input type="number" step="0.01" class="form-control @error('endpoint') is-invalid @enderror"
                                     id="endpoint" name="endpoint" placeholder="Enter endpoint"
@@ -36,7 +36,7 @@
                                 @error('endpoint')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
-                            </div>
+                            </div> -->
 
 
                             <label>STATUS</label>

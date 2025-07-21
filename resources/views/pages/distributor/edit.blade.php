@@ -29,14 +29,14 @@
 
                             <input type="hidden" name="role" value="distributor">
 
-                            
+
 
                             <!-- Endpoint -->
-                            <label>Endpoint</label>
+                            <!-- <label>Endpoint</label>
                                 <div class="input-group mb-3">
                                     <input type="number" step="0.01" class="form-control" name="endpoint"
                                         value="{{ old('endpoint', (float) $distributor->endpoint) }}" required>
-                                </div>
+                                </div> -->
 
 
                             <!-- STATUS -->
