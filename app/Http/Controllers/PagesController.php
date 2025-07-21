@@ -552,9 +552,10 @@ class PagesController extends Controller
         $setting = Setting::first();
 
         return response()->json([
-            'standing' => $setting->standing ?? 0,
-            'earning'  => $setting->earning ?? 0,
-            'result'   => $setting->result ?? '--',
+            'standing'          => $setting->standing ?? 0,
+            'earning'           => $setting->earning ?? 0,
+            'earningPercentage' => $setting->earningPercentage,
+            'result'            => $setting->result ?? '--',
         ]);
     }
 
@@ -1270,7 +1271,7 @@ class PagesController extends Controller
                 'name'      => $agent->player,
                 'date'      => optional($agent->release_commission_date)->format('Y-m-d'),
                 'endpoint'  => $agent->endpoint ?? 'N/A',
-                'winAmount' => $totalWinpointSum_agent, // ← per agent win point calculated
+                'winAmount' => $totalWinpointSum_agent,
 
             ];
         }
@@ -1293,7 +1294,7 @@ class PagesController extends Controller
         if ($request->type === 'distributor') {
             $rules['commission_percentage'] = 'required|numeric|min:0|max:100';
         } else {
-            $rules['commission_percentage'] = 'required|numeric|min:0'; // agent: commission is currency
+            $rules['commission_percentage'] = 'required|numeric|min:0';
         }
 
         $request->validate($rules);
