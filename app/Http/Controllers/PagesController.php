@@ -1084,51 +1084,101 @@ class PagesController extends Controller
         return back()->with('success', 'Balance transferred successfully.');
     }
 
-    public function showRefilReport()
-    {
-        $user  = auth('web')->user();
-        $admin = auth('admin')->user();
+  public function showRefilReport(Request $request)
+{
+    $user = auth('web')->user();
+    $admin = auth('admin')->user();
 
-        if (! $user && ! $admin) {
-            return redirect()->route('login');
+    if (!$user && !$admin) {
+        return redirect()->route('login');
+    }
+
+    // Get per_page value or default to 10
+    $perPage = $request->get('per_page', 10);
+
+    // Start query
+    $query = DB::connection('mongodb')->table('refils')->orderBy('created_at', 'desc');
+
+    // Apply user filter if logged in as user
+    if ($user) {
+        $query->where('transfer_by', $user->id);
+    }
+
+    // Apply search filter if search term exists
+    if ($request->has('search') && !empty($request->search)) {
+        $searchTerm = $request->search;
+        $query->where(function($q) use ($searchTerm) {
+            $q->where('amount', 'LIKE', "%{$searchTerm}%")
+              ->orWhere('type', 'LIKE', "%{$searchTerm}%")
+              ->orWhere('transfer_role', 'LIKE', "%{$searchTerm}%");
+        });
+    }
+
+    // Apply date range filter
+    if ($request->has('date_range') && !empty($request->date_range)) {
+        switch ($request->date_range) {
+            case '2_days_ago':
+                $query->where('created_at', '>=', now()->subDays(2));
+                break;
+            case 'this_week':
+                // Last Week (previous 7 days)
+                $query->whereBetween('created_at', [now()->subWeek(), now()]);
+                break;
+            case 'this_month':
+                // Last Month (previous 30 days)
+                $query->whereBetween('created_at', [now()->subMonth(), now()]);
+                break;
         }
+    }
 
-        $query = DB::connection('mongodb')->table('refils')->orderBy('created_at', 'desc');
+    // Apply custom date range filter
+    if ($request->has('from_date') && !empty($request->from_date)) {
+        $query->where('created_at', '>=', Carbon::parse($request->from_date)->startOfDay());
+    }
 
-        if ($user) {
-            $query->where('transfer_by', $user->id);
-        }
+    if ($request->has('to_date') && !empty($request->to_date)) {
+        $query->where('created_at', '<=', Carbon::parse($request->to_date)->endOfDay());
+    }
 
-        $refils = $query->get();
+    // Paginate the results
+    $refils = $query->paginate($perPage);
 
-        if ($refils->isEmpty()) {
-            return view('pages.refil-report', compact('refils'));
-        }
+    // Append all query parameters to pagination links
+    $refils->appends([
+        'per_page' => $perPage,
+        'search' => $request->search,
+        'date_range' => $request->date_range,
+        'from_date' => $request->from_date,
+        'to_date' => $request->to_date
+    ]);
 
-        // 🔍 Fetch all related users and admins
-        $allAdmins = Admin::all()->keyBy('_id');
-        $userIds   = $refils->pluck('transfer_by')->merge($refils->pluck('transfer_to'))->unique();
-        $users     = User::whereIn('_id', $userIds)->get()->keyBy('_id');
-
-        foreach ($refils as $refil) {
-
-            if ($users->has($refil->transfer_by)) {
-                $refil->agent_name = $users->get($refil->transfer_by)?->player ?? 'User (ID: ' . $refil->transfer_by . ')';
-            } elseif ($allAdmins->has($refil->transfer_by)) {
-                $refil->agent_name = $allAdmins->get($refil->transfer_by)?->player ?? 'Admin (ID: ' . $refil->transfer_by . ')';
-            } else {
-                $refil->agent_name = 'N/A (User ID: ' . $refil->transfer_by . ')';
-            }
-
-            if ($allAdmins->has($refil->transfer_to)) {
-                $refil->distributor_name = $allAdmins->get($refil->transfer_to)?->player ?? 'Admin (ID: ' . $refil->transfer_to . ')';
-            } else {
-                $refil->distributor_name = $users->get($refil->transfer_to)?->player ?? 'N/A (ID: ' . $refil->transfer_to . ')';
-            }
-        }
-
+    if ($refils->isEmpty()) {
         return view('pages.refil-report', compact('refils'));
     }
+
+    // Fetch all related users and admins
+    $allAdmins = Admin::all()->keyBy('_id');
+    $userIds = $refils->pluck('transfer_by')->merge($refils->pluck('transfer_to'))->unique();
+    $users = User::whereIn('_id', $userIds)->get()->keyBy('_id');
+
+    foreach ($refils as $refil) {
+        if ($users->has($refil->transfer_by)) {
+            $refil->agent_name = $users->get($refil->transfer_by)?->player ?? 'User (ID: ' . $refil->transfer_by . ')';
+        } elseif ($allAdmins->has($refil->transfer_by)) {
+            $refil->agent_name = $allAdmins->get($refil->transfer_by)?->player ?? 'Admin (ID: ' . $refil->transfer_by . ')';
+        } else {
+            $refil->agent_name = 'N/A (User ID: ' . $refil->transfer_by . ')';
+        }
+
+        if ($allAdmins->has($refil->transfer_to)) {
+            $refil->distributor_name = $allAdmins->get($refil->transfer_to)?->player ?? 'Admin (ID: ' . $refil->transfer_to . ')';
+        } else {
+            $refil->distributor_name = $users->get($refil->transfer_to)?->player ?? 'N/A (ID: ' . $refil->transfer_to . ')';
+        }
+    }
+
+    return view('pages.refil-report', compact('refils'));
+}
 
     public function getSettingsData()
     {
