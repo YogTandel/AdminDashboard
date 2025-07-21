@@ -52,12 +52,13 @@
 
                 {{-- Custom Bet --}}
                 <form action="{{ route('custom.bet.update') }}" method="POST" class="d-flex align-items-center">
-                    @csrf
-                    <span class="text-dark me-2" style="font-size: 1.5rem; font-weight: 700;">Custom Bet:</span>
-                    <input type="number" name="custom_bet" class="form-control form-control-sm"
-                        placeholder="Enter Custom Bet" style="width: 200px;" min="0" max="9" required />
-                    <button type="submit" class="btn btn-primary btn-sm ms-2 mt-2" style="width: 100px;">Submit</button>
-                </form>
+    @csrf
+    <span class="text-dark me-2" style="font-size: 1.5rem; font-weight: 700;">Custom Bet:</span>
+    <input type="number" name="custom_bet" class="form-control form-control-sm"
+           placeholder="Enter Custom Bet" style="width: 200px;" 
+           min="0" max="9" required value="{{ old('custom_bet') }}" />
+    <button type="submit" class="btn btn-primary btn-sm ms-2 mt-2" style="width: 100px;">Submit</button>
+</form>
             </div>
         </div>
     </div>

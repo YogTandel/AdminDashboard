@@ -937,23 +937,31 @@ class PagesController extends Controller
         }
     }
 
-    public function updateCustomBet(Request $request)
-    {
-        $request->validate([
-            'custom_bet' => 'required|integer|min:0|max:9',
-        ]);
+  public function updateCustomBet(Request $request)
+{
+    $validated = $request->validate([
+        'custom_bet' => 'required|integer|min:0|max:9',
+    ]);
 
-        // MongoDB ObjectId ના આધાર પર શોધો
-        $setting = Setting::where('_id', new ObjectId('67d942244d741e1fb4f08710'))->first();
-
-        if ($setting) {
-            $setting->customBet = (int) $request->custom_bet;
-            $setting->save();
-            return back()->with('success', 'Custom Bet successfully added!');
-        } else {
-            return back()->with('error', 'Setting not!');
+    try {
+        // Get the first settings record (assuming you only have one)
+        $setting = Setting::first();
+        
+        if (!$setting) {
+            // Create new settings if none exists
+            $setting = new Setting();
+            $setting->_id = new ObjectId('67d942244d741e1fb4f08710'); // Only if you need this specific ID
         }
+
+        $setting->customBet = $validated['custom_bet'];
+        $setting->save();
+        
+        return back()->with('success', 'Custom Bet updated successfully!');
+        
+    } catch (\Exception $e) {
+        return back()->with('error', 'Failed to update Custom Bet: ' . $e->getMessage());
     }
+}
 
     public function getAdminEndpoint()
     {
