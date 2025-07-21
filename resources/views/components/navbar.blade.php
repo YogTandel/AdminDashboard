@@ -31,10 +31,10 @@
                 }
             @endphp
 
-                <div class="d-flex align-items-center">
-                    <span class="text-dark me-2" style="font-size: 1.5rem; font-weight: 700;">Profit:</span>
-                    <span id="live-earning" class="badge bg-gradient-success me-3" style="font-size: 1rem;">--</span>
-                </div>
+            <div class="d-flex align-items-center">
+                <span class="text-dark me-2" style="font-size: 1.5rem; font-weight: 700;">Profit:</span>
+                <span id="live-earning" class="badge bg-gradient-success me-3" style="font-size: 1rem;">--</span>
+            </div>
             @if ($user)
                 <li class="nav-item d-flex align-items-center">
                     <a class="nav-link text-body font-weight-bold px-0">
@@ -83,7 +83,7 @@
             </li>
 
             {{-- Notifications --}}
-            <li class="nav-item dropdown px-2 pe-2 d-flex align-items-center">
+            {{-- <li class="nav-item dropdown px-2 pe-2 d-flex align-items-center">
                 <a href="javascript:;" class="nav-link text-body p-0" id="dropdownMenuButton" data-bs-toggle="dropdown"
                     aria-expanded="false">
                     <i class="fa fa-bell cursor-pointer"></i>
@@ -163,7 +163,7 @@
                         </a>
                     </li>
                 </ul>
-            </li>
+            </li> --}}
         </ul>
     </div>
 </nav>
