@@ -56,7 +56,7 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
 
-                            <label>ENDPOINT</label>
+                            <!-- <label>ENDPOINT</label>
                                 <div class="input-group mb-3">
                                     <input type="number" step="0.01" class="form-control @error('endpoint') is-invalid @enderror"
                                         placeholder="Endpoint" aria-label="endpoint" name="endpoint" aria-describedby="endpoint"
@@ -64,7 +64,7 @@
                                     @error('endpoint')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
-                                </div>
+                                </div> -->
 
 
                             <label>STATUS</label>

@@ -35,11 +35,11 @@
                                     value="{{ old('distributor', $agent->distributor) }}" required>
                             </div>
 
-                            <label class="text-left d-block text-start">ENDPOINT</label>
+                            <!-- <label class="text-left d-block text-start">ENDPOINT</label>
                             <div class="input-group mb-3">
                                 <input type="number" step="0.01" class="form-control" name="endpoint"
                                     value="{{ old('endpoint', $agent->endpoint) }}" required>
-                            </div>
+                            </div> -->
 
                             <!-- STATUS -->
                             <label class="text-left d-block text-start">STATUS</label>
