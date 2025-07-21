@@ -274,11 +274,19 @@ public function createAgent(Request $request)
     }
 
     public function deleteDistributor($id)
-    {
-        $agent = User::where('id', $id)->where('role', 'distributor')->firstOrFail();
-        $agent->forceDelete();
-        return redirect()->route('distributor.show')->with('success', 'Distributor deleted successfully');
-    }
+{
+    
+    $distributor = User::where('distributor', $id)->where('role', 'distributor')->firstOrFail();
+    $distributor->forceDelete();
+
+    User::where('distributor', $id)
+        ->update(['status' => 'inactive']);
+
+
+
+    return redirect()->route('distributor.show')->with('success', 'Distributor deleted successfully and agents deactivated.');
+}
+
 
     public function deleteplayer($id)
     {
