@@ -95,7 +95,7 @@
                 method: 'GET',
                 success: function(response) {
                     if (response.earningPercentage !== undefined) {
-                        $('#live-earning').text(response.earningPercentage + '%');
+                        $('#live-earning').text(response.earningPercentage);
                     } else {
                         $('#live-earning').text('--');
                     }
