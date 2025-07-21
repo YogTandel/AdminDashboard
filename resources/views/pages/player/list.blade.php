@@ -131,7 +131,7 @@
                                         </th>
                                         <th
                                             class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                            DateOfCreation
+                                            Date
                                         </th>
                                         <th
                                             class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
@@ -205,14 +205,21 @@
                                                         <a href="javascript:void(0);" onclick="copyPlayerToClipboard('{{ $player->_id }}')" 
                                                             class="text-secondary font-weight-bold text-xs" 
                                                             data-bs-toggle="tooltip" title="Copy Player Credentials">
-                                                            <i class="fas fa-copy me-3" style="cursor: pointer;"></i>
+                                                            <i class="fas fa-copy me-2" style="cursor: pointer;"></i>
                                                         </a>
                                                         <a href="javascript:;" class="text-secondary font-weight-bold text-xs me-2"
                                                             title="Edit Player" data-bs-toggle="modal"
                                                             data-bs-target="#editModal{{ $player->id }}">
-                                                            <i class="fas fa-edit"></i>
+                                                            <i class="fas fa-edit me-1"></i>
                                                         </a>
                                                         @include('pages.player.edit')
+                                                         @if(auth()->check() && auth()->user()->role === 'agent')
+                                                            <a href="javascript:;" class="text-success font-weight-bold text-xs me-2"
+                                                                data-bs-toggle="modal" data-bs-target="#transferModal{{ $player->id }}">
+                                                                <i class="fa-solid fa-indian-rupee-sign me-1"></i>
+                                                            </a>
+                                                        @endif
+                                                        @include('pages.player.refil2', ['user' => $player])
                                                         <form action="{{ route('player.delete', $player->id) }}" method="post"
                                                             style="display:flex;">
                                                             @csrf
@@ -224,13 +231,6 @@
                                                                 <i class="fas fa-trash"></i>
                                                             </button>
                                                         </form>
-                                                        @if(auth()->check() && auth()->user()->role === 'agent')
-                                                            <a href="javascript:;" class="text-success font-weight-bold text-xs me-2"
-                                                                data-bs-toggle="modal" data-bs-target="#transferModal{{ $player->id }}">
-                                                                <i class="fa-solid fa-indian-rupee-sign"></i>
-                                                            </a>
-                                                        @endif
-                                                        @include('pages.player.refil2', ['user' => $player])
                                                         <a href="{{ route('player.history', $player->_id) }}"
                                                             class="text-secondary font-weight-bold text-xs me-2"
                                                             data-bs-toggle="tooltip" data-bs-placement="top" title="Player History">
