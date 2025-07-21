@@ -34,23 +34,25 @@ class PagesController extends Controller
         if ($dateRange) {
             $today = Carbon::today();
             if ($dateRange === '2_days_ago') {
-                $from = $today->copy()->subDays(2)->format('Ymd');
-                $to = $today->format('Ymd');
+                $from = $today->copy()->subDays(2)->format('Y-m-d');
+                $to = $today->format('Y-m-d');
             } elseif ($dateRange === 'this_week') {
-                $from = $today->copy()->startOfWeek()->format('Ymd');
-                $to = $today->format('Ymd');
+                // Last Week (previous 7 days)
+                $from = $today->copy()->subWeek()->format('Y-m-d');
+                $to = $today->format('Y-m-d');
             } elseif ($dateRange === 'this_month') {
-                $from = $today->copy()->startOfMonth()->format('Ymd');
-                $to = $today->format('Ymd');
+                // Last Month (previous 30 days)
+                $from = $today->copy()->subMonth()->format('Y-m-d');
+                $to = $today->format('Y-m-d');
             }
         }
 
         if ($from) {
-            $query->where('DateOfCreation', '>=', $from);
+            $query->whereDate('created_at', '>=', $from);
         }
 
         if ($to) {
-            $query->where('DateOfCreation', '<=', $to);
+            $query->whereDate('created_at', '<=', $to);
         }
 
         // Fetch agents
@@ -58,10 +60,9 @@ class PagesController extends Controller
             ->paginate($perPage)
             ->appends(request()->query());
 
-        // 🔥 Fetch all distributors for dropdown
+        // Fetch all distributors for dropdown
         $distributors = User::where('role', 'distributor')->get();
 
-        // Pass to view
         return view('pages.agent.list', compact('agents', 'perPage', 'distributors'));
     }
 
@@ -86,20 +87,27 @@ class PagesController extends Controller
             if ($dateRange === '2_days_ago') {
                 $from = $today->copy()->subDays(2)->format('YmdHis');
                 $to = $today->copy()->endOfDay()->format('YmdHis');
-            } elseif ($dateRange === 'this_week') {
-                $from = $today->copy()->startOfWeek()->format('YmdHis');
-                $to = $today->copy()->endOfDay()->format('YmdHis');
-            } elseif ($dateRange === 'this_month') {
-                $from = $today->copy()->startOfMonth()->format('YmdHis');
-                $to = $today->copy()->endOfDay()->format('YmdHis');
+            } elseif ($dateRange === 'last_week') {
+                $from = $today->copy()->subWeek()->startOfWeek()->format('YmdHis');
+                $to = $today->copy()->subWeek()->endOfWeek()->format('YmdHis');
+            } elseif ($dateRange === 'last_month') {
+                $from = $today->copy()->subMonth()->startOfMonth()->format('YmdHis');
+                $to = $today->copy()->subMonth()->endOfMonth()->format('YmdHis');
+            }
+        } elseif ($from || $to) {
+            // Handle manual date inputs
+            if ($from) {
+                $from = Carbon::createFromFormat('Y-m-d', $from)->startOfDay()->format('YmdHis');
+            }
+            if ($to) {
+                $to = Carbon::createFromFormat('Y-m-d', $to)->endOfDay()->format('YmdHis');
             }
         }
 
-        // Cast from/to to float (since stored as double)
+        // Apply date filters
         if ($from) {
             $query->where('DateOfCreation', '>=', (float) $from);
         }
-
         if ($to) {
             $query->where('DateOfCreation', '<=', (float) $to);
         }
