@@ -801,7 +801,7 @@ class PagesController extends Controller
             return redirect()->route('login');
         }
 
-        // Get per_page value or default to 10
+        // Get per_page value or default to 10 (matches your blade options)
         $perPage = $request->get('per_page', 10);
 
         // Start query
@@ -817,7 +817,8 @@ class PagesController extends Controller
             $searchTerm = $request->search;
             $query->where(function ($q) use ($searchTerm) {
                 $q->where('amount', 'LIKE', "%{$searchTerm}%")
-                    ->orWhere('remaining_balance', 'LIKE', "%{$searchTerm}%");
+                    ->orWhere('remaining_balance', 'LIKE', "%{$searchTerm}%")
+                    ->orWhere('transfer_role', 'LIKE', "%{$searchTerm}%");
             });
         }
 
@@ -828,12 +829,10 @@ class PagesController extends Controller
                     $query->where('created_at', '>=', now()->subDays(2));
                     break;
                 case 'this_week':
-                    // Last Week (previous 7 days)
-                    $query->whereBetween('created_at', [now()->subWeek(), now()]);
+                    $query->whereBetween('created_at', [now()->startOfWeek(), now()]);
                     break;
                 case 'this_month':
-                    // Last Month (previous 30 days)
-                    $query->whereBetween('created_at', [now()->subMonth(), now()]);
+                    $query->whereBetween('created_at', [now()->startOfMonth(), now()]);
                     break;
             }
         }

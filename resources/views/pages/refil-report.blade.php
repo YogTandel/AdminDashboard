@@ -130,6 +130,10 @@
                         @endforeach
                     </tbody>
                 </table>
+                 {{-- Pagination --}}
+                        <div class="d-flex justify-content-center mt-3 pagination pagination-info">
+                            {{ $refils->links('vendor.pagination.bootstrap-4') }}
+                        </div>
             </div>
         @else
             <div class="alert alert-info small">No refil records found.</div>

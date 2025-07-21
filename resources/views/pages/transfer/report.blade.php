@@ -29,7 +29,7 @@
                     <div class="input-group input-group-outline border-radius-lg shadow-sm">
                         <select name="per_page" id="per_page" class="form-select border-0 ps-3 pe-4"
                             onchange="this.form.submit()" style="min-width: 60px;">
-                            <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
+                            <option value="10" {{ request('per_page') == 105 ? 'selected' : '' }}>10</option>
                             <option value="15" {{ request('per_page') == 15 ? 'selected' : '' }}>15</option>
                         </select>
                     </div>
@@ -122,6 +122,10 @@
                         @endforeach
                     </tbody>
                 </table>
+                {{-- Pagination --}}
+                        <div class="d-flex justify-content-center mt-3 pagination pagination-info">
+                            {{ $transfers->links('vendor.pagination.bootstrap-4') }}
+                        </div>
             </div>
         @else
             <div class="alert alert-info small">No transfer records found.</div>
