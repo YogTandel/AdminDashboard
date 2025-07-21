@@ -67,13 +67,12 @@ public function createAgent(Request $request)
     ]);
 
     $validate = $request->validate([
-    'player'   => 'required|string|max:255|unique:users,player',
-    'password' => 'required|string|min:3',
-    'role'     => 'required|in:distributor',
-    'status'   => 'required|in:Active,Inactive',
-    'endpoint' => 'required|numeric|min:0',
-]);
-
+        'player'   => 'required|string|max:255|unique:users,player',
+        'password' => 'required|string|min:3',
+        'role'     => 'required|in:distributor',
+        'status'   => 'required|in:Active,Inactive',
+        'endpoint' => 'required|numeric|min:0',
+    ]);
 
     try {
         $validate['original_password'] = $validate['password'];
@@ -95,7 +94,7 @@ public function createAgent(Request $request)
         Log::error('Failed to create Distributor', ['error' => $e->getMessage()]);
         return back()->withErrors(['error' => 'Failed to create Distributor. Please try again.']);
     }
-    }
+}
 
   public function createplayer(Request $request)
 {

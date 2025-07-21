@@ -24,20 +24,8 @@
                             </div>
 
                             <input type="hidden" name="role" value="distributor">
-
                             
-
-
-                            <!-- <label for="endpoint">Endpoint</label>
-                            <div class="input-group mb-3">
-                                <input type="number" step="0.01" class="form-control @error('endpoint') is-invalid @enderror"
-                                    id="endpoint" name="endpoint" placeholder="Enter endpoint"
-                                    value="{{ old('endpoint') }}" aria-describedby="endpoint-addon" aria-label="endpoint" required>
-                                @error('endpoint')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div> -->
-
+                            <input type="hidden" name="endpoint" value="0">
 
                             <label>STATUS</label>
                             <div class="input-group mb-3">

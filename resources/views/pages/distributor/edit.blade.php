@@ -24,20 +24,12 @@
                             <label>PASSWORD</label>
                             <div class="input-group mb-3">
                                 <input type="password" class="form-control" name="password"
-                                    placeholder="Leave blank to keep current" required>
+                                    placeholder="Leave blank to keep current">
                             </div>
 
                             <input type="hidden" name="role" value="distributor">
-
-
-
-                            <!-- Endpoint -->
-                            <!-- <label>Endpoint</label>
-                                <div class="input-group mb-3">
-                                    <input type="number" step="0.01" class="form-control" name="endpoint"
-                                        value="{{ old('endpoint', (float) $distributor->endpoint) }}" required>
-                                </div> -->
-
+                            
+                            <input type="hidden" name="endpoint" value="{{ $distributor->endpoint }}">
 
                             <!-- STATUS -->
                             <label>STATUS</label>
