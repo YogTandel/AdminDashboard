@@ -27,7 +27,7 @@ Route::post('/agent/deselect', [PagesController::class, 'deselect'])->name('agen
 Route::get('/distributor', [PagesController::class, 'distributor'])->name('distributor.show');
 Route::post('/distributor/store', [AuthController::class, 'createDistributor'])->name('distributor.add');
 Route::put('/distributor/{id}/update', [AuthController::class, 'editDistributor'])->name('distributor.update');
-Route::delete('/distributor/{id}/delete', [AuthController::class, 'deleteDistributor'])->name('Distributor.delete');
+Route::delete('/distributor/{id}/delete', [AuthController::class, 'deleteDistributor'])->name('distributor.delete');
 
 //player
 Route::get('/players', [PagesController::class, 'player'])->name('player.show');

@@ -121,7 +121,8 @@
                                                         {{ $distributor->player }}</h6>
                                                 </td>
                                                 <td>
-                                                    <p class="text-xs font-weight-bold mb-0" id="password-{{ $distributor->id }}">
+                                                    <p class="text-xs font-weight-bold mb-0"
+                                                        id="password-{{ $distributor->id }}">
                                                         {{ $distributor->original_password }}
                                                     </p>
                                                 </td>
@@ -145,15 +146,18 @@
                                                 </td>
                                                 <td class="align-middle">
                                                     <div class="d-flex align-items-center justify-content-around">
-                                                        <a href="javascript:;" onclick="copyToClipboard({{ $distributor->id }})"
+                                                        <a href="javascript:;"
+                                                            onclick="copyToClipboard({{ $distributor->id }})"
                                                             class="text-secondary font-weight-bold text-xs me-2"
                                                             data-bs-toggle="tooltip" title="Copy distributor">
                                                             <i class="fas fa-copy"
                                                                 onclick="copyToClipboard('{{ $distributor->_id }}')"
                                                                 style="cursor: pointer;"></i>
                                                         </a>
-                                                        <a href="javascript:;" class="text-secondary font-weight-bold text-xs me-2"
-                                                            data-bs-toggle="modal" data-bs-target="#Editmodal{{ $distributor->id }}"
+                                                        <a href="javascript:;"
+                                                            class="text-secondary font-weight-bold text-xs me-2"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#Editmodal{{ $distributor->id }}"
                                                             title="Edit Distributor">
                                                             <i class="fas fa-edit"></i>
                                                         </a>
@@ -162,7 +166,8 @@
                                                         @endforeach
                                                         @php $admin = Auth::guard('admin')->user(); @endphp
                                                         @if ($admin)
-                                                            <a href="javascript:;" class="text-success font-weight-bold text-xs me-2"
+                                                            <a href="javascript:;"
+                                                                class="text-success font-weight-bold text-xs me-2"
                                                                 data-bs-toggle="modal"
                                                                 data-bs-target="#refillModal{{ $distributor->id }}"
                                                                 title="Refill Balance">
@@ -172,13 +177,14 @@
                                                         @foreach ($distributors as $distributor_data)
                                                             @include('pages.distributor.refil')
                                                         @endforeach
-                                                        <form action="{{ route('Distributor.delete', $distributor->id) }}"
+                                                        <form action="{{ route('distributor.delete', $distributor->id) }}"
                                                             method="post" style="display:flex;">
-                                                            @csrf @method('DELETE')
+                                                            @csrf
+                                                            @method('DELETE')
                                                             <button class="text-danger font-weight-bold text-xs me-2"
                                                                 onclick="return confirm('Are you sure?')"
-                                                                style="background: none; border: none; padding: 0;"
-                                                                title="Delete Agent">
+                                                                data-bs-toggle="tooltip" title="Delete Distributor"
+                                                                style="background: none; border: none; padding: 0;">
                                                                 <i class="fas fa-trash"></i>
                                                             </button>
                                                         </form>
@@ -209,63 +215,63 @@
     </div>
 
     <!-- <style>
-            /* Loader Styles */
-            .loader-container {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background-color: rgba(0, 0, 0, 0.5);
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                z-index: 9999;
-                display: none;
-            }
+                            /* Loader Styles */
+                            .loader-container {
+                                position: fixed;
+                                top: 0;
+                                left: 0;
+                                width: 100%;
+                                height: 100%;
+                                background-color: rgba(0, 0, 0, 0.5);
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                z-index: 9999;
+                                display: none;
+                            }
 
-            .loader {
-                border: 5px solid #f3f3f3;
-                border-top: 5px solid #3498db;
-                border-radius: 50%;
-                width: 50px;
-                height: 50px;
-                animation: spin 1s linear infinite;
-            }
+                            .loader {
+                                border: 5px solid #f3f3f3;
+                                border-top: 5px solid #3498db;
+                                border-radius: 50%;
+                                width: 50px;
+                                height: 50px;
+                                animation: spin 1s linear infinite;
+                            }
 
-            @keyframes spin {
-                0% { transform: rotate(0deg); }
-                100% { transform: rotate(360deg); }
-            }
-        </style> -->
+                            @keyframes spin {
+                                0% { transform: rotate(0deg); }
+                                100% { transform: rotate(360deg); }
+                            }
+                        </style> -->
 
     <script>
         // Show loader when page is loading
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             // Show loader immediately when page starts loading
             document.getElementById('loader').style.display = 'flex';
 
             // Hide loader when page is fully loaded
-            window.addEventListener('load', function () {
+            window.addEventListener('load', function() {
                 document.getElementById('loader').style.display = 'none';
             });
 
             // Show loader during AJAX requests
-            $(document).ajaxStart(function () {
+            $(document).ajaxStart(function() {
                 document.getElementById('loader').style.display = 'flex';
             });
 
-            $(document).ajaxStop(function () {
+            $(document).ajaxStop(function() {
                 document.getElementById('loader').style.display = 'none';
             });
 
-            $(document).ajaxError(function () {
+            $(document).ajaxError(function() {
                 document.getElementById('loader').style.display = 'none';
             });
         });
 
         // Show loader when page is being refreshed
-        window.addEventListener('beforeunload', function () {
+        window.addEventListener('beforeunload', function() {
             document.getElementById('loader').style.display = 'flex';
         });
 
@@ -291,9 +297,9 @@
         }
 
         // Toggle status functionality with loader
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.distributor-toggle-status').forEach(btn => {
-                btn.addEventListener('click', function () {
+                btn.addEventListener('click', function() {
                     const distributorId = this.dataset.distributorId;
                     const icon = this.querySelector('i');
                     const statusBadge = document.getElementById(`status-badge-${ distributorId }`);
@@ -303,13 +309,13 @@
                     document.getElementById('loader').style.display = 'flex';
 
                     fetch(`/distributor/toggle-status/${ distributorId }`, {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                            'Accept': 'application/json',
-                            'Content-Type': 'application/json',
-                        }
-                    })
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json',
+                            }
+                        })
                         .then(response => response.json())
                         .then(data => {
                             if (data.status === 'Active') {
