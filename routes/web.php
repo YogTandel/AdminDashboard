@@ -112,3 +112,5 @@ Route::get('/dashboard', [PagesController::class, 'index'])->name('dashboard');
 
 Route::post('/agent/toggle-status/{id}', [PagesController::class, 'toggleStatus'])->name('agent.toggleStatus');
 Route::post('/distributor/toggle-status/{id}', [PagesController::class, 'distoggleStatus'])->name('distributor.toggleStatus');
+
+Route::get('/live-game-value', [PagesController::class, 'liveGamevalue']);
