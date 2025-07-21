@@ -120,55 +120,63 @@ class PagesController extends Controller
     }
 
     public function player()
-    {
-        $perPage = request()->get('per_page', 5);
-        $query = User::query();
+{
+    $perPage = request()->get('per_page', 10);
+    $query = User::query();
 
-        // Search filter
-        if (request()->has('search')) {
-            $query->where('player', 'like', '%' . request()->search . '%');
-        }
-
-        // Date range filter
-        $from = request()->input('from_date');
-        $to = request()->input('to_date');
-        $dateRange = request()->input('date_range');
-
-        if ($dateRange) {
-            $today = \Carbon\Carbon::today();
-
-            if ($dateRange === '2_days_ago') {
-                $from = $today->copy()->subDays(2)->format('YmdHis');
-                $to = $today->copy()->endOfDay()->format('YmdHis');
-            } elseif ($dateRange === 'this_week') {
-                $from = $today->copy()->startOfWeek()->format('YmdHis');
-                $to = $today->copy()->endOfDay()->format('YmdHis');
-            } elseif ($dateRange === 'this_month') {
-                $from = $today->copy()->startOfMonth()->format('YmdHis');
-                $to = $today->copy()->endOfDay()->format('YmdHis');
-            }
-        }
-
-        if ($from) {
-            $query->where('DateOfCreation', '>=', (float) $from);
-        }
-
-        if ($to) {
-            $query->where('DateOfCreation', '<=', (float) $to);
-        }
-
-        // Players list with relation
-        $players = $query->where('role', 'player')
-            ->with(['agentUser'])
-            ->paginate($perPage)
-            ->appends(request()->query());
-
-        // Dropdown lists
-        $agents = User::where('role', 'agent')->get(['_id', 'player']);
-        $distributors = User::where('role', 'distributor')->get(['_id', 'player']);
-
-        return view('pages.player.list', compact('players', 'perPage', 'agents', 'distributors'));
+    // Search filter
+    if (request()->has('search')) {
+        $query->where('player', 'like', '%' . request()->search . '%');
     }
+
+    // Date range filter
+    $from = request()->input('from_date');
+    $to = request()->input('to_date');
+    $dateRange = request()->input('date_range');
+
+    if ($dateRange) {
+        $today = \Carbon\Carbon::today();
+
+        if ($dateRange === '2_days_ago') {
+            $from = $today->copy()->subDays(2)->format('YmdHis');
+            $to = $today->copy()->endOfDay()->format('YmdHis');
+        } elseif ($dateRange === 'last_week') {
+            $from = $today->copy()->subWeek()->startOfWeek()->format('YmdHis');
+            $to = $today->copy()->subWeek()->endOfWeek()->format('YmdHis');
+        } elseif ($dateRange === 'last_month') {
+            $from = $today->copy()->subMonth()->startOfMonth()->format('YmdHis');
+            $to = $today->copy()->subMonth()->endOfMonth()->format('YmdHis');
+        }
+    } elseif ($from || $to) {
+        // Handle manual date inputs
+        if ($from) {
+            $from = \Carbon\Carbon::createFromFormat('Y-m-d', $from)->startOfDay()->format('YmdHis');
+        }
+        if ($to) {
+            $to = \Carbon\Carbon::createFromFormat('Y-m-d', $to)->endOfDay()->format('YmdHis');
+        }
+    }
+
+    // Apply date filters
+    if ($from) {
+        $query->where('DateOfCreation', '>=', (float)$from);
+    }
+    if ($to) {
+        $query->where('DateOfCreation', '<=', (float)$to);
+    }
+
+    // Players list with relation
+    $players = $query->where('role', 'player')
+        ->with(['agentUser'])
+        ->paginate($perPage)
+        ->appends(request()->query());
+
+    // Dropdown lists
+    $agents = User::where('role', 'agent')->get(['_id', 'player']);
+    $distributors = User::where('role', 'distributor')->get(['_id', 'player']);
+
+    return view('pages.player.list', compact('players', 'perPage', 'agents', 'distributors'));
+}
 
     public function transactionreport()
     {
