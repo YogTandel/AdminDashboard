@@ -13,14 +13,14 @@
                             @method('PUT')
 
                             <!-- PLAYER -->
-                            <label>AGENT NAME</label>
+                            <label class="text-left d-block text-start">AGENT NAME</label>
                             <div class="input-group mb-3">
                                 <input type="text" class="form-control" name="player"
                                     value="{{ old('player', $agent->player) }}" required>
                             </div>
 
                             <!-- PASSWORD -->
-                            <label>PASSWORD</label>
+                            <label class="text-left d-block text-start">PASSWORD</label>
                             <div class="input-group mb-3">
                                 <input type="password" class="form-control" name="password"
                                     placeholder="Leave blank to keep current" required>
@@ -29,20 +29,20 @@
                             <input type="hidden" name="role" value="agent">
 
                             <!-- DISTRIBUTOR -->
-                            <label>DISTRIBUTOR</label>
+                            <label class="text-left d-block text-start">DISTRIBUTOR</label>
                             <div class="input-group mb-3">
                                 <input type="text" class="form-control" name="distributor"
                                     value="{{ old('distributor', $agent->distributor) }}" required>
                             </div>
 
-                            <label>ENDPOINT</label>
-                                <div class="input-group mb-3">
-                                    <input type="number" step="0.01" class="form-control" name="endpoint"
-                                        value="{{ old('endpoint', $agent->endpoint) }}" required>
-                                </div>
+                            <label class="text-left d-block text-start">ENDPOINT</label>
+                            <div class="input-group mb-3">
+                                <input type="number" step="0.01" class="form-control" name="endpoint"
+                                    value="{{ old('endpoint', $agent->endpoint) }}" required>
+                            </div>
 
                             <!-- STATUS -->
-                            <label>STATUS</label>
+                            <label class="text-left d-block text-start">STATUS</label>
                             <div class="input-group mb-3">
                                 <select class="form-control" name="status" required>
                                     <option value="Active" {{ $agent->status == 'Active' ? 'selected' : '' }}>
