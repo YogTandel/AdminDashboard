@@ -1220,7 +1220,7 @@ class PagesController extends Controller
                 'name'      => $agent->player,
                 'date'      => optional($agent->release_commission_date)->format('Y-m-d'),
                 'endpoint'  => $agent->endpoint ?? 'N/A',
-                'winAmount' => $totalWinpointSum_agent, // ← per agent win point calculated
+                'winAmount' => $totalWinpointSum_agent, 
 
             ];
         }
