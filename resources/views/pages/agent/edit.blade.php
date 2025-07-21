@@ -23,7 +23,7 @@
                             <label class="text-left d-block text-start">PASSWORD</label>
                             <div class="input-group mb-3">
                                 <input type="password" class="form-control" name="password"
-                                    placeholder="Leave blank to keep current" required>
+                                    placeholder="Leave blank to keep current">
                             </div>
 
                             <input type="hidden" name="role" value="agent">
@@ -35,11 +35,7 @@
                                     value="{{ old('distributor', $agent->distributor) }}" required>
                             </div>
 
-                            <!-- <label class="text-left d-block text-start">ENDPOINT</label>
-                            <div class="input-group mb-3">
-                                <input type="number" step="0.01" class="form-control" name="endpoint"
-                                    value="{{ old('endpoint', $agent->endpoint) }}" required>
-                            </div> -->
+                            <input type="hidden" name="endpoint" value="{{ $agent->endpoint }}">
 
                             <!-- STATUS -->
                             <label class="text-left d-block text-start">STATUS</label>
