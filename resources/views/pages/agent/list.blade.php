@@ -199,6 +199,9 @@
                                             <td class="text-center">
                                                 <div class="d-flex justify-content-center gap-2 align-items-center">
                                                     <!-- Radio Button -->
+                                                    @php $admin = Auth::guard('admin')->user(); @endphp
+
+                                                    @if($admin)
                                                     <div class="form-check form-switch">
                                                         <input class="form-check-input agent-radio" type="radio"
                                                             name="agent_select" id="agentSwitch{{ $agent->id }}"
@@ -211,6 +214,7 @@
                                                             data-bs-toggle="tooltip"
                                                             title="Select agent {{ $agent->player }}">
                                                     </div>
+                                                    @endif
 
                                                     <!-- Copy -->
                                                     <a href="javascript:;"

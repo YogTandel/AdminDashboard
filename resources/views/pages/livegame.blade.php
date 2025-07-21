@@ -37,7 +37,7 @@
                 {{-- Earning --}}
                 <div class="d-flex align-items-center">
                     <span class="text-dark me-2" style="font-size: 1.5rem; font-weight: 700;">Earning:</span>
-                    <span id="live-earning" class="badge bg-gradient-success me-3" style="font-size: 1rem;">--</span>
+                    <span id="live-earning11" class="badge bg-gradient-success me-3" style="font-size: 1rem;">--</span>
                 </div>
 
                 {{-- Result --}}
@@ -131,7 +131,7 @@
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById('live-standing').innerText = data.standing;
-                    document.getElementById('live-earning').innerText = data.earning;
+                    document.getElementById('live-earning11').innerText = data.earning;
                     document.getElementById('live-result').innerText = data.result;
                 })
                 .catch(error => console.error('Error fetching live game values:', error));
