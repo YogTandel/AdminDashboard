@@ -274,7 +274,7 @@
                     data.forEach(function(item) {
                         $select.append(
                             `<option value="${item.id}" data-name="${item.name}">${item.name}</option>`
-                            );
+                        );
                         distributordata[item.id] = item;
                     });
                 },
@@ -292,14 +292,14 @@
 
                 let releaseDateRaw = distributordata[id]?.release_date;
                 $('#releaseDateBox').text(releaseDateRaw ? new Date(releaseDateRaw).toLocaleString(
-                'en-IN', {
-                    day: '2-digit',
-                    month: 'long',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    hour12: true
-                }) : 'N/A');
+                    'en-IN', {
+                        day: '2-digit',
+                        month: 'long',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: true
+                    }) : 'N/A');
 
                 if (!id) {
                     clearFields();
@@ -335,7 +335,7 @@
                                     agentpercentage / 100)).toFixed(2);
                                 const isDisabled = parseFloat(agentCommission) <= 0;
 
-                                const row = `
+                                const row = /* HTML */ `
                             <tr>
                                 <td><p class="text-xs font-weight-bold mb-0">${agent.name}</p></td>
                                 <td><p class="text-xs font-weight-bold mb-0">${agent.date || '-'}</p></td>
@@ -358,7 +358,7 @@
                         } else {
                             agentTableBody.html(
                                 '<tr><td colspan="6" class="text-muted">No agents to display.</td></tr>'
-                                );
+                            );
                         }
 
                         $('#releaseButton').prop('disabled', !releaseAllowed);
@@ -401,7 +401,7 @@
                         fetchLiveGameValues();
                         $('#releaseButton').prop('disabled', true);
                         $('#releaseDateBox').text(res.released_at || new Date()
-                        .toLocaleString());
+                            .toLocaleString());
                     },
                     error: function(xhr) {
                         alert(xhr.responseJSON?.error ||
