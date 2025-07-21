@@ -1328,7 +1328,6 @@ class PagesController extends Controller
                 'date' => optional($agent->release_commission_date)->format('Y-m-d'),
                 'endpoint' => $agent->endpoint ?? 'N/A',
                 'winAmount' => $totalWinpointSum_agent,
-
             ];
         }
 
