@@ -29,8 +29,8 @@ public function createAgent(Request $request)
         'password'        => 'required|string|min:3',
         'role'            => 'required|in:agent',
         'endpoint'        => 'required|numeric|min:0',
-        'distributor_id'  => 'required|string',  // MongoDB ID as string
-        'distributor'     => 'required|string|max:255',  // Distributor name
+        'distributor_id'  => 'required|string',
+        'distributor'     => 'required|string|max:255',
         'status'          => 'required|in:Active,Inactive',
     ]);
 

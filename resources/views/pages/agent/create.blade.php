@@ -34,7 +34,6 @@
 
                             <input type="hidden" name="role" value="agent">
 
-
                             <label>Distributor</label>
                             <div class="input-group mb-3">
                                 <select id="distributor_id" name="distributor_id" class="form-control @error('distributor_id') is-invalid @enderror" required>
@@ -50,22 +49,12 @@
                                 @enderror
                             </div>
 
-                            {{-- Hidden input for distributor name --}}
                             <input type="hidden" name="distributor" id="distributor" value="{{ old('distributor') }}">
                             @error('distributor')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
 
-                            <!-- <label>ENDPOINT</label>
-                                <div class="input-group mb-3">
-                                    <input type="number" step="0.01" class="form-control @error('endpoint') is-invalid @enderror"
-                                        placeholder="Endpoint" aria-label="endpoint" name="endpoint" aria-describedby="endpoint"
-                                        value="{{ old('endpoint') }}" required>
-                                    @error('endpoint')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div> -->
-
+                            <input type="hidden" name="endpoint" value="0">
 
                             <label>STATUS</label>
                             <div class="input-group mb-3">
