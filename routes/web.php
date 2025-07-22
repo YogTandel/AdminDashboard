@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [AuthController::class, 'showLogin'])->name('show.login');
 Route::get('/register', [AuthController::class, 'showRegister'])->name('show.register');
+Route::get('/changepassword', [AuthController::class, 'showChangePassword'])->name('show.changepassword');
 Route::post('/register', [AuthController::class, 'register'])->name('register');
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');

@@ -63,14 +63,16 @@
             <!-- Agent List -->
             @if (in_array($role, ['admin', 'agent', 'distributor']))
                 <li class="nav-item">
-                    <a class="nav-link {{ Request::is('agentlist') ? 'active' : '' }}" href="{{ route('agentlist.show') }}">
+                    <a class="nav-link {{ Request::is('agentlist') ? 'active' : '' }}"
+                        href="{{ route('agentlist.show') }}">
                         <div
                             class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
                             <svg width="12px" height="12px" viewBox="0 0 46 42" version="1.1"
                                 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                                 <title>agents</title>
                                 <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                                    <g transform="translate(-1717.000000, -291.000000)" fill="#FFFFFF" fill-rule="nonzero">
+                                    <g transform="translate(-1717.000000, -291.000000)" fill="#FFFFFF"
+                                        fill-rule="nonzero">
                                         <g transform="translate(1716.000000, 291.000000)">
                                             <g transform="translate(1.000000, 0.000000)">
                                                 <path class="color-background opacity-6"
@@ -96,9 +98,10 @@
             <!-- Player -->
             <li class="nav-item">
                 <a class="nav-link {{ Request::is('player') ? 'active' : '' }}" href="{{ route('player.show') }}">
-                    <div class="icon icon-shape
-                    icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center
-                    justify-content-center">
+                    <div
+                        class="icon icon-shape
+                icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center
+                justify-content-center">
                         <svg width="12px" height="12px" viewBox="0 0 40 40" version="1.1"
                             xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                             <title>player</title>
@@ -204,6 +207,20 @@
                             <i class="fas fa-cog text-dark"></i>
                         </div>
                         <span class="nav-link-text ms-1">Settings</span>
+                    </a>
+                </li>
+            @endif
+
+            <!-- Change Password -->
+            @if ($admin || $user)
+                <li class="nav-item">
+                    <a class="nav-link"
+                        href="{{ route('show.changepassword') }}">
+                        <div
+                            class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+                            <i class="fas fa-key text-dark"></i>
+                        </div>
+                        <span class="nav-link-text ms-1">Change Password</span>
                     </a>
                 </li>
             @endif

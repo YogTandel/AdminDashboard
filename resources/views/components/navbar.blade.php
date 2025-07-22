@@ -46,7 +46,6 @@
                 </li>
             @endif
 
-
             {{-- Logout button --}}
             @php
                 $isAdmin = Auth::guard('admin')->check();
@@ -81,7 +80,6 @@
                     </div>
                 </a>
             </li>
-
         </ul>
     </div>
 </nav>

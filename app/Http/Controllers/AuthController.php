@@ -4,9 +4,10 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
-use MongoDB\BSON\ObjectId;
 use Illuminate\Validation\ValidationException;
+use MongoDB\BSON\ObjectId;
 
 class AuthController extends Controller
 {
@@ -20,18 +21,23 @@ class AuthController extends Controller
         return view('auth.login');
     }
 
+    public function showChangePassword()
+    {
+        return view("auth.changepassword");
+    }
+
     public function createAgent(Request $request)
     {
         Log::info('Attempting to create a new agent', ['input' => $request->except(['password', 'original_password'])]);
 
         $validate = $request->validate([
-            'player' => 'required|string|max:255|unique:users,player',
-            'password' => 'required|string|min:3',
-            'role' => 'required|in:agent',
-            'endpoint' => 'required|numeric|min:0',
+            'player'         => 'required|string|max:255|unique:users,player',
+            'password'       => 'required|string|min:3',
+            'role'           => 'required|in:agent',
+            'endpoint'       => 'required|numeric|min:0',
             'distributor_id' => 'required|string',
-            'distributor' => 'required|string|max:255',
-            'status' => 'required|in:Active,Inactive',
+            'distributor'    => 'required|string|max:255',
+            'status'         => 'required|in:Active,Inactive',
         ]);
 
         try {
@@ -39,9 +45,9 @@ class AuthController extends Controller
             $validate['distributor_id'] = new ObjectId($validate['distributor_id']);
 
             $validate['original_password'] = $validate['password'];
-            $validate['password'] = bcrypt($validate['password']);
-            $validate['DateOfCreation'] = (float) now()->format('YmdHis');
-            $validate['endpoint'] = (float) $validate['endpoint'];
+            $validate['password']          = bcrypt($validate['password']);
+            $validate['DateOfCreation']    = (float) now()->format('YmdHis');
+            $validate['endpoint']          = (float) $validate['endpoint'];
 
             // Create the user document in MongoDB
             $user = User::create($validate);
@@ -63,23 +69,23 @@ class AuthController extends Controller
     public function createDistributor(Request $request)
     {
         Log::info('Attempting to create a new Distributor', [
-            'input' => $request->except(['password', 'original_password'])
+            'input' => $request->except(['password', 'original_password']),
         ]);
 
         $validate = $request->validate([
-            'player' => 'required|string|max:255|unique:users,player',
+            'player'   => 'required|string|max:255|unique:users,player',
             'password' => 'required|string|min:3',
-            'role' => 'required|in:distributor',
-            'status' => 'required|in:Active,Inactive',
+            'role'     => 'required|in:distributor',
+            'status'   => 'required|in:Active,Inactive',
             'endpoint' => 'required|numeric|min:0',
         ]);
 
         try {
             $validate['original_password'] = $validate['password'];
-            $validate['password'] = bcrypt($validate['password']);
+            $validate['password']          = bcrypt($validate['password']);
 
             $validate['DateOfCreation'] = (float) now()->format('YmdHis');
-            $validate['endpoint'] = (float) $validate['endpoint'];
+            $validate['endpoint']       = (float) $validate['endpoint'];
 
             $user = User::create($validate);
 
@@ -99,18 +105,18 @@ class AuthController extends Controller
     public function createplayer(Request $request)
     {
         Log::info('Attempting to create a new player', [
-            'input' => $request->except(['password', 'original_password'])
+            'input' => $request->except(['password', 'original_password']),
         ]);
 
         $validate = $request->validate([
-            'player' => 'required|string|max:255|unique:users,player',
-            'password' => 'required|string|min:3',
-            'role' => 'required|in:player',
-            'balance' => 'required|numeric|min:0',
+            'player'      => 'required|string|max:255|unique:users,player',
+            'password'    => 'required|string|min:3',
+            'role'        => 'required|in:player',
+            'balance'     => 'required|numeric|min:0',
             'distributor' => 'required|exists:users,id',
-            'agent' => 'required|string|max:255',
-            'agent_id' => 'required|string',
-            'status' => 'required|in:Active,Inactive',
+            'agent'       => 'required|string|max:255',
+            'agent_id'    => 'required|string',
+            'status'      => 'required|in:Active,Inactive',
             'gameHistory' => 'nullable|array',
         ]);
 
@@ -120,9 +126,9 @@ class AuthController extends Controller
 
             // Set system-level fields
             $validate['original_password'] = $validate['password'];
-            $validate['password'] = bcrypt($validate['password']);
-            $validate['DateOfCreation'] = (float) now()->format('YmdHis');
-            $validate['balance'] = (float) $validate['balance'];
+            $validate['password']          = bcrypt($validate['password']);
+            $validate['DateOfCreation']    = (float) now()->format('YmdHis');
+            $validate['balance']           = (float) $validate['balance'];
 
             // ✅ Set default login_status as false
             $validate['login_status'] = false;
@@ -146,28 +152,26 @@ class AuthController extends Controller
         }
     }
 
-
-
     public function editAgent(Request $request, $id)
     {
         Log::info('Attempting to edit agent', ['id' => $id]);
 
         $validate = $request->validate([
-            'player' => 'required|string|max:255|unique:users,player,' . $id,
-            'password' => 'nullable|string|min:3',
-            'role' => 'required|in:agent',
-            'endpoint' => 'required|numeric|min:0',
+            'player'      => 'required|string|max:255|unique:users,player,' . $id,
+            'password'    => 'nullable|string|min:3',
+            'role'        => 'required|in:agent',
+            'endpoint'    => 'required|numeric|min:0',
             'distributor' => 'required|string|max:255',
-            'status' => 'required|in:Active,Inactive',
+            'status'      => 'required|in:Active,Inactive',
         ]);
 
         try {
-            $user = User::findOrFail($id);
+            $user                 = User::findOrFail($id);
             $validate['endpoint'] = (float) $validate['endpoint'];
 
-            if (!empty($validate['password'])) {
+            if (! empty($validate['password'])) {
                 $validate['original_password'] = $validate['password'];
-                $validate['password'] = bcrypt($validate['password']);
+                $validate['password']          = bcrypt($validate['password']);
             } else {
                 unset($validate['password']);
             }
@@ -192,19 +196,19 @@ class AuthController extends Controller
         Log::info('Attempting to edit distributor', ['id' => $id]);
 
         $validate = $request->validate([
-            'player' => 'required|string|max:255|unique:users,player,' . $id,
+            'player'   => 'required|string|max:255|unique:users,player,' . $id,
             'password' => 'nullable|string|min:3',
-            'role' => 'required|in:distributor',
-            'status' => 'required|in:Active,Inactive',
+            'role'     => 'required|in:distributor',
+            'status'   => 'required|in:Active,Inactive',
             'endpoint' => 'required|numeric|min:0',
         ]);
 
         try {
             $user = User::findOrFail($id);
 
-            if (!empty($validate['password'])) {
+            if (! empty($validate['password'])) {
                 $validate['original_password'] = $validate['password'];
-                $validate['password'] = bcrypt($validate['password']);
+                $validate['password']          = bcrypt($validate['password']);
             } else {
                 unset($validate['password']);
             }
@@ -230,13 +234,13 @@ class AuthController extends Controller
 
         // Validate request (winamount removed)
         $validate = $request->validate([
-            'player' => 'required|string|max:255|unique:users,player,' . $id,
-            'password' => 'nullable|string|min:3',
-            'role' => 'required|in:player',
-            'balance' => 'required|numeric|min:0',
+            'player'      => 'required|string|max:255|unique:users,player,' . $id,
+            'password'    => 'nullable|string|min:3',
+            'role'        => 'required|in:player',
+            'balance'     => 'required|numeric|min:0',
             'distributor' => 'required|exists:users,id',
-            'agent' => 'required|string|max:255',
-            'status' => 'required|in:Active,Inactive',
+            'agent'       => 'required|string|max:255',
+            'status'      => 'required|in:Active,Inactive',
             'gameHistory' => 'nullable|array',
         ]);
 
@@ -245,9 +249,9 @@ class AuthController extends Controller
             $user = User::findOrFail($id);
 
             // Optional password update
-            if (!empty($validate['password'])) {
+            if (! empty($validate['password'])) {
                 $validate['original_password'] = $validate['password'];
-                $validate['password'] = bcrypt($validate['password']);
+                $validate['password']          = bcrypt($validate['password']);
             } else {
                 unset($validate['password']);
             }
@@ -266,13 +270,12 @@ class AuthController extends Controller
 
         } catch (\Exception $e) {
             Log::error('Failed to update player', [
-                'id' => $id,
+                'id'    => $id,
                 'error' => $e->getMessage(),
             ]);
             return back()->withErrors(['error' => 'Failed to update player. Please try again.']);
         }
     }
-
 
     public function deleteAgent($id)
     {
@@ -292,11 +295,8 @@ class AuthController extends Controller
         User::where('distributor', $id)
             ->update(['status' => 'Inactive']);
 
-
-
         return redirect()->route('distributor.show')->with('success', 'Distributor deleted successfully and agents deactivated.');
     }
-
 
     public function deleteplayer($id)
     {
@@ -308,15 +308,15 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $credentials = $request->validate([
-            'player' => 'required|string',
+            'player'   => 'required|string',
             'password' => 'required|string',
-            'role' => 'required|in:admin,distributor,agent,player',
+            'role'     => 'required|in:admin,distributor,agent,player',
         ]);
 
         $guard = $credentials['role'] === 'admin' ? 'admin' : 'web';
 
         $loginData = [
-            'player' => $credentials['player'],
+            'player'   => $credentials['player'],
             'password' => $credentials['password'],
         ];
 
