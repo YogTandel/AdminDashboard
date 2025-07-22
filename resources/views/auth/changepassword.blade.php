@@ -10,7 +10,26 @@
                         <p class="mb-0">Update your account password here.</p>
                     </div>
                     <div class="card-body px-4">
-                        <form action="" method="POST">
+
+                        {{-- Success Message --}}
+                        @if (session('success'))
+                            <div class="alert alert-success text-white" role="alert">
+                                {{ session('success') }}
+                            </div>
+                        @endif
+
+                        {{-- Error Message --}}
+                        @if ($errors->any())
+                            <div class="alert alert-danger text-white" role="alert">
+                                <ul class="mb-0">
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
+
+                        <form action="{{ route('change.password') }}" method="POST">
                             @csrf
 
                             <div class="form-group mb-4 position-relative">
@@ -18,18 +37,12 @@
                                 <input type="password" class="form-control" id="current_password" name="current_password"
                                     required>
                                 <i class="fas fa-eye toggle-password-icon" data-target="current_password"></i>
-                                @error('current_password')
-                                    <p class="text-danger text-xs mt-1">{{ $message }}</p>
-                                @enderror
                             </div>
 
                             <div class="form-group mb-4 position-relative">
                                 <label for="new_password" class="form-label">New Password</label>
                                 <input type="password" class="form-control" id="new_password" name="new_password" required>
                                 <i class="fas fa-eye toggle-password-icon" data-target="new_password"></i>
-                                @error('new_password')
-                                    <p class="text-danger text-xs mt-1">{{ $message }}</p>
-                                @enderror
                             </div>
 
                             <div class="form-group mb-4 position-relative">
@@ -50,7 +63,6 @@
     </div>
 
     <style>
-        /* Improved input style */
         .form-control {
             padding-right: 2.5rem;
         }

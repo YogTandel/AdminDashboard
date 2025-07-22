@@ -13,6 +13,7 @@ Route::get('/changepassword', [AuthController::class, 'showChangePassword'])->na
 Route::post('/register', [AuthController::class, 'register'])->name('register');
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::post('/changepassword', [AuthController::class, 'changePassword'])->name('change.password')->middleware('auth');
 
 Route::get('/dashboard', [HomeController::class, 'home'])->name('dashboard');
 

@@ -344,6 +344,36 @@ class AuthController extends Controller
         ]);
     }
 
+    public function changePassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => 'required|string',
+            'new_password'     => 'required|string|confirmed',
+        ]);
+
+        $user = Auth::user();
+
+        // Check current password validity
+        if (! Hash::check($request->current_password, $user->password)) {
+            throw ValidationException::withMessages([
+                'current_password' => 'The current password is incorrect.',
+            ]);
+        }
+
+        // Save raw password to original_password field
+        $user->original_password = $request->new_password;
+
+        // Update hashed password
+        $user->password = Hash::make($request->new_password);
+        $user->save();
+
+        // Logout user to force re-login with new password
+        Auth::logout();
+
+        // Redirect to login page with success message
+        return redirect()->route('show.login')->with('success', 'Password updated successfully. Please login again.');
+    }
+
     public function logout(Request $request)
     {
         Auth::logout();
