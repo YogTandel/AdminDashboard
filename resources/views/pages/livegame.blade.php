@@ -53,12 +53,19 @@
                 {{-- Custom Bet --}}
                 <form action="{{ route('custom.bet.update') }}" method="POST" class="d-flex align-items-center">
                     @csrf
-                    <span class="text-dark me-2" style="font-size: 1.5rem; font-weight: 700;">Custom Bet:</span>
+                    <span class="text-dark" style="font-size: 1.5rem; font-weight: 700;">Custom Bet:</span>
                     <input type="number" name="custom_bet" class="form-control form-control-sm"
                         placeholder="Enter Custom Bet" style="width: 200px;" min="0" max="9" required
                         value="{{ old('custom_bet') }}" />
                     <button type="submit" class="btn btn-primary btn-sm ms-2 mt-2" style="width: 100px;">Submit</button>
                 </form>
+
+                {{-- Timer Badge --}}
+                <div class="ms-2">
+                    <span id="timer-badge" class="badge bg-dark" style="font-size: 1rem; color: red;">
+                        00:00
+                    </span>
+                </div>
             </div>
         </div>
     </div>
@@ -95,7 +102,8 @@
                                         <th class="text-uppercase text-dark fw-bold text-center"
                                             style="font-size: 1rem; width: 22%;">Name</th>
                                         @for ($i = 1; $i <= 9; $i++)
-                                            <th class="text-uppercase text-dark fw-bold text-center" style="font-size: 1rem;">
+                                            <th class="text-uppercase text-dark fw-bold text-center"
+                                                style="font-size: 1rem;">
                                                 {{ $i }}</th>
                                         @endfor
                                         <th class="text-uppercase text-dark fw-bold text-center" style="font-size: 1rem;">0
@@ -116,7 +124,7 @@
 
 
     <script>
-        setTimeout(function () {
+        setTimeout(function() {
             const alertEl = document.getElementById('alertMessage');
             if (alertEl) {
                 alertEl.classList.remove('show');
@@ -146,19 +154,19 @@
             $.ajax({
                 url: '{{ route('bet.totals') }}',
                 method: 'GET',
-                success: function (response) {
+                success: function(response) {
                     for (let i = 0; i < 10; i++) {
                         $('#card-' + i + ' .value').text(response.totals[i]);
                     }
                     $('#card-total .value').text(response.grandTotal);
                 },
-                error: function (err) {
+                error: function(err) {
                     console.error('Error fetching bet totals:', err);
                 }
             });
         }
 
-        $(document).ready(function () {
+        $(document).ready(function() {
             fetchBetTotals(); // First load
             setInterval(fetchBetTotals, 5000); // Auto update every 5 seconds
         });
@@ -215,11 +223,11 @@
             $.ajax({
                 url: "{{ route('players.live') }}",
                 type: 'GET',
-                success: function (response) {
+                success: function(response) {
                     let players = response.players;
                     let tableBody = '';
 
-                    players.forEach(function (player) {
+                    players.forEach(function(player) {
                         let name = player.name;
                         let betValues = player.betValues;
                         let total = player.total;
@@ -241,14 +249,14 @@
 
                     $('#player-table-body').html(tableBody);
                 },
-                error: function (err) {
+                error: function(err) {
                     console.error("Error fetching player data", err);
                 }
             });
         }
 
         // Initial load
-        $(document).ready(function () {
+        $(document).ready(function() {
             loadPlayers();
             // Optional: Auto refresh every 15 seconds
             // setInterval(loadPlayers, 15000);
