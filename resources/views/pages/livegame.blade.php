@@ -413,10 +413,9 @@
     <script>
         let timeOffset = 0;
         let targetTime = 0;
-        let timeRemaining = 0;
         let countdownInterval;
 
-        // DOM element replacing TMP_Text in Unity
+        // DOM element for timer badge
         const countdownText = document.getElementById('timer-badge');
 
         // WebSocket setup
@@ -424,7 +423,7 @@
 
         socket.onopen = function(event) {
             console.log("✅ [WebSocket] Connection opened");
-            sendTimerRequest(); // Send initial timer request like Start_option
+            sendTimerRequest(); // Send initial timer request on connect
         };
 
         socket.onmessage = function(event) {
@@ -447,72 +446,61 @@
                 data: "Timer request"
             };
             socket.send(JSON.stringify(message));
+            console.log("➡️ [WebSocket] Sent TIMER request");
         }
 
-        // Equivalent to SetServerTime
+        // Set server time based on received system time
         function setServerTime(serverTimeMilliseconds) {
-            const serverTimeTicks = (serverTimeMilliseconds * 10000) + 621355968000000000;
-            const serverTimeSeconds = Math.floor(serverTimeTicks / 10000000);
-
-            const localTimeMilliseconds = Date.now();
-            const localTimeTicks = (localTimeMilliseconds * 10000) + 621355968000000000;
-            const localTimeSeconds = Math.floor(localTimeTicks / 10000000);
+            const serverTimeSeconds = Math.floor(serverTimeMilliseconds / 1000);
+            const localTimeSeconds = Math.floor(Date.now() / 1000);
 
             timeOffset = serverTimeSeconds - localTimeSeconds;
             console.log(`✅ [setServerTime] Time offset set: ${timeOffset} seconds`);
         }
 
-        // Equivalent to HandleTimerEvent
+        // Handle TIMER event from server
         function handleTimerEvent(currentTimeMs, systemTimeMs) {
             console.log(`🕒 [handleTimerEvent] currentTime: ${currentTimeMs}, systemTime: ${systemTimeMs}`);
             setServerTime(systemTimeMs);
 
-            // Convert currentTime to ticks → seconds
-            const utcDateTimeTicks = (currentTimeMs * 10000) + 621355968000000000;
-            targetTime = Math.floor(utcDateTimeTicks / 10000000);
+            // Use currentTime in seconds directly (Unix epoch)
+            targetTime = Math.floor(currentTimeMs / 1000) + timeOffset;
 
-            updateCountdownText();
+            console.log(`✅ [handleTimerEvent] targetTime set to: ${targetTime}`);
+
+            // Start countdown loop
+            startCountdown();
         }
 
-        // Equivalent to UpdateCountdownText
-        function updateCountdownText() {
-            const currentTime = Math.floor(Date.now() / 1000) + timeOffset;
-            let timeRemainingLocal = targetTime - currentTime;
+        // Start countdown interval (equivalent to Unity Update loop)
+        function startCountdown() {
+            if (countdownInterval) clearInterval(countdownInterval);
 
-            if (timeRemainingLocal <= 0) {
-                countdownText.innerText = "00:00";
-                return;
-            }
-
-            let seconds = timeRemainingLocal % 60;
-            seconds -= 3; // same as Unity adjustment
-
-            const formattedSeconds = (seconds < 10 && seconds >= 0) ? "0" + seconds : seconds.toString();
-            countdownText.innerText = `00:${formattedSeconds}`;
-        }
-
-        // Equivalent to Update loop in Unity
-        function startUpdateLoop() {
             countdownInterval = setInterval(() => {
                 const currentTime = Math.floor(Date.now() / 1000) + timeOffset;
-                timeRemaining = 60 - Math.abs(targetTime - currentTime);
+                let timeRemaining = targetTime - currentTime;
 
                 if (timeRemaining <= 0) {
                     countdownText.innerText = "00:00";
+                    clearInterval(countdownInterval);
+                    console.log("🛑 [startCountdown] Countdown ended");
                     return;
                 }
 
-                const seconds = timeRemaining % 60;
-                const formattedSeconds = (seconds < 10 && seconds >= 0) ? "0" + seconds : seconds;
+                let seconds = timeRemaining % 60;
+                seconds -= 3; // same adjustment as Unity
 
+                const formattedSeconds = (seconds < 10 && seconds >= 0) ? "0" + seconds : seconds.toString();
                 countdownText.innerText = `00:${formattedSeconds}`;
+
+                console.log(`⏰ [startCountdown] Timer updated: 00:${formattedSeconds}`);
             }, 1000);
         }
 
-        // Start update loop on page load
-        document.addEventListener("DOMContentLoaded", () => {
-            startUpdateLoop();
-        });
+        // Automatically send timer request after 3 seconds if needed
+        setTimeout(() => {
+            sendTimerRequest();
+        }, 3000);
     </script>
 
 
