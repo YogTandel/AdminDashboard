@@ -62,9 +62,11 @@
 
                 {{-- Timer Badge --}}
                 <div class="ms-2">
-                    <span id="timer-badge" class="badge bg-dark" style="font-size: 1rem; color: red;">
+                    <span id="timer-badge" class="badge bg-dark"
+                        style="font-size: 16px; color: #FF0000; font-family: 'Share Tech Mono', monospace;">
                         00:00
                     </span>
+
                 </div>
             </div>
         </div>
@@ -262,5 +264,257 @@
             // setInterval(loadPlayers, 15000);
         });
     </script>
+
+    {{-- <script>
+        let timeOffset = 0;
+        let targetTime = 0;
+        let countdownInterval;
+
+        // Set server time based on received server timestamp (in milliseconds)
+        function setServerTime(serverTimeMilliseconds) {
+            // Convert server milliseconds to ticks
+            const serverTimeTicks = (serverTimeMilliseconds * 10000) + 621355968000000000;
+
+            // Convert server ticks to seconds
+            const serverTimeSeconds = Math.floor(serverTimeTicks / 10000000);
+
+            // Get local time in ticks
+            const localTimeMilliseconds = Date.now();
+            const localTimeTicks = (localTimeMilliseconds * 10000) + 621355968000000000;
+
+            // Convert local ticks to seconds
+            const localTimeSeconds = Math.floor(localTimeTicks / 10000000);
+
+            // Calculate offset
+            timeOffset = serverTimeSeconds - localTimeSeconds;
+
+            // console.log(`✅ [setServerTime] Time offset set: ${timeOffset} seconds`);
+        }
+
+        // Start countdown loop (similar to Update in Unity)
+        function startCountdown(targetTimeInSeconds) {
+            targetTime = targetTimeInSeconds;
+
+            // console.log(`🔄 [startCountdown] Target Time set to: ${targetTime} (epoch seconds)`);
+
+            // Clear existing interval if any
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+                // console.log("⏹️ [startCountdown] Existing countdown interval cleared");
+            }
+
+            countdownInterval = setInterval(updateCountdown, 1000); // Update every 1 second
+            // console.log("▶️ [startCountdown] Countdown interval started");
+        }
+
+        // Update countdown display
+        function updateCountdown() {
+            const currentTime = Math.floor(Date.now() / 1000) + timeOffset;
+            let timeRemaining = targetTime - currentTime;
+
+            // console.log(`⏰ [updateCountdown] Current Time: ${currentTime}, Time Remaining: ${timeRemaining}`);
+
+            if (timeRemaining <= 0) {
+                document.getElementById('timer-badge').innerText = '00:00';
+                clearInterval(countdownInterval);
+                // console.log("🛑 [updateCountdown] Countdown ended, interval cleared");
+                return;
+            }
+
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+
+            const formattedSeconds = seconds < 10 ? '0' + seconds : seconds;
+
+            // Update your DOM elements
+            document.getElementById('timer-badge').innerText = `00:${formattedSeconds}`;
+
+
+            // If you have a separate timer-badge like in Unity
+            // document.getElementById('timer-badge').innerText = formattedSeconds;
+
+            // console.log(`✅ [updateCountdown] Updated timer display to 00:${formattedSeconds}`);
+        }
+
+        // Adjusted countdown similar to updatetimerbadge(systemTime) in Unity
+        function updatetimerbadge(systemTime) {
+            const currentTime = Math.floor(Date.now() / 1000) + timeOffset;
+            let timeRemaining = targetTime - currentTime;
+
+            if (timeRemaining <= 0) {
+                document.getElementById('timer-badge').innerText = '0';
+                console.log("🛑 [updatetimerbadge] Countdown ended");
+                return;
+            }
+
+            let seconds = timeRemaining % 60;
+            seconds -= 3; // adjustment like your Unity code
+
+            const formattedSeconds = seconds < 10 && seconds >= 0 ? '0' + seconds : seconds.toString();
+
+            document.getElementById('timer-badge').innerText = formattedSeconds;
+
+            // console.log(`✅ [updatetimerbadge] Updated timer-badge to: ${formattedSeconds}`);
+        }
+
+        const socket = new WebSocket('ws://128.199.64.164:3101');
+
+        socket.onopen = function(event) {
+            console.log("✅ [WebSocket] Connection opened");
+        };
+
+        socket.onmessage = function(event) {
+            console.log("📩 [WebSocket] Message received:", event);
+
+            const data = JSON.parse(event.data);
+            console.log("📦 [WebSocket] Parsed data:", data);
+
+            if (data.eventName === "TIMER") {
+                // console.log("⏰ [WebSocket] TIMER event received with currentTime:", data.currentTime);
+
+                setServerTime(data.systemTime);
+
+                const utcMillisecondsTime = data.currentTime;
+
+                // In JS, Date uses ms since Unix epoch, similar to .NET DateTimeOffset.FromUnixTimeMilliseconds
+                const utcDateTime = new Date(utcMillisecondsTime);
+
+                // Convert to ticks
+                const utcDateTimeTicks = (utcMillisecondsTime * 10000) + 621355968000000000;
+
+                // Convert ticks to seconds (same as C# targetTime logic)
+                targetTime = Math.floor(utcDateTimeTicks / 10000000);
+
+                console.log(`✅ [handleTimerEvent] targetTime set to: ${targetTime}`);
+
+                // Call update countdown text logic
+                updateCountdown(data.systemTime);
+
+            }
+        };
+
+        socket.onclose = function(event) {
+            console.log("❌ [WebSocket] Connection closed", event);
+        };
+
+        function sendMessage() {
+            const message = {
+                eventName: "TIMER",
+            };
+
+            const jsonMessage = JSON.stringify(message);
+            socket.send(jsonMessage);
+        }
+
+        setTimeout(function() {
+            sendMessage();
+        }, 3000);
+    </script> --}}
+    <script>
+        let timeOffset = 0;
+        let targetTime = 0;
+        let timeRemaining = 0;
+        let countdownInterval;
+
+        // DOM element replacing TMP_Text in Unity
+        const countdownText = document.getElementById('timer-badge');
+
+        // WebSocket setup
+        const socket = new WebSocket('ws://128.199.64.164:3101');
+
+        socket.onopen = function(event) {
+            console.log("✅ [WebSocket] Connection opened");
+            sendTimerRequest(); // Send initial timer request like Start_option
+        };
+
+        socket.onmessage = function(event) {
+            const data = JSON.parse(event.data);
+            console.log("📦 [WebSocket] Parsed data:", data);
+
+            if (data.eventName === "TIMER") {
+                handleTimerEvent(data.currentTime, data.systemTime);
+            }
+        };
+
+        socket.onclose = function(event) {
+            console.log("❌ [WebSocket] Connection closed", event);
+        };
+
+        // Send timer request (equivalent to SendTimerRequest in Unity)
+        function sendTimerRequest() {
+            const message = {
+                eventName: "TIMER",
+                data: "Timer request"
+            };
+            socket.send(JSON.stringify(message));
+        }
+
+        // Equivalent to SetServerTime
+        function setServerTime(serverTimeMilliseconds) {
+            const serverTimeTicks = (serverTimeMilliseconds * 10000) + 621355968000000000;
+            const serverTimeSeconds = Math.floor(serverTimeTicks / 10000000);
+
+            const localTimeMilliseconds = Date.now();
+            const localTimeTicks = (localTimeMilliseconds * 10000) + 621355968000000000;
+            const localTimeSeconds = Math.floor(localTimeTicks / 10000000);
+
+            timeOffset = serverTimeSeconds - localTimeSeconds;
+            console.log(`✅ [setServerTime] Time offset set: ${timeOffset} seconds`);
+        }
+
+        // Equivalent to HandleTimerEvent
+        function handleTimerEvent(currentTimeMs, systemTimeMs) {
+            console.log(`🕒 [handleTimerEvent] currentTime: ${currentTimeMs}, systemTime: ${systemTimeMs}`);
+            setServerTime(systemTimeMs);
+
+            // Convert currentTime to ticks → seconds
+            const utcDateTimeTicks = (currentTimeMs * 10000) + 621355968000000000;
+            targetTime = Math.floor(utcDateTimeTicks / 10000000);
+
+            updateCountdownText();
+        }
+
+        // Equivalent to UpdateCountdownText
+        function updateCountdownText() {
+            const currentTime = Math.floor(Date.now() / 1000) + timeOffset;
+            let timeRemainingLocal = targetTime - currentTime;
+
+            if (timeRemainingLocal <= 0) {
+                countdownText.innerText = "00:00";
+                return;
+            }
+
+            let seconds = timeRemainingLocal % 60;
+            seconds -= 3; // same as Unity adjustment
+
+            const formattedSeconds = (seconds < 10 && seconds >= 0) ? "0" + seconds : seconds.toString();
+            countdownText.innerText = `00:${formattedSeconds}`;
+        }
+
+        // Equivalent to Update loop in Unity
+        function startUpdateLoop() {
+            countdownInterval = setInterval(() => {
+                const currentTime = Math.floor(Date.now() / 1000) + timeOffset;
+                timeRemaining = 60 - Math.abs(targetTime - currentTime);
+
+                if (timeRemaining <= 0) {
+                    countdownText.innerText = "00:00";
+                    return;
+                }
+
+                const seconds = timeRemaining % 60;
+                const formattedSeconds = (seconds < 10 && seconds >= 0) ? "0" + seconds : seconds;
+
+                countdownText.innerText = `00:${formattedSeconds}`;
+            }, 1000);
+        }
+
+        // Start update loop on page load
+        document.addEventListener("DOMContentLoaded", () => {
+            startUpdateLoop();
+        });
+    </script>
+
+
 
 @endsection
