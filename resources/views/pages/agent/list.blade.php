@@ -70,9 +70,6 @@
                                         <input type="hidden" name="per_page" value="{{ request('per_page', 10) }}">
                                 </div>
                                 
-                                <!-- Add hidden field to maintain per_page value -->
-                                
-                                
                                 <button type="submit" class="btn bg-gradient-warning rounded-pill shadow-sm mb-0">
                                     Search
                                 </button>

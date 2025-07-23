@@ -36,11 +36,27 @@
                                     <span class="input-group-text bg-transparent border-0 text-secondary">
                                         <i class="fas fa-search"></i>
                                     </span>
-                                    <label class="form-label"></label>
-                                    <input type="search" name="search" class="form-control border-0"
+                                    <input type="search" name="search" class="form-control border-0" 
+                                        value="{{ request('search') }}"
                                         onfocus="this.parentElement.classList.add('is-focused')"
-                                        onfocusout="this.parentElement.classList.remove('is-focused')">
+                                        onfocusout="this.parentElement.classList.remove('is-focused')"
+                                        placeholder="Search...">
                                 </div>
+                                
+                                <!-- Hidden field to maintain per_page value -->
+                                <input type="hidden" name="per_page" value="{{ request('per_page', 10) }}">
+                                
+                                <!-- Preserve date filters if they exist -->
+                                @if(request()->has('from_date'))
+                                    <input type="hidden" name="from_date" value="{{ request('from_date') }}">
+                                @endif
+                                @if(request()->has('to_date'))
+                                    <input type="hidden" name="to_date" value="{{ request('to_date') }}">
+                                @endif
+                                @if(request()->has('date_range'))
+                                    <input type="hidden" name="date_range" value="{{ request('date_range') }}">
+                                @endif
+                                
                                 <button type="submit" class="btn bg-gradient-warning rounded-pill shadow-sm mb-0">
                                     Search
                                 </button>
@@ -66,12 +82,15 @@
                         </select>
                         <input type="date" name="from_date" class="form-control form-control-sm"
                             value="{{ request('from_date') }}" style="width: 150px;">
+
                         <span class="text-sm mx-1">to</span>
                         <input type="date" name="to_date" class="form-control form-control-sm"
                             value="{{ request('to_date') }}" style="width: 150px;">
                         @if (request()->has('search'))
                             <input type="hidden" name="search" value="{{ request('search') }}">
                         @endif
+                        <input type="hidden" name="per_page" value="{{ request('per_page', 10) }}">
+
                         <button type="submit" class="btn btn-sm btn-primary  mb-0">Filter</button>
                         @if (request()->has('from_date') || request()->has('to_date') || request()->has('date_range'))
                             <a href="{{ route('distributor.show') }}" class="btn btn-secondary btn-sm px-3 mt-3">Reset</a>
