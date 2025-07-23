@@ -46,17 +46,6 @@
                                 <!-- Hidden field to maintain per_page value -->
                                 <input type="hidden" name="per_page" value="{{ request('per_page', 10) }}">
                                 
-                                <!-- Preserve date filters if they exist -->
-                                @if(request()->has('from_date'))
-                                    <input type="hidden" name="from_date" value="{{ request('from_date') }}">
-                                @endif
-                                @if(request()->has('to_date'))
-                                    <input type="hidden" name="to_date" value="{{ request('to_date') }}">
-                                @endif
-                                @if(request()->has('date_range'))
-                                    <input type="hidden" name="date_range" value="{{ request('date_range') }}">
-                                @endif
-                                
                                 <button type="submit" class="btn bg-gradient-warning rounded-pill shadow-sm mb-0">
                                     Search
                                 </button>
