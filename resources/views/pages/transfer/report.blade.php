@@ -110,6 +110,7 @@
                             <th scope="col" class="text-dark">transfer by </th>
                             <th scope="col" class="text-dark">transfer to </th>
                             <th scope="col" class="text-dark">Amount</th>
+                            <th scope="col" class="text-dark">Role</th>
                             <th scope="col" class="text-dark">Remaining Balance</th>
                             <th scope="col" class="text-dark">Date</th>
                         </tr>
@@ -125,7 +126,8 @@
                                         {{ $transfer->distributor_name }}
                                     @endif
                                 </td>
-                                <td class="text-success">{{ number_format($transfer->amount, 2) }}</td>
+                                <td>{{ number_format($transfer->amount, 2) }}</td>
+                                <td>{{$transfer->transfer_role }}</td>
                                 <td>{{ number_format($transfer->remaining_balance, 2) }}</td>
                                 <td>{{ \Carbon\Carbon::parse($transfer->created_at)->format('d-M-Y h:i A') }}</td>
                             </tr>
