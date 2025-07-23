@@ -25,9 +25,13 @@
                                         <option value="15" {{ request('per_page') == 15 ? 'selected' : '' }}>15</option>
                                     </select>
                                 </div>
-                                @if (request()->has('search'))
-                                    <input type="hidden" name="search" value="{{ request('search') }}">
-                                @endif
+                                
+                                <!-- Add all current query parameters as hidden inputs -->
+                                @foreach(request()->query() as $key => $value)
+                                    @if($key != 'per_page')
+                                        <input type="hidden" name="{{ $key }}" value="{{ $value }}">
+                                    @endif
+                                @endforeach
                             </form>
                             <form action="{{ route('player.show') }}" method="GET" class="d-flex align-items-center">
                                 <div class="input-group input-group-outline rounded-pill me-2 shadow-sm">
@@ -39,6 +43,8 @@
                                         onfocus="this.parentElement.classList.add('is-focused')"
                                         onfocusout="this.parentElement.classList.remove('is-focused')">
                                 </div>
+                                <input type="hidden" name="per_page" value="{{ request('per_page', 10) }}">
+
                                 <button type="submit" class="btn bg-gradient-warning rounded-pill shadow-sm mb-0">
                                     Search
                                 </button>
@@ -77,9 +83,11 @@
                         @if (request()->has('search'))
                             <input type="hidden" name="search" value="{{ request('search') }}">
                         @endif
+                        <input type="hidden" name="per_page" value="{{ request('per_page', 10) }}">
 
                         <!-- Filter Button -->
                         <button type="submit" class="btn btn-sm btn-primary  mb-0">Filter</button>
+                        <input type="hidden" name="per_page" value="{{ request('per_page', 10) }}">
 
                         <!-- Reset Button -->
                         @if (request()->has('from_date') || request()->has('to_date') || request()->has('date_range'))

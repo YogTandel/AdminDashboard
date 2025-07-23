@@ -12,6 +12,9 @@
                             @csrf
                             @method('PUT')
 
+                            <!-- Add this hidden field to preserve per_page -->
+                            <input type="hidden" name="per_page" value="{{ request('per_page', 10) }}">
+
                             <!-- PLAYER -->
                             <label class="text-left d-block text-start">AGENT NAME</label>
                             <div class="input-group mb-3">

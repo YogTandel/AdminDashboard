@@ -18,7 +18,7 @@ class PagesController extends Controller
 {
     public function agentList()
     {
-        $perPage = request()->get('per_page', 5);
+        $perPage = request()->get('per_page', 10);
         $query = User::query();
 
         // Search filter
@@ -68,7 +68,7 @@ class PagesController extends Controller
 
     public function distributor()
     {
-        $perPage = request()->get('per_page', 5);
+        $perPage = request()->get('per_page', 10);
         $query = User::query();
 
         // Search filter
@@ -120,63 +120,63 @@ class PagesController extends Controller
     }
 
     public function player()
-{
-    $perPage = request()->get('per_page', 10);
-    $query = User::query();
+    {
+        $perPage = request()->get('per_page', 10);
+        $query = User::query();
 
-    // Search filter
-    if (request()->has('search')) {
-        $query->where('player', 'like', '%' . request()->search . '%');
-    }
-
-    // Date range filter
-    $from = request()->input('from_date');
-    $to = request()->input('to_date');
-    $dateRange = request()->input('date_range');
-
-    if ($dateRange) {
-        $today = \Carbon\Carbon::today();
-
-        if ($dateRange === '2_days_ago') {
-            $from = $today->copy()->subDays(2)->format('YmdHis');
-            $to = $today->copy()->endOfDay()->format('YmdHis');
-        } elseif ($dateRange === 'last_week') {
-            $from = $today->copy()->subWeek()->startOfWeek()->format('YmdHis');
-            $to = $today->copy()->subWeek()->endOfWeek()->format('YmdHis');
-        } elseif ($dateRange === 'last_month') {
-            $from = $today->copy()->subMonth()->startOfMonth()->format('YmdHis');
-            $to = $today->copy()->subMonth()->endOfMonth()->format('YmdHis');
+        // Search filter
+        if (request()->has('search')) {
+            $query->where('player', 'like', '%' . request()->search . '%');
         }
-    } elseif ($from || $to) {
-        // Handle manual date inputs
+
+        // Date range filter
+        $from = request()->input('from_date');
+        $to = request()->input('to_date');
+        $dateRange = request()->input('date_range');
+
+        if ($dateRange) {
+            $today = \Carbon\Carbon::today();
+
+            if ($dateRange === '2_days_ago') {
+                $from = $today->copy()->subDays(2)->format('YmdHis');
+                $to = $today->copy()->endOfDay()->format('YmdHis');
+            } elseif ($dateRange === 'last_week') {
+                $from = $today->copy()->subWeek()->startOfWeek()->format('YmdHis');
+                $to = $today->copy()->subWeek()->endOfWeek()->format('YmdHis');
+            } elseif ($dateRange === 'last_month') {
+                $from = $today->copy()->subMonth()->startOfMonth()->format('YmdHis');
+                $to = $today->copy()->subMonth()->endOfMonth()->format('YmdHis');
+            }
+        } elseif ($from || $to) {
+            // Handle manual date inputs
+            if ($from) {
+                $from = \Carbon\Carbon::createFromFormat('Y-m-d', $from)->startOfDay()->format('YmdHis');
+            }
+            if ($to) {
+                $to = \Carbon\Carbon::createFromFormat('Y-m-d', $to)->endOfDay()->format('YmdHis');
+            }
+        }
+
+        // Apply date filters
         if ($from) {
-            $from = \Carbon\Carbon::createFromFormat('Y-m-d', $from)->startOfDay()->format('YmdHis');
+            $query->where('DateOfCreation', '>=', (float) $from);
         }
         if ($to) {
-            $to = \Carbon\Carbon::createFromFormat('Y-m-d', $to)->endOfDay()->format('YmdHis');
+            $query->where('DateOfCreation', '<=', (float) $to);
         }
+
+        // Players list with relation
+        $players = $query->where('role', 'player')
+            ->with(['agentUser'])
+            ->paginate($perPage)
+            ->appends(request()->query());
+
+        // Dropdown lists
+        $agents = User::where('role', 'agent')->get(['_id', 'player']);
+        $distributors = User::where('role', 'distributor')->get(['_id', 'player']);
+
+        return view('pages.player.list', compact('players', 'perPage', 'agents', 'distributors'));
     }
-
-    // Apply date filters
-    if ($from) {
-        $query->where('DateOfCreation', '>=', (float)$from);
-    }
-    if ($to) {
-        $query->where('DateOfCreation', '<=', (float)$to);
-    }
-
-    // Players list with relation
-    $players = $query->where('role', 'player')
-        ->with(['agentUser'])
-        ->paginate($perPage)
-        ->appends(request()->query());
-
-    // Dropdown lists
-    $agents = User::where('role', 'agent')->get(['_id', 'player']);
-    $distributors = User::where('role', 'distributor')->get(['_id', 'player']);
-
-    return view('pages.player.list', compact('players', 'perPage', 'agents', 'distributors'));
-}
 
     public function transactionreport()
     {
@@ -830,11 +830,18 @@ class PagesController extends Controller
 
         // Apply search filter if search term exists
         if ($request->has('search') && !empty($request->search)) {
-            $searchTerm = $request->search;
-            $query->where(function ($q) use ($searchTerm) {
+            $searchTerm = strtolower($request->search);
+
+            // Find matching user IDs by player name
+            $matchedUsers = User::where('player', 'LIKE', "%{$searchTerm}%")->get(['_id']);
+            $userIds = $matchedUsers->pluck('_id')->map(fn($id) => (string) $id)->toArray();
+
+            $query->where(function ($q) use ($searchTerm, $userIds) {
                 $q->where('amount', 'LIKE', "%{$searchTerm}%")
                     ->orWhere('remaining_balance', 'LIKE', "%{$searchTerm}%")
-                    ->orWhere('transfer_role', 'LIKE', "%{$searchTerm}%");
+                    ->orWhere('transfer_role', 'LIKE', "%{$searchTerm}%")
+                    ->orWhereIn('transfer_by', $userIds)
+                    ->orWhereIn('transfer_to', $userIds);
             });
         }
 
@@ -937,31 +944,31 @@ class PagesController extends Controller
         }
     }
 
-  public function updateCustomBet(Request $request)
-{
-    $validated = $request->validate([
-        'custom_bet' => 'required|integer|min:0|max:9',
-    ]);
+    public function updateCustomBet(Request $request)
+    {
+        $validated = $request->validate([
+            'custom_bet' => 'required|integer|min:0|max:9',
+        ]);
 
-    try {
-        // Get the first settings record (assuming you only have one)
-        $setting = Setting::first();
-        
-        if (!$setting) {
-            // Create new settings if none exists
-            $setting = new Setting();
-            $setting->_id = new ObjectId('67d942244d741e1fb4f08710'); // Only if you need this specific ID
+        try {
+            // Get the first settings record (assuming you only have one)
+            $setting = Setting::first();
+
+            if (!$setting) {
+                // Create new settings if none exists
+                $setting = new Setting();
+                $setting->_id = new ObjectId('67d942244d741e1fb4f08710'); // Only if you need this specific ID
+            }
+
+            $setting->customBet = $validated['custom_bet'];
+            $setting->save();
+
+            return back()->with('success', 'Custom Bet updated successfully!');
+
+        } catch (\Exception $e) {
+            return back()->with('error', 'Failed to update Custom Bet: ' . $e->getMessage());
         }
-
-        $setting->customBet = $validated['custom_bet'];
-        $setting->save();
-        
-        return back()->with('success', 'Custom Bet updated successfully!');
-        
-    } catch (\Exception $e) {
-        return back()->with('error', 'Failed to update Custom Bet: ' . $e->getMessage());
     }
-}
 
     public function getAdminEndpoint()
     {
@@ -1179,13 +1186,27 @@ class PagesController extends Controller
 
         // Apply search filter if search term exists
         if ($request->has('search') && !empty($request->search)) {
-            $searchTerm = $request->search;
-            $query->where(function ($q) use ($searchTerm) {
+            $searchTerm = strtolower($request->search);
+
+            // Step 1: Search users and admins by 'player' name
+            $matchedUsers = User::where('player', 'LIKE', "%{$searchTerm}%")->get(['_id']);
+            $userIds = $matchedUsers->pluck('_id')->map(fn($id) => (string) $id)->toArray();
+
+            $matchedAdmins = Admin::where('player', 'LIKE', "%{$searchTerm}%")->get(['_id']);
+            $adminIds = $matchedAdmins->pluck('_id')->map(fn($id) => (string) $id)->toArray();
+
+            $allMatchedIds = array_merge($userIds, $adminIds);
+
+            // Step 2: Apply search filter to all relevant fields
+            $query->where(function ($q) use ($searchTerm, $allMatchedIds) {
                 $q->where('amount', 'LIKE', "%{$searchTerm}%")
                     ->orWhere('type', 'LIKE', "%{$searchTerm}%")
-                    ->orWhere('transfer_role', 'LIKE', "%{$searchTerm}%");
+                    ->orWhere('transfer_role', 'LIKE', "%{$searchTerm}%")
+                    ->orWhereIn('transfer_by', $allMatchedIds)
+                    ->orWhereIn('transfer_to', $allMatchedIds);
             });
         }
+
 
         // Apply date range filter
         if ($request->has('date_range') && !empty($request->date_range)) {

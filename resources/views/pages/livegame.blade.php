@@ -73,10 +73,13 @@
     </div>
 
     <div class="row g-2 container-fluid py-4">
-        @for ($i = 0; $i <= 9; $i++)
-            <div class="col-12 col-sm-6 col-md-1 ms-2" id="card-{{ $i }}">
-                <div class="p-3 rounded text-white card-bg-{{ $i }}">
-                    <p class="font-weight-bolder mb-3" style="font-size: 1.5rem; font-weight: 800;">{{ $i }}</p>
+        @for ($i = 1; $i <= 10; $i++)
+            @php
+                $displayNumber = $i % 10; // This will give 1-9 then 0
+            @endphp
+            <div class="col-12 col-sm-6 col-md-1 ms-2" id="card-{{ $displayNumber }}">
+                <div class="p-3 rounded text-white card-bg-{{ $displayNumber }}">
+                    <p class="font-weight-bolder mb-3" style="font-size: 1.5rem; font-weight: 800;">{{ $displayNumber }}</p>
                     <h5 class="text-sm value">0</h5>
                 </div>
             </div>

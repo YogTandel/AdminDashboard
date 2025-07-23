@@ -21,24 +21,31 @@
                                 <div class="input-group input-group-outline border-radius-lg shadow-sm">
                                     <select name="per_page" id="per_page" class="form-select border-0 ps-3 pe-4"
                                         onchange="this.form.submit()" style="min-width: 60px;">
-                                        <option value="5" {{ request('per_page') == 5 ? 'selected' : '' }}>5</option>
                                         <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
+                                        <option value="15" {{ request('per_page') == 15 ? 'selected' : '' }}>15</option>
                                     </select>
                                 </div>
-                                @if (request()->has('search'))
-                                    <input type="hidden" name="search" value="{{ request('search') }}">
-                                @endif
+                                @foreach(request()->query() as $key => $value)
+                                    @if($key != 'per_page')
+                                        <input type="hidden" name="{{ $key }}" value="{{ $value }}">
+                                    @endif
+                                @endforeach
                             </form>
                             <form action="{{ route('distributor.show') }}" method="GET" class="d-flex align-items-center">
                                 <div class="input-group input-group-outline rounded-pill me-2 shadow-sm">
                                     <span class="input-group-text bg-transparent border-0 text-secondary">
                                         <i class="fas fa-search"></i>
                                     </span>
-                                    <label class="form-label"></label>
-                                    <input type="search" name="search" class="form-control border-0"
+                                    <input type="search" name="search" class="form-control border-0" 
+                                        value="{{ request('search') }}"
                                         onfocus="this.parentElement.classList.add('is-focused')"
-                                        onfocusout="this.parentElement.classList.remove('is-focused')">
+                                        onfocusout="this.parentElement.classList.remove('is-focused')"
+                                        placeholder="Search...">
                                 </div>
+                                
+                                <!-- Hidden field to maintain per_page value -->
+                                <input type="hidden" name="per_page" value="{{ request('per_page', 10) }}">
+                                
                                 <button type="submit" class="btn bg-gradient-warning rounded-pill shadow-sm mb-0">
                                     Search
                                 </button>
@@ -64,12 +71,15 @@
                         </select>
                         <input type="date" name="from_date" class="form-control form-control-sm"
                             value="{{ request('from_date') }}" style="width: 150px;">
+
                         <span class="text-sm mx-1">to</span>
                         <input type="date" name="to_date" class="form-control form-control-sm"
                             value="{{ request('to_date') }}" style="width: 150px;">
                         @if (request()->has('search'))
                             <input type="hidden" name="search" value="{{ request('search') }}">
                         @endif
+                        <input type="hidden" name="per_page" value="{{ request('per_page', 10) }}">
+
                         <button type="submit" class="btn btn-sm btn-primary  mb-0">Filter</button>
                         @if (request()->has('from_date') || request()->has('to_date') || request()->has('date_range'))
                             <a href="{{ route('distributor.show') }}" class="btn btn-secondary btn-sm px-3 mt-3">Reset</a>

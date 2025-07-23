@@ -38,19 +38,22 @@
                         <h6 class="mb-0 ms-4 mt-3 text-bolder">Agent Users</h6>
                         <div class="d-flex align-items-center gap-2 flex-wrap mt-3 me-3">
                             <!-- Show Dropdown -->
-                            <form method="GET" class="d-flex align-items-center mb-0">
+                            <form method="GET" class="d-flex align-items-center mb-0" id="perPageForm">
                                 <label for="per_page" class="mb-0 me-2 text-sm text-dark fw-bold">Show:</label>
-
+                                
                                 <div class="input-group input-group-outline border-radius-lg shadow-sm">
-                                    <select name="per_page" id="per_page" class="form-select border-0 ps-3 pe-4"
-                                        onchange="this.form.submit()" style="min-width: 60px;">
-                                        <option value="5" {{ request('per_page') == 5 ? 'selected' : '' }}>5</option>
-                                        <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
+                                    <select name="per_page" id="per_page" class="form-select border-0 ps-3 pe-4" style="min-width: 60px;">
+                                        <option value="10" {{ (int)request()->query('per_page', 10) === 10 ? 'selected' : '' }}>10</option>
+                                        <option value="15" {{ (int)request()->query('per_page', 10) === 15 ? 'selected' : '' }}>15</option>
                                     </select>
                                 </div>
-                                @if (request()->has('search'))
-                                    <input type="hidden" name="search" value="{{ request('search') }}">
-                                @endif
+                                
+                                <!-- Persist ALL parameters EXCEPT page -->
+                                 @foreach(request()->query() as $key => $value)
+                                    @if($key != 'per_page')
+                                        <input type="hidden" name="{{ $key }}" value="{{ $value }}">
+                                    @endif
+                                @endforeach
                             </form>
 
                             <!-- Search -->
@@ -60,14 +63,17 @@
                                         <i class="fas fa-search"></i>
                                     </span>
                                     <label class="form-label"></label>
-                                    <input type="search" name="search" class="form-control border-0"
+                                    <input type="search" name="search" class="form-control border-0" 
+                                        value="{{ request('search') }}"
                                         onfocus="this.parentElement.classList.add('is-focused')"
                                         onfocusout="this.parentElement.classList.remove('is-focused')">
                                 </div>
+                                
                                 <button type="submit" class="btn bg-gradient-warning rounded-pill shadow-sm mb-0">
                                     Search
                                 </button>
                             </form>
+                            
 
                             <!-- Add Agent -->
                             <button type="button" class="btn bg-primary mb-0 text-white" data-bs-toggle="modal"
@@ -106,14 +112,17 @@
                         @if (request()->has('search'))
                             <input type="hidden" name="search" value="{{ request('search') }}">
                         @endif
+                        <input type="hidden" name="per_page" value="{{ request('per_page', 10) }}">
 
                         <!-- Filter Button -->
                         <button type="submit" class="btn btn-sm btn-primary  mb-0">Filter</button>
+                        <input type="hidden" name="per_page" value="{{ request('per_page', 10) }}">
 
                         <!-- Reset Button -->
                         @if (request()->has('from_date') || request()->has('to_date') || request()->has('date_range'))
                             <a href="{{ route('agentlist.show') }}" class="btn btn-secondary btn-sm px-3 mt-3">Reset</a>
                         @endif
+                        <input type="hidden" name="per_page" value="{{ request('per_page', 10) }}">
                     </form>
 
                     <div class="card-body px-0 pt-0 pb-2">
@@ -603,4 +612,21 @@
                 });
         }
     </script>
+ <script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('perPageForm');
+    const select = document.getElementById('per_page');
+    
+    if (select) {
+        select.addEventListener('change', function() {
+            // Update the force_per_page hidden field
+            const hiddenField = form.querySelector('input[name="force_per_page"]');
+            if (hiddenField) {
+                hiddenField.value = this.value;
+            }
+            form.submit();
+        });
+    }
+});
+</script>
 @endsection

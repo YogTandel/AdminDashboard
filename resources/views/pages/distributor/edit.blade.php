@@ -13,6 +13,14 @@
                             @csrf
                             @method('PUT')
 
+                            <!-- Add hidden field to preserve per_page -->
+                            <input type="hidden" name="per_page" value="{{ request('per_page', 10) }}">
+                            
+                            <!-- Add hidden field to preserve search if exists -->
+                            @if(request()->has('search'))
+                                <input type="hidden" name="search" value="{{ request('search') }}">
+                            @endif
+
                             <!-- PLAYER -->
                             <label>Distributor Name</label>
                             <div class="input-group mb-3">
