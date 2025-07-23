@@ -20,7 +20,7 @@
         </h3>
 
         <div class="d-flex justify-content-between align-items-center flex-wrap mb-2">
-            <h6 class="mb-0 ms-4 mt-3 text-bolder">redeem report</h6>
+            <h6 class="mb-0 ms-4 mt-3 text-bolder">Redeem report</h6>
             <div class="d-flex align-items-center gap-2 flex-wrap mt-3 me-3">
                 <!-- Show Dropdown -->
                 <form method="GET" class="d-flex align-items-center mb-0" id="perPageForm">
@@ -107,8 +107,8 @@
                 <table class="table table-bordered table-hover" style="font-size: 0.8rem; color: #212529;">
                     <thead>
                         <tr>
-                            <th scope="col" class="text-dark">transfer by Name</th>
-                            <th scope="col" class="text-dark">transfer to Name</th>
+                            <th scope="col" class="text-dark">transfer by </th>
+                            <th scope="col" class="text-dark">transfer to </th>
                             <th scope="col" class="text-dark">Amount</th>
                             <th scope="col" class="text-dark">Remaining Balance</th>
                             <th scope="col" class="text-dark">Date</th>

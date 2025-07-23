@@ -120,63 +120,63 @@ class PagesController extends Controller
     }
 
     public function player()
-{
-    $perPage = request()->get('per_page', 10);
-    $query = User::query();
+    {
+        $perPage = request()->get('per_page', 10);
+        $query = User::query();
 
-    // Search filter
-    if (request()->has('search')) {
-        $query->where('player', 'like', '%' . request()->search . '%');
-    }
-
-    // Date range filter
-    $from = request()->input('from_date');
-    $to = request()->input('to_date');
-    $dateRange = request()->input('date_range');
-
-    if ($dateRange) {
-        $today = \Carbon\Carbon::today();
-
-        if ($dateRange === '2_days_ago') {
-            $from = $today->copy()->subDays(2)->format('YmdHis');
-            $to = $today->copy()->endOfDay()->format('YmdHis');
-        } elseif ($dateRange === 'last_week') {
-            $from = $today->copy()->subWeek()->startOfWeek()->format('YmdHis');
-            $to = $today->copy()->subWeek()->endOfWeek()->format('YmdHis');
-        } elseif ($dateRange === 'last_month') {
-            $from = $today->copy()->subMonth()->startOfMonth()->format('YmdHis');
-            $to = $today->copy()->subMonth()->endOfMonth()->format('YmdHis');
+        // Search filter
+        if (request()->has('search')) {
+            $query->where('player', 'like', '%' . request()->search . '%');
         }
-    } elseif ($from || $to) {
-        // Handle manual date inputs
+
+        // Date range filter
+        $from = request()->input('from_date');
+        $to = request()->input('to_date');
+        $dateRange = request()->input('date_range');
+
+        if ($dateRange) {
+            $today = \Carbon\Carbon::today();
+
+            if ($dateRange === '2_days_ago') {
+                $from = $today->copy()->subDays(2)->format('YmdHis');
+                $to = $today->copy()->endOfDay()->format('YmdHis');
+            } elseif ($dateRange === 'last_week') {
+                $from = $today->copy()->subWeek()->startOfWeek()->format('YmdHis');
+                $to = $today->copy()->subWeek()->endOfWeek()->format('YmdHis');
+            } elseif ($dateRange === 'last_month') {
+                $from = $today->copy()->subMonth()->startOfMonth()->format('YmdHis');
+                $to = $today->copy()->subMonth()->endOfMonth()->format('YmdHis');
+            }
+        } elseif ($from || $to) {
+            // Handle manual date inputs
+            if ($from) {
+                $from = \Carbon\Carbon::createFromFormat('Y-m-d', $from)->startOfDay()->format('YmdHis');
+            }
+            if ($to) {
+                $to = \Carbon\Carbon::createFromFormat('Y-m-d', $to)->endOfDay()->format('YmdHis');
+            }
+        }
+
+        // Apply date filters
         if ($from) {
-            $from = \Carbon\Carbon::createFromFormat('Y-m-d', $from)->startOfDay()->format('YmdHis');
+            $query->where('DateOfCreation', '>=', (float) $from);
         }
         if ($to) {
-            $to = \Carbon\Carbon::createFromFormat('Y-m-d', $to)->endOfDay()->format('YmdHis');
+            $query->where('DateOfCreation', '<=', (float) $to);
         }
+
+        // Players list with relation
+        $players = $query->where('role', 'player')
+            ->with(['agentUser'])
+            ->paginate($perPage)
+            ->appends(request()->query());
+
+        // Dropdown lists
+        $agents = User::where('role', 'agent')->get(['_id', 'player']);
+        $distributors = User::where('role', 'distributor')->get(['_id', 'player']);
+
+        return view('pages.player.list', compact('players', 'perPage', 'agents', 'distributors'));
     }
-
-    // Apply date filters
-    if ($from) {
-        $query->where('DateOfCreation', '>=', (float)$from);
-    }
-    if ($to) {
-        $query->where('DateOfCreation', '<=', (float)$to);
-    }
-
-    // Players list with relation
-    $players = $query->where('role', 'player')
-        ->with(['agentUser'])
-        ->paginate($perPage)
-        ->appends(request()->query());
-
-    // Dropdown lists
-    $agents = User::where('role', 'agent')->get(['_id', 'player']);
-    $distributors = User::where('role', 'distributor')->get(['_id', 'player']);
-
-    return view('pages.player.list', compact('players', 'perPage', 'agents', 'distributors'));
-}
 
     public function transactionreport()
     {
@@ -809,109 +809,116 @@ class PagesController extends Controller
     }
 
     public function showTransferReport(Request $request)
-{
-    $user = auth('web')->user();
-    $admin = auth('admin')->user();
+    {
+        $user = auth('web')->user();
+        $admin = auth('admin')->user();
 
-    if (!$user && !$admin) {
-        return redirect()->route('login');
-    }
-
-    // Get per_page value or default to 10 (matches your blade options)
-    $perPage = $request->get('per_page', 10);
-
-    // Start query
-    $query = DB::connection('mongodb')->table('transfers')->orderBy('created_at', 'desc');
-
-    // If a normal user is logged in, restrict to their transfers
-    if ($user) {
-        $query->where('transfer_by', $user->id);
-    }
-
-    // Apply search filter if search term exists
-    if ($request->has('search') && !empty($request->search)) {
-        $searchTerm = $request->search;
-        $query->where(function ($q) use ($searchTerm) {
-            $q->where('amount', 'LIKE', "%{$searchTerm}%")
-                ->orWhere('remaining_balance', 'LIKE', "%{$searchTerm}%")
-                ->orWhere('transfer_role', 'LIKE', "%{$searchTerm}%");
-        });
-    }
-
-    // Apply date range filter
-    if ($request->has('date_range') && !empty($request->date_range)) {
-        switch ($request->date_range) {
-            case '2_days_ago':
-                $query->where('created_at', '>=', now()->subDays(2));
-                break;
-            case 'this_week':
-                $query->whereBetween('created_at', [now()->startOfWeek(), now()]);
-                break;
-            case 'this_month':
-                $query->whereBetween('created_at', [now()->startOfMonth(), now()]);
-                break;
+        if (!$user && !$admin) {
+            return redirect()->route('login');
         }
-    }
 
-    // Apply custom date range filter
-    if ($request->has('from_date') && !empty($request->from_date)) {
-        $query->where('created_at', '>=', Carbon::parse($request->from_date)->startOfDay());
-    }
+        // Get per_page value or default to 10 (matches your blade options)
+        $perPage = $request->get('per_page', 10);
 
-    if ($request->has('to_date') && !empty($request->to_date)) {
-        $query->where('created_at', '<=', Carbon::parse($request->to_date)->endOfDay());
-    }
+        // Start query
+        $query = DB::connection('mongodb')->table('transfers')->orderBy('created_at', 'desc');
 
-    // Paginate the results
-    $transfers = $query->paginate($perPage);
+        // If a normal user is logged in, restrict to their transfers
+        if ($user) {
+            $query->where('transfer_by', $user->id);
+        }
 
-    // Append all query parameters to pagination links
-    $transfers->appends([
-        'per_page' => $perPage,
-        'search' => $request->search,
-        'date_range' => $request->date_range,
-        'from_date' => $request->from_date,
-        'to_date' => $request->to_date
-    ]);
+        // Apply search filter if search term exists
+        if ($request->has('search') && !empty($request->search)) {
+            $searchTerm = strtolower($request->search);
 
-    if ($transfers->isEmpty()) {
+            // Find matching user IDs by player name
+            $matchedUsers = User::where('player', 'LIKE', "%{$searchTerm}%")->get(['_id']);
+            $userIds = $matchedUsers->pluck('_id')->map(fn($id) => (string) $id)->toArray();
+
+            $query->where(function ($q) use ($searchTerm, $userIds) {
+                $q->where('amount', 'LIKE', "%{$searchTerm}%")
+                    ->orWhere('remaining_balance', 'LIKE', "%{$searchTerm}%")
+                    ->orWhere('transfer_role', 'LIKE', "%{$searchTerm}%")
+                    ->orWhereIn('transfer_by', $userIds)
+                    ->orWhereIn('transfer_to', $userIds);
+            });
+        }
+
+        // Apply date range filter
+        if ($request->has('date_range') && !empty($request->date_range)) {
+            switch ($request->date_range) {
+                case '2_days_ago':
+                    $query->where('created_at', '>=', now()->subDays(2));
+                    break;
+                case 'this_week':
+                    $query->whereBetween('created_at', [now()->startOfWeek(), now()]);
+                    break;
+                case 'this_month':
+                    $query->whereBetween('created_at', [now()->startOfMonth(), now()]);
+                    break;
+            }
+        }
+
+        // Apply custom date range filter
+        if ($request->has('from_date') && !empty($request->from_date)) {
+            $query->where('created_at', '>=', Carbon::parse($request->from_date)->startOfDay());
+        }
+
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $query->where('created_at', '<=', Carbon::parse($request->to_date)->endOfDay());
+        }
+
+        // Paginate the results
+        $transfers = $query->paginate($perPage);
+
+        // Append all query parameters to pagination links
+        $transfers->appends([
+            'per_page' => $perPage,
+            'search' => $request->search,
+            'date_range' => $request->date_range,
+            'from_date' => $request->from_date,
+            'to_date' => $request->to_date
+        ]);
+
+        if ($transfers->isEmpty()) {
+            return view('pages.transfer.report', compact('transfers'));
+        }
+
+        // Convert MongoDB IDs to strings for array keys
+        $allAdmins = Admin::all()->mapWithKeys(function ($admin) {
+            return [(string) $admin->_id => $admin];
+        });
+
+        $userIds = $transfers->pluck('transfer_by')
+            ->merge($transfers->pluck('transfer_to'))
+            ->unique()
+            ->map(function ($id) {
+                return (string) $id;
+            });
+
+        $users = User::whereIn('_id', $userIds)->get()->mapWithKeys(function ($user) {
+            return [(string) $user->_id => $user];
+        });
+
+        foreach ($transfers as $transfer) {
+            // Convert transfer IDs to strings for comparison
+            $transferBy = (string) $transfer->transfer_by;
+            $transferTo = (string) $transfer->transfer_to;
+
+            // Set agent name
+            $transfer->agent_name = $users[$transferBy]->player ?? 'N/A (User ID: ' . $transferBy . ')';
+
+            // Set distributor name
+            if (isset($allAdmins[$transferTo])) {
+                $transfer->distributor_name = $allAdmins[$transferTo]->player ?? 'Admin';
+            } else {
+                $transfer->distributor_name = $users[$transferTo]->player ?? 'N/A (ID: ' . $transferTo . ')';
+            }
+        }
+
         return view('pages.transfer.report', compact('transfers'));
     }
-
-    // Convert MongoDB IDs to strings for array keys
-    $allAdmins = Admin::all()->mapWithKeys(function ($admin) {
-        return [(string) $admin->_id => $admin];
-    });
-
-    $userIds = $transfers->pluck('transfer_by')
-        ->merge($transfers->pluck('transfer_to'))
-        ->unique()
-        ->map(function ($id) {
-            return (string) $id;
-        });
-
-    $users = User::whereIn('_id', $userIds)->get()->mapWithKeys(function ($user) {
-        return [(string) $user->_id => $user];
-    });
-
-    foreach ($transfers as $transfer) {
-        // Convert transfer IDs to strings for comparison
-        $transferBy = (string) $transfer->transfer_by;
-        $transferTo = (string) $transfer->transfer_to;
-
-        // Set agent name
-        $transfer->agent_name = $users[$transferBy]->player ?? 'N/A (User ID: ' . $transferBy . ')';
-
-        // Set distributor name
-        if (isset($allAdmins[$transferTo])) {
-            $transfer->distributor_name = $allAdmins[$transferTo]->player ?? 'Admin';
-        } else {
-            $transfer->distributor_name = $users[$transferTo]->player ?? 'N/A (ID: ' . $transferTo . ')';
-        }
-    }
-
-    return view('pages.transfer.report', compact('transfers'));
-}
 
     public function getAgents($distributorId)
     {
@@ -937,31 +944,31 @@ class PagesController extends Controller
         }
     }
 
-  public function updateCustomBet(Request $request)
-{
-    $validated = $request->validate([
-        'custom_bet' => 'required|integer|min:0|max:9',
-    ]);
+    public function updateCustomBet(Request $request)
+    {
+        $validated = $request->validate([
+            'custom_bet' => 'required|integer|min:0|max:9',
+        ]);
 
-    try {
-        // Get the first settings record (assuming you only have one)
-        $setting = Setting::first();
-        
-        if (!$setting) {
-            // Create new settings if none exists
-            $setting = new Setting();
-            $setting->_id = new ObjectId('67d942244d741e1fb4f08710'); // Only if you need this specific ID
+        try {
+            // Get the first settings record (assuming you only have one)
+            $setting = Setting::first();
+
+            if (!$setting) {
+                // Create new settings if none exists
+                $setting = new Setting();
+                $setting->_id = new ObjectId('67d942244d741e1fb4f08710'); // Only if you need this specific ID
+            }
+
+            $setting->customBet = $validated['custom_bet'];
+            $setting->save();
+
+            return back()->with('success', 'Custom Bet updated successfully!');
+
+        } catch (\Exception $e) {
+            return back()->with('error', 'Failed to update Custom Bet: ' . $e->getMessage());
         }
-
-        $setting->customBet = $validated['custom_bet'];
-        $setting->save();
-        
-        return back()->with('success', 'Custom Bet updated successfully!');
-        
-    } catch (\Exception $e) {
-        return back()->with('error', 'Failed to update Custom Bet: ' . $e->getMessage());
     }
-}
 
     public function getAdminEndpoint()
     {
