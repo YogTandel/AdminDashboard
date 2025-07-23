@@ -21,8 +21,8 @@
                                 <div class="input-group input-group-outline border-radius-lg shadow-sm">
                                     <select name="per_page" id="per_page" class="form-select border-0 ps-3 pe-4"
                                         onchange="this.form.submit()" style="min-width: 60px;">
-                                        <option value="5" {{ request('per_page') == 5 ? 'selected' : '' }}>5</option>
                                         <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
+                                        <option value="15" {{ request('per_page') == 15 ? 'selected' : '' }}>15</option>
                                     </select>
                                 </div>
                                 @if (request()->has('search'))

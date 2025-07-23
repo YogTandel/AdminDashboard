@@ -18,7 +18,7 @@ class PagesController extends Controller
 {
     public function agentList()
     {
-        $perPage = request()->get('per_page', 5);
+        $perPage = request()->get('per_page', 10);
         $query = User::query();
 
         // Search filter
@@ -68,7 +68,7 @@ class PagesController extends Controller
 
     public function distributor()
     {
-        $perPage = request()->get('per_page', 5);
+        $perPage = request()->get('per_page', 10);
         $query = User::query();
 
         // Search filter
