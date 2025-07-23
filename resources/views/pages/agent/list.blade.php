@@ -63,14 +63,19 @@
                                         <i class="fas fa-search"></i>
                                     </span>
                                     <label class="form-label"></label>
-                                    <input type="search" name="search" class="form-control border-0"
+                                    <input type="search" name="search" class="form-control border-0" 
+                                        value="{{ request('search') }}"
                                         onfocus="this.parentElement.classList.add('is-focused')"
                                         onfocusout="this.parentElement.classList.remove('is-focused')">
+                                        <input type="hidden" name="per_page" value="{{ request('per_page', 10) }}">
                                 </div>
+                                
+                                <!-- Add hidden field to maintain per_page value -->
+                                
+                                
                                 <button type="submit" class="btn bg-gradient-warning rounded-pill shadow-sm mb-0">
                                     Search
                                 </button>
-                                <input type="hidden" name="per_page" value="{{ request('per_page', 10) }}">
                             </form>
                             
 
@@ -121,6 +126,7 @@
                         @if (request()->has('from_date') || request()->has('to_date') || request()->has('date_range'))
                             <a href="{{ route('agentlist.show') }}" class="btn btn-secondary btn-sm px-3 mt-3">Reset</a>
                         @endif
+                        <input type="hidden" name="per_page" value="{{ request('per_page', 10) }}">
                     </form>
 
                     <div class="card-body px-0 pt-0 pb-2">
