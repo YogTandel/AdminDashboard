@@ -240,9 +240,18 @@
                         let row = `<tr>`;
                         row += `<td class="text-center text-dark fw-bold">${ name }</td>`;
 
-                        for (let i = 0; i < 10; i++) {
-                            row += `<td class="text-center">${ betValues[i] ?? 0 }</td>`;
-                        }
+                        row += `<td class="text-center">${ betValues[1] ?? 0 }</td>`;
+                        row += `<td class="text-center">${ betValues[2] ?? 0 }</td>`;
+                        row += `<td class="text-center">${ betValues[3] ?? 0 }</td>`;
+                        row += `<td class="text-center">${ betValues[4] ?? 0 }</td>`;
+                        row += `<td class="text-center">${ betValues[5] ?? 0 }</td>`;
+                        row += `<td class="text-center">${ betValues[6] ?? 0 }</td>`;
+                        row += `<td class="text-center">${ betValues[7] ?? 0 }</td>`;
+                        row += `<td class="text-center">${ betValues[8] ?? 0 }</td>`;
+                        row += `<td class="text-center">${ betValues[9] ?? 0 }</td>`;
+                        row += `<td class="text-center">${ betValues[0] ?? 0 }</td>`;
+                        
+                        
 
                         row += `<td class="text-center fw-bold">${ total }</td>`;
                         row += `</tr>`;

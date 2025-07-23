@@ -1383,37 +1383,31 @@ class PagesController extends Controller
             'win_amount' => 'required|numeric|min:0',
         ];
 
-        if ($request->type === 'distributor') {
-            $rules['commission_percentage'] = 'required|numeric|min:0|max:100';
-        } else {
-            $rules['commission_percentage'] = 'required|numeric|min:0';
-        }
 
         $request->validate($rules);
 
         $transferTo = $request->transfer_to;
+        $distributor_id = $request->distributor_id;
         $type = $request->type;
         $totalBet = $request->total_bet;
-        $commissionPercentage = $request->commission_percentage;
+        $commission_amount = $request->commission_amount;
         $winAmount = $request->win_amount;
-
-        $commission = ($type === 'distributor')
-            ? ($totalBet * $commissionPercentage) / 100
-            : $commissionPercentage;
 
         $setting = Setting::first();
         if (!$setting) {
             return response()->json(['error' => 'System settings not found'], 400);
         }
 
-        $systemEarningPercent = $setting->earning;
-        $availableEarning = ($winAmount * $systemEarningPercent) / 100;
-
-        if ($availableEarning < $commission) {
+        $commission_amount_distributor = $winAmount*($setting->distributorComission/100);
+       
+        if ($setting->earning < ($commission_amount+$commission_amount_distributor)) {
             return response()->json(['error' => 'Not enough earnings in system'], 400);
         }
 
-        $user = User::where('id', $transferTo)->where('role', $type)->first();
+        $user = User::where('id', $transferTo)->first();
+        $dis_dtd = User::where('id', $distributor_id)->first();
+        $remainingBalance_agent = $user->endpoint;
+        $remainingBalance_distributor = $dis_dtd->endpoint;
         if (!$user) {
             Log::error('Agent not found', [
                 'transfer_to' => $transferTo,
@@ -1422,30 +1416,33 @@ class PagesController extends Controller
             return response()->json(['error' => ucfirst($type) . ' not found'], 404);
         }
 
+        
         if ($type === 'agent') {
-            $user->endpoint = ($user->endpoint ?? 0) + $commission;
-            $commissionPercentageValue = ($commission / $winAmount) * 100;
-            $newSystemEarningPercent = $systemEarningPercent - $commissionPercentageValue;
+            $user->endpoint = ($user->endpoint ?? 0) + $commission_amount;
+            $dis_dtd->endpoint = ($dis_dtd->endpoint ?? 0) + $commission_amount_distributor;
+            
+
+
+            $newSystemEarningPercent = $setting->earning - ($commission_amount + $commission_amount_distributor);
 
             if ($newSystemEarningPercent < 0) {
                 return response()->json(['error' => 'System earning cannot go below zero'], 400);
             }
+            
 
             $setting->earning = $newSystemEarningPercent;
             $setting->save();
 
-        } elseif ($type === 'distributor') {
-            $commissionPercentageValue = ($commission / $winAmount) * 100;
-            $user->endpoint = ($user->endpoint ?? 0) + $commissionPercentageValue;
-            // System earning not reduced for distributor
+            
+            
+            $user->release_commission_date = now();
+            $user->save();
+            $dis_dtd->save();
+
         }
-
-        $user->release_commission_date = now();
-        $user->save();
-
-        $remainingBalance = ($type === 'agent')
-            ? ($winAmount * $setting->earning) / 100
-            : ($winAmount * $systemEarningPercent) / 100;
+        
+        
+        
 
         $name = $user->player ?? $request->name ?? 'Unknown';
 
@@ -1454,15 +1451,27 @@ class PagesController extends Controller
             'name' => $name,
             'type' => $type,
             'total_bet' => $totalBet,
-            'commission_percentage' => $commissionPercentage,
-            'remaining_balance' => $remainingBalance,
+            'commission_percentage' => $setting->agentComission,
+            'commission_amount' => $commission_amount,
+            'remaining_balance' => $remainingBalance_agent,
+            'transfer_role' => 'admin',
+        ]);
+        
+        $data = Release::create([
+            'transfer_to' => $dis_dtd->_id,
+            'name' => $dis_dtd->player,
+            'type' => "distributor",
+            'total_bet' => $totalBet,
+            'commission_percentage' => $setting->distributorComission,
+            'commission_amount' => $commission_amount_distributor,
+            'remaining_balance' => $remainingBalance_distributor,
             'transfer_role' => 'admin',
         ]);
 
         return response()->json([
             'success' => true,
             'message' => 'Commission released successfully.',
-            'remaining_balance' => $remainingBalance,
+            'remaining_balance' => $remainingBalance_agent,
             'released_at' => now()->format('Y-m-d H:i:s'),
             'data' => $data,
         ]);

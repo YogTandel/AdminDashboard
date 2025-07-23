@@ -161,9 +161,9 @@
                                 <!-- Release Button -->
                                 <div class="d-flex flex-column" style="min-width: 140px;">
                                     <label class="form-label mb-1 invisible">Placeholder</label>
-                                    <button type="button" class="btn btn-success w-100 mb-0" id="releaseButton">
+                                    <!-- <button type="button" class="btn btn-success w-100 mb-0" id="releaseButton">
                                         Release
-                                    </button>
+                                    </button> -->
                                 </div>
 
                                 <input type="hidden" id="totalBet" value="0">
@@ -414,13 +414,14 @@
             $(document).on('click', '.agent-release-btn', function() {
                 const $button = $(this);
                 const agentId = $button.data('agentid');
+                const distributorId = $('#distributor_id').val();
                 const agentName = $button.data('agent-name');
                 const winAmount = parseFloat($button.data('win-amount'));
                 const commissionAmount = parseFloat($button.data('agent-commission'));
-
+                //alert(commissionAmount);
                 console.log('Release clicked for agentId:', agentId);
-
-                if (!agentId || isNaN(commissionAmount) || commissionAmount <= 0 || isNaN(winAmount) ||
+                //return;
+                if (!distributorId || !agentId || isNaN(commissionAmount) || commissionAmount <= 0 || isNaN(winAmount) ||
                     winAmount <= 0) {
                     alert('Invalid agent data.');
                     return;
@@ -431,10 +432,11 @@
                     method: 'POST',
                     data: {
                         transfer_to: agentId,
+                        distributor_id:distributorId,
                         name: agentName,
                         type: 'agent',
                         total_bet: winAmount,
-                        commission_percentage: commissionAmount, // agent commission is currency directly
+                        commission_amount: commissionAmount, // agent commission is currency directly
                         win_amount: winAmount,
                         _token: '{{ csrf_token() }}'
                     },
