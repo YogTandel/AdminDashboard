@@ -52,6 +52,8 @@
                             onfocus="this.parentElement.classList.add('is-focused')"
                             onfocusout="this.parentElement.classList.remove('is-focused')">
                     </div>
+                    <input type="hidden" name="per_page" value="{{ request('per_page', 10) }}">
+
                     <button type="submit" class="btn bg-gradient-warning rounded-pill shadow-sm mb-0">
                         Search
                     </button>
