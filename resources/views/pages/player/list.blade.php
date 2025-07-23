@@ -48,6 +48,9 @@
                                 <button type="submit" class="btn bg-gradient-warning rounded-pill shadow-sm mb-0">
                                     Search
                                 </button>
+                                @if (request()->has('from_date') || request()->has('to_date') || request()->has('date_range') || request()->has('search'))
+                                    <a href="{{ route('player.show') }}" class="btn btn-secondary btn-sm px-3 mt-3">Reset</a>
+                                @endif
                             </form>
                             <button type="button" class="btn btn-primary mb-0" data-bs-toggle="modal"
                                 data-bs-target="#exampleModalAddplayer">

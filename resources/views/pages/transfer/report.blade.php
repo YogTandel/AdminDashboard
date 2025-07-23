@@ -56,6 +56,9 @@
                     <button type="submit" class="btn bg-gradient-warning rounded-pill shadow-sm mb-0">
                         Search
                     </button>
+                    @if (request()->has('from_date') || request()->has('to_date') || request()->has('date_range') || request()->has('search'))
+                        <a href="{{ route('transfer.report') }}" class="btn btn-secondary btn-sm px-3 mt-3">Reset</a>
+                    @endif
                     
                     <!-- Persist per_page in search form -->
                     <input type="hidden" name="per_page" value="{{ request('per_page', 10) }}">
