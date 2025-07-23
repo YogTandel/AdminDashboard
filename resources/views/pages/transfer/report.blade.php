@@ -104,9 +104,10 @@
 
         @if(count($transfers) > 0)
             <div class="table-responsive mt-2">
-                <table class="table table-bordered table-hover" style="font-size: 0.8rem; color: #212529;">
+                <table class="table table-bordered table-hover table-striped" style="font-size: 0.8rem; color: #212529;">
                     <thead>
                         <tr>
+                            <th scope="col" class="text-dark">No</th>
                             <th scope="col" class="text-dark">transfer by </th>
                             <th scope="col" class="text-dark">transfer to </th>
                             <th scope="col" class="text-dark">Amount</th>
@@ -116,8 +117,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($transfers as $transfer)
+                        @foreach($transfers as $index => $transfer)
                             <tr>
+                                <td>{{ $index + 1 }}</td>
                                 <td>{{ $transfer->agent_name }}</td>
                                 <td>
                                     @if(str_contains($transfer->distributor_name, 'Admin'))

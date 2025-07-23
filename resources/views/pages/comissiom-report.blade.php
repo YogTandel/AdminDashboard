@@ -105,7 +105,8 @@
             <!-- <h3 class="mb-4">Release History</h3> -->
             <table class="table table-bordered table-striped">
                 <thead>
-                    <tr>
+                    <tr class="text-center">
+                        <th>No</th>
                         <th>Transfer To</th>
                         <th>Type</th>
                         <th>Total Bet</th>
@@ -116,8 +117,9 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse ($releases as $release)
-                        <tr class="text-dark">
+                    @forelse ($releases as $index => $release)
+                        <tr class="text-dark text-center">
+                            <td>{{ $index + 1 }}</td>
                             <td>{{ $release['name'] ?? 'N/A' }}</td>
                             <td>{{ $release['type'] ?? 'N/A' }}</td>
                             <td>₹ {{ $release['total_bet'] ?? '0' }}</td>

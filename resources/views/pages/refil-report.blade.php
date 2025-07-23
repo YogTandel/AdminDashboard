@@ -103,9 +103,10 @@
 
         @if ($refils->count() > 0)
             <div class="table-responsive">
-                <table class="table table-bordered table-hover" style="font-size: 0.8rem; color: #212529;">
+                <table class="table table-bordered table-hover table-striped" style="font-size: 0.8rem; color: #212529;">
                     <thead>
-                        <tr>
+                        <tr class="text-center">
+                            <th>No</th>
                             <th>Transfer By</th>
                             <th>Transfer To</th>
                             <th>Amount</th>
@@ -116,8 +117,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($refils as $refil)
-                            <tr>
+                        @foreach ($refils as $index => $refil)
+                            <tr class="text-center">
+                                <td>{{ $index + 1 }}</td>
                                 <td>{{ $refil->agent_name }}</td>
                                 <td>
                                     @if (str_contains($refil->distributor_name, 'Admin'))
