@@ -410,7 +410,28 @@
             sendMessage();
         }, 3000);
     </script> --}}
-    <script>
+
+    {{-- <script>
+        const socket = new WebSocket('ws://localhost:8080');
+
+        socket.onopen = function(event) {
+            // Handle connection open
+        };
+
+        socket.onmessage = function(event) {
+            // Handle received message
+        };
+
+        socket.onclose = function(event) {
+            // Handle connection close
+        };
+
+        function sendMessage(message) {
+            socket.send(message);
+        }
+    </script> --}}
+
+    {{-- <script>
         let timeOffset = 0;
         let targetTime = 0;
         let countdownInterval;
@@ -501,7 +522,121 @@
         setTimeout(() => {
             sendTimerRequest();
         }, 3000);
+    </script> --}}
+
+    <!-- Your timer badge -->
+    <span id="timer-badge" class="badge bg-dark"
+        style="font-size: 16px; color: #FF0000; font-family: 'Share Tech Mono', monospace;">
+        00:00
+    </span>
+
+    <script>
+        let timeOffset = 0;
+        let targetTime = 0;
+        let countdownInterval;
+
+        // ✅ Sets the server time offset like Unity's SetServerTime()
+        function setServerTime(serverTimeMilliseconds) {
+            const serverTimeTicks = (serverTimeMilliseconds * 10000) + 621355968000000000;
+            const serverTimeSeconds = Math.floor(serverTimeTicks / 10000000);
+            const localTimeTicks = (Date.now() * 10000) + 621355968000000000;
+            const localTimeSeconds = Math.floor(localTimeTicks / 10000000);
+            timeOffset = serverTimeSeconds - localTimeSeconds;
+            console.log(`✅ [setServerTime] Time offset set: ${timeOffset} seconds`);
+        }
+
+        // ✅ Handles incoming TIMER events like HandleTimerEvent()
+        function handleTimerEvent(currentTimeMilliseconds, systemTimeMilliseconds) {
+            setServerTime(systemTimeMilliseconds);
+
+            const utcDateTime = new Date(currentTimeMilliseconds);
+            targetTime = Math.floor(utcDateTime.getTime() / 1000); // Convert ms to epoch seconds
+            console.log(`✅ [handleTimerEvent] targetTime set to: ${targetTime}`);
+
+            updateCountdownText();
+
+            if (countdownInterval) clearInterval(countdownInterval);
+            countdownInterval = setInterval(updateCountdown, 1000);
+        }
+
+        // ✅ Updates countdown text each second (equivalent to Unity's Update())
+        function updateCountdown() {
+            const currentTime = Math.floor(Date.now() / 1000) + timeOffset;
+            let timeRemaining = 60 - Math.abs(targetTime - currentTime);
+
+            if (timeRemaining <= 0) {
+                document.getElementById('timer-badge').innerText = '00:00';
+                clearInterval(countdownInterval);
+                console.log("🛑 [updateCountdown] Countdown ended");
+                return;
+            }
+
+            const seconds = timeRemaining % 60;
+            const formattedSeconds = seconds < 10 ? '0' + seconds : seconds;
+            document.getElementById('timer-badge').innerText = `00:${formattedSeconds}`;
+        }
+
+        // ✅ Updates countdown text immediately after receiving TIMER (like UpdateCountdownText())
+        function updateCountdownText() {
+            const currentTime = Math.floor(Date.now() / 1000) + timeOffset;
+            let timeRemaining = targetTime - currentTime;
+
+            if (timeRemaining <= 0) {
+                document.getElementById('timer-badge').innerText = '0';
+                console.log("🛑 [updateCountdownText] Countdown ended");
+                return;
+            }
+
+            let seconds = timeRemaining % 60;
+            seconds -= 3; // Unity logic adjustment
+
+            if (seconds < 0) seconds = 0;
+
+            const formattedSeconds = seconds < 10 ? '0' + seconds : seconds;
+            document.getElementById('timer-badge').innerText = formattedSeconds;
+        }
+
+        // ✅ Send TIMER request like Unity's SendTimerRequest()
+        function sendTimerRequest(socket) {
+            const message = {
+                data: "Timer request"
+            };
+            socket.send(JSON.stringify(message));
+            console.log("📤 [WebSocket] Timer request sent");
+        }
+
+        // ✅ Initialize WebSocket and timer logic
+        function startTimerSocket() {
+            const socket = new WebSocket('ws://128.199.64.164:3101');
+
+            socket.onopen = function() {
+                console.log("✅ [WebSocket] Connection opened");
+                sendTimerRequest(socket);
+            };
+
+            socket.onmessage = function(event) {
+                const data = JSON.parse(event.data);
+                console.log("📩 [WebSocket] Message received:", data);
+
+                if (data.eventName === "TIMER") {
+                    handleTimerEvent(data.currentTime, data.systemTime);
+                }
+            };
+
+            socket.onclose = function(event) {
+                console.log("❌ [WebSocket] Connection closed", event);
+            };
+
+            socket.onerror = function(event) {
+                console.error("❌ [WebSocket] Error occurred:", event);
+            };
+        }
+
+        // ✅ Start everything on page load
+        startTimerSocket();
     </script>
+
+
 
 
 
