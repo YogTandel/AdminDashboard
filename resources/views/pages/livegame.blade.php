@@ -524,12 +524,6 @@
         }, 3000);
     </script> --}}
 
-    <!-- Your timer badge -->
-    <span id="timer-badge" class="badge bg-dark"
-        style="font-size: 16px; color: #FF0000; font-family: 'Share Tech Mono', monospace;">
-        00:00
-    </span>
-
     <script>
         let timeOffset = 0;
         let targetTime = 0;
