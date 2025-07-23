@@ -1186,13 +1186,27 @@ class PagesController extends Controller
 
         // Apply search filter if search term exists
         if ($request->has('search') && !empty($request->search)) {
-            $searchTerm = $request->search;
-            $query->where(function ($q) use ($searchTerm) {
+            $searchTerm = strtolower($request->search);
+
+            // Step 1: Search users and admins by 'player' name
+            $matchedUsers = User::where('player', 'LIKE', "%{$searchTerm}%")->get(['_id']);
+            $userIds = $matchedUsers->pluck('_id')->map(fn($id) => (string) $id)->toArray();
+
+            $matchedAdmins = Admin::where('player', 'LIKE', "%{$searchTerm}%")->get(['_id']);
+            $adminIds = $matchedAdmins->pluck('_id')->map(fn($id) => (string) $id)->toArray();
+
+            $allMatchedIds = array_merge($userIds, $adminIds);
+
+            // Step 2: Apply search filter to all relevant fields
+            $query->where(function ($q) use ($searchTerm, $allMatchedIds) {
                 $q->where('amount', 'LIKE', "%{$searchTerm}%")
                     ->orWhere('type', 'LIKE', "%{$searchTerm}%")
-                    ->orWhere('transfer_role', 'LIKE', "%{$searchTerm}%");
+                    ->orWhere('transfer_role', 'LIKE', "%{$searchTerm}%")
+                    ->orWhereIn('transfer_by', $allMatchedIds)
+                    ->orWhereIn('transfer_to', $allMatchedIds);
             });
         }
+
 
         // Apply date range filter
         if ($request->has('date_range') && !empty($request->date_range)) {

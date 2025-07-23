@@ -106,8 +106,8 @@
                 <table class="table table-bordered table-hover" style="font-size: 0.8rem; color: #212529;">
                     <thead>
                         <tr>
-                            <th>Transfer By Name</th>
-                            <th>Transfer To Name</th>
+                            <th>Transfer By</th>
+                            <th>Transfer To</th>
                             <th>Amount</th>
                             <th>Remaining Balance</th>
                             <th>Role</th>
