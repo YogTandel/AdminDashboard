@@ -82,9 +82,11 @@
             @if (request()->has('search'))
                 <input type="hidden" name="search" value="{{ request('search') }}">
             @endif
+            <input type="hidden" name="per_page" value="{{ request('per_page', 10) }}">
 
             <!-- Filter Button -->
             <button type="submit" class="btn btn-sm btn-primary  mb-0">Filter</button>
+            <input type="hidden" name="per_page" value="{{ request('per_page', 10) }}">
 
             <!-- Reset Button -->
             @if (request()->has('from_date') || request()->has('to_date') || request()->has('date_range'))
