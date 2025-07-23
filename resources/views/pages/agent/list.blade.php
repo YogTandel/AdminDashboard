@@ -38,19 +38,22 @@
                         <h6 class="mb-0 ms-4 mt-3 text-bolder">Agent Users</h6>
                         <div class="d-flex align-items-center gap-2 flex-wrap mt-3 me-3">
                             <!-- Show Dropdown -->
-                            <form method="GET" class="d-flex align-items-center mb-0">
+                            <form method="GET" class="d-flex align-items-center mb-0" id="perPageForm">
                                 <label for="per_page" class="mb-0 me-2 text-sm text-dark fw-bold">Show:</label>
-
+                                
                                 <div class="input-group input-group-outline border-radius-lg shadow-sm">
-                                    <select name="per_page" id="per_page" class="form-select border-0 ps-3 pe-4"
-                                        onchange="this.form.submit()" style="min-width: 60px;">
-                                        <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
-                                        <option value="15" {{ request('per_page') == 15 ? 'selected' : '' }}>15</option>
+                                    <select name="per_page" id="per_page" class="form-select border-0 ps-3 pe-4" style="min-width: 60px;">
+                                        <option value="10" {{ (int)request()->query('per_page', 10) === 10 ? 'selected' : '' }}>10</option>
+                                        <option value="15" {{ (int)request()->query('per_page', 10) === 15 ? 'selected' : '' }}>15</option>
                                     </select>
                                 </div>
-                                @if (request()->has('search'))
-                                    <input type="hidden" name="search" value="{{ request('search') }}">
-                                @endif
+                                
+                                <!-- Persist ALL parameters EXCEPT page -->
+                                 @foreach(request()->query() as $key => $value)
+                                    @if($key != 'per_page')
+                                        <input type="hidden" name="{{ $key }}" value="{{ $value }}">
+                                    @endif
+                                @endforeach
                             </form>
 
                             <!-- Search -->
@@ -603,4 +606,21 @@
                 });
         }
     </script>
+ <script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('perPageForm');
+    const select = document.getElementById('per_page');
+    
+    if (select) {
+        select.addEventListener('change', function() {
+            // Update the force_per_page hidden field
+            const hiddenField = form.querySelector('input[name="force_per_page"]');
+            if (hiddenField) {
+                hiddenField.value = this.value;
+            }
+            form.submit();
+        });
+    }
+});
+</script>
 @endsection
