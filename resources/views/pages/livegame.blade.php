@@ -37,13 +37,13 @@
                 {{-- Earning --}}
                 <div class="d-flex align-items-center">
                     <span class="text-dark me-2" style="font-size: 1.5rem; font-weight: 700;">Earning:</span>
-                    <span id="live-earning11" class="badge bg-gradient-success me-3" style="font-size: 1rem;">--</span>
+                    <span id="live-earning11" class="badge bg-gradient-success me-2" style="font-size: 1rem;">--</span>
                 </div>
 
                 {{-- Result --}}
                 <div class="d-flex align-items-center">
                     <span class="text-dark me-2" style="font-size: 1.5rem; font-weight: 700;">Result:</span>
-                    <span id="live-result" class="badge text-white me-3"
+                    <span id="live-result" class="badge text-white "
                         style="background: linear-gradient(135deg, #f093fb, #f5576c); font-size: 1rem; font-weight: 700;">
                         --
                     </span>
@@ -55,9 +55,9 @@
                     @csrf
                     <span class="text-dark" style="font-size: 1.5rem; font-weight: 700;">Custom Bet:</span>
                     <input type="number" name="custom_bet" class="form-control form-control-sm"
-                        placeholder="Enter Custom Bet" style="width: 200px;" min="0" max="9" required
+                        placeholder="" style="width: 100px;" min="0" max="9" required
                         value="{{ old('custom_bet') }}" />
-                    <button type="submit" class="btn btn-primary btn-sm ms-2 mt-2" style="width: 100px;">Submit</button>
+                    <button type="submit" class="btn btn-primary btn-sm ms-2 mt-3" style="width: 100px;">Submit</button>
                 </form>
 
                 {{-- Timer Badge --}}
