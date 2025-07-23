@@ -66,7 +66,6 @@
                         style="font-size: 16px; color: #FF0000; font-family: 'Share Tech Mono', monospace;">
                         00:00
                     </span>
-
                 </div>
             </div>
         </div>
