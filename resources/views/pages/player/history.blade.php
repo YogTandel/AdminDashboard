@@ -22,9 +22,9 @@
                                 </div>
                             </div>
 
-                            <div class="d-flex flex-wrap align-items-end gap-2 mt-2 mt-md-0">
+                            <!-- <div class="d-flex flex-wrap align-items-end gap-2 mt-2 mt-md-0"> -->
                                 <!-- Show Dropdown -->
-                                <div class="d-flex align-items-center mb-0">
+                                <div class="d-flex align-items-center mb-2">
                                     <label for="per_page" class="mb-0 me-2 text-sm text-dark fw-bold">Show:</label>
                                     <div class="input-group input-group-outline border-radius-lg shadow-sm">
                                         <select name="per_page" id="per_page" class="form-select border-0 ps-3 pe-4"
@@ -38,7 +38,7 @@
                                 </div>
 
                                 <form method="GET" action="{{ route('player.history', $player->_id) }}">
-                                    <div class="d-flex justify-content-end gap-2 mb-3">
+                                    <div class="d-flex justify-content-end gap-2 mt-5">
                                         <div>
                                             <label for="date_range" class="form-label mb-0">Quick Date Range</label>
                                             <select name="date_range" id="date_range" class="form-control mb-0">
@@ -76,7 +76,7 @@
                                         <a href="{{ route('player.show') }}" class="btn btn-sm btn-outline-dark">← Back</a>
                                     </div>
                                 </form>
-                            </div>
+                            <!-- </div> -->
                         </div>
                     </div>
 
