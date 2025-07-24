@@ -1422,7 +1422,6 @@ class PagesController extends Controller
             'win_amount' => 'required|numeric|min:0',
         ];
 
-
         $request->validate($rules);
 
         $transferTo = $request->transfer_to;
@@ -1460,8 +1459,6 @@ class PagesController extends Controller
             $user->endpoint = ($user->endpoint ?? 0) + $commission_amount;
             $dis_dtd->endpoint = ($dis_dtd->endpoint ?? 0) + $commission_amount_distributor;
 
-
-
             $newSystemEarningPercent = $setting->earning - ($commission_amount + $commission_amount_distributor);
 
             if ($newSystemEarningPercent < 0) {
@@ -1472,16 +1469,10 @@ class PagesController extends Controller
             $setting->earning = $newSystemEarningPercent;
             $setting->save();
 
-
-
             $user->release_commission_date = now();
             $user->save();
             $dis_dtd->save();
-
         }
-
-
-
 
         $name = $user->player ?? $request->name ?? 'Unknown';
 
