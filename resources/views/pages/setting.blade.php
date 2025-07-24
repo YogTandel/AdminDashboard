@@ -78,10 +78,10 @@
                             </div>
 
                             <div class="d-flex flex-wrap gap-2 mt-3">
-                                <button type="submit" class="btn bg-gradient-info mb-2">
+                                <button type="submit" class="btn bg-gradient-info mb-2"style="font-size:13px">
                                     Update Commissions
                                 </button>
-                                <button type="button" class="btn bg-gradient-success mb-2">
+                                <button type="button" class="btn bg-gradient-success mb-2" style="font-size:13px">
                                     Release Commission
                                 </button>
                             </div>
@@ -110,16 +110,16 @@
                             <form action="{{ route('settings.standingToEarning') }}" method="POST"
                                 id="standingToEarningForm">
                                 @csrf
-                                <button type="submit" class="equal-btn btn-orange">Standing To Earning</button>
+                                <button type="submit" class="equal-btn btn-orange " style="font-size:15px">Standing To Earning</button>
                             </form>
 
                             <form action="{{ route('settings.earningToZero') }}" method="POST" id="earningToZeroForm">
                                 @csrf
-                                <button type="submit" class="equal-btn btn-red">Earning to 0</button>
+                                <button type="submit" class="equal-btn btn-red" style="font-size:15px">Earning to 0</button>
                             </form>
 
                             <!-- Your existing button HTML remains exactly the same -->
-                            <button id="toggleSetToMinimumBtn" type="button" class="equal-btn btn-green">
+                            <button id="toggleSetToMinimumBtn" type="button" class="equal-btn btn-green" style="font-size:15px">
                                 Set To Minimum
                             </button>
                         </div>
@@ -148,7 +148,7 @@
                                         required>
                                 </div>
                                 <div class="d-grid mt-3">
-                                    <button type="submit" class="btn bg-gradient-info">
+                                    <button type="submit" class="btn bg-gradient-info"style="font-size:14px">
                                         Update Earning%
                                     </button>
                                 </div>
@@ -172,7 +172,7 @@
                                 <input type="number" class="form-control" name="add_points"
                                     placeholder="Enter Points to Add" required>
                                 <div class="d-grid mt-2">
-                                    <button type="submit" class="btn btn-success shadow-soft">Add To Admin</button>
+                                    <button type="submit" class="btn btn-success shadow-soft"style="font-size:14px">Add To Admin</button>
                                 </div>
                             </div>
                         </form>
@@ -182,7 +182,7 @@
                             <input type="number" class="form-control" name="remove_points"
                                 placeholder="Enter Points to Remove" required min="1">
                             <div class="d-grid mt-2">
-                                <button type="submit" class="btn btn-danger shadow-soft">Remove from Admin</button>
+                                <button type="submit" class="btn btn-danger shadow-soft"style="font-size:14px">Remove from Admin</button>
                             </div>
                         </form>
                     </div>
