@@ -134,28 +134,39 @@ class PagesController extends Controller
         $to = request()->input('to_date');
         $dateRange = request()->input('date_range');
 
-        if ($dateRange) {
+        if (request('date_range')) {
             $today = \Carbon\Carbon::today();
+            $dateRange = request('date_range');
 
             if ($dateRange === '2_days_ago') {
-                $from = $today->copy()->subDays(2)->format('YmdHis');
-                $to = $today->copy()->endOfDay()->format('YmdHis');
+                $query->whereBetween('created_at', [
+                    $today->copy()->subDays(2)->startOfDay(),
+                    $today->copy()->endOfDay()
+                ]);
             } elseif ($dateRange === 'last_week') {
-                $from = $today->copy()->subWeek()->startOfWeek()->format('YmdHis');
-                $to = $today->copy()->subWeek()->endOfWeek()->format('YmdHis');
+                $query->whereBetween('created_at', [
+                    $today->copy()->subWeek()->startOfWeek(),
+                    $today->copy()->subWeek()->endOfWeek()
+                ]);
             } elseif ($dateRange === 'last_month') {
-                $from = $today->copy()->subMonth()->startOfMonth()->format('YmdHis');
-                $to = $today->copy()->subMonth()->endOfMonth()->format('YmdHis');
+                $query->whereBetween('created_at', [
+                    $today->copy()->subMonth()->startOfMonth(),
+                    $today->copy()->subMonth()->endOfMonth()
+                ]);
             }
-        } elseif ($from || $to) {
+        } elseif (request('from') || request('to')) {
             // Handle manual date inputs
-            if ($from) {
-                $from = \Carbon\Carbon::createFromFormat('Y-m-d', $from)->startOfDay()->format('YmdHis');
+            if (request('from')) {
+                $from = \Carbon\Carbon::createFromFormat('Y-m-d', request('from'))->startOfDay();
+                $query->where('created_at', '>=', $from);
             }
-            if ($to) {
-                $to = \Carbon\Carbon::createFromFormat('Y-m-d', $to)->endOfDay()->format('YmdHis');
+            if (request('to')) {
+                $to = \Carbon\Carbon::createFromFormat('Y-m-d', request('to'))->endOfDay();
+                $query->where('created_at', '<=', $to);
             }
         }
+
+        $results = $query->get();
 
         // Apply date filters
         if ($from) {
@@ -1398,9 +1409,9 @@ class PagesController extends Controller
             return response()->json(['error' => 'System settings not found'], 400);
         }
 
-        $commission_amount_distributor = $winAmount*($setting->distributorComission/100);
-       
-        if ($setting->earning < ($commission_amount+$commission_amount_distributor)) {
+        $commission_amount_distributor = $winAmount * ($setting->distributorComission / 100);
+
+        if ($setting->earning < ($commission_amount + $commission_amount_distributor)) {
             return response()->json(['error' => 'Not enough earnings in system'], 400);
         }
 
@@ -1416,11 +1427,11 @@ class PagesController extends Controller
             return response()->json(['error' => ucfirst($type) . ' not found'], 404);
         }
 
-        
+
         if ($type === 'agent') {
             $user->endpoint = ($user->endpoint ?? 0) + $commission_amount;
             $dis_dtd->endpoint = ($dis_dtd->endpoint ?? 0) + $commission_amount_distributor;
-            
+
 
 
             $newSystemEarningPercent = $setting->earning - ($commission_amount + $commission_amount_distributor);
@@ -1428,21 +1439,21 @@ class PagesController extends Controller
             if ($newSystemEarningPercent < 0) {
                 return response()->json(['error' => 'System earning cannot go below zero'], 400);
             }
-            
+
 
             $setting->earning = $newSystemEarningPercent;
             $setting->save();
 
-            
-            
+
+
             $user->release_commission_date = now();
             $user->save();
             $dis_dtd->save();
 
         }
-        
-        
-        
+
+
+
 
         $name = $user->player ?? $request->name ?? 'Unknown';
 
@@ -1456,7 +1467,7 @@ class PagesController extends Controller
             'remaining_balance' => $remainingBalance_agent,
             'transfer_role' => 'admin',
         ]);
-        
+
         $data = Release::create([
             'transfer_to' => $dis_dtd->_id,
             'name' => $dis_dtd->player,

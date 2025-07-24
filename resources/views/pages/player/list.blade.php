@@ -62,15 +62,11 @@
                     <!-- Second Row: Date Filter -->
                     <form method="GET" class="d-flex justify-content-end align-items-center flex-wrap gap-2 mt-2 me-3">
                         <!-- Date Range -->
-                        <select name="date_range" class="form-select form-select-sm" onchange="this.form.submit()"
-                            style="width: 150px;">
+                        <select name="date_range" class="form-select form-select-sm" onchange="this.form.submit()" style="width: 150px;">
                             <option value="">Date Range</option>
-                            <option value="2_days_ago" {{ request('date_range') == '2_days_ago' ? 'selected' : '' }}>Last 2
-                                Days</option>
-                            <option value="this_week" {{ request('date_range') == 'this_week' ? 'selected' : '' }}>This Week
-                            </option>
-                            <option value="this_month" {{ request('date_range') == 'this_month' ? 'selected' : '' }}>This
-                                Month</option>
+                            <option value="2_days_ago" {{ request('date_range') == '2_days_ago' ? 'selected' : '' }}>Last 2 Days</option>
+                            <option value="last_week" {{ request('date_range') == 'last_week' ? 'selected' : '' }}>Last Week</option>
+                            <option value="last_month" {{ request('date_range') == 'last_month' ? 'selected' : '' }}>Last Month</option>
                         </select>
 
                         <!-- From Date -->
@@ -130,7 +126,7 @@
                                         </th>
                                         <th
                                             class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                            Login Status
+                                            Login 
                                         </th>
                                         <th
                                             class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
@@ -138,7 +134,7 @@
                                         </th>
                                         <th
                                             class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                            Winamount
+                                            Win
                                         </th>
                                         <th
                                             class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
@@ -182,7 +178,7 @@
                                                 </td>
                                                 <td class="align-middle text-center text-sm">
                                                     <p class="text-xs font-weight-bold mb-0">
-                                                        ₹{{ number_format($player->balance, 2) }}</p>
+                                                        ₹{{ number_format($player->balance) }}</p>
                                                 </td>
                                                 <td class="align-middle text-center text-sm">
                                                     <p class="text-xs font-weight-bold mb-0">{{ $player->distributorUser?->player }}
@@ -208,7 +204,7 @@
                                                 </td>
                                                 <td class="align-middle text-center">
                                                     <span class="text-secondary text-xs font-weight-bold">
-                                                        {{ \Carbon\Carbon::createFromFormat('YmdHis', $player->DateOfCreation)->format('d M Y, H:i') }}
+                                                        {{ \Carbon\Carbon::createFromFormat('YmdHis', $player->DateOfCreation)->format('d M Y') }}
                                                     </span>
                                                 </td>
                                                 <td class="align-middle">
