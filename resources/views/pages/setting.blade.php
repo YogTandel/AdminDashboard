@@ -5,7 +5,8 @@
 @section('content')
     <div class="container-fluid py-4">
         <!-- Loading Spinner -->
-        <div id="loadingSpinner" class="d-none" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 9999; display: flex; justify-content: center; align-items: center;">
+        <div id="loadingSpinner" class="d-none"
+            style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 9999; display: flex; justify-content: center; align-items: center;">
             <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
                 <span class="visually-hidden">Loading...</span>
             </div>
@@ -105,8 +106,9 @@
                             <div><strong>Admin% Earning:</strong> <span class="text-success">{{ $settings->earning }}</span>
                             </div>
                         </div>
-                        <div class="d-flex flex-wrap gap-3">
-                            <form action="{{ route('settings.standingToEarning') }}" method="POST" id="standingToEarningForm">
+                        <div class="d-flex flex-wrap gap-2">
+                            <form action="{{ route('settings.standingToEarning') }}" method="POST"
+                                id="standingToEarningForm">
                                 @csrf
                                 <button type="submit" class="equal-btn btn-orange">Standing To Earning</button>
                             </form>
@@ -116,6 +118,7 @@
                                 <button type="submit" class="equal-btn btn-red">Earning to 0</button>
                             </form>
 
+                            <!-- Your existing button HTML remains exactly the same -->
                             <button id="toggleSetToMinimumBtn" type="button" class="equal-btn btn-green">
                                 Set To Minimum
                             </button>
@@ -141,8 +144,8 @@
                                     <span class="input-group-text">%</span>
                                     <input type="number" name="earningPercentage" class="form-control"
                                         placeholder="Enter Earning Percentage"
-                                        value="{{ $settings->earningPercentage ?? '' }}" min="0" max="100"
-                                        step="0.01" required>
+                                        value="{{ $settings->earningPercentage ?? '' }}" min="0" max="100" step="0.01"
+                                        required>
                                 </div>
                                 <div class="d-grid mt-3">
                                     <button type="submit" class="btn bg-gradient-info">
@@ -227,7 +230,7 @@
         function showLoader() {
             $('#loadingSpinner').removeClass('d-none').addClass('d-flex');
         }
-        
+
         // Hide loading spinner
         function hideLoader() {
             $('#loadingSpinner').removeClass('d-flex').addClass('d-none');
@@ -246,36 +249,46 @@
             }
         }
 
-        $(document).ready(function() {
+        $(document).ready(function () {
             updateButtonColor(initialValue);
 
             // Form submissions with loader
-            $('#commissionForm').on('submit', function() {
+            $('#commissionForm').on('submit', function () {
                 showLoader();
             });
 
-            $('#standingToEarningForm').on('submit', function() {
+            $('#standingToEarningForm').on('submit', function () {
                 showLoader();
             });
 
-            $('#earningToZeroForm').on('submit', function() {
+            $('#earningToZeroForm').on('submit', function () {
                 showLoader();
             });
 
-            $('#profitForm').on('submit', function() {
+            $('#profitForm').on('submit', function () {
                 showLoader();
             });
 
-            $('#addPointsForm').on('submit', function() {
+            $('#addPointsForm').on('submit', function () {
                 showLoader();
             });
 
-            $('#removePointsForm').on('submit', function() {
+            $('#removePointsForm').on('submit', function () {
                 showLoader();
             });
 
             // Toggle Set To Minimum button
-            $('#toggleSetToMinimumBtn').click(function() {
+
+            function updateButtonColor(isSetToMinimum) {
+                if(isSetToMinimum) {
+                    $('#toggleSetToMinimumBtn').text('ON - Set To Minimum');
+                    $('#toggleSetToMinimumBtn').removeClass('btn-red').addClass('btn-green');
+                } else {
+                    $('#toggleSetToMinimumBtn').text('OFF - Set To Minimum');
+                    $('#toggleSetToMinimumBtn').removeClass('btn-green').addClass('btn-red');
+                }
+            }
+            $('#toggleSetToMinimumBtn').click(function () {
                 showLoader();
                 $.ajax({
                     url: "{{ route('toggle.setToMinimum') }}",
@@ -283,7 +296,7 @@
                     data: {
                         _token: "{{ csrf_token() }}"
                     },
-                    success: function(response) {
+                    success: function (response) {
                         if (response.setTominimum !== undefined) {
                             updateButtonColor(response.setTominimum);
                         } else {
@@ -291,7 +304,7 @@
                         }
                         hideLoader();
                     },
-                    error: function() {
+                    error: function () {
                         alert('Error toggling Set To Minimum');
                         hideLoader();
                     }
@@ -303,18 +316,18 @@
             $.ajax({
                 url: "{{ route('admin.endpoint') }}",
                 method: 'GET',
-                success: function(response) {
+                success: function (response) {
                     $('#admin-endpoint').text("Endpoint: " + response.endpoint);
                     hideLoader();
                 },
-                error: function() {
+                error: function () {
                     $('#admin-endpoint').text("Endpoint: Error loading");
                     hideLoader();
                 }
             });
 
             // Auto-dismiss alerts
-            setTimeout(function() {
+            setTimeout(function () {
                 $('.alert-success-auto').fadeOut('slow');
                 $('.alert-danger-auto').fadeOut('slow');
             }, 5000);
