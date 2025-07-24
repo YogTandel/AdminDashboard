@@ -228,7 +228,7 @@ class AuthController extends Controller
         if ($validate['status'] == "Inactive") {
             User::where('distributor', $id)->update(['status' => 'Inactive']);
         }
-        
+
         Log::info('Distributor updated', ['id' => $user->id]);
 
         // Redirect with all original query parameters
@@ -237,7 +237,7 @@ class AuthController extends Controller
             'search' => $request->search ?? null,
             // Add any other parameters you need to preserve
         ])->with('success', 'Distributor updated successfully');
-        
+
     } catch (\Exception $e) {
         Log::error('Failed to update distributor', ['id' => $id, 'error' => $e->getMessage()]);
         return back()
@@ -306,7 +306,7 @@ class AuthController extends Controller
     public function deleteDistributor($id)
     {
 
-        $distributor = User::where('distributor', $id)->where('role', 'distributor')->firstOrFail();
+        $distributor = User::where('id', $id)->where('role', 'distributor')->firstOrFail();
         $distributor->forceDelete();
 
         User::where('distributor', $id)
