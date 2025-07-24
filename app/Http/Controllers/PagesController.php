@@ -1423,41 +1423,54 @@ class PagesController extends Controller
 
         $request->validate($rules);
 
+        // Convert all money values to integer cents/paisa
         $transferTo        = $request->transfer_to;
         $distributor_id    = $request->distributor_id;
         $type              = $request->type;
-        $totalBet          = $request->total_bet;
-        $commission_amount = $request->commission_amount;
-        $winAmount         = $request->win_amount;
+        $totalBet          = (int) round($request->total_bet * 100);
+        $commission_amount = (int) round($request->commission_amount * 100);
+        $winAmount         = (int) round($request->win_amount * 100);
 
         $setting = Setting::first();
         if (! $setting) {
             return response()->json(['error' => 'System settings not found'], 400);
         }
 
-        $commission_amount_distributor = $winAmount * ($setting->distributorComission / 100);
+        // Convert commission percentages to integers (already stored as 5.00 for 5%)
+        $distributorComission = (int) $setting->distributorComission;
+        $agentComission       = (int) $setting->agentComission;
 
-        if ($setting->earning < ($commission_amount + $commission_amount_distributor)) {
+        // Calculate distributor commission (integer math)
+        $commission_amount_distributor = (int) (($winAmount * $distributorComission) / 100);
+
+        // System earning should also be stored as integer
+        $systemEarning = (int) $setting->earning;
+
+        if ($systemEarning < ($commission_amount + $commission_amount_distributor)) {
             return response()->json(['error' => 'Not enough earnings in system'], 400);
         }
 
-        $user                         = User::where('id', $transferTo)->first();
-        $dis_dtd                      = User::where('id', $distributor_id)->first();
-        $remainingBalance_agent       = $user->endpoint;
-        $remainingBalance_distributor = $dis_dtd->endpoint;
-        if (! $user) {
-            Log::error('Agent not found', [
+        $user    = User::where('id', $transferTo)->first();
+        $dis_dtd = User::where('id', $distributor_id)->first();
+
+        if (! $user || ! $dis_dtd) {
+            Log::error(($user ? 'Distributor' : 'Agent') . ' not found', [
                 'transfer_to' => $transferTo,
                 'type'        => $type,
             ]);
             return response()->json(['error' => ucfirst($type) . ' not found'], 404);
         }
 
-        if ($type === 'agent') {
-            $user->endpoint    = ($user->endpoint ?? 0) + $commission_amount;
-            $dis_dtd->endpoint = ($dis_dtd->endpoint ?? 0) + $commission_amount_distributor;
+        // Get current balances (stored as integers)
+        $remainingBalance_agent       = (int) $user->endpoint;
+        $remainingBalance_distributor = (int) $dis_dtd->endpoint;
 
-            $newSystemEarningPercent = $setting->earning - ($commission_amount + $commission_amount_distributor);
+        if ($type === 'agent') {
+            // Update balances with integer math
+            $user->endpoint    = $remainingBalance_agent + $commission_amount;
+            $dis_dtd->endpoint = $remainingBalance_distributor + $commission_amount_distributor;
+
+            $newSystemEarningPercent = $systemEarning - ($commission_amount + $commission_amount_distributor);
 
             if ($newSystemEarningPercent < 0) {
                 return response()->json(['error' => 'System earning cannot go below zero'], 400);
@@ -1473,35 +1486,56 @@ class PagesController extends Controller
 
         $name = $user->player ?? $request->name ?? 'Unknown';
 
-        $data = Release::create([
+        // Create release records with integer values
+        $agentRelease = Release::create([
             'transfer_to'           => $transferTo,
             'name'                  => $name,
             'type'                  => $type,
             'total_bet'             => $totalBet,
-            'commission_percentage' => $setting->agentComission,
+            'commission_percentage' => $agentComission,
             'commission_amount'     => $commission_amount,
             'remaining_balance'     => $remainingBalance_agent,
             'transfer_role'         => 'admin',
         ]);
 
-        $data = Release::create([
+        $distributorRelease = Release::create([
             'transfer_to'           => $dis_dtd->_id,
             'name'                  => $dis_dtd->player,
             'type'                  => "distributor",
             'total_bet'             => $totalBet,
-            'commission_percentage' => $setting->distributorComission,
+            'commission_percentage' => $distributorComission,
             'commission_amount'     => $commission_amount_distributor,
             'remaining_balance'     => $remainingBalance_distributor,
             'transfer_role'         => 'admin',
         ]);
 
+        // Return values divided by 100 for display
         return response()->json([
             'success'           => true,
             'message'           => 'Commission released successfully.',
-            'remaining_balance' => $remainingBalance_agent,
+            'remaining_balance' => $user->endpoint / 100,
             'released_at'       => now()->format('Y-m-d H:i:s'),
-            'data'              => $data,
+            'data'              => [
+                'agent_release'       => $this->formatReleaseForDisplay($agentRelease),
+                'distributor_release' => $this->formatReleaseForDisplay($distributorRelease),
+            ],
         ]);
+    }
+
+// Helper method to format integer values for display
+    private function formatReleaseForDisplay($release)
+    {
+        return [
+            'id'                    => $release->id,
+            'transfer_to'           => $release->transfer_to,
+            'name'                  => $release->name,
+            'type'                  => $release->type,
+            'total_bet'             => $release->total_bet / 100,
+            'commission_percentage' => $release->commission_percentage,
+            'commission_amount'     => $release->commission_amount / 100,
+            'remaining_balance'     => $release->remaining_balance / 100,
+            'created_at'            => $release->created_at,
+        ];
     }
 
     public function relesecommissionReport(Request $request)
