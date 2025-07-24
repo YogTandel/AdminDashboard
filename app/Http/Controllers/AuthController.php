@@ -112,7 +112,6 @@ class AuthController extends Controller
             'player' => 'required|string|max:255|unique:users,player',
             'password' => 'required|string|min:3',
             'role' => 'required|in:player',
-            'balance' => 'required|numeric|min:0',
             'distributor' => 'required|exists:users,id',
             'agent' => 'required|string|max:255',
             'agent_id' => 'required|string',

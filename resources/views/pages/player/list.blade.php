@@ -25,10 +25,10 @@
                                         <option value="15" {{ request('per_page') == 15 ? 'selected' : '' }}>15</option>
                                     </select>
                                 </div>
-                                
+
                                 <!-- Add all current query parameters as hidden inputs -->
-                                @foreach(request()->query() as $key => $value)
-                                    @if($key != 'per_page')
+                                @foreach (request()->query() as $key => $value)
+                                    @if ($key != 'per_page')
                                         <input type="hidden" name="{{ $key }}" value="{{ $value }}">
                                     @endif
                                 @endforeach
@@ -48,8 +48,12 @@
                                 <button type="submit" class="btn bg-gradient-warning rounded-pill shadow-sm mb-0">
                                     Search
                                 </button>
-                                @if (request()->has('from_date') || request()->has('to_date') || request()->has('date_range') || request()->has('search'))
-                                    <a href="{{ route('player.show') }}" class="btn btn-secondary btn-sm px-3 mt-3">Reset</a>
+                                @if (request()->has('from_date') ||
+                                        request()->has('to_date') ||
+                                        request()->has('date_range') ||
+                                        request()->has('search'))
+                                    <a href="{{ route('player.show') }}"
+                                        class="btn btn-secondary btn-sm px-3 mt-3">Reset</a>
                                 @endif
                             </form>
                             <button type="button" class="btn btn-primary mb-0" data-bs-toggle="modal"
@@ -62,11 +66,15 @@
                     <!-- Second Row: Date Filter -->
                     <form method="GET" class="d-flex justify-content-end align-items-center flex-wrap gap-2 mt-2 me-3">
                         <!-- Date Range -->
-                        <select name="date_range" class="form-select form-select-sm" onchange="this.form.submit()" style="width: 150px;">
+                        <select name="date_range" class="form-select form-select-sm" onchange="this.form.submit()"
+                            style="width: 150px;">
                             <option value="">Date Range</option>
-                            <option value="2_days_ago" {{ request('date_range') == '2_days_ago' ? 'selected' : '' }}>Last 2 Days</option>
-                            <option value="last_week" {{ request('date_range') == 'last_week' ? 'selected' : '' }}>Last Week</option>
-                            <option value="last_month" {{ request('date_range') == 'last_month' ? 'selected' : '' }}>Last Month</option>
+                            <option value="2_days_ago" {{ request('date_range') == '2_days_ago' ? 'selected' : '' }}>Last 2
+                                Days</option>
+                            <option value="last_week" {{ request('date_range') == 'last_week' ? 'selected' : '' }}>Last Week
+                            </option>
+                            <option value="last_month" {{ request('date_range') == 'last_month' ? 'selected' : '' }}>Last
+                                Month</option>
                         </select>
 
                         <!-- From Date -->
@@ -126,7 +134,7 @@
                                         </th>
                                         <th
                                             class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                            Login 
+                                            Login
                                         </th>
                                         <th
                                             class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
@@ -164,12 +172,14 @@
                                                 <td>
                                                     <div class="d-flex px-2 py-1">
                                                         <div class="d-flex flex-column justify-content-center">
-                                                            <h6 id="name-{{ $player->id }}" class="mb-0 text-sm">{{ $player->player }}</h6>
+                                                            <h6 id="name-{{ $player->id }}" class="mb-0 text-sm">
+                                                                {{ $player->player }}</h6>
                                                         </div>
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    <p id="password-{{ $player->id }}" class="text-xs font-weight-bold mb-0">
+                                                    <p id="password-{{ $player->id }}"
+                                                        class="text-xs font-weight-bold mb-0">
                                                         {{ $player->original_password }}
                                                     </p>
                                                 </td>
@@ -181,7 +191,8 @@
                                                         ₹{{ number_format($player->balance) }}</p>
                                                 </td>
                                                 <td class="align-middle text-center text-sm">
-                                                    <p class="text-xs font-weight-bold mb-0">{{ $player->distributorUser?->player }}
+                                                    <p class="text-xs font-weight-bold mb-0">
+                                                        {{ $player->distributorUser?->player }}
                                                     </p>
                                                 </td>
                                                 <td class="align-middle text-center text-sm">
@@ -209,38 +220,46 @@
                                                 </td>
                                                 <td class="align-middle">
                                                     <div class="d-flex align-items-center justify-content-around">
-                                                        <a href="javascript:void(0);" onclick="copyPlayerToClipboard('{{ $player->_id }}')" 
-                                                            class="text-secondary font-weight-bold text-xs" 
+                                                        <a href="javascript:void(0);"
+                                                            onclick="copyPlayerToClipboard('{{ $player->_id }}')"
+                                                            class="text-secondary font-weight-bold text-xs"
                                                             data-bs-toggle="tooltip" title="Copy Player Credentials">
                                                             <i class="fas fa-copy me-2" style="cursor: pointer;"></i>
                                                         </a>
-                                                        <a href="javascript:;" class="text-secondary font-weight-bold text-xs me-2"
+                                                        <a href="javascript:;"
+                                                            class="text-secondary font-weight-bold text-xs me-2"
                                                             title="Edit Player" data-bs-toggle="modal"
                                                             data-bs-target="#editModal{{ $player->id }}">
                                                             <i class="fas fa-edit me-1"></i>
                                                         </a>
                                                         @include('pages.player.edit')
-                                                         @if(auth()->check() && auth()->user()->role === 'agent')
-                                                            <a href="javascript:;" class="text-success font-weight-bold text-xs me-2"
-                                                                data-bs-toggle="modal" data-bs-target="#transferModal{{ $player->id }}">
+                                                        @if (auth()->check() && auth()->user()->role === 'agent')
+                                                            <a href="javascript:;"
+                                                                class="text-success font-weight-bold text-xs me-2"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#transferModal{{ $player->id }}">
                                                                 <i class="fa-solid fa-indian-rupee-sign me-1"></i>
                                                             </a>
                                                         @endif
-                                                        @include('pages.player.refil2', ['user' => $player])
-                                                        <form action="{{ route('player.delete', $player->id) }}" method="post"
-                                                            style="display:flex;">
+                                                        @include('pages.player.refil2', [
+                                                            'user' => $player,
+                                                        ])
+                                                        <form action="{{ route('player.delete', $player->id) }}"
+                                                            method="post" style="display:flex;">
                                                             @csrf
                                                             @method('DELETE')
                                                             <button class="text-danger font-weight-bold text-xs me-2"
-                                                                onclick="return confirm('Are you sure?')" data-bs-toggle="tooltip"
-                                                                data-bs-placement="top" title="Delete Player"
+                                                                onclick="return confirm('Are you sure?')"
+                                                                data-bs-toggle="tooltip" data-bs-placement="top"
+                                                                title="Delete Player"
                                                                 style="background: none; border: none; padding: 0;">
                                                                 <i class="fas fa-trash"></i>
                                                             </button>
                                                         </form>
                                                         <a href="{{ route('player.history', $player->_id) }}"
                                                             class="text-secondary font-weight-bold text-xs me-2"
-                                                            data-bs-toggle="tooltip" data-bs-placement="top" title="Player History">
+                                                            data-bs-toggle="tooltip" data-bs-placement="top"
+                                                            title="Player History">
                                                             <i class="fas fa-history"></i>
                                                         </a>
                                                     </div>
@@ -263,91 +282,91 @@
     </div>
 
     <!-- <style>
-        /* Loader Styles */
-        .loader-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            display: none;
-        }
+            /* Loader Styles */
+            .loader-container {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.5);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 9999;
+                display: none;
+            }
 
-        .loader {
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid #3498db;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-        }
+            .loader {
+                border: 5px solid #f3f3f3;
+                border-top: 5px solid #3498db;
+                border-radius: 50%;
+                width: 50px;
+                height: 50px;
+                animation: spin 1s linear infinite;
+            }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-    </style> -->
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        </style> -->
 
     @push('scripts')
-    <script>
-        // Show loader when page is loading
-        document.addEventListener('DOMContentLoaded', function() {
-            // Show loader immediately when page starts loading
-            document.getElementById('loader').style.display = 'flex';
-            
-            // Hide loader when page is fully loaded
-            window.addEventListener('load', function() {
-                document.getElementById('loader').style.display = 'none';
+        <script>
+            // Show loader when page is loading
+            document.addEventListener('DOMContentLoaded', function() {
+                // Show loader immediately when page starts loading
+                document.getElementById('loader').style.display = 'flex';
+
+                // Hide loader when page is fully loaded
+                window.addEventListener('load', function() {
+                    document.getElementById('loader').style.display = 'none';
+                });
+
+                // Show loader during AJAX requests
+                $(document).ajaxStart(function() {
+                    document.getElementById('loader').style.display = 'flex';
+                });
+
+                $(document).ajaxStop(function() {
+                    document.getElementById('loader').style.display = 'none';
+                });
+
+                $(document).ajaxError(function() {
+                    document.getElementById('loader').style.display = 'none';
+                });
             });
 
-            // Show loader during AJAX requests
-            $(document).ajaxStart(function() {
+            // Show loader when page is being refreshed
+            window.addEventListener('beforeunload', function() {
                 document.getElementById('loader').style.display = 'flex';
             });
 
-            $(document).ajaxStop(function() {
-                document.getElementById('loader').style.display = 'none';
-            });
+            function copyPlayerToClipboard(id) {
+                const name = document.getElementById('name-' + id)?.innerText.trim();
+                const password = document.getElementById('password-' + id)?.innerText.trim();
 
-            $(document).ajaxError(function() {
-                document.getElementById('loader').style.display = 'none';
-            });
-        });
+                if (!name || !password) {
+                    alert("Name or password missing");
+                    return;
+                }
 
-        // Show loader when page is being refreshed
-        window.addEventListener('beforeunload', function() {
-            document.getElementById('loader').style.display = 'flex';
-        });
+                const text = `Name: ${name}\nPassword: ${password}`;
 
-        function copyPlayerToClipboard(id) {
-            const name = document.getElementById('name-' + id)?.innerText.trim();
-            const password = document.getElementById('password-' + id)?.innerText.trim();
+                // Show loader during copy operation
+                // document.getElementById('loader').style.display = 'flex';
 
-            if (!name || !password) {
-                alert("Name or password missing");
-                return;
+                // navigator.clipboard.writeText(text).then(() => {
+                //     alert("Copied to clipboard!");
+                // }).catch((err) => {
+                //     console.error("Clipboard write failed", err);
+                //     alert("Failed to copy.");
+                // }).finally(() => {
+                //     // Hide loader after copy operation
+                //     document.getElementById('loader').style.display = 'none';
+                // });
             }
-
-            const text = `Name: ${name}\nPassword: ${password}`;
-
-            // Show loader during copy operation
-            // document.getElementById('loader').style.display = 'flex';
-
-            // navigator.clipboard.writeText(text).then(() => {
-            //     alert("Copied to clipboard!");
-            // }).catch((err) => {
-            //     console.error("Clipboard write failed", err);
-            //     alert("Failed to copy.");
-            // }).finally(() => {
-            //     // Hide loader after copy operation
-            //     document.getElementById('loader').style.display = 'none';
-            // });
-        }
-    </script>
+        </script>
     @endpush
 @endsection
