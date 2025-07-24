@@ -117,6 +117,7 @@ class AuthController extends Controller
             'agent_id' => 'required|string',
             'status' => 'required|in:Active,Inactive',
             'gameHistory' => 'nullable|array',
+            'balance' => 'numeric|min:0',
         ]);
 
         try {
@@ -127,6 +128,7 @@ class AuthController extends Controller
             $validate['original_password'] = $validate['password'];
             $validate['password'] = bcrypt($validate['password']);
             $validate['DateOfCreation'] = (float) now()->format('YmdHis');
+            $validate['balance'] = 0;
 
             // ✅ Set default login_status as false
             $validate['login_status'] = false;
