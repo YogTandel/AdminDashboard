@@ -41,7 +41,6 @@
                                     <i class="fas fa-exchange-alt me-1"></i> Transfer
                                 </button>
                             </form>
-
                         </form>
                     </div>
                 </div>
