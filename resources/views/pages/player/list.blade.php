@@ -122,6 +122,10 @@
                                         </th>
                                         <th
                                             class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                            Balance
+                                        </th>
+                                        <th
+                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                             Distributor
                                         </th>
                                         <th
@@ -181,6 +185,10 @@
                                                 </td>
                                                 <td>
                                                     <p class="text-xs font-weight-bold mb-0">{{ $player->role }}</p>
+                                                </td>
+                                                <td class="align-middle text-center text-sm">
+                                                    <p class="text-xs font-weight-bold mb-0">
+                                                        ₹{{ number_format($player->balance) }}</p>
                                                 </td>
                                                 <td class="align-middle text-center text-sm">
                                                     <p class="text-xs font-weight-bold mb-0">
