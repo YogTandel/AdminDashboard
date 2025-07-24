@@ -112,7 +112,7 @@
             <!-- End Agent Commissions -->
 
             <!-- Distributor Dropdown Section -->
-            <div class="row">
+            <div class="row" id="distributorDropdown">
                 <div class="col-12">
                     <div class="card shadow-sm border-radius-xl mb-4">
                         <div class="card-body py-4 px-4">
@@ -162,8 +162,8 @@
                                 <div class="d-flex flex-column" style="min-width: 140px;">
                                     <label class="form-label mb-1 invisible">Placeholder</label>
                                     <!-- <button type="button" class="btn btn-success w-100 mb-0" id="releaseButton">
-                                                    Release
-                                                </button> -->
+                                                                Release
+                                                            </button> -->
                                 </div>
 
                                 <input type="hidden" id="totalBet" value="0">
@@ -176,7 +176,7 @@
             <!-- End Distributor Dropdown Section -->
 
             <!-- Dynamic Agent Summary Table Section -->
-            <div class="row mt-4">
+            <div class="row mt-4" id="agentSummaryTable">
                 <div class="col-12">
                     <div class="card shadow-sm border-radius-xl">
                         <div class="card-header pb-0">
@@ -249,6 +249,12 @@
                         100).toFixed(2);
                     document.getElementById('agentamount').value = totalWinpointSum * (data.agentComission / 100)
                         .toFixed(2);
+
+                    //if totalEarnings is zero then hide the distributorDropdown, agentSummaryTable
+                    if (data.earning == 0) {
+                        document.getElementById('distributorDropdown').style.display = 'none';
+                        document.getElementById('agentSummaryTable').style.display = 'none';
+                    }
 
 
                 })
