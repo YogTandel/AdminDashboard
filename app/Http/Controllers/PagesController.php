@@ -1393,7 +1393,6 @@ class PagesController extends Controller
                         foreach ($game['betValues'] ?? [] as $betVal) {
                             $totalWinpointSum_agent += $betVal;
                             $totalWinpointSum_distributor += $betVal;
-
                         }
 
                     }
@@ -1482,7 +1481,7 @@ class PagesController extends Controller
             $setting->earning = $newSystemEarningPercent;
             $setting->save();
 
-            $user->release_commission_date = now()->timestamp;
+            $user->release_commission_date = (int) (microtime(true) * 1000);
             $user->save();
             $dis_dtd->save();
         }
