@@ -127,7 +127,6 @@ class AuthController extends Controller
             $validate['original_password'] = $validate['password'];
             $validate['password'] = bcrypt($validate['password']);
             $validate['DateOfCreation'] = (float) now()->format('YmdHis');
-            $validate['balance'] = (float) $validate['balance'];
 
             // ✅ Set default login_status as false
             $validate['login_status'] = false;
