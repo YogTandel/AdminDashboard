@@ -162,8 +162,8 @@
                                 <div class="d-flex flex-column" style="min-width: 140px;">
                                     <label class="form-label mb-1 invisible">Placeholder</label>
                                     <!-- <button type="button" class="btn btn-success w-100 mb-0" id="releaseButton">
-                                                                    Release
-                                                                </button> -->
+                                                                                        Release
+                                                                                    </button> -->
                                 </div>
 
                                 <input type="hidden" id="totalBet" value="0">
@@ -326,7 +326,7 @@
                             distributorpercentage / 100)).toFixed(2);
                         $('#distCommission').text(commission);
 
-                        const releaseAllowed = !(parseFloat(commission) <= 0);
+                        const releaseAllowed = !(parseInt(commission) <= 0);
 
                         const agentTableBody = $('#agentTableBody');
                         agentTableBody.empty();
@@ -339,26 +339,26 @@
                                 const agentId = agent._id || agent.id || agent.agent_id;
                                 const agentCommission = (agent.winAmount * (
                                     agentpercentage / 100)).toFixed(2);
-                                const isDisabled = parseFloat(agentCommission) <= 0;
+                                const isDisabled = parseInt(agentCommission) <= 0;
 
                                 const row = /* HTML */ `
-                            <tr>
-                                <td><p class="text-xs font-weight-bold mb-0">${agent.name}</p></td>
-                                <td><p class="text-xs font-weight-bold mb-0">${agent.date || '-'}</p></td>
-                                <td><p class="text-xs mb-0 text-secondary">${agent.endpoint}</p></td>
-                                <td><p class="text-xs mb-0 text-success fw-bold">₹${agent.winAmount}</p></td>
-                                <td><p class="text-xs mb-0 text-secondary">₹${agentCommission}</p></td>
-                                <td>
-                                    <button type="button" class="btn btn-sm btn-success agent-release-btn"
-                                        data-agentid="${agentId}"
-                                        data-agent-name="${agent.name}"
-                                        data-win-amount="${agent.winAmount}"
-                                        data-agent-commission="${agentCommission}"
-                                        ${isDisabled ? 'disabled style="opacity:0.6; cursor:not-allowed;"' : ''}>
-                                        Release
-                                    </button>
-                                </td>
-                            </tr>`;
+                        <tr>
+                            <td><p class="text-xs font-weight-bold mb-0">${agent.name}</p></td>
+                            <td><p class="text-xs font-weight-bold mb-0">${agent.date || '-'}</p></td>
+                            <td><p class="text-xs mb-0 text-secondary">${agent.endpoint}</p></td>
+                            <td><p class="text-xs mb-0 text-success fw-bold agent-win-amount">₹${agent.winAmount}</p></td>
+                            <td><p class="text-xs mb-0 text-secondary agent-commission">₹${agentCommission}</p></td>
+                            <td>
+                                <button type="button" class="btn btn-sm btn-success agent-release-btn"
+                                    data-agentid="${agentId}"
+                                    data-agent-name="${agent.name}"
+                                    data-win-amount="${agent.winAmount}"
+                                    data-agent-commission="${agentCommission}"
+                                    ${isDisabled ? 'disabled style="opacity:0.6; cursor:not-allowed;"' : ''}>
+                                    Release
+                                </button>
+                            </td>
+                        </tr>`;
                                 agentTableBody.append(row);
                             });
                         } else {
@@ -376,61 +376,25 @@
                 });
             });
 
-            // Distributor release button
-            /* $('#releaseButton').on('click', function() {
-                            const distributorId = $('#distributor_id').val();
-                            const distributorName = $('#distributor').val();
-                            const commissionAmount = parseFloat($('#distCommission').text());
-                            const commissionPercentage = parseFloat($('#distributorPercent').val());
-                            const winAmount = parseFloat($('#distWinAmount').text());
-
-                            if (!distributorId || isNaN(commissionAmount) || commissionAmount <= 0 || isNaN(
-                                    commissionPercentage) || isNaN(winAmount) || winAmount <= 0) {
-                                alert('Invalid input: Check Distributor, Total Bet, or Commission %');
-                                return;
-                            }
-
-                            $.ajax({
-                                url: '/release-commission',
-                                method: 'POST',
-                                data: {
-                                    transfer_to: distributorId,
-                                    name: distributorName,
-                                    type: 'distributor',
-                                    total_bet: winAmount,
-                                    commission_percentage: commissionPercentage,
-                                    win_amount: winAmount,
-                                    _token: '{{ csrf_token() }}'
-                                },
-                                success: function(res) {
-                                    alert('Distributor Commission Released Successfully!');
-                                    fetchLiveGameValues();
-                                    $('#releaseButton').prop('disabled', true);
-                                    $('#releaseDateBox').text(res.released_at || new Date()
-                                        .toLocaleString());
-                                },
-                                error: function(xhr) {
-                                    alert(xhr.responseJSON?.error ||
-                                        'Failed to release distributor commission.');
-                                }
-                            });
-                        });
-             */
             // Agent release button
             $(document).on('click', '.agent-release-btn', function() {
                 const $button = $(this);
+                const $row = $button.closest('tr');
                 const agentId = $button.data('agentid');
                 const distributorId = $('#distributor_id').val();
                 const agentName = $button.data('agent-name');
-                const winAmount = parseFloat($button.data('win-amount'));
-                const commissionAmount = parseFloat($button.data('agent-commission'));
-                //alert(commissionAmount);
-                console.log('Release clicked for agentId:', agentId);
-                //return;
+                const winAmount = parseInt($button.data('win-amount'));
+                const commissionAmount = parseInt($button.data('agent-commission'));
+
                 if (!distributorId || !agentId || isNaN(commissionAmount) || commissionAmount <= 0 || isNaN(
-                        winAmount) ||
-                    winAmount <= 0) {
+                        winAmount) || winAmount <= 0) {
                     alert('Invalid agent data.');
+                    return;
+                }
+
+                if (!confirm(
+                        `Are you sure you want to release ₹${(commissionAmount/100).toFixed(2)} commission to ${agentName}?`
+                        )) {
                     return;
                 }
 
@@ -443,16 +407,28 @@
                         name: agentName,
                         type: 'agent',
                         total_bet: winAmount,
-                        commission_amount: commissionAmount, // agent commission is currency directly
+                        commission_amount: commissionAmount,
                         win_amount: winAmount,
                         _token: '{{ csrf_token() }}'
                     },
                     success: function(res) {
+                        // Update the UI without reloading the page
+                        $row.find('.agent-win-amount').text('₹0');
+                        $row.find('.agent-commission').text('₹0');
+                        $button.prop('disabled', true).css({
+                            'opacity': '0.6',
+                            'cursor': 'not-allowed'
+                        });
+
+                        // Update the distributor totals
+                        const currentWin = parseInt($('#distWinAmount').text());
+                        const currentComm = parseFloat($('#distCommission').text());
+                        $('#distWinAmount').text(currentWin - winAmount);
+                        $('#distCommission').text((currentComm - (commissionAmount / 100))
+                            .toFixed(2));
+
                         alert('Agent Commission Released Successfully!');
                         fetchLiveGameValues();
-                        $button.prop('disabled', true);
-
-                        window.location.reload();
                     },
                     error: function(xhr) {
                         alert(xhr.responseJSON?.error || 'Failed to release agent commission.');

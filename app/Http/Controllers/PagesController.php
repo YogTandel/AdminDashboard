@@ -1016,8 +1016,9 @@ class PagesController extends Controller
         $totalWinpointSum = 0;
 
         foreach ($agents as $agent) {
-            $releaseDate      = $agent->release_commission_date ?? null;
-            $releaseTimestamp = $releaseDate ? Carbon::parse($releaseDate)->timestamp : null;
+            // $releaseDate      = $agent->release_commission_date ?? null;
+            // $releaseTimestamp = $releaseDate ? Carbon::parse($releaseDate)->timestamp : null;
+            $releaseTimestamp = $agent->release_commission_date;
 
             // $players = User::where('role', 'player')
             //     ->where('agent_id', new ObjectId($agent->_id))
@@ -1330,13 +1331,13 @@ class PagesController extends Controller
         $distributors = User::where('role', 'distributor')->get();
 
         $data = $distributors->map(function ($distributor) {
-            $releaseDate = $distributor->release_commission_date ?? null;
+            // $releaseDate = $distributor->release_commission_date ?? null;
 
             return [
-                'id'           => (string) $distributor->_id,
-                'name'         => $distributor->player,
-                'endpoint'     => $distributor->endpoint ?? 0,
-                'release_date' => $releaseDate,
+                'id'       => (string) $distributor->_id,
+                'name'     => $distributor->player,
+                'endpoint' => $distributor->endpoint ?? 0,
+                // 'release_date' => $releaseDate,
             ];
         });
 
@@ -1355,8 +1356,9 @@ class PagesController extends Controller
 
         foreach ($agents as $agent) {
             $totalWinpointSum_agent = 0;
-            $releaseDate            = $agent->release_commission_date ?? null;
-            $releaseTimestamp       = $releaseDate ? Carbon::parse($releaseDate)->timestamp : null;
+            // $releaseDate            = $agent->release_commission_date ?? null;
+            // $releaseTimestamp       = $releaseDate ? Carbon::parse($releaseDate)->timestamp : null;
+            $releaseTimestamp = $agent->release_commission_date;
 
             $players = User::raw(function ($collection) use ($agent) {
                 return $collection->aggregate([
@@ -1479,7 +1481,7 @@ class PagesController extends Controller
             $setting->earning = $newSystemEarningPercent;
             $setting->save();
 
-            $user->release_commission_date = now();
+            $user->release_commission_date = now()->timestamp;
             $user->save();
             $dis_dtd->save();
         }
