@@ -162,8 +162,8 @@
                                 <div class="d-flex flex-column" style="min-width: 140px;">
                                     <label class="form-label mb-1 invisible">Placeholder</label>
                                     <!-- <button type="button" class="btn btn-success w-100 mb-0" id="releaseButton">
-                                        Release
-                                    </button> -->
+                                                Release
+                                            </button> -->
                                 </div>
 
                                 <input type="hidden" id="totalBet" value="0">
@@ -371,45 +371,45 @@
             });
 
             // Distributor release button
-            $('#releaseButton').on('click', function() {
-                const distributorId = $('#distributor_id').val();
-                const distributorName = $('#distributor').val();
-                const commissionAmount = parseFloat($('#distCommission').text());
-                const commissionPercentage = parseFloat($('#distributorPercent').val());
-                const winAmount = parseFloat($('#distWinAmount').text());
+            /* $('#releaseButton').on('click', function() {
+                        const distributorId = $('#distributor_id').val();
+                        const distributorName = $('#distributor').val();
+                        const commissionAmount = parseFloat($('#distCommission').text());
+                        const commissionPercentage = parseFloat($('#distributorPercent').val());
+                        const winAmount = parseFloat($('#distWinAmount').text());
 
-                if (!distributorId || isNaN(commissionAmount) || commissionAmount <= 0 || isNaN(
-                        commissionPercentage) || isNaN(winAmount) || winAmount <= 0) {
-                    alert('Invalid input: Check Distributor, Total Bet, or Commission %');
-                    return;
-                }
+                        if (!distributorId || isNaN(commissionAmount) || commissionAmount <= 0 || isNaN(
+                                commissionPercentage) || isNaN(winAmount) || winAmount <= 0) {
+                            alert('Invalid input: Check Distributor, Total Bet, or Commission %');
+                            return;
+                        }
 
-                $.ajax({
-                    url: '/release-commission',
-                    method: 'POST',
-                    data: {
-                        transfer_to: distributorId,
-                        name: distributorName,
-                        type: 'distributor',
-                        total_bet: winAmount,
-                        commission_percentage: commissionPercentage,
-                        win_amount: winAmount,
-                        _token: '{{ csrf_token() }}'
-                    },
-                    success: function(res) {
-                        alert('Distributor Commission Released Successfully!');
-                        fetchLiveGameValues();
-                        $('#releaseButton').prop('disabled', true);
-                        $('#releaseDateBox').text(res.released_at || new Date()
-                            .toLocaleString());
-                    },
-                    error: function(xhr) {
-                        alert(xhr.responseJSON?.error ||
-                            'Failed to release distributor commission.');
-                    }
-                });
-            });
-
+                        $.ajax({
+                            url: '/release-commission',
+                            method: 'POST',
+                            data: {
+                                transfer_to: distributorId,
+                                name: distributorName,
+                                type: 'distributor',
+                                total_bet: winAmount,
+                                commission_percentage: commissionPercentage,
+                                win_amount: winAmount,
+                                _token: '{{ csrf_token() }}'
+                            },
+                            success: function(res) {
+                                alert('Distributor Commission Released Successfully!');
+                                fetchLiveGameValues();
+                                $('#releaseButton').prop('disabled', true);
+                                $('#releaseDateBox').text(res.released_at || new Date()
+                                    .toLocaleString());
+                            },
+                            error: function(xhr) {
+                                alert(xhr.responseJSON?.error ||
+                                    'Failed to release distributor commission.');
+                            }
+                        });
+                    });
+         */
             // Agent release button
             $(document).on('click', '.agent-release-btn', function() {
                 const $button = $(this);
@@ -421,7 +421,8 @@
                 //alert(commissionAmount);
                 console.log('Release clicked for agentId:', agentId);
                 //return;
-                if (!distributorId || !agentId || isNaN(commissionAmount) || commissionAmount <= 0 || isNaN(winAmount) ||
+                if (!distributorId || !agentId || isNaN(commissionAmount) || commissionAmount <= 0 || isNaN(
+                        winAmount) ||
                     winAmount <= 0) {
                     alert('Invalid agent data.');
                     return;
@@ -432,7 +433,7 @@
                     method: 'POST',
                     data: {
                         transfer_to: agentId,
-                        distributor_id:distributorId,
+                        distributor_id: distributorId,
                         name: agentName,
                         type: 'agent',
                         total_bet: winAmount,
