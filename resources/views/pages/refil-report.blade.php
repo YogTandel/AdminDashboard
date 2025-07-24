@@ -132,7 +132,7 @@
                                 <td>{{ number_format($refil->remaining_balance, 2) }}</td>
                                 <td>{{ ucfirst($refil->transfer_role) }}</td>
                                 <td>{{ $refil->type }}</td>
-                                <td>{{ \Carbon\Carbon::parse($refil->created_at)->format('d-M-Y h:i A') }}</td>
+                                <td>{{ \Carbon\Carbon::parse(time: $refil->created_at)->format('d-M-Y h:i A') }}</td>
                             </tr>
                         @endforeach
                     </tbody>

@@ -66,12 +66,9 @@
             <select name="date_range" class="form-select form-select-sm" onchange="this.form.submit()"
                 style="width: 150px;">
                 <option value="">Date Range</option>
-                <option value="2_days_ago" {{ request('date_range') == '2_days_ago' ? 'selected' : '' }}>Last 2
-                    Days</option>
-                <option value="this_week" {{ request('date_range') == 'this_week' ? 'selected' : '' }}>This Week
-                </option>
-                <option value="this_month" {{ request('date_range') == 'this_month' ? 'selected' : '' }}>This
-                    Month</option>
+                <option value="2_days_ago" {{ request('date_range') == '2_days_ago' ? 'selected' : '' }}>Last 2 Days</option>
+                <option value="last_week" {{ request('date_range') == 'last_week' ? 'selected' : '' }}>Last Week</option>
+                <option value="last_month" {{ request('date_range') == 'last_month' ? 'selected' : '' }}>Last Month</option>
             </select>
 
             <!-- From Date -->
@@ -129,7 +126,7 @@
                             <td>{{ $release['commission_percentage'] ?? '0' }}%</td>
                             <td>₹ {{ $release['remaining_balance'] ?? '0' }}</td>
                             <td>{{ $release['transfer_role'] ?? 'N/A' }}</td>
-                            <td>{{ $release['created_at'] }}</td>
+                            <td>{{ \Carbon\Carbon::parse(time: $release->created_at)->format('d-M-Y h:i A') }}</td>
                         </tr>
                     @empty
                         <tr>
