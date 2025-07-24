@@ -27,12 +27,13 @@
                     <label for="per_page" class="mb-0 me-2 text-sm text-dark fw-bold">Show:</label>
 
                     <div class="input-group input-group-outline border-radius-lg shadow-sm">
-                        <select name="per_page" id="per_page" class="form-select border-0 ps-3 pe-4" style="min-width: 60px;">
+                        <select name="per_page" id="per_page" class="form-select border-0 ps-3 pe-4"
+                            style="min-width: 60px;">
                             <option value="10" {{ request('per_page', 10) == 10 ? 'selected' : '' }}>10</option>
                             <option value="15" {{ request('per_page', 10) == 15 ? 'selected' : '' }}>15</option>
                         </select>
                     </div>
-                    
+
                     <!-- Persist all query parameters -->
                     @foreach(request()->except(['per_page', 'page']) as $key => $value)
                         @if(!is_array($value))
@@ -59,25 +60,22 @@
                     @if (request()->has('from_date') || request()->has('to_date') || request()->has('date_range') || request()->has('search'))
                         <a href="{{ route('transfer.report') }}" class="btn btn-secondary btn-sm px-3 mt-3">Reset</a>
                     @endif
-                    
+
                     <!-- Persist per_page in search form -->
                     <input type="hidden" name="per_page" value="{{ request('per_page', 10) }}">
                 </form>
             </div>
         </div>
-        
+
         <form action="{{ route('transfer.report') }}" method="GET"
             class="d-flex justify-content-end align-items-center flex-wrap gap-2 mt-2 me-3">
             <!-- Date Range -->
             <select name="date_range" class="form-select form-select-sm" onchange="this.form.submit()"
                 style="width: 150px;">
                 <option value="">Date Range</option>
-                <option value="2_days_ago" {{ request('date_range') == '2_days_ago' ? 'selected' : '' }}>Last 2
-                    Days</option>
-                <option value="this_week" {{ request('date_range') == 'this_week' ? 'selected' : '' }}>last Week
-                </option>
-                <option value="this_month" {{ request('date_range') == 'this_month' ? 'selected' : '' }}>last
-                    Month</option>
+                <option value="2_days_ago" {{ request('date_range') == '2_days_ago' ? 'selected' : '' }}>Last 2 Days</option>
+                <option value="last_week" {{ request('date_range') == 'last_week' ? 'selected' : '' }}>Last Week</option>
+                <option value="last_month" {{ request('date_range') == 'last_month' ? 'selected' : '' }}>Last Month</option>
             </select>
 
             <!-- From Date -->
@@ -109,7 +107,7 @@
             <div class="table-responsive mt-2">
                 <table class="table table-bordered table-hover table-striped" style="font-size: 0.8rem; color: #212529;">
                     <thead>
-                        <tr>
+                        <tr class="text-center">
                             <th scope="col" class="text-dark">No</th>
                             <th scope="col" class="text-dark">transfer by </th>
                             <th scope="col" class="text-dark">transfer to </th>
@@ -121,7 +119,7 @@
                     </thead>
                     <tbody>
                         @foreach($transfers as $index => $transfer)
-                            <tr>
+                            <tr class="text-center">
                                 <td>{{ $index + 1 }}</td>
                                 <td>{{ $transfer->agent_name }}</td>
                                 <td>
@@ -131,7 +129,7 @@
                                         {{ $transfer->distributor_name }}
                                     @endif
                                 </td>
-                                <td>{{ number_format($transfer->amount, 2) }}</td>
+                                <td>{{ number_format($transfer->amount) }}</td>
                                 <td>{{$transfer->transfer_role }}</td>
                                 <td>{{ number_format($transfer->remaining_balance, 2) }}</td>
                                 <td>{{ \Carbon\Carbon::parse($transfer->created_at)->format('d-M-Y h:i A') }}</td>
@@ -178,6 +176,7 @@
             0% {
                 transform: rotate(0deg);
             }
+
             100% {
                 transform: rotate(360deg);
             }
@@ -186,23 +185,23 @@
 
     <script>
         // Show loader when page is loading
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Show loader immediately when page starts loading
             document.getElementById('loader').style.display = 'flex';
 
             // Hide loader when page is fully loaded
-            window.addEventListener('load', function() {
+            window.addEventListener('load', function () {
                 document.getElementById('loader').style.display = 'none';
             });
         });
 
         // Show loader when page is being refreshed
-        window.addEventListener('beforeunload', function() {
+        window.addEventListener('beforeunload', function () {
             document.getElementById('loader').style.display = 'flex';
         });
 
         // Handle per_page form submission
-        document.getElementById('per_page')?.addEventListener('change', function() {
+        document.getElementById('per_page')?.addEventListener('change', function () {
             document.getElementById('perPageForm').submit();
         });
     </script>

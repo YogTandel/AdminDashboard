@@ -70,12 +70,9 @@
             <select name="date_range" class="form-select form-select-sm" onchange="this.form.submit()"
                 style="width: 150px;">
                 <option value="">Date Range</option>
-                <option value="2_days_ago" {{ request('date_range') == '2_days_ago' ? 'selected' : '' }}>Last 2
-                    Days</option>
-                <option value="this_week" {{ request('date_range') == 'this_week' ? 'selected' : '' }}>last Week
-                </option>
-                <option value="this_month" {{ request('date_range') == 'this_month' ? 'selected' : '' }}>last
-                    Month</option>
+                <option value="2_days_ago" {{ request('date_range') == '2_days_ago' ? 'selected' : '' }}>Last 2 Days</option>
+                <option value="last_week" {{ request('date_range') == 'last_week' ? 'selected' : '' }}>Last Week</option>
+                <option value="last_month" {{ request('date_range') == 'last_month' ? 'selected' : '' }}>Last Month</option>
             </select>
 
             <!-- From Date -->
@@ -131,7 +128,7 @@
                                         {{ $refil->distributor_name }}
                                     @endif
                                 </td>
-                                <td class="text-success">{{ number_format($refil->amount, 2) }}</td>
+                                <td>{{ number_format($refil->amount) }}</td>
                                 <td>{{ number_format($refil->remaining_balance, 2) }}</td>
                                 <td>{{ ucfirst($refil->transfer_role) }}</td>
                                 <td>{{ $refil->type }}</td>
@@ -140,10 +137,10 @@
                         @endforeach
                     </tbody>
                 </table>
-                 {{-- Pagination --}}
-                        <div class="d-flex justify-content-center mt-3 pagination pagination-info">
-                            {{ $refils->links('vendor.pagination.bootstrap-4') }}
-                        </div>
+                {{-- Pagination --}}
+                <div class="d-flex justify-content-center mt-3 pagination pagination-info">
+                    {{ $refils->links('vendor.pagination.bootstrap-4') }}
+                </div>
             </div>
         @else
             <div class="alert alert-info small">No refil records found.</div>

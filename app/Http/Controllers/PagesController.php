@@ -857,19 +857,39 @@ class PagesController extends Controller
         }
 
         // Apply date range filter
-        if ($request->has('date_range') && !empty($request->date_range)) {
-            switch ($request->date_range) {
-                case '2_days_ago':
-                    $query->where('created_at', '>=', now()->subDays(2));
-                    break;
-                case 'this_week':
-                    $query->whereBetween('created_at', [now()->startOfWeek(), now()]);
-                    break;
-                case 'this_month':
-                    $query->whereBetween('created_at', [now()->startOfMonth(), now()]);
-                    break;
+        if (request('date_range')) {
+            $today = \Carbon\Carbon::today();
+            $dateRange = request('date_range');
+
+            if ($dateRange === '2_days_ago') {
+                $query->whereBetween('created_at', [
+                    $today->copy()->subDays(2)->startOfDay(),
+                    $today->copy()->endOfDay()
+                ]);
+            } elseif ($dateRange === 'last_week') {
+                $query->whereBetween('created_at', [
+                    $today->copy()->subWeek()->startOfWeek(),
+                    $today->copy()->subWeek()->endOfWeek()
+                ]);
+            } elseif ($dateRange === 'last_month') {
+                $query->whereBetween('created_at', [
+                    $today->copy()->subMonth()->startOfMonth(),
+                    $today->copy()->subMonth()->endOfMonth()
+                ]);
+            }
+        } elseif (request('from') || request('to')) {
+            // Handle manual date inputs
+            if (request('from')) {
+                $from = \Carbon\Carbon::createFromFormat('Y-m-d', request('from'))->startOfDay();
+                $query->where('created_at', '>=', $from);
+            }
+            if (request('to')) {
+                $to = \Carbon\Carbon::createFromFormat('Y-m-d', request('to'))->endOfDay();
+                $query->where('created_at', '<=', $to);
             }
         }
+
+        $results = $query->get();
 
         // Apply custom date range filter
         if ($request->has('from_date') && !empty($request->from_date)) {
@@ -1220,21 +1240,29 @@ class PagesController extends Controller
 
 
         // Apply date range filter
-        if ($request->has('date_range') && !empty($request->date_range)) {
-            switch ($request->date_range) {
-                case '2_days_ago':
-                    $query->where('created_at', '>=', now()->subDays(2));
-                    break;
-                case 'this_week':
-                    // Last Week (previous 7 days)
-                    $query->whereBetween('created_at', [now()->subWeek(), now()]);
-                    break;
-                case 'this_month':
-                    // Last Month (previous 30 days)
-                    $query->whereBetween('created_at', [now()->subMonth(), now()]);
-                    break;
-            }
-        }
+        if (request('date_range')) {
+    $today = \Carbon\Carbon::today();
+    $dateRange = request('date_range');
+
+    if ($dateRange === '2_days_ago') {
+        $query->whereBetween('created_at', [
+            $today->copy()->subDays(2)->startOfDay(),
+            $today->copy()->endOfDay()
+        ]);
+    } elseif ($dateRange === 'last_week') {
+        $query->whereBetween('created_at', [
+            $today->copy()->subWeek()->startOfWeek(),
+            $today->copy()->subWeek()->endOfWeek()
+        ]);
+    } elseif ($dateRange === 'last_month') {
+        $query->whereBetween('created_at', [
+            $today->copy()->subMonth()->startOfMonth(),
+            $today->copy()->subMonth()->endOfMonth()
+        ]);
+    }
+} 
+
+$results = $query->get();
 
         // Apply custom date range filter
         if ($request->has('from_date') && !empty($request->from_date)) {
