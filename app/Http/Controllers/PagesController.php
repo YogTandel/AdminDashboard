@@ -1388,11 +1388,12 @@ class PagesController extends Controller
 
             foreach ($players as $player) {
                 foreach ($player->gameHistory ?? [] as $game) {
-                    $gameTime = strtotime(str_replace('/', '-', $game['stime']));
-                    if (! $releaseTimestamp || $gameTime > $releaseTimestamp) {
+                    $gameTime = strtotime(str_replace('/', '-', $game['time_stamp']));
+                    if ($gameTime > $releaseTimestamp) {
                         foreach ($game['betValues'] ?? [] as $betVal) {
                             $totalWinpointSum_agent += $betVal;
                             $totalWinpointSum_distributor += $betVal;
+
                         }
 
                     }
