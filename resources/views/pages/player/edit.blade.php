@@ -63,14 +63,14 @@
 
 
                             <!-- AGENT -->
-                            <!-- <label>Agent</label>
+                             <label>Agent</label>
                             <div class="input-group mb-3">
                                 <input type="text" class="form-control @error('agent') is-invalid @enderror"
                                     name="agent" value="{{ old('agent', $player->agent) }}" required>
                                 @error('agent')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
-                            </div> -->
+                            </div> 
 
                             <!-- STATUS -->
                             <label>Status</label>

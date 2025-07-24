@@ -456,22 +456,20 @@ class PagesController extends Controller
 
     public function standingToEarning(Request $request)
     {
-        // છેલ્લો inserted settings record લો
+       
         $setting = DB::table('settings')->latest('id')->first();
 
         if (!$setting) {
             return redirect()->back()->with('error', 'No settings record found.');
         }
 
-        // નવા earning ની ગણતરી
         $newEarning = $setting->earning + $setting->standing;
 
-        // Update earning અને standing બંને
         DB::table('settings')
             ->where('id', $setting->id)
             ->update([
                 'earning' => $newEarning,
-                'standing' => 0, // standing હવે 0 થાય
+                'standing' => 0, 
                 'updated_at' => now(),
             ]);
 
