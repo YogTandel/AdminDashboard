@@ -17,4 +17,12 @@ class Release extends Model
         'remaining_balance',
         'transfer_role',
     ];
+
+    protected $dates = [
+        'created_at',
+        'updated_at',
+        'total_bet'             => 'integer',
+        'remaining_balance'     => 'integer',
+        'commission_percentage' => 'double',
+    ];
 }

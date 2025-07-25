@@ -3,7 +3,6 @@ namespace App\Models;
 
 use \Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use MongoDB\BSON\Decimal128;
 use MongoDB\Laravel\Auth\User as Authenticatable;
 
 class User extends Authenticatable
@@ -54,13 +53,14 @@ class User extends Authenticatable
     protected $casts = [
         'password'       => 'hashed',
         'gameHistory'    => 'array',
-        'balance'        => 'double',
+        'balance'        => 'integer',
         'winamount'      => 'integer',
         'isupdated'      => 'boolean',
         'login_status'   => 'boolean',
         'DateOfCreation' => 'double',
-        'endpoint'       => 'double',
+        'endpoint'       => 'integer',
     ];
+
 
     protected function getGameHistoryAttribute($value)
     {
@@ -73,7 +73,8 @@ class User extends Authenticatable
 
     public function getBalanceAttribute($value)
     {
-        return $value instanceof Decimal128 ? (float) (string) $value : $value;
+        // change this value amount save in integer
+        return (int) (string) $value;
     }
 
     public function getWinamountAttribute($value)

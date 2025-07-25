@@ -14,4 +14,9 @@ class Transaction extends Model
         'to',
         'date_time',
     ];
+
+    protected $dates = [
+        'date_time',
+        'amount' => 'integer',
+    ];
 }

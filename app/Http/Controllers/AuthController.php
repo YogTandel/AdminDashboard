@@ -254,6 +254,7 @@ class AuthController extends Controller
             'player' => 'required|string|max:255|unique:users,player,' . $id,
             'password' => 'nullable|string|min:3',
             'role' => 'required|in:player',
+            'balance' => 'required|numeric|min:0',
             'distributor' => 'required|exists:users,id',
             'agent' => 'required|string|max:255',
             'status' => 'required|in:Active,Inactive',
@@ -272,8 +273,11 @@ class AuthController extends Controller
                 unset($validate['password']);
             }
 
-            $validate['balance'] = $user->balance;
-        $validate['winamount'] = $user->winamount ?? 0;
+            // Type casting
+            $validate['balance'] = (float) $validate['balance'];
+
+            // Preserve winamount from existing record
+            $validate['winamount'] = isset($user->winamount) ? (int) $user->winamount : 0;
 
             // Update user
             $user->update($validate);

@@ -32,12 +32,12 @@ class Setting extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'agentComission'       => 'Double',
-        'distributorComission' => 'Double',
-        'earning'              => 'decimal:2',
+        'agentComission'       => 'integer',
+        'distributorComission' => 'integer',
+        'earning'              => 'integer',
         'earningPercentage'    => 'Double',
         'setTominimum'         => 'boolean',
-        'standing'             => 'double',
+        'standing'             => 'integer',
         'customBet'            => 'integer',
         'last10data'           => 'array',
     ];
@@ -48,8 +48,8 @@ class Setting extends Model
      * @var array
      */
     protected $attributes = [
-        'agentComission'       => 0.0,
-        'distributorComission' => 0.0,
+        'agentComission'       => 0,
+        'distributorComission' => 0,
         'earningPercentage'    => 0,
         'setTominimum'         => false,
         'customBet'            => -1,

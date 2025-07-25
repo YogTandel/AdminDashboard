@@ -14,7 +14,7 @@
                             action="{{ route('admin.transfer.to.distributor') }}">
                             @csrf
 
-                            
+
                             <input type="hidden" name="transfer_to" value="{{ $distributor->id }}">
 
                             @php
@@ -26,18 +26,19 @@
                                 <input type="text" class="form-control" value="{{ $adminBalance }}" readonly>
                             </div>
 
-                          
+
                             <label>Amount to Transfer</label>
                             <div class="input-group mb-3">
-                                <input type="number" name="amount" step="0.01" min="0.01"
-                                    class="form-control" required>
+                                <input type="number" name="amount" step="0.01" min="0.01" class="form-control"
+                                    required>
                             </div>
 
-                     
+
                             <div class="alert mt-2 d-none" id="refillAlert{{ $distributor->id }}"></div>
 
                             <div class="text-center">
-                                <button type="submit" class="btn bg-gradient-primary btn-lg btn-rounded w-100 mt-4 mb-0"
+                                <button type="submit"
+                                    class="btn bg-gradient-primary btn-lg btn-rounded w-100 mt-4 mb-0"
                                     id="submitBtn{{ $distributor->id }}">
                                     <i class="fas fa-exchange-alt me-1"></i> Transfer
                                 </button>
@@ -50,12 +51,13 @@
     </div>
 </div>
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    document.querySelectorAll('.open-refill-modal').forEach(el => {
-        el.addEventListener('click', function () {
-            document.getElementById('transferToInput').value = this.dataset.id;
-            document.getElementById('refillModalTitle').textContent = "Transfer to " + this.dataset.name;
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.open-refill-modal').forEach(el => {
+            el.addEventListener('click', function() {
+                document.getElementById('transferToInput').value = this.dataset.id;
+                document.getElementById('refillModalTitle').textContent = "Transfer to " + this
+                    .dataset.name;
+            });
         });
     });
-});
 </script>
