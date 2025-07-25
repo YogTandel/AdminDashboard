@@ -54,8 +54,12 @@
                     <button type="submit" class="btn bg-gradient-warning rounded-pill shadow-sm mb-0">
                         Search
                     </button>
-                    @if (request()->has('from_date') || request()->has('to_date') || request()->has('date_range') || request()->has('search'))
-                        <a href="{{ route('relesecommission-report') }}" class="btn btn-secondary btn-sm px-3 mt-3">Reset</a>
+                    @if (request()->has('from_date') ||
+                            request()->has('to_date') ||
+                            request()->has('date_range') ||
+                            request()->has('search'))
+                        <a href="{{ route('relesecommission-report') }}"
+                            class="btn btn-secondary btn-sm px-3 mt-3">Reset</a>
                     @endif
                 </form>
             </div>
@@ -66,7 +70,8 @@
             <select name="date_range" class="form-select form-select-sm" onchange="this.form.submit()"
                 style="width: 150px;">
                 <option value="">Date Range</option>
-                <option value="2_days_ago" {{ request('date_range') == '2_days_ago' ? 'selected' : '' }}>Last 2 Days</option>
+                <option value="2_days_ago" {{ request('date_range') == '2_days_ago' ? 'selected' : '' }}>Last 2 Days
+                </option>
                 <option value="last_week" {{ request('date_range') == 'last_week' ? 'selected' : '' }}>Last Week</option>
                 <option value="last_month" {{ request('date_range') == 'last_month' ? 'selected' : '' }}>Last Month</option>
             </select>
@@ -125,7 +130,7 @@
                             <td>{{ $release['type'] ?? 'N/A' }}</td>
                             <td>₹ {{ $release['total_bet'] ?? '0' }}</td>
                             <td>{{ $release['commission_percentage'] ?? '0' }}%</td>
-                            <td></td>
+                            <td>{{ $release['commission_amount'] ?? '0' }}</td>
                             <td>₹ {{ $release['remaining_balance'] ?? '0' }}</td>
                             <td></td>
                             <td>{{ \Carbon\Carbon::parse(time: $release->created_at)->format('d-M-Y h:i A') }}</td>
@@ -182,18 +187,18 @@
 
     <script>
         // Show loader when page is loading
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             // Show loader immediately when page starts loading
             document.getElementById('loader').style.display = 'flex';
 
             // Hide loader when page is fully loaded
-            window.addEventListener('load', function () {
+            window.addEventListener('load', function() {
                 document.getElementById('loader').style.display = 'none';
             });
         });
 
         // Show loader when page is being refreshed
-        window.addEventListener('beforeunload', function () {
+        window.addEventListener('beforeunload', function() {
             document.getElementById('loader').style.display = 'flex';
         });
     </script>

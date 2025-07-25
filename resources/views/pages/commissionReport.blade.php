@@ -162,8 +162,8 @@
                                 <div class="d-flex flex-column" style="min-width: 140px;">
                                     <label class="form-label mb-1 invisible">Placeholder</label>
                                     <!-- <button type="button" class="btn btn-success w-100 mb-0" id="releaseButton">
-                                                                                        Release
-                                                                                    </button> -->
+                                                                                            Release
+                                                                                        </button> -->
                                 </div>
 
                                 <input type="hidden" id="totalBet" value="0">
@@ -201,7 +201,7 @@
                                             </th>
                                             <th
                                                 class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                                               Play amount
+                                                Play amount
                                             </th>
                                             <th
                                                 class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
@@ -394,7 +394,7 @@
 
                 if (!confirm(
                         `Are you sure you want to release ₹${(commissionAmount/100).toFixed(2)} commission to ${agentName}?`
-                        )) {
+                    )) {
                     return;
                 }
 
