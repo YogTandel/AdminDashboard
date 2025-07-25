@@ -13,7 +13,7 @@
                             @csrf
                             <label>Distributor Name</label>
                             <div class="input-group mb-3">
-                                <input type="text" class="form-control" placeholder="Player" aria-label="player"
+                                <input type="text" class="form-control" placeholder="Enter Distributor" aria-label="player"
                                     name="player" aria-describedby="player-addon" required>
                             </div>
 

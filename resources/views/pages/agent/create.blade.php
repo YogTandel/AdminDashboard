@@ -15,7 +15,7 @@
                             <label>AGENT NAME</label>
                             <div class="input-group mb-3">
                                 <input type="text" class="form-control @error('player') is-invalid @enderror"
-                                    placeholder="Enter Player" aria-label="player" name="player"
+                                    placeholder="Enter Agent" aria-label="player" name="player"
                                     aria-describedby="player" value="{{ old('player') }}" required>
                                 @error('player')
                                     <div class="invalid-feedback">{{ $message }}</div>
