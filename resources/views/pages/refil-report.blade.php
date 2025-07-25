@@ -70,9 +70,11 @@
             <select name="date_range" class="form-select form-select-sm" onchange="this.form.submit()"
                 style="width: 150px;">
                 <option value="">Date Range</option>
-                <option value="2_days_ago" {{ request('date_range') == '2_days_ago' ? 'selected' : '' }}>Last 2 Days</option>
+                <option value="2_days_ago" {{ request('date_range') == '2_days_ago' ? 'selected' : '' }}>Last 2 Days
+                </option>
                 <option value="last_week" {{ request('date_range') == 'last_week' ? 'selected' : '' }}>Last Week</option>
-                <option value="last_month" {{ request('date_range') == 'last_month' ? 'selected' : '' }}>Last Month</option>
+                <option value="last_month" {{ request('date_range') == 'last_month' ? 'selected' : '' }}>Last Month
+                </option>
             </select>
 
             <!-- From Date -->
@@ -110,7 +112,7 @@
                             <th>Transfer By</th>
                             <th>Transfer To</th>
                             <th>Remaining Balance</th>
-                            <th>Amount</th>     
+                            <th>Amount</th>
                             <th>Role</th>
                             <th>Type</th>
                             <th>Date</th>
@@ -132,7 +134,8 @@
                                 <td>{{ number_format($refil->amount) }}</td>
                                 <td>{{ ucfirst($refil->transfer_role) }}</td>
                                 <td>{{ $refil->type }}</td>
-                                <td>{{ \Carbon\Carbon::parse(time: $refil->created_at)->format('d-M-Y h:i A') }}</td>
+                                <td>{{ \Carbon\Carbon::parse($refil->created_at)->setTimezone('Asia/Kolkata')->format('d-M-Y h:i A') }}
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -185,18 +188,18 @@
 
     <script>
         // Show loader when page is loading
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             // Show loader immediately when page starts loading
             document.getElementById('loader').style.display = 'flex';
 
             // Hide loader when page is fully loaded
-            window.addEventListener('load', function () {
+            window.addEventListener('load', function() {
                 document.getElementById('loader').style.display = 'none';
             });
         });
 
         // Show loader when page is being refreshed
-        window.addEventListener('beforeunload', function () {
+        window.addEventListener('beforeunload', function() {
             document.getElementById('loader').style.display = 'flex';
         });
     </script>
