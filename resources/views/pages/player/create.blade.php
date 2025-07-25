@@ -15,7 +15,7 @@
                             <label>Player</label>
                             <div class="input-group mb-3">
                                 <input type="text" class="form-control @error('player') is-invalid @enderror"
-                                    name="player" placeholder="Player" value="{{ old('player') }}" required>
+                                    name="player" placeholder="Enter Player" value="{{ old('player') }}" required>
                                 @error('player')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror

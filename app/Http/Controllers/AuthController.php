@@ -273,8 +273,14 @@ class AuthController extends Controller
                 unset($validate['password']);
             }
 
+<<<<<<< HEAD
+            // Type casting
+           $validate['balance'] = $user->balance;
+        $validate['winamount'] = $user->winamount ?? 0;
+=======
             // Preserve winamount from existing record
             $validate['winamount'] = isset($user->winamount) ? (int) $user->winamount : 0;
+>>>>>>> 502f3d3c1a36092e5e35ea0dc11016aaaa97384c
 
             // Update user
             $user->update($validate);
