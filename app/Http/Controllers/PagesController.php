@@ -456,7 +456,7 @@ class PagesController extends Controller
 
     public function standingToEarning(Request $request)
     {
-       
+
         $setting = DB::table('settings')->latest('id')->first();
 
         if (! $setting) {
@@ -468,8 +468,8 @@ class PagesController extends Controller
         DB::table('settings')
             ->where('id', $setting->id)
             ->update([
-                'earning' => $newEarning,
-                'standing' => 0, // standing હવે 0 થાય
+                'earning'    => $newEarning,
+                'standing'   => 0, // standing હવે 0 થાય
                 'updated_at' => now(),
             ]);
 
@@ -1428,7 +1428,7 @@ class PagesController extends Controller
         $distributor_id    = $request->distributor_id;
         $type              = $request->type;
         $totalBet          = (int) round($request->total_bet * 100);
-        $commission_amount = (int) round($request->commission_amount * 100);
+        $commission_amount = (int) round($request->commission_amount);
         $winAmount         = (int) round($request->win_amount * 100);
 
         $setting = Setting::first();
