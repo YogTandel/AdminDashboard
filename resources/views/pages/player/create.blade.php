@@ -38,6 +38,7 @@
                             <div class="input-group mb-3">
                                 <select id="distributor" class="form-control @error('distributor') is-invalid @enderror"
                                     name="distributor" required>
+                                    <option value="">-- Select Distributor --</option>
                                     @if ($authUser->role == '')
                                         @foreach ($distributors as $distributor)
                                             <option value="{{ $distributor->_id }}"
@@ -70,11 +71,12 @@
                             <div class="input-group mb-3">
                                 <select id="agent_id" name="agent_id"
                                     class="form-control @error('agent_id') is-invalid @enderror" required>
+
                                     <option value="">-- Select Agent --</option>
-                                    @foreach ($agents as $agent)
+                                    {{-- @foreach ($agents as $agent)
                                         <option value="{{ $agent->_id }}" data-name="{{ $agent->player }}">
                                             {{ $agent->player }}</option>
-                                    @endforeach
+                                    @endforeach --}}
                                 </select>
                                 @error('agent_id')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -118,6 +120,11 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+    var authU = '{{ $authUser->role }}';
+    var authI = '{{ $authUser->_id }}';
+
+    /* alert(authU);
+    alert(authI); */
     $('#distributor').on('change', function() {
         var distributorId = $(this).val();
 
@@ -127,12 +134,26 @@
                 type: 'GET',
                 success: function(data) {
                     $('#agent_id').empty().append('<option value="">-- Select Agent --</option>');
-                    $.each(data, function(key, agent) {
-                        $('#agent_id').append(
-                            '<option value="' + agent._id + '" data-name="' + agent
-                            .player + '">' + agent.player + '</option>'
-                        );
-                    });
+                    if (authU !== 'agent') {
+                        $.each(data, function(key, agent) {
+                            $('#agent_id').append(
+                                '<option value="' + agent._id + '" data-name="' + agent
+                                .player + '">' + agent.player + '</option>'
+                            );
+                        });
+                    }
+                    else if(authU == 'agent') {
+                        $.each(data, function(key, agent) {
+                            if (authI == agent._id) {
+                                $('#agent_id').append(
+                                    '<option value="' + agent._id +
+                                    '" data-name="' +
+                                    agent
+                                    .player + '">' + agent.player + '</option>'
+                                );
+                            }
+                        });
+                    }
                 }
             });
         } else {
