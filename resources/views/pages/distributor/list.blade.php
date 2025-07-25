@@ -51,8 +51,8 @@
                                 </button>
 
                                 @if (request()->has('search') && request('search') != '')
-                                    <a href="{{ route('distributor.show') }}" class="btn btn-secondary btn-sm px-3 mt-3">Reset</a>
-
+                                    <a href="{{ route('distributor.show') }}"
+                                        class="btn btn-secondary btn-sm px-3 mt-3">Reset</a>
                                 @endif
                             </form>
                             <button type="button" class="btn bg-primary mb-0 text-white" data-bs-toggle="modal"
@@ -228,37 +228,6 @@
             <x-footer />
         </div>
     </div>
-
-    <!-- <style>
-                                /* Loader Styles */
-                                .loader-container {
-                                    position: fixed;
-                                    top: 0;
-                                    left: 0;
-                                    width: 100%;
-                                    height: 100%;
-                                    background-color: rgba(0, 0, 0, 0.5);
-                                    display: flex;
-                                    justify-content: center;
-                                    align-items: center;
-                                    z-index: 9999;
-                                    display: none;
-                                }
-
-                                .loader {
-                                    border: 5px solid #f3f3f3;
-                                    border-top: 5px solid #3498db;
-                                    border-radius: 50%;
-                                    width: 50px;
-                                    height: 50px;
-                                    animation: spin 1s linear infinite;
-                                }
-
-                                @keyframes spin {
-                                    0% { transform: rotate(0deg); }
-                                    100% { transform: rotate(360deg); }
-                                }
-                            </style> -->
 
     <script>
         // Show loader when page is loading

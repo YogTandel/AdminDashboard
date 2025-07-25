@@ -16,7 +16,7 @@ use MongoDB\BSON\ObjectId;
 
 class PagesController extends Controller
 {
-    public function agentList()
+    public function agentList(Request $request)
     {
         $perPage = request()->get('per_page', 10);
         $query   = User::query();
@@ -70,7 +70,10 @@ class PagesController extends Controller
         // Fetch all distributors for dropdown
         $distributors = User::where('role', 'distributor')->get();
 
-        return view('pages.agent.list', compact('agents', 'perPage', 'distributors'));
+        $authUser = Auth::guard('admin')->user() ?? Auth::guard('web')->user();
+        /* print_r($authUser->role);
+        exit; */
+        return view('pages.agent.list', compact('agents', 'perPage', 'distributors', 'authUser'));
     }
 
     public function distributor()
