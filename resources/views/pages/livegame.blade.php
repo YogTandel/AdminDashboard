@@ -249,8 +249,8 @@
                         row += `<td class="text-center">${ betValues[8] ?? 0 }</td>`;
                         row += `<td class="text-center">${ betValues[9] ?? 0 }</td>`;
                         row += `<td class="text-center">${ betValues[0] ?? 0 }</td>`;
-                        
-                        
+
+
 
                         row += `<td class="text-center fw-bold">${ total }</td>`;
                         row += `</tr>`;
@@ -441,99 +441,6 @@
         }
     </script> --}}
 
-    {{-- <script>
-        let timeOffset = 0;
-        let targetTime = 0;
-        let countdownInterval;
-
-        // DOM element for timer badge
-        const countdownText = document.getElementById('timer-badge');
-
-        // WebSocket setup
-        const socket = new WebSocket('ws://128.199.64.164:3101');
-
-        socket.onopen = function(event) {
-            console.log("✅ [WebSocket] Connection opened");
-            sendTimerRequest(); // Send initial timer request on connect
-        };
-
-        socket.onmessage = function(event) {
-            const data = JSON.parse(event.data);
-            console.log("📦 [WebSocket] Parsed data:", data);
-
-            if (data.eventName === "TIMER") {
-                handleTimerEvent(data.currentTime, data.systemTime);
-            }
-        };
-
-        socket.onclose = function(event) {
-            console.log("❌ [WebSocket] Connection closed", event);
-        };
-
-        // Send timer request (equivalent to SendTimerRequest in Unity)
-        function sendTimerRequest() {
-            const message = {
-                eventName: "TIMER",
-                data: "Timer request"
-            };
-            socket.send(JSON.stringify(message));
-            console.log("➡️ [WebSocket] Sent TIMER request");
-        }
-
-        // Set server time based on received system time
-        function setServerTime(serverTimeMilliseconds) {
-            const serverTimeSeconds = Math.floor(serverTimeMilliseconds / 1000);
-            const localTimeSeconds = Math.floor(Date.now() / 1000);
-
-            timeOffset = serverTimeSeconds - localTimeSeconds;
-            console.log(`✅ [setServerTime] Time offset set: ${timeOffset} seconds`);
-        }
-
-        // Handle TIMER event from server
-        function handleTimerEvent(currentTimeMs, systemTimeMs) {
-            console.log(`🕒 [handleTimerEvent] currentTime: ${currentTimeMs}, systemTime: ${systemTimeMs}`);
-            setServerTime(systemTimeMs);
-
-            // Use currentTime in seconds directly (Unix epoch)
-            targetTime = Math.floor(currentTimeMs / 1000) + timeOffset;
-
-            console.log(`✅ [handleTimerEvent] targetTime set to: ${targetTime}`);
-
-            // Start countdown loop
-            startCountdown();
-        }
-
-        // Start countdown interval (equivalent to Unity Update loop)
-        function startCountdown() {
-            if (countdownInterval) clearInterval(countdownInterval);
-
-            countdownInterval = setInterval(() => {
-                const currentTime = Math.floor(Date.now() / 1000) + timeOffset;
-                let timeRemaining = targetTime - currentTime;
-
-                if (timeRemaining <= 0) {
-                    countdownText.innerText = "00:00";
-                    clearInterval(countdownInterval);
-                    console.log("🛑 [startCountdown] Countdown ended");
-                    return;
-                }
-
-                let seconds = timeRemaining % 60;
-                seconds -= 3; // same adjustment as Unity
-
-                const formattedSeconds = (seconds < 10 && seconds >= 0) ? "0" + seconds : seconds.toString();
-                countdownText.innerText = `00:${formattedSeconds}`;
-
-                console.log(`⏰ [startCountdown] Timer updated: 00:${formattedSeconds}`);
-            }, 1000);
-        }
-
-        // Automatically send timer request after 3 seconds if needed
-        setTimeout(() => {
-            sendTimerRequest();
-        }, 3000);
-    </script> --}}
-
     <script>
         let timeOffset = 0;
         let targetTime = 0;
@@ -558,7 +465,7 @@
 
             console.log(
                 `✅ [handleTimerEvent] targetTime set to: ${targetTime} (+${networkDelay.toFixed(2)}s delay compensated)`
-                );
+            );
         }
 
         function updateCountdown() {
@@ -569,7 +476,7 @@
                 timeRemaining = 60 - Math.abs(timeRemaining % 60);
             }
 
-            const seconds = timeRemaining % 60;
+            const seconds = Math.floor(timeRemaining % 60);
             const formattedSeconds = seconds < 10 ? '0' + seconds : seconds;
             document.getElementById('timer-badge').innerText = `00:${formattedSeconds}`;
         }
