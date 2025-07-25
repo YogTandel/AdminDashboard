@@ -111,8 +111,9 @@
                         <th>Type</th>
                         <th>Total Bet</th>
                         <th> %</th>
-                        <th>Remaining Balance</th>
-                        <th>Transfer Role</th>
+                        <th>Comission</th>
+                        <th>Before</th>
+                        <th>After</th>
                         <th>Created At</th>
                     </tr>
                 </thead>
@@ -124,8 +125,9 @@
                             <td>{{ $release['type'] ?? 'N/A' }}</td>
                             <td>₹ {{ $release['total_bet'] ?? '0' }}</td>
                             <td>{{ $release['commission_percentage'] ?? '0' }}%</td>
+                            <td></td>
                             <td>₹ {{ $release['remaining_balance'] ?? '0' }}</td>
-                            <td>{{ $release['transfer_role'] ?? 'N/A' }}</td>
+                            <td></td>
                             <td>{{ \Carbon\Carbon::parse(time: $release->created_at)->format('d-M-Y h:i A') }}</td>
                         </tr>
                     @empty

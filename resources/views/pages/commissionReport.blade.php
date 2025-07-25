@@ -137,13 +137,13 @@
 
                                 <!-- Endpoint -->
                                 <div class="d-flex flex-column" style="min-width: 140px;">
-                                    <label class="form-label mb-1">Endpoint</label>
+                                    <label class="form-label mb-1"> Balance</label>
                                     <div class="form-control bg-light" id="distEndpoint">N/A</div>
                                 </div>
 
                                 <!-- Win Amount -->
                                 <div class="d-flex flex-column" style="min-width: 140px;">
-                                    <label class="form-label mb-1">Win Amount</label>
+                                    <label class="form-label mb-1">Play Amount</label>
                                     <div class="input-group">
                                         <div class="form-control bg-light" id="distWinAmount">0</div>
                                     </div>
@@ -197,11 +197,11 @@
                                             </th>
                                             <th
                                                 class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                                                Endpoint
+                                                Balance
                                             </th>
                                             <th
                                                 class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                                                Win Amount
+                                               Play amount
                                             </th>
                                             <th
                                                 class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">

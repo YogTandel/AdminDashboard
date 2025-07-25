@@ -14,6 +14,7 @@ class Release extends Model
         'type',
         'total_bet',
         'commission_percentage',
+        'commission_amount',
         'remaining_balance',
         'transfer_role',
     ];
