@@ -27,7 +27,7 @@
 <div id="mainContent" style="display: none;">
     <div class="container-fluid py-4">
         <div class="row g-3">
-         
+          @if(auth('admin')->check())
            <!-- Card 1 -->
         <div class="col-12 col-sm-6 col-md-3">
             <div class="p-3 bg-primary rounded">
@@ -123,6 +123,9 @@
                 <h5 class="text-white text-sm">{{ $totalBulk }}</h5>
             </div>
         </div>
+         
+
+        @endif
         </div>
     </div>
 </div>

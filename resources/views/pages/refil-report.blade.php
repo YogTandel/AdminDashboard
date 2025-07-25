@@ -109,8 +109,8 @@
                             <th>No</th>
                             <th>Transfer By</th>
                             <th>Transfer To</th>
-                            <th>Amount</th>
-                            <th>Remaining Balance</th>
+                            <th>Last Balance</th>
+                            <th>Amount</th>     
                             <th>Role</th>
                             <th>Type</th>
                             <th>Date</th>
@@ -128,8 +128,8 @@
                                         {{ $refil->distributor_name }}
                                     @endif
                                 </td>
-                                <td>{{ number_format($refil->amount) }}</td>
                                 <td>{{ number_format($refil->remaining_balance, 2) }}</td>
+                                <td>{{ number_format($refil->amount) }}</td>
                                 <td>{{ ucfirst($refil->transfer_role) }}</td>
                                 <td>{{ $refil->type }}</td>
                                 <td>{{ \Carbon\Carbon::parse(time: $refil->created_at)->format('d-M-Y h:i A') }}</td>
