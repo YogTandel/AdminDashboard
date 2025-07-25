@@ -3,11 +3,6 @@
 @section('page-name', 'Player List')
 
 @section('content')
-    <!-- Loader Container -->
-    <div id="loader" class="loader-container">
-        <div class="loader"></div>
-    </div>
-
     <div class="container-fluid py-4">
         <div class="row">
             <div class="col-12">
@@ -288,35 +283,6 @@
 
     @push('scripts')
         <script>
-            // Show loader when page is loading
-            document.addEventListener('DOMContentLoaded', function() {
-                // Show loader immediately when page starts loading
-                document.getElementById('loader').style.display = 'flex';
-
-                // Hide loader when page is fully loaded
-                window.addEventListener('load', function() {
-                    document.getElementById('loader').style.display = 'none';
-                });
-
-                // Show loader during AJAX requests
-                $(document).ajaxStart(function() {
-                    document.getElementById('loader').style.display = 'flex';
-                });
-
-                $(document).ajaxStop(function() {
-                    document.getElementById('loader').style.display = 'none';
-                });
-
-                $(document).ajaxError(function() {
-                    document.getElementById('loader').style.display = 'none';
-                });
-            });
-
-            // Show loader when page is being refreshed
-            window.addEventListener('beforeunload', function() {
-                document.getElementById('loader').style.display = 'flex';
-            });
-
             function copyPlayerToClipboard(id) {
                 const name = document.getElementById('name-' + id)?.innerText.trim();
                 const password = document.getElementById('password-' + id)?.innerText.trim();
@@ -328,68 +294,55 @@
 
                 const text = `Name: ${name}\nPassword: ${password}`;
 
-                // Show loader during copy operation
-                // document.getElementById('loader').style.display = 'flex';
-
-                // navigator.clipboard.writeText(text).then(() => {
-                //     alert("Copied to clipboard!");
-                // }).catch((err) => {
-                //     console.error("Clipboard write failed", err);
-                //     alert("Failed to copy.");
-                // }).finally(() => {
-                //     // Hide loader after copy operation
-                //     document.getElementById('loader').style.display = 'none';
-                // });
-
-                document.addEventListener('DOMContentLoaded', function() {
-                    document.querySelectorAll('.toggle-status').forEach(btn => {
-                        btn.addEventListener('click', function() {
-                            const playerId = this.dataset.playerId;
-                            const icon = this.querySelector('i');
-                            const statusBadge = document.getElementById(`status-badge-${playerId}`);
-                            const tooltipTitle = this;
-
-                            // Show loader
-                            document.getElementById('loader').style.display = 'flex';
-
-                            fetch(`/player/toggle-status/${playerId}`, {
-                                    method: 'POST',
-                                    headers: {
-                                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                        'Accept': 'application/json',
-                                        'Content-Type': 'application/json',
-                                    }
-                                })
-                                .then(response => response.json())
-                                .then(data => {
-                                    if (data.status === 'Active') {
-                                        icon.classList.remove('fa-check', 'text-success');
-                                        icon.classList.add('fa-ban', 'text-danger');
-                                        tooltipTitle.setAttribute('title', 'Block Agent');
-                                        statusBadge.classList.remove('bg-gradient-danger');
-                                        statusBadge.classList.add('bg-gradient-success');
-                                    } else {
-                                        icon.classList.remove('fa-ban', 'text-danger');
-                                        icon.classList.add('fa-check', 'text-success');
-                                        tooltipTitle.setAttribute('title', 'Unblock Agent');
-                                        statusBadge.classList.remove('bg-gradient-success');
-                                        statusBadge.classList.add('bg-gradient-danger');
-                                    }
-
-                                    statusBadge.innerText = data.status.toUpperCase();
-                                })
-                                .catch(error => {
-                                    alert('Something went wrong.');
-                                    console.error(error);
-                                })
-                                .finally(() => {
-                                    // Hide loader
-                                    document.getElementById('loader').style.display = 'none';
-                                });
-                        });
-                    });
+                navigator.clipboard.writeText(text).then(() => {
+                    alert("Copied to clipboard!");
+                }).catch((err) => {
+                    console.error("Clipboard write failed", err);
+                    alert("Failed to copy.");
                 });
             }
+
+            document.addEventListener('DOMContentLoaded', function() {
+                document.querySelectorAll('.toggle-status').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const playerId = this.dataset.playerId;
+                        const icon = this.querySelector('i');
+                        const statusBadge = document.getElementById(`status-badge-${playerId}`);
+                        const tooltipTitle = this;
+
+                        fetch(`/player/toggle-status/${playerId}`, {
+                                method: 'POST',
+                                headers: {
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                    'Accept': 'application/json',
+                                    'Content-Type': 'application/json',
+                                }
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.status === 'Active') {
+                                    icon.classList.remove('fa-check', 'text-success');
+                                    icon.classList.add('fa-ban', 'text-danger');
+                                    tooltipTitle.setAttribute('title', 'Block Agent');
+                                    statusBadge.classList.remove('bg-gradient-danger');
+                                    statusBadge.classList.add('bg-gradient-success');
+                                } else {
+                                    icon.classList.remove('fa-ban', 'text-danger');
+                                    icon.classList.add('fa-check', 'text-success');
+                                    tooltipTitle.setAttribute('title', 'Unblock Agent');
+                                    statusBadge.classList.remove('bg-gradient-success');
+                                    statusBadge.classList.add('bg-gradient-danger');
+                                }
+
+                                statusBadge.innerText = data.status.toUpperCase();
+                            })
+                            .catch(error => {
+                                alert('Something went wrong.');
+                                console.error(error);
+                            });
+                    });
+                });
+            });
         </script>
     @endpush
 @endsection
