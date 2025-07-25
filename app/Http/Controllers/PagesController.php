@@ -1692,7 +1692,7 @@ class PagesController extends Controller
 
         return response()->json([
             'status'  => $player->status,
-            'message' => 'Distributor status updated.',
+            'message' => 'Player status updated.',
         ]);
     }
 
