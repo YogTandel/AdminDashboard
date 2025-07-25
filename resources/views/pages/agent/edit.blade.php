@@ -32,7 +32,7 @@
                             <input type="hidden" name="role" value="agent">
 
                             <!-- DISTRIBUTOR -->
-                            <label class="text-left d-block text-start">DISTRIBUTOR</label>
+                            {{-- <label class="text-left d-block text-start">DISTRIBUTOR</label>
                             <div class="input-group mb-3">
                                 <select id="distributor_id" name="distributor_id"
                                     class="form-control @error('distributor_id') is-invalid @enderror" required>
@@ -62,7 +62,7 @@
                                 @error('distributor_id')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
-                            </div>
+                            </div> --}}
 
                             <input type="hidden" name="endpoint" value="{{ $agent->endpoint }}">
 

@@ -185,7 +185,11 @@ class PagesController extends Controller
         $agents       = User::where('role', 'agent')->get(['_id', 'player']);
         $distributors = User::where('role', 'distributor')->get(['_id', 'player']);
 
-        return view('pages.player.list', compact('players', 'perPage', 'agents', 'distributors'));
+        $authUser = Auth::guard('admin')->user() ?? Auth::guard('web')->user();
+        /* print_r($authUser->role);
+        exit; */
+
+        return view('pages.player.list', compact('players', 'perPage', 'agents', 'distributors','authUser'));
     }
 
     public function transactionreport()
