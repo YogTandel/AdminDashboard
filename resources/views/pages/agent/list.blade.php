@@ -3,11 +3,6 @@
 @section('page-name', 'Agent List')
 
 @section('content')
-    <!-- Loader Container -->
-    <div id="loader" class="loader-container">
-        <div class="loader"></div>
-    </div>
-
     <div class="container-fluid py-4">
         <!-- Toast Container -->
         <div class="position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 1080">
@@ -80,7 +75,6 @@
 
                                 @if (request()->has('search') && request('search') != '')
                                     <a href="{{ route('agentlist.show') }}" class="btn btn-secondary btn-sm px-3 mt-3">Reset</a>
-
                                 @endif
                             </form>
 
@@ -103,11 +97,9 @@
                             <option value="2_days_ago" {{ request('date_range') == '2_days_ago' ? 'selected' : '' }}>Last 2
                                 Days
                             </option>
-
                             <option value="this_week" {{ request('date_range') == 'this_week' ? 'selected' : '' }}>Last
                                 Week
                             </option>
-
                             <option value="last_month" {{ request('date_range') == 'last_month' ? 'selected' : '' }}>Last
                                 Month
                             </option>
@@ -129,7 +121,7 @@
                         <input type="hidden" name="per_page" value="{{ request('per_page', 10) }}">
 
                         <!-- Filter Button -->
-                        <button type="submit" class="btn btn-sm btn-primary  mb-0">Filter</button>
+                        <button type="submit" class="btn btn-sm btn-primary mb-0">Filter</button>
                         <input type="hidden" name="per_page" value="{{ request('per_page', 10) }}">
 
                         <!-- Reset Button -->
@@ -144,40 +136,31 @@
                             <table class="table align-items-center mb-0">
                                 <thead>
                                     <tr>
-                                        <th
-                                            class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity- text-center">
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity- text-center">
                                             No
                                         </th>
-                                        <th
-                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                             Name
                                         </th>
-                                        <th
-                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2 ">
+                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                                             Password
                                         </th>
-                                        <th
-                                            class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2 text-center">
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2 text-center">
                                             Role
                                         </th>
-                                        <th
-                                            class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">
                                             Distributor
                                         </th>
-                                        <th
-                                            class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">
                                             Status
                                         </th>
-                                        <th
-                                            class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">
                                             Balance
                                         </th>
-                                        <th
-                                            class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">
                                             Created At
                                         </th>
-                                        <th
-                                            class=" text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">
                                             Action
                                         </th>
                                     </tr>
@@ -301,7 +284,6 @@
                                                 found.</td>
                                         </tr>
                                     @endforelse
-
                                 </tbody>
                             </table>
                         </div>
@@ -318,35 +300,6 @@
     </div>
 
     <script>
-        // Show loader when page is loading
-        document.addEventListener('DOMContentLoaded', function() {
-            // Show loader immediately when page starts loading
-            document.getElementById('loader').style.display = 'flex';
-
-            // Hide loader when page is fully loaded
-            window.addEventListener('load', function() {
-                document.getElementById('loader').style.display = 'none';
-            });
-
-            // Show loader during AJAX requests
-            $(document).ajaxStart(function() {
-                document.getElementById('loader').style.display = 'flex';
-            });
-
-            $(document).ajaxStop(function() {
-                document.getElementById('loader').style.display = 'none';
-            });
-
-            $(document).ajaxError(function() {
-                document.getElementById('loader').style.display = 'none';
-            });
-        });
-
-        // Show loader when page is being refreshed
-        window.addEventListener('beforeunload', function() {
-            document.getElementById('loader').style.display = 'flex';
-        });
-
         // Password copy functionality
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.querySelector('form[action="{{ route('agent.add') }}"]');
@@ -361,7 +314,7 @@
             }
         });
 
-        // Toggle status functionality with loader
+        // Toggle status functionality
         document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.toggle-status').forEach(btn => {
                 btn.addEventListener('click', function() {
@@ -369,9 +322,6 @@
                     const icon = this.querySelector('i');
                     const statusBadge = document.getElementById(`status-badge-${agentId}`);
                     const tooltipTitle = this;
-
-                    // Show loader
-                    document.getElementById('loader').style.display = 'flex';
 
                     fetch(`/agent/toggle-status/${agentId}`, {
                             method: 'POST',
@@ -402,16 +352,12 @@
                         .catch(error => {
                             alert('Something went wrong.');
                             console.error(error);
-                        })
-                        .finally(() => {
-                            // Hide loader
-                            document.getElementById('loader').style.display = 'none';
                         });
                 });
             });
         });
 
-        // Agent selection with loader
+        // Agent selection
         document.addEventListener('DOMContentLoaded', function() {
             let selectedAgent = JSON.parse(sessionStorage.getItem('selectedAgent')) || null;
             const radioButtons = document.querySelectorAll('.agent-radio');
@@ -428,9 +374,6 @@
                 radio.addEventListener('click', async function() {
                     const clickedAgentId = this.getAttribute('data-agent-id');
 
-                    // Show loader
-                    document.getElementById('loader').style.display = 'flex';
-
                     // If deselecting current agent
                     if (this.checked && selectedAgent && clickedAgentId === selectedAgent.id) {
                         await handleDeselect(this);
@@ -439,9 +382,6 @@
                     else {
                         await handleSelect(this, clickedAgentId);
                     }
-
-                    // Hide loader
-                    document.getElementById('loader').style.display = 'none';
                 });
             });
 
