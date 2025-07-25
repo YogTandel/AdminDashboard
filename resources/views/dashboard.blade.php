@@ -126,8 +126,9 @@
 
        @elseauth('web')
                 @if(auth()->user()->role === 'distributor')
+
          <!-- Card 1 -->
-        <div class="col-12 col-sm-6 col-md-3">
+        <div class="col-12 col-sm-6 col-md-4">
             <div class="p-3 bg-primary rounded">
                 <p class="text-white font-weight-bolder mb-3">Total Distributor</p>
                 <h5 class="text-white text-sm">{{ $totalDistributors }}</h5>
@@ -135,7 +136,7 @@
         </div>
 
         <!-- Card 2 -->
-        <div class="col-12 col-sm-6 col-md-3">
+        <div class="col-12 col-sm-6 col-md-4">
             <div class="p-3 bg-info rounded">
                 <p class="text-white font-weight-bolder mb-3">Total Active Distributor</p>
                 <h5 class="text-white text-sm">{{ $activeDistributors }}</h5>
@@ -143,10 +144,34 @@
         </div>
 
         <!-- Card 3 -->
-        <div class="col-12 col-sm-6 col-md-3">
+        <div class="col-12 col-sm-6 col-md-4">
             <div class="p-3 bg-dark rounded">
                 <p class="text-white font-weight-bolder mb-3">Total Deactive Distributor</p>
                 <h5 class="text-white text-sm">{{ $deactiveDistributors }}</h5>
+            </div>
+        </div>
+
+        <!-- Card 1 -->
+        <div class="col-12 col-sm-6 col-md-4">
+            <div class="p-3 bg-primary rounded">
+                <p class="text-white font-weight-bolder mb-3">Total Player</p>
+                <h5 class="text-white text-sm">{{ $totalPlayers }}</h5>
+            </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="col-12 col-sm-6 col-md-4">
+            <div class="p-3 bg-info rounded">
+                <p class="text-white font-weight-bolder mb-3">Total Active Player</p>
+                <h5 class="text-white text-sm">{{ $activePlayers }}</h5>
+            </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="col-12 col-sm-6 col-md-4">
+            <div class="p-3 bg-dark rounded">
+                <p class="text-white font-weight-bolder mb-3">Total Deactive Player</p>
+                <h5 class="text-white text-sm">{{ $deactivePlayers }}</h5>
             </div>
         </div>
 
@@ -173,6 +198,30 @@
             <div class="p-3 bg-dark rounded">
                 <p class="text-white font-weight-bolder mb-3">Total Deactive Agent</p>
                 <h5 class="text-white text-sm">{{ $deactiveAgents }}</h5>
+            </div>
+        </div>
+
+        <!-- Card 1 -->
+        <div class="col-12 col-sm-6 col-md-4">
+            <div class="p-3 bg-primary rounded">
+                <p class="text-white font-weight-bolder mb-3">Total Player</p>
+                <h5 class="text-white text-sm">{{ $totalPlayers }}</h5>
+            </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="col-12 col-sm-6 col-md-4">
+            <div class="p-3 bg-info rounded">
+                <p class="text-white font-weight-bolder mb-3">Total Active Player</p>
+                <h5 class="text-white text-sm">{{ $activePlayers }}</h5>
+            </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="col-12 col-sm-6 col-md-4">
+            <div class="p-3 bg-dark rounded">
+                <p class="text-white font-weight-bolder mb-3">Total Deactive Player</p>
+                <h5 class="text-white text-sm">{{ $deactivePlayers }}</h5>
             </div>
         </div>
 
