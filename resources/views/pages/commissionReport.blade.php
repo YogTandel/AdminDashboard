@@ -116,8 +116,8 @@
                 <div class="col-12">
                     <div class="card shadow-sm border-radius-xl mb-4">
                         <div class="card-body py-4 px-4">
-                            <div class="d-flex flex-wrap gap-4 align-items-end">
-                                <div class="d-flex flex-column" style="min-width: 270px;">
+                            <div class="d-flex flex-wrap gap-4 align-items-end gap-5">
+                                <div class="d-flex flex-column" style="min-width: 290px;">
                                     <label>Distributor</label>
                                     <div class="input-group">
                                         <select id="distributor_id" name="distributor_id" class="form-control" required>
@@ -136,13 +136,13 @@
                                 </div> -->
 
                                 <!-- Endpoint -->
-                                <div class="d-flex flex-column" style="min-width: 170px;">
+                                <div class="d-flex flex-column" style="min-width: 190px;">
                                     <label class="form-label mb-1"> Balance</label>
                                     <div class="form-control bg-light" id="distEndpoint">N/A</div>
                                 </div>
 
                                 <!-- Win Amount -->
-                                <div class="d-flex flex-column" style="min-width: 170px;">
+                                <div class="d-flex flex-column" style="min-width: 190px;">
                                     <label class="form-label mb-1">Play Amount</label>
                                     <div class="input-group">
                                         <div class="form-control bg-light" id="distWinAmount">0</div>
@@ -150,7 +150,7 @@
                                 </div>
 
                                 <!-- Commission -->
-                                <div class="d-flex flex-column" style="min-width: 170px;">
+                                <div class="d-flex flex-column" style="min-width: 190px;">
                                     <label class="form-label mb-1">Commission</label>
                                     <div class="input-group">
                                         <span class="input-group-text bg-light">₹</span>
