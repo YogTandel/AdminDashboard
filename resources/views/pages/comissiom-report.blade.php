@@ -132,7 +132,7 @@
                             <td>{{ $release['commission_percentage'] ?? '0' }}%</td>
                             <td>{{ $release['commission_amount'] ?? '0' }}</td>
                             <td>₹ {{ $release['remaining_balance'] ?? '0' }}</td>
-                            <td></td>
+                            <td>₹ {{ $release['remaining_balance'] + $release['commission_amount'] }}</td>
                             <td>{{ \Carbon\Carbon::parse(time: $release->created_at)->format('d-M-Y h:i A') }}</td>
                         </tr>
                     @empty
