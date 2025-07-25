@@ -4,6 +4,11 @@
 
 @section('content')
     <div class="container-fluid py-4">
+        <!-- Loader -->
+        <div id="loader" class="loader-overlay" style="display: none;">
+            <div class="loader-spinner"></div>
+        </div>
+
         <div class="row">
             <div class="col-12">
                 <div class="card mb-4">
@@ -225,6 +230,16 @@
     </div>
 
     <script>
+        // Show loader when page starts loading
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('loader').style.display = 'flex';
+        });
+
+        // Hide loader when page is fully loaded
+        window.addEventListener('load', function() {
+            document.getElementById('loader').style.display = 'none';
+        });
+
         function copyToClipboard(distributorId) {
             console.log("Icon clicked", distributorId); // Debug line
 
@@ -289,4 +304,34 @@
             });
         });
     </script>
+
+    <style>
+        /* Loader styles */
+        .loader-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loader-spinner {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
 @endsection
