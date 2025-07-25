@@ -47,7 +47,7 @@
             @endphp
 
             <!-- Distributor -->
-            @if (in_array($role, ['admin', 'distributor']))
+            @if (in_array($role, ['admin' ]))
                 <li class="nav-item">
                     <a class="nav-link {{ Request::is('distributor') ? 'active' : '' }}"
                         href="{{ route('distributor.show') }}">
@@ -61,7 +61,7 @@
             @endif
 
             <!-- Agent List -->
-            @if (in_array($role, ['admin', 'agent', 'distributor']))
+            @if (in_array($role, ['admin']))
                 <li class="nav-item">
                     <a class="nav-link {{ Request::is('agentlist') ? 'active' : '' }}"
                         href="{{ route('agentlist.show') }}">
