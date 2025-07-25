@@ -158,13 +158,12 @@ class AuthController extends Controller
         Log::info('Attempting to edit agent', ['id' => $id]);
 
         $validate = $request->validate([
-            'player'      => 'required|string|max:255|unique:users,player,' . $id,
-            'password'    => 'nullable|string|min:3',
-            'role'        => 'required|in:agent',
-            'endpoint'    => 'required|numeric|min:0',
-            'distributor' => 'required|string|max:255',
-            'status'      => 'required|in:Active,Inactive',
-            'per_page'    => 'sometimes|numeric', // Add validation for per_page
+            'player'   => 'required|string|max:255|unique:users,player,' . $id,
+            'password' => 'nullable|string|min:3',
+            'role'     => 'required|in:agent',
+            'endpoint' => 'required|numeric|min:0',
+            'status'   => 'required|in:Active,Inactive',
+            'per_page' => 'sometimes|numeric', // Add validation for per_page
         ]);
 
         try {
@@ -255,8 +254,6 @@ class AuthController extends Controller
             'player'      => 'required|string|max:255|unique:users,player,' . $id,
             'password'    => 'nullable|string|min:3',
             'role'        => 'required|in:player',
-            'distributor' => 'required|exists:users,id',
-            'agent'       => 'required|string|max:255',
             'status'      => 'required|in:Active,Inactive',
             'gameHistory' => 'nullable|array',
         ]);
