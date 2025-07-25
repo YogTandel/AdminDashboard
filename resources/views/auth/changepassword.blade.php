@@ -34,20 +34,20 @@
                         <label for="current_password" class="form-label">Current Password</label>
                         <input type="password" class="form-control" id="current_password" name="current_password"
                             required>
-                        <i class="fas fa-eye toggle-password-icon" data-target="current_password"></i>
+                        <i class="fas fa-eye toggle-password-icon mt-3" data-target="current_password"></i>
                     </div>
 
                     <div class="form-group mb-4 position-relative">
                         <label for="new_password" class="form-label">New Password</label>
                         <input type="password" class="form-control" id="new_password" name="new_password" required>
-                        <i class="fas fa-eye toggle-password-icon" data-target="new_password"></i>
+                        <i class="fas fa-eye toggle-password-icon mt-3" data-target="new_password"></i>
                     </div>
 
                     <div class="form-group mb-4 position-relative">
                         <label for="new_password_confirmation" class="form-label">Confirm New Password</label>
                         <input type="password" class="form-control" id="new_password_confirmation"
                             name="new_password_confirmation" required>
-                        <i class="fas fa-eye toggle-password-icon" data-target="new_password_confirmation"></i>
+                        <i class="fas fa-eye toggle-password-icon mt-3" data-target="new_password_confirmation"></i>
                     </div>
 
                     <div class="text-center">

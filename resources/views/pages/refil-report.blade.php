@@ -57,7 +57,7 @@
                     <button type="submit" class="btn bg-gradient-warning rounded-pill shadow-sm mb-0">
                         Search
                     </button>
-                    @if (request()->has('from_date') || request()->has('to_date') || request()->has('date_range') || request()->has('search'))
+                    @if (request()->has('search') && request('search') != '')
                         <a href="{{ route('refil.report') }}" class="btn btn-secondary btn-sm px-3 mt-3">Reset</a>
                     @endif
                 </form>
