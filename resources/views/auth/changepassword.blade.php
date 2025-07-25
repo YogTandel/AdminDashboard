@@ -9,24 +9,6 @@
             </div>
             <div class="modal-body">
 
-                {{-- Success Message --}}
-                @if (session('success'))
-                    <div class="alert alert-success text-white" role="alert">
-                        {{ session('success') }}
-                    </div>
-                @endif
-
-                {{-- Error Message --}}
-                @if ($errors->any())
-                    <div class="alert alert-danger text-white" role="alert">
-                        <ul class="mb-0">
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif
-
                 <form action="{{ route('change.password') }}" method="POST">
                     @csrf
 
