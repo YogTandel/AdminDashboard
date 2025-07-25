@@ -145,8 +145,8 @@
         <!-- Card 3 -->
         <div class="col-12 col-sm-6 col-md-3">
             <div class="p-3 bg-dark rounded">
-                <p class="text-white font-weight-bolder mb-3">Total Deactive Agent</p>
-                <h5 class="text-white text-sm">{{ $deactiveAgents }}</h5>
+                <p class="text-white font-weight-bolder mb-3">Total Deactive Distributor</p>
+                <h5 class="text-white text-sm">{{ $deactiveDistributors }}</h5>
             </div>
         </div>
 
@@ -171,8 +171,8 @@
         <!-- Card 3 -->
         <div class="col-12 col-sm-6 col-md-3">
             <div class="p-3 bg-dark rounded">
-                <p class="text-white font-weight-bolder mb-3">Total Deactive Distributor</p>
-                <h5 class="text-white text-sm">{{ $deactiveDistributors }}</h5>
+                <p class="text-white font-weight-bolder mb-3">Total Deactive Agent</p>
+                <h5 class="text-white text-sm">{{ $deactiveAgents }}</h5>
             </div>
         </div>
 
