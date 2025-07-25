@@ -1683,4 +1683,17 @@ class PagesController extends Controller
         ]);
     }
 
+    public function playertoggleStatus($id)
+    {
+        $player = User::where('_id', $id)->where('role', 'player')->firstOrFail();
+
+        $player->status = $player->status === 'Active' ? 'Inactive' : 'Active';
+        $player->save();
+
+        return response()->json([
+            'status'  => $player->status,
+            'message' => 'Distributor status updated.',
+        ]);
+    }
+
 }

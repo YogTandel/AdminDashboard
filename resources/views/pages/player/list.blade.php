@@ -49,7 +49,8 @@
                                     Search
                                 </button>
                                 @if (request()->has('search') && request('search') != '')
-                                    <a href="{{ route('player.show') }}" class="btn btn-secondary btn-sm px-3 mt-3">Reset</a>
+                                    <a href="{{ route('player.show') }}"
+                                        class="btn btn-secondary btn-sm px-3 mt-3">Reset</a>
                                 @endif
                             </form>
                             <button type="button" class="btn btn-primary mb-0" data-bs-toggle="modal"
@@ -258,6 +259,14 @@
                                                             title="Player History">
                                                             <i class="fas fa-history"></i>
                                                         </a>
+                                                        <a href="javascript:;"
+                                                            class="font-weight-bold text-xs toggle-status"
+                                                            data-bs-toggle="tooltip"
+                                                            title="{{ $player->status === 'Active' ? 'Block Player' : 'Unblock Player' }}"
+                                                            data-agent-id="{{ $player->id }}">
+                                                            <i
+                                                                class="fas {{ $player->status === 'Active' ? 'fa-ban text-danger' : 'fa-check text-success' }}"></i>
+                                                        </a>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -276,37 +285,6 @@
             <x-footer />
         </div>
     </div>
-
-    <!-- <style>
-                    /* Loader Styles */
-                    .loader-container {
-                        position: fixed;
-                        top: 0;
-                        left: 0;
-                        width: 100%;
-                        height: 100%;
-                        background-color: rgba(0, 0, 0, 0.5);
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                        z-index: 9999;
-                        display: none;
-                    }
-
-                    .loader {
-                        border: 5px solid #f3f3f3;
-                        border-top: 5px solid #3498db;
-                        border-radius: 50%;
-                        width: 50px;
-                        height: 50px;
-                        animation: spin 1s linear infinite;
-                    }
-
-                    @keyframes spin {
-                        0% { transform: rotate(0deg); }
-                        100% { transform: rotate(360deg); }
-                    }
-                </style> -->
 
     @push('scripts')
         <script>
@@ -362,6 +340,55 @@
                 //     // Hide loader after copy operation
                 //     document.getElementById('loader').style.display = 'none';
                 // });
+
+                document.addEventListener('DOMContentLoaded', function() {
+                    document.querySelectorAll('.toggle-status').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            const playerId = this.dataset.playerId;
+                            const icon = this.querySelector('i');
+                            const statusBadge = document.getElementById(`status-badge-${playerId}`);
+                            const tooltipTitle = this;
+
+                            // Show loader
+                            document.getElementById('loader').style.display = 'flex';
+
+                            fetch(`/player/toggle-status/${playerId}`, {
+                                    method: 'POST',
+                                    headers: {
+                                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                        'Accept': 'application/json',
+                                        'Content-Type': 'application/json',
+                                    }
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.status === 'Active') {
+                                        icon.classList.remove('fa-check', 'text-success');
+                                        icon.classList.add('fa-ban', 'text-danger');
+                                        tooltipTitle.setAttribute('title', 'Block Agent');
+                                        statusBadge.classList.remove('bg-gradient-danger');
+                                        statusBadge.classList.add('bg-gradient-success');
+                                    } else {
+                                        icon.classList.remove('fa-ban', 'text-danger');
+                                        icon.classList.add('fa-check', 'text-success');
+                                        tooltipTitle.setAttribute('title', 'Unblock Agent');
+                                        statusBadge.classList.remove('bg-gradient-success');
+                                        statusBadge.classList.add('bg-gradient-danger');
+                                    }
+
+                                    statusBadge.innerText = data.status.toUpperCase();
+                                })
+                                .catch(error => {
+                                    alert('Something went wrong.');
+                                    console.error(error);
+                                })
+                                .finally(() => {
+                                    // Hide loader
+                                    document.getElementById('loader').style.display = 'none';
+                                });
+                        });
+                    });
+                });
             }
         </script>
     @endpush
