@@ -212,7 +212,7 @@
                                                 </td>
                                                 <td class="align-middle text-center">
                                                     <span class="text-secondary text-xs font-weight-bold">
-                                                        {{ \Carbon\Carbon::createFromFormat('YmdHis', $player->DateOfCreation)->format('d M Y') }}
+                                                        {{ \Carbon\Carbon::createFromFormat('YmdHis', $player->DateOfCreation)->setTimezone('Asia/Kolkata')->format('d M Y') }}
                                                     </span>
                                                 </td>
                                                 <td class="align-middle">

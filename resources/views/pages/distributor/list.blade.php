@@ -151,7 +151,7 @@
                                                 </td>
                                                 <td class="align-middle text-center">
                                                     <span class="text-secondary text-xs font-weight-bold">
-                                                        {{ \Carbon\Carbon::createFromFormat('YmdHis', (string) (int) $distributor->DateOfCreation)->format('d M Y, H:i') }}
+                                                        {{ \Carbon\Carbon::createFromFormat('YmdHis', (string) (int) $distributor->DateOfCreation)->setTimezone('Asia/Kolkata')->format('d M Y, H:i') }}
                                                     </span>
                                                 </td>
                                                 <td class="align-middle">
