@@ -361,7 +361,7 @@ class AuthController extends Controller
             'new_password'     => 'required|string|confirmed',
         ]);
 
-        // Check which guard is authenticated
+        // Determine which guard is authenticated
         if (Auth::guard('admin')->check()) {
             $user  = Auth::guard('admin')->user();
             $guard = 'admin';
@@ -376,15 +376,13 @@ class AuthController extends Controller
                 'current_password' => 'The current password is incorrect.',
             ]);
         }
-
-        // Save raw password to original_password field (optional)
         $user->original_password = $request->new_password;
 
         // Update hashed password
         $user->password = Hash::make($request->new_password);
         $user->save();
 
-        // Logout from the correct guard
+        // Logout user from the correct guard
         Auth::guard($guard)->logout();
 
         return redirect()->route('show.login')->with('success', 'Password updated successfully. Please login again.');
