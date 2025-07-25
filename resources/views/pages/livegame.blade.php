@@ -249,8 +249,8 @@
                         row += `<td class="text-center">${ betValues[8] ?? 0 }</td>`;
                         row += `<td class="text-center">${ betValues[9] ?? 0 }</td>`;
                         row += `<td class="text-center">${ betValues[0] ?? 0 }</td>`;
-                        
-                        
+
+
 
                         row += `<td class="text-center fw-bold">${ total }</td>`;
                         row += `</tr>`;
@@ -558,7 +558,7 @@
 
             console.log(
                 `✅ [handleTimerEvent] targetTime set to: ${targetTime} (+${networkDelay.toFixed(2)}s delay compensated)`
-                );
+            );
         }
 
         function updateCountdown() {
@@ -569,7 +569,7 @@
                 timeRemaining = 60 - Math.abs(timeRemaining % 60);
             }
 
-            const seconds = timeRemaining % 60;
+            const seconds = Math.floor(timeRemaining % 60);
             const formattedSeconds = seconds < 10 ? '0' + seconds : seconds;
             document.getElementById('timer-badge').innerText = `00:${formattedSeconds}`;
         }
