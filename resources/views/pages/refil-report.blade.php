@@ -109,7 +109,7 @@
                             <th>No</th>
                             <th>Transfer By</th>
                             <th>Transfer To</th>
-                            <th>Last Balance</th>
+                            <th>Remaining Balance</th>
                             <th>Amount</th>     
                             <th>Role</th>
                             <th>Type</th>
