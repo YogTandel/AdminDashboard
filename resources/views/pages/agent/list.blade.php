@@ -40,17 +40,22 @@
                             <!-- Show Dropdown -->
                             <form method="GET" class="d-flex align-items-center mb-0" id="perPageForm">
                                 <label for="per_page" class="mb-0 me-2 text-sm text-dark fw-bold">Show:</label>
-                                
+
                                 <div class="input-group input-group-outline border-radius-lg shadow-sm">
-                                    <select name="per_page" id="per_page" class="form-select border-0 ps-3 pe-4" style="min-width: 60px;">
-                                        <option value="10" {{ (int)request()->query('per_page', 10) === 10 ? 'selected' : '' }}>10</option>
-                                        <option value="15" {{ (int)request()->query('per_page', 10) === 15 ? 'selected' : '' }}>15</option>
+                                    <select name="per_page" id="per_page" class="form-select border-0 ps-3 pe-4"
+                                        style="min-width: 60px;">
+                                        <option value="10"
+                                            {{ (int) request()->query('per_page', 10) === 10 ? 'selected' : '' }}>10
+                                        </option>
+                                        <option value="15"
+                                            {{ (int) request()->query('per_page', 10) === 15 ? 'selected' : '' }}>15
+                                        </option>
                                     </select>
                                 </div>
-                                
+
                                 <!-- Persist ALL parameters EXCEPT page -->
-                                 @foreach(request()->query() as $key => $value)
-                                    @if($key != 'per_page')
+                                @foreach (request()->query() as $key => $value)
+                                    @if ($key != 'per_page')
                                         <input type="hidden" name="{{ $key }}" value="{{ $value }}">
                                     @endif
                                 @endforeach
@@ -63,21 +68,25 @@
                                         <i class="fas fa-search"></i>
                                     </span>
                                     <label class="form-label"></label>
-                                    <input type="search" name="search" class="form-control border-0" 
+                                    <input type="search" name="search" class="form-control border-0"
                                         value="{{ request('search') }}"
                                         onfocus="this.parentElement.classList.add('is-focused')"
                                         onfocusout="this.parentElement.classList.remove('is-focused')">
                                 </div>
-                                
+
                                 <button type="submit" class="btn bg-gradient-warning rounded-pill shadow-sm mb-0">
                                     Search
                                 </button>
-                                @if (request()->has('from_date') || request()->has('to_date') || request()->has('date_range') || request()->has('search'))
-                                    <a href="{{ route('agentlist.show') }}" class="btn btn-secondary btn-sm px-3 mt-3">Reset</a>
+                                @if (request()->has('from_date') ||
+                                        request()->has('to_date') ||
+                                        request()->has('date_range') ||
+                                        request()->has('search'))
+                                    <a href="{{ route('agentlist.show') }}"
+                                        class="btn btn-secondary btn-sm px-3 mt-3">Reset</a>
                                 @endif
 
                             </form>
-                            
+
                             <!-- Add Agent -->
                             <button type="button" class="btn bg-primary mb-0 text-white" data-bs-toggle="modal"
                                 data-bs-target="#exampleModalAddAgent">
@@ -96,7 +105,8 @@
                             <option value="">Date Range</option>
                             <option value="2_days_ago" {{ request('date_range') == '2_days_ago' ? 'selected' : '' }}>Last 2
                                 Days</option>
-                            <option value="this_week" {{ request('date_range') == 'this_week' ? 'selected' : '' }}>Last Week
+                            <option value="this_week" {{ request('date_range') == 'this_week' ? 'selected' : '' }}>Last
+                                Week
                             </option>
                             <option value="this_month" {{ request('date_range') == 'this_month' ? 'selected' : '' }}>Last
                                 Month</option>
@@ -213,20 +223,34 @@
                                                     <!-- Radio Button -->
                                                     @php $admin = Auth::guard('admin')->user(); @endphp
 
-                                                    @if($admin)
-                                                    <div class="form-check form-switch">
-                                                        <input class="form-check-input agent-radio" type="radio"
-                                                            name="agent_select" id="agentSwitch{{ $agent->id }}"
-                                                            value="{{ $agent->id }}"
-                                                            data-agent-id="{{ $agent->id }}"
-                                                            data-agent-name="{{ $agent->player }}"
-                                                            data-agent-balance="{{ $agent->balance }}"
-                                                            data-agent-distributor="{{ $agent->distributor }}"
-                                                            data-agent-endpoint="{{ $agent->endpoint }}"
-                                                            data-bs-toggle="tooltip"
-                                                            title="Select agent {{ $agent->player }}">
-                                                    </div>
+                                                    @if ($admin)
+                                                        <div class="form-check form-switch">
+                                                            <input class="form-check-input agent-radio" type="radio"
+                                                                name="agent_select" id="agentSwitch{{ $agent->id }}"
+                                                                value="{{ $agent->id }}"
+                                                                data-agent-id="{{ $agent->id }}"
+                                                                data-agent-name="{{ $agent->player }}"
+                                                                data-agent-balance="{{ $agent->balance }}"
+                                                                data-agent-distributor="{{ $agent->distributor }}"
+                                                                data-agent-endpoint="{{ $agent->endpoint }}"
+                                                                data-bs-toggle="tooltip"
+                                                                title="Select agent {{ $agent->player }}">
+                                                        </div>
                                                     @endif
+
+                                                    @if (auth()->check() && auth()->user()->role === 'distributor')
+                                                        <a href="javascript:;"
+                                                            class="text-success font-weight-bold text-xs me-2"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#refillModal1{{ $agent->id }}">
+                                                            <i class="fa-solid fa-indian-rupee-sign"></i>
+                                                        </a>
+                                                    @endif
+                                                    @foreach ($agents as $agent_data)
+                                                        @include('pages.agent.refil1', [
+                                                            'user' => $agent_data,
+                                                        ])
+                                                    @endforeach
 
                                                     <!-- Copy -->
                                                     <a href="javascript:;"
@@ -258,20 +282,6 @@
                                                             <i class="fas fa-trash"></i>
                                                         </button>
                                                     </form>
-
-                                                    @if (auth()->check() && auth()->user()->role === 'distributor')
-                                                        <a href="javascript:;"
-                                                            class="text-success font-weight-bold text-xs me-2"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#refillModal1{{ $agent->id }}">
-                                                            <i class="fa-solid fa-indian-rupee-sign"></i>
-                                                        </a>
-                                                    @endif
-                                                    @foreach ($agents as $agent_data)
-                                                        @include('pages.agent.refil1', [
-                                                            'user' => $agent_data,
-                                                        ])
-                                                    @endforeach
 
                                                     <!-- Block/Unblock -->
                                                     <a href="javascript:;" class="font-weight-bold text-xs toggle-status"
@@ -307,35 +317,35 @@
     </div>
 
     <!-- <style>
-        /* Loader Styles */
-        .loader-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            display: none;
-        }
+                /* Loader Styles */
+                .loader-container {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background-color: rgba(0, 0, 0, 0.5);
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    z-index: 9999;
+                    display: none;
+                }
 
-        .loader {
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid #3498db;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-        }
+                .loader {
+                    border: 5px solid #f3f3f3;
+                    border-top: 5px solid #3498db;
+                    border-radius: 50%;
+                    width: 50px;
+                    height: 50px;
+                    animation: spin 1s linear infinite;
+                }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-    </style> -->
+                @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                }
+            </style> -->
 
     <script>
         // Show loader when page is loading
@@ -615,21 +625,21 @@
                 });
         }
     </script>
- <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('perPageForm');
-    const select = document.getElementById('per_page');
-    
-    if (select) {
-        select.addEventListener('change', function() {
-            // Update the force_per_page hidden field
-            const hiddenField = form.querySelector('input[name="force_per_page"]');
-            if (hiddenField) {
-                hiddenField.value = this.value;
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('perPageForm');
+            const select = document.getElementById('per_page');
+
+            if (select) {
+                select.addEventListener('change', function() {
+                    // Update the force_per_page hidden field
+                    const hiddenField = form.querySelector('input[name="force_per_page"]');
+                    if (hiddenField) {
+                        hiddenField.value = this.value;
+                    }
+                    form.submit();
+                });
             }
-            form.submit();
         });
-    }
-});
-</script>
+    </script>
 @endsection

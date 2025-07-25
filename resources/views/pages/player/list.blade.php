@@ -220,6 +220,17 @@
                                                 </td>
                                                 <td class="align-middle">
                                                     <div class="d-flex align-items-center justify-content-around">
+                                                        @if (auth()->check() && auth()->user()->role === 'agent')
+                                                            <a href="javascript:;"
+                                                                class="text-success font-weight-bold text-xs me-2"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#transferModal{{ $player->id }}">
+                                                                <i class="fa-solid fa-indian-rupee-sign me-1"></i>
+                                                            </a>
+                                                        @endif
+                                                        @include('pages.player.refil2', [
+                                                            'user' => $player,
+                                                        ])
                                                         <a href="javascript:void(0);"
                                                             onclick="copyPlayerToClipboard('{{ $player->_id }}')"
                                                             class="text-secondary font-weight-bold text-xs"
@@ -233,17 +244,6 @@
                                                             <i class="fas fa-edit me-1"></i>
                                                         </a>
                                                         @include('pages.player.edit')
-                                                        @if (auth()->check() && auth()->user()->role === 'agent')
-                                                            <a href="javascript:;"
-                                                                class="text-success font-weight-bold text-xs me-2"
-                                                                data-bs-toggle="modal"
-                                                                data-bs-target="#transferModal{{ $player->id }}">
-                                                                <i class="fa-solid fa-indian-rupee-sign me-1"></i>
-                                                            </a>
-                                                        @endif
-                                                        @include('pages.player.refil2', [
-                                                            'user' => $player,
-                                                        ])
                                                         <form action="{{ route('player.delete', $player->id) }}"
                                                             method="post" style="display:flex;">
                                                             @csrf
@@ -282,35 +282,35 @@
     </div>
 
     <!-- <style>
-            /* Loader Styles */
-            .loader-container {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background-color: rgba(0, 0, 0, 0.5);
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                z-index: 9999;
-                display: none;
-            }
+                    /* Loader Styles */
+                    .loader-container {
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background-color: rgba(0, 0, 0, 0.5);
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        z-index: 9999;
+                        display: none;
+                    }
 
-            .loader {
-                border: 5px solid #f3f3f3;
-                border-top: 5px solid #3498db;
-                border-radius: 50%;
-                width: 50px;
-                height: 50px;
-                animation: spin 1s linear infinite;
-            }
+                    .loader {
+                        border: 5px solid #f3f3f3;
+                        border-top: 5px solid #3498db;
+                        border-radius: 50%;
+                        width: 50px;
+                        height: 50px;
+                        animation: spin 1s linear infinite;
+                    }
 
-            @keyframes spin {
-                0% { transform: rotate(0deg); }
-                100% { transform: rotate(360deg); }
-            }
-        </style> -->
+                    @keyframes spin {
+                        0% { transform: rotate(0deg); }
+                        100% { transform: rotate(360deg); }
+                    }
+                </style> -->
 
     @push('scripts')
         <script>

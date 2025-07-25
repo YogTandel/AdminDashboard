@@ -25,8 +25,8 @@
                                         <option value="15" {{ request('per_page') == 15 ? 'selected' : '' }}>15</option>
                                     </select>
                                 </div>
-                                @foreach(request()->query() as $key => $value)
-                                    @if($key != 'per_page')
+                                @foreach (request()->query() as $key => $value)
+                                    @if ($key != 'per_page')
                                         <input type="hidden" name="{{ $key }}" value="{{ $value }}">
                                     @endif
                                 @endforeach
@@ -36,21 +36,25 @@
                                     <span class="input-group-text bg-transparent border-0 text-secondary">
                                         <i class="fas fa-search"></i>
                                     </span>
-                                    <input type="search" name="search" class="form-control border-0" 
+                                    <input type="search" name="search" class="form-control border-0"
                                         value="{{ request('search') }}"
                                         onfocus="this.parentElement.classList.add('is-focused')"
                                         onfocusout="this.parentElement.classList.remove('is-focused')"
                                         placeholder="Search...">
                                 </div>
-                                
+
                                 <!-- Hidden field to maintain per_page value -->
                                 <input type="hidden" name="per_page" value="{{ request('per_page', 10) }}">
-                                
+
                                 <button type="submit" class="btn bg-gradient-warning rounded-pill shadow-sm mb-0">
                                     Search
                                 </button>
-                                @if (request()->has('from_date') || request()->has('to_date') || request()->has('date_range') || request()->has('search'))
-                                    <a href="{{ route('distributor.show') }}" class="btn btn-secondary btn-sm px-3 mt-3">Reset</a>
+                                @if (request()->has('from_date') ||
+                                        request()->has('to_date') ||
+                                        request()->has('date_range') ||
+                                        request()->has('search'))
+                                    <a href="{{ route('distributor.show') }}"
+                                        class="btn btn-secondary btn-sm px-3 mt-3">Reset</a>
                                 @endif
                             </form>
                             <button type="button" class="btn bg-primary mb-0 text-white" data-bs-toggle="modal"
@@ -106,7 +110,7 @@
                                             Role</th>
                                         <th
                                             class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                             Balance</th>
+                                            Balance</th>
                                         <th
                                             class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                             Status</th>
@@ -159,6 +163,19 @@
                                                 </td>
                                                 <td class="align-middle">
                                                     <div class="d-flex align-items-center justify-content-around">
+                                                        @php $admin = Auth::guard('admin')->user(); @endphp
+                                                        @if ($admin)
+                                                            <a href="javascript:;"
+                                                                class="text-success font-weight-bold text-xs me-2"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#refillModal{{ $distributor->id }}"
+                                                                title="Refill Balance">
+                                                                <i class="fa-solid fa-indian-rupee-sign"></i>
+                                                            </a>
+                                                        @endif
+                                                        @foreach ($distributors as $distributor_data)
+                                                            @include('pages.distributor.refil')
+                                                        @endforeach
                                                         <a href="javascript:;"
                                                             onclick="copyToClipboard({{ $distributor->id }})"
                                                             class="text-secondary font-weight-bold text-xs me-2"
@@ -176,19 +193,6 @@
                                                         </a>
                                                         @foreach ($distributors as $distributor_data)
                                                             @include('pages.distributor.edit')
-                                                        @endforeach
-                                                        @php $admin = Auth::guard('admin')->user(); @endphp
-                                                        @if ($admin)
-                                                            <a href="javascript:;"
-                                                                class="text-success font-weight-bold text-xs me-2"
-                                                                data-bs-toggle="modal"
-                                                                data-bs-target="#refillModal{{ $distributor->id }}"
-                                                                title="Refill Balance">
-                                                                <i class="fa-solid fa-indian-rupee-sign"></i>
-                                                            </a>
-                                                        @endif
-                                                        @foreach ($distributors as $distributor_data)
-                                                            @include('pages.distributor.refil')
                                                         @endforeach
                                                         <form action="{{ route('distributor.delete', $distributor->id) }}"
                                                             method="post" style="display:flex;">
@@ -228,35 +232,35 @@
     </div>
 
     <!-- <style>
-                            /* Loader Styles */
-                            .loader-container {
-                                position: fixed;
-                                top: 0;
-                                left: 0;
-                                width: 100%;
-                                height: 100%;
-                                background-color: rgba(0, 0, 0, 0.5);
-                                display: flex;
-                                justify-content: center;
-                                align-items: center;
-                                z-index: 9999;
-                                display: none;
-                            }
+                                /* Loader Styles */
+                                .loader-container {
+                                    position: fixed;
+                                    top: 0;
+                                    left: 0;
+                                    width: 100%;
+                                    height: 100%;
+                                    background-color: rgba(0, 0, 0, 0.5);
+                                    display: flex;
+                                    justify-content: center;
+                                    align-items: center;
+                                    z-index: 9999;
+                                    display: none;
+                                }
 
-                            .loader {
-                                border: 5px solid #f3f3f3;
-                                border-top: 5px solid #3498db;
-                                border-radius: 50%;
-                                width: 50px;
-                                height: 50px;
-                                animation: spin 1s linear infinite;
-                            }
+                                .loader {
+                                    border: 5px solid #f3f3f3;
+                                    border-top: 5px solid #3498db;
+                                    border-radius: 50%;
+                                    width: 50px;
+                                    height: 50px;
+                                    animation: spin 1s linear infinite;
+                                }
 
-                            @keyframes spin {
-                                0% { transform: rotate(0deg); }
-                                100% { transform: rotate(360deg); }
-                            }
-                        </style> -->
+                                @keyframes spin {
+                                    0% { transform: rotate(0deg); }
+                                    100% { transform: rotate(360deg); }
+                                }
+                            </style> -->
 
     <script>
         // Show loader when page is loading
