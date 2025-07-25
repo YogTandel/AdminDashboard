@@ -162,8 +162,8 @@
                                 <div class="d-flex flex-column" style="min-width: 140px;">
                                     <label class="form-label mb-1 invisible">Placeholder</label>
                                     <!-- <button type="button" class="btn btn-success w-100 mb-0" id="releaseButton">
-                                                                                            Release
-                                                                                        </button> -->
+                                                                                                Release
+                                                                                            </button> -->
                                 </div>
 
                                 <input type="hidden" id="totalBet" value="0">
@@ -384,7 +384,7 @@
                 const distributorId = $('#distributor_id').val();
                 const agentName = $button.data('agent-name');
                 const winAmount = parseInt($button.data('win-amount'));
-                const commissionAmount = parseInt($button.data('agent-commission'));
+                const commissionAmount = parseFloat($button.data('agent-commission'));
 
                 if (!distributorId || !agentId || isNaN(commissionAmount) || commissionAmount <= 0 || isNaN(
                         winAmount) || winAmount <= 0) {
