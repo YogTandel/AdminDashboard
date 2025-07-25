@@ -40,44 +40,48 @@
                                 <input type="number" step="0.01" class="form-control @error('balance') is-invalid @enderror"
                                     name="balance" value="{{ old('balance', (float) $player->balance) }}" required>
                                 @error('balance')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+    <div class="invalid-feedback">{{ $message }}</div>
+@enderror
                             </div> -->
 
                             <!-- DISTRIBUTOR -->
-                            <label>Distributor</label>
-                        <div class="input-group mb-3">
-                            <select name="distributor" class="form-control @error('distributor') is-invalid @enderror" required>
-                                <option value="">Select Distributor</option>
-                                @foreach ($distributors as $distributor)
-                                    <option value="{{ $distributor->id }}" 
-                                        {{ old('distributor', $player->distributor) == $distributor->id ? 'selected' : '' }}>
-                                        {{ $distributor->player }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('distributor')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
+                            {{-- <label>Distributor</label>
+                            <div class="input-group mb-3">
+                                <select name="distributor"
+                                    class="form-control @error('distributor') is-invalid @enderror" required>
+                                    <option value="">Select Distributor</option>
+                                    @foreach ($distributors as $distributor)
+                                        <option value="{{ $distributor->id }}"
+                                            {{ old('distributor', $player->distributor) == $distributor->id ? 'selected' : '' }}>
+                                            {{ $distributor->player }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('distributor')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div> --}}
 
 
                             <!-- AGENT -->
-                             <label>Agent</label>
-                            <div class="input-group mb-3">
+                            {{-- <label>Agent</label> --}}
+                            {{-- <div class="input-group mb-3">
                                 <input type="text" class="form-control @error('agent') is-invalid @enderror"
                                     name="agent" value="{{ old('agent', $player->agent) }}" required>
                                 @error('agent')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
-                            </div> 
+                            </div> --}}
 
                             <!-- STATUS -->
                             <label>Status</label>
                             <div class="input-group mb-3">
-                                <select class="form-control @error('status') is-invalid @enderror" name="status" required>
-                                    <option value="Active" {{ $player->status == 'Active' ? 'selected' : '' }}>Active</option>
-                                    <option value="Inactive" {{ $player->status == 'Inactive' ? 'selected' : '' }}>Inactive</option>
+                                <select class="form-control @error('status') is-invalid @enderror" name="status"
+                                    required>
+                                    <option value="Active" {{ $player->status == 'Active' ? 'selected' : '' }}>Active
+                                    </option>
+                                    <option value="Inactive" {{ $player->status == 'Inactive' ? 'selected' : '' }}>
+                                        Inactive</option>
                                 </select>
                                 @error('status')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -87,7 +91,8 @@
                             <input type="hidden" name="original_password">
 
                             <div class="text-center">
-                                <button type="submit" class="btn bg-gradient-warning btn-lg btn-rounded w-100 mt-4 mb-0">
+                                <button type="submit"
+                                    class="btn bg-gradient-warning btn-lg btn-rounded w-100 mt-4 mb-0">
                                     Update Player
                                 </button>
                             </div>

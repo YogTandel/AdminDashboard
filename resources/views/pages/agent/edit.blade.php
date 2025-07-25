@@ -32,11 +32,37 @@
                             <input type="hidden" name="role" value="agent">
 
                             <!-- DISTRIBUTOR -->
-                            <label class="text-left d-block text-start">DISTRIBUTOR</label>
+                            {{-- <label class="text-left d-block text-start">DISTRIBUTOR</label>
                             <div class="input-group mb-3">
-                                <input type="text" class="form-control" name="distributor"
-                                    value="{{ old('distributor', $agent->distributor) }}" required>
-                            </div>
+                                <select id="distributor_id" name="distributor_id"
+                                    class="form-control @error('distributor_id') is-invalid @enderror" required>
+                                    <option value="">-- Select Distributor --</option>
+                                    @if ($authUser->role == '')
+                                        @foreach ($distributors as $distributor)
+                                            <option value="{{ $distributor->_id }}"
+                                                data-name="{{ $distributor->player }}">
+                                                {{ $distributor->player }}
+                                            </option>
+                                        @endforeach
+                                    @elseif($authUser->role == 'distributor')
+                                        {
+                                        <option value="{{ $authUser->_id }}" data-name="{{ $authUser->player }}">
+                                            {{ $authUser->player }}
+                                        </option>
+                                        }
+                                    @elseif($authUser->role == 'agent')
+                                        {
+                                        <option value="{{ $authUser->distributor_id }}"
+                                            data-name="{{ $authUser->distributor }}">
+                                            {{ $authUser->distributor }}
+                                        </option>
+                                        }
+                                    @endif
+                                </select>
+                                @error('distributor_id')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div> --}}
 
                             <input type="hidden" name="endpoint" value="{{ $agent->endpoint }}">
 

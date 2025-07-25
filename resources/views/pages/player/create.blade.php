@@ -38,10 +38,27 @@
                             <div class="input-group mb-3">
                                 <select id="distributor" class="form-control @error('distributor') is-invalid @enderror"
                                     name="distributor" required>
-                                    <option value="">Select Distributor</option>
-                                    @foreach ($distributors as $distributor)
-                                        <option value="{{ $distributor->_id }}">{{ $distributor->player }}</option>
-                                    @endforeach
+                                    @if ($authUser->role == '')
+                                        @foreach ($distributors as $distributor)
+                                            <option value="{{ $distributor->_id }}"
+                                                data-name="{{ $distributor->player }}">
+                                                {{ $distributor->player }}
+                                            </option>
+                                        @endforeach
+                                    @elseif($authUser->role == 'distributor')
+                                        {
+                                        <option value="{{ $authUser->_id }}" data-name="{{ $authUser->player }}">
+                                            {{ $authUser->player }}
+                                        </option>
+                                        }
+                                    @elseif($authUser->role == 'agent')
+                                        {
+                                        <option value="{{ $authUser->distributor_id }}"
+                                            data-name="{{ $authUser->distributor }}">
+                                            {{ $authUser->distributor }}
+                                        </option>
+                                        }
+                                    @endif
                                 </select>
                                 @error('distributor')
                                     <div class="invalid-feedback">{{ $message }}</div>

@@ -36,13 +36,30 @@
 
                             <label>Distributor</label>
                             <div class="input-group mb-3">
-                                <select id="distributor_id" name="distributor_id" class="form-control @error('distributor_id') is-invalid @enderror" required>
+                                <select id="distributor_id" name="distributor_id"
+                                    class="form-control @error('distributor_id') is-invalid @enderror" required>
                                     <option value="">-- Select Distributor --</option>
-                                    @foreach ($distributors as $distributor)
-                                        <option value="{{ $distributor->_id }}" data-name="{{ $distributor->player }}">
-                                            {{ $distributor->player }}
+                                    @if ($authUser->role == '')
+                                        @foreach ($distributors as $distributor)
+                                            <option value="{{ $distributor->_id }}"
+                                                data-name="{{ $distributor->player }}">
+                                                {{ $distributor->player }}
+                                            </option>
+                                        @endforeach
+                                    @elseif($authUser->role == 'distributor')
+                                        {
+                                        <option value="{{ $authUser->_id }}" data-name="{{ $authUser->player }}">
+                                            {{ $authUser->player }}
                                         </option>
-                                    @endforeach
+                                        }
+                                    @elseif($authUser->role == 'agent')
+                                        {
+                                        <option value="{{ $authUser->distributor_id }}"
+                                            data-name="{{ $authUser->distributor }}">
+                                            {{ $authUser->distributor }}
+                                        </option>
+                                        }
+                                    @endif
                                 </select>
                                 @error('distributor_id')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -58,7 +75,8 @@
 
                             <label>STATUS</label>
                             <div class="input-group mb-3">
-                                <select class="form-control @error('status') is-invalid @enderror" name="status" required>
+                                <select class="form-control @error('status') is-invalid @enderror" name="status"
+                                    required>
                                     <option value="">Select Status</option>
                                     <option value="Active" {{ old('status') == 'Active' ? 'selected' : '' }}>
                                         Active
@@ -87,7 +105,7 @@
     </div>
 </div>
 <script>
-    document.getElementById('distributor_id').addEventListener('change', function () {
+    document.getElementById('distributor_id').addEventListener('change', function() {
         const name = this.options[this.selectedIndex].getAttribute('data-name');
         document.getElementById('distributor').value = name ?? '';
     });
