@@ -81,9 +81,9 @@
                                 <button type="submit" class="btn bg-gradient-info mb-2"style="font-size:13px">
                                     Update Commissions
                                 </button>
-                                <button type="button" class="btn bg-gradient-success mb-2" style="font-size:13px">
+                                <a href="{{ route('commission.report') }}" class="btn bg-gradient-success mb-2" style="font-size:13px">
                                     Release Commission
-                                </button>
+                                </a>
                             </div>
                         </form>
                     </div>

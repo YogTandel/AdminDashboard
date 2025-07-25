@@ -61,18 +61,16 @@
             @endif
 
             <!-- Agent List -->
-            @if (in_array($role, ['admin','distributor']))
+            @if (in_array($role, ['admin', 'distributor']))
                 <li class="nav-item">
-                    <a class="nav-link {{ Request::is('agentlist') ? 'active' : '' }}"
-                        href="{{ route('agentlist.show') }}">
+                    <a class="nav-link {{ Request::is('agentlist') ? 'active' : '' }}" href="{{ route('agentlist.show') }}">
                         <div
                             class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
                             <svg width="12px" height="12px" viewBox="0 0 46 42" version="1.1"
                                 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                                 <title>agents</title>
                                 <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                                    <g transform="translate(-1717.000000, -291.000000)" fill="#FFFFFF"
-                                        fill-rule="nonzero">
+                                    <g transform="translate(-1717.000000, -291.000000)" fill="#FFFFFF" fill-rule="nonzero">
                                         <g transform="translate(1716.000000, 291.000000)">
                                             <g transform="translate(1.000000, 0.000000)">
                                                 <path class="color-background opacity-6"
@@ -97,21 +95,21 @@
 
             <!-- Player -->
             <li class="nav-item">
-                <a class="nav-link {{ Request::is('player') ? 'active' : '' }}" href="{{ route('player.show') }}">
+                <a class="nav-link {{ Request::is('player*') ? 'active' : '' }}" href="{{ route('player.show') }}">
                     <div
-                        class="icon icon-shape
-                icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center
-                justify-content-center">
+                        class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
                         <svg width="12px" height="12px" viewBox="0 0 40 40" version="1.1"
                             xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                             <title>player</title>
                             <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                                <g transform="translate(-2020.000000, -442.000000)" fill="#FFFFFF" fill-rule="nonzero">
+                                <g transform="translate(-2020.000000, -442.000000)" fill-rule="nonzero">
                                     <g transform="translate(1716.000000, 291.000000)">
                                         <g transform="translate(304.000000, 151.000000)">
-                                            <path class="color-background"
+                                            <path
+                                                class="color-background {{ Request::is('player*') ? 'fill-orange' : 'fill-white' }}"
                                                 d="M20,0 C31.046,0 40,8.954 40,20 C40,31.046 31.046,40 20,40 C8.954,40 0,31.046 0,20 C0,8.954 8.954,0 20,0 Z M20,4 C11.163,4 4,11.163 4,20 C4,28.837 11.163,36 20,36 C28.837,36 36,28.837 36,20 C36,11.163 28.837,4 20,4 Z" />
-                                            <path class="color-background opacity-6"
+                                            <path
+                                                class="color-background {{ Request::is('player*') ? 'fill-orange opacity-100' : 'fill-white opacity-6' }}"
                                                 d="M16,12 L28,20 L16,28 L16,12 Z" />
                                         </g>
                                     </g>
@@ -185,18 +183,21 @@
             @endif
 
             <!--commission report -->
-            @if ($role === 'admin')
-                <li class="nav-item">
-                    <a class="nav-link {{ Request::is('relesecommission-report') ? 'active' : '' }}"
-                        href="{{ route('relesecommission-report') }}">
-                        <div
-                            class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                            <i class="fas fa-percentage text-dark"></i>
-                        </div>
-                        <span class="nav-link-text ms-1">Commission Report</span>
-                    </a>
-                </li>
-            @endif
+
+            <li class="nav-item">
+                <a class="nav-link {{ Request::is('relesecommission-report*') ? 'active' : '' }}"
+                    href="{{ route('relesecommission-report') }}">
+                    <div
+                        class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+                        <i class="fas fa-percentage" style="
+                color: {{ Request::is('relesecommission-report*') ? '#fb6340' : '#344767' }};
+                transition: color 0.3s ease;
+            "></i>
+                    </div>
+                    <span class="nav-link-text ms-1">Commission Report</span>
+                </a>
+            </li>
+
 
             <!-- Setting (Only for Admin) -->
             @if ($role === 'admin')
