@@ -55,7 +55,8 @@
                         Search
                     </button>
                     @if (request()->has('search') && request('search') != '')
-                        <a href="{{ route('relesecommission-report') }}" class="btn btn-secondary btn-sm px-3 mt-3">Reset</a>
+                        <a href="{{ route('relesecommission-report') }}"
+                            class="btn btn-secondary btn-sm px-3 mt-3">Reset</a>
                     @endif
                 </form>
             </div>
@@ -129,7 +130,8 @@
                             <td>{{ $release['commission_amount'] ?? '0' }}</td>
                             <td>₹ {{ $release['remaining_balance'] ?? '0' }}</td>
                             <td>₹ {{ $release['remaining_balance'] + $release['commission_amount'] }}</td>
-                            <td>{{ \Carbon\Carbon::parse(time: $release->created_at)->format('d-M-Y h:i A') }}</td>
+                            <td>{{ \Carbon\Carbon::parse(time: $release->created_at)->setTimezone('Asia/Kolkata')->format('d-M-Y h:i A') }}
+                            </td>
                         </tr>
                     @empty
                         <tr>

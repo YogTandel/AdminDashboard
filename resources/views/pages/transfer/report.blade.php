@@ -35,8 +35,8 @@
                     </div>
 
                     <!-- Persist all query parameters -->
-                    @foreach(request()->except(['per_page', 'page']) as $key => $value)
-                        @if(!is_array($value))
+                    @foreach (request()->except(['per_page', 'page']) as $key => $value)
+                        @if (!is_array($value))
                             <input type="hidden" name="{{ $key }}" value="{{ $value }}">
                         @endif
                     @endforeach
@@ -73,9 +73,11 @@
             <select name="date_range" class="form-select form-select-sm" onchange="this.form.submit()"
                 style="width: 150px;">
                 <option value="">Date Range</option>
-                <option value="2_days_ago" {{ request('date_range') == '2_days_ago' ? 'selected' : '' }}>Last 2 Days</option>
+                <option value="2_days_ago" {{ request('date_range') == '2_days_ago' ? 'selected' : '' }}>Last 2 Days
+                </option>
                 <option value="last_week" {{ request('date_range') == 'last_week' ? 'selected' : '' }}>Last Week</option>
-                <option value="last_month" {{ request('date_range') == 'last_month' ? 'selected' : '' }}>Last Month</option>
+                <option value="last_month" {{ request('date_range') == 'last_month' ? 'selected' : '' }}>Last Month
+                </option>
             </select>
 
             <!-- From Date -->
@@ -103,7 +105,7 @@
             @endif
         </form>
 
-        @if(count($transfers) > 0)
+        @if (count($transfers) > 0)
             <div class="table-responsive mt-2">
                 <table class="table table-bordered table-hover table-striped" style="font-size: 0.8rem; color: #212529;">
                     <thead>
@@ -118,21 +120,22 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($transfers as $index => $transfer)
+                        @foreach ($transfers as $index => $transfer)
                             <tr class="text-center">
                                 <td>{{ $index + 1 }}</td>
                                 <td>{{ $transfer->agent_name }}</td>
                                 <td>
-                                    @if(str_contains($transfer->distributor_name, 'Admin'))
+                                    @if (str_contains($transfer->distributor_name, 'Admin'))
                                         <span class="text-primary">{{ $transfer->distributor_name }}</span>
                                     @else
                                         {{ $transfer->distributor_name }}
                                     @endif
                                 </td>
                                 <td>{{ number_format($transfer->amount) }}</td>
-                                <td>{{$transfer->transfer_role }}</td>
+                                <td>{{ $transfer->transfer_role }}</td>
                                 <td>{{ number_format($transfer->remaining_balance, 2) }}</td>
-                                <td>{{ \Carbon\Carbon::parse($transfer->created_at)->format('d-M-Y h:i A') }}</td>
+                                <td>{{ \Carbon\Carbon::parse($transfer->created_at)->setTimezone('Asia/Kolkata')->format('d-M-Y h:i A') }}
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -185,23 +188,23 @@
 
     <script>
         // Show loader when page is loading
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             // Show loader immediately when page starts loading
             document.getElementById('loader').style.display = 'flex';
 
             // Hide loader when page is fully loaded
-            window.addEventListener('load', function () {
+            window.addEventListener('load', function() {
                 document.getElementById('loader').style.display = 'none';
             });
         });
 
         // Show loader when page is being refreshed
-        window.addEventListener('beforeunload', function () {
+        window.addEventListener('beforeunload', function() {
             document.getElementById('loader').style.display = 'flex';
         });
 
         // Handle per_page form submission
-        document.getElementById('per_page')?.addEventListener('change', function () {
+        document.getElementById('per_page')?.addEventListener('change', function() {
             document.getElementById('perPageForm').submit();
         });
     </script>
