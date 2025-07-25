@@ -33,17 +33,24 @@ class PagesController extends Controller
 
         if ($dateRange) {
             $today = Carbon::today();
+
             if ($dateRange === '2_days_ago') {
-                $from = $today->copy()->subDays(2)->format('Y-m-d');
-                $to   = $today->format('Y-m-d');
-            } elseif ($dateRange === 'this_week') {
-                // Last Week (previous 7 days)
-                $from = $today->copy()->subWeek()->format('Y-m-d');
-                $to   = $today->format('Y-m-d');
-            } elseif ($dateRange === 'this_month') {
-                // Last Month (previous 30 days)
-                $from = $today->copy()->subMonth()->format('Y-m-d');
-                $to   = $today->format('Y-m-d');
+                $from = $today->copy()->subDays(2)->format('YmdHis');
+                $to   = $today->copy()->endOfDay()->format('YmdHis');
+            } elseif ($dateRange === 'last_week') {
+                $from = $today->copy()->subWeek()->startOfWeek()->format('YmdHis');
+                $to   = $today->copy()->subWeek()->endOfWeek()->format('YmdHis');
+            } elseif ($dateRange === 'last_month') {
+                $from = $today->copy()->subMonth()->startOfMonth()->format('YmdHis');
+                $to   = $today->copy()->subMonth()->endOfMonth()->format('YmdHis');
+            }
+        } elseif ($from || $to) {
+            // Handle manual date inputs
+            if ($from) {
+                $from = Carbon::createFromFormat('Y-m-d', $from)->startOfDay()->format('YmdHis');
+            }
+            if ($to) {
+                $to = Carbon::createFromFormat('Y-m-d', $to)->endOfDay()->format('YmdHis');
             }
         }
 

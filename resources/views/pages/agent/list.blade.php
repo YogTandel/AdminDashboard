@@ -96,9 +96,9 @@
                             <option value="">Date Range</option>
                             <option value="2_days_ago" {{ request('date_range') == '2_days_ago' ? 'selected' : '' }}>Last 2
                                 Days</option>
-                            <option value="this_week" {{ request('date_range') == 'this_week' ? 'selected' : '' }}>Last Week
+                            <option value="last_week" {{ request('date_range') == 'last_week' ? 'selected' : '' }}>Last Week
                             </option>
-                            <option value="this_month" {{ request('date_range') == 'this_month' ? 'selected' : '' }}>Last
+                            <option value="last_month" {{ request('date_range') == 'last_month' ? 'selected' : '' }}>Last
                                 Month</option>
                         </select>
 
