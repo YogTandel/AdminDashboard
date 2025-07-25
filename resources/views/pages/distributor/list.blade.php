@@ -3,11 +3,6 @@
 @section('page-name', 'Distributor List')
 
 @section('content')
-    <!-- Loader Container -->
-    <div id="loader" class="loader-container">
-        <div class="loader"></div>
-    </div>
-
     <div class="container-fluid py-4">
         <div class="row">
             <div class="col-12">
@@ -230,35 +225,6 @@
     </div>
 
     <script>
-        // Show loader when page is loading
-        document.addEventListener('DOMContentLoaded', function() {
-            // Show loader immediately when page starts loading
-            document.getElementById('loader').style.display = 'flex';
-
-            // Hide loader when page is fully loaded
-            window.addEventListener('load', function() {
-                document.getElementById('loader').style.display = 'none';
-            });
-
-            // Show loader during AJAX requests
-            $(document).ajaxStart(function() {
-                document.getElementById('loader').style.display = 'flex';
-            });
-
-            $(document).ajaxStop(function() {
-                document.getElementById('loader').style.display = 'none';
-            });
-
-            $(document).ajaxError(function() {
-                document.getElementById('loader').style.display = 'none';
-            });
-        });
-
-        // Show loader when page is being refreshed
-        window.addEventListener('beforeunload', function() {
-            document.getElementById('loader').style.display = 'flex';
-        });
-
         function copyToClipboard(distributorId) {
             console.log("Icon clicked", distributorId); // Debug line
 
@@ -280,7 +246,7 @@
             });
         }
 
-        // Toggle status functionality with loader
+        // Toggle status functionality
         document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.distributor-toggle-status').forEach(btn => {
                 btn.addEventListener('click', function() {
@@ -288,9 +254,6 @@
                     const icon = this.querySelector('i');
                     const statusBadge = document.getElementById(`status-badge-${ distributorId }`);
                     const tooltipTitle = this;
-
-                    // Show loader
-                    document.getElementById('loader').style.display = 'flex';
 
                     fetch(`/distributor/toggle-status/${ distributorId }`, {
                             method: 'POST',
@@ -321,10 +284,6 @@
                         .catch(error => {
                             alert('Something went wrong.');
                             console.error(error);
-                        })
-                        .finally(() => {
-                            // Hide loader
-                            document.getElementById('loader').style.display = 'none';
                         });
                 });
             });
