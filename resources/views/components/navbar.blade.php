@@ -40,7 +40,7 @@
                     <a class="nav-link text-body font-weight-bold px-0">
                         <i class="ps-3 fa fa-user me-sm-1"></i>
                         <span class="d-sm-inline d-none">
-                            {{ $user->player }} — endpoint: {{ $endpointValue }}
+                            {{ $user->player }} — Balance: {{ $endpointValue }}
                         </span>
                     </a>
                 </li>
