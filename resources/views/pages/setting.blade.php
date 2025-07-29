@@ -96,7 +96,7 @@
                     <div class="card-header pb-0">
                         <h6 class="mb-0 d-flex justify-content-between align-items-center">
                             <span>Standing & Earnings</span>
-                            <span class="text-muted small" id="admin-endpoint">Balance</span>
+                            <span class="text-muted big" id="admin-endpoint">Balance</span>
                         </h6>
                     </div>
                     <div class="card-body">
