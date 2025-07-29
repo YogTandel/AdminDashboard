@@ -317,11 +317,11 @@
                 url: "{{ route('admin.endpoint') }}",
                 method: 'GET',
                 success: function (response) {
-                    $('#admin-endpoint').text("Endpoint: " + response.endpoint);
+                    $('#admin-endpoint').text("Balance: " + response.endpoint);
                     hideLoader();
                 },
                 error: function () {
-                    $('#admin-endpoint').text("Endpoint: Error loading");
+                    $('#admin-endpoint').text("Balance: Error loading");
                     hideLoader();
                 }
             });
