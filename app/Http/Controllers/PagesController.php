@@ -421,7 +421,7 @@ class PagesController extends Controller
 
         // Convert empty string to null
         if ($agentId === 'null' || $agentId === '' || $agentId === null) {
-            $agentId = null;
+            $agentId = "0";
         }
 
         // Update all settings (as per your current logic)

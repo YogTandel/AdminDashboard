@@ -423,7 +423,7 @@
 
                     // Clear storage
                     sessionStorage.removeItem('selectedAgent');
-                    selectedAgent = null;
+                    selectedAgent = "0";
 
                     // Send deselect request
                     const response = await fetch("{{ route('agent.deselect') }}", {
