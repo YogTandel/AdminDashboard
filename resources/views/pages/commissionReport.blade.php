@@ -1,4 +1,4 @@
-@extends('layouts.layout')
+        @extends('layouts.layout')
 
 @section('page-name', 'Report')
 
@@ -24,7 +24,6 @@
                         </div>
                     </div>
                 </div>
-
             </div>
             <!-- End Total Earnings -->
 
@@ -59,7 +58,6 @@
                                         <input type="text" id="distributoramount" class="form-control" readonly
                                             value="{{ number_format($totalWinpointSum * 0.01, 2) }}"
                                             style="background-color: #e9ecef; pointer-events: none;">
-
                                     </div>
                                 </div>
                             </div>
@@ -129,12 +127,6 @@
                                     <input type="hidden" name="distributor" id="distributor" value="">
                                 </div>
 
-                                <!-- Last Release -->
-                                <!-- <div class="d-flex flex-column" style="min-width: 140px;">
-                                    <label class="form-label">Last Release</label>
-                                    <div class="form-control bg-light" id="releaseDateBox">N/A</div>
-                                </div> -->
-
                                 <!-- Endpoint -->
                                 <div class="d-flex flex-column" style="min-width: 190px;">
                                     <label class="form-label mb-1"> Balance</label>
@@ -158,14 +150,6 @@
                                     </div>
                                 </div>
 
-                                <!-- Release Button -->
-                                <!-- <div class="d-flex flex-column" style="min-width: 140px;">
-                                    <label class="form-label mb-1 invisible">Placeholder</label> -->
-                                    <!-- <button type="button" class="btn btn-success w-100 mb-0" id="releaseButton">
-                                                                                                Release
-                                                                                            </button> -->
-                                <!-- </div> -->
-
                                 <input type="hidden" id="totalBet" value="0">
                                 <input type="hidden" id="distCommissionPercentage" value="0">
                             </div>
@@ -187,28 +171,22 @@
                                 <table class="table align-items-center mb-0">
                                     <thead>
                                         <tr>
-                                            <th
-                                                class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                                 Agent Name
                                             </th>
-                                            <th
-                                                class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                                 Last Release
                                             </th>
-                                            <th
-                                                class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                                                 Balance
                                             </th>
-                                            <th
-                                                class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                                                 Play amount
                                             </th>
-                                            <th
-                                                class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                                                 Commissions
                                             </th>
-                                            <th
-                                                class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
                                                 Action
                                             </th>
                                         </tr>
@@ -232,31 +210,21 @@
 
     <script>
         var totalWinpointSum = {{ $totalWinpointSum }};
-        //alert(totalWinpointSum);
+        
         function fetchLiveGameValues() {
             fetch("{{ route('settings.data') }}")
                 .then(response => response.json())
                 .then(data => {
-
                     document.getElementById('totalEarnings').value = data.earning;
-
                     document.getElementById('distributorPercent').value = data.distributorComission;
-
                     document.getElementById('agentPercent').value = data.agentComission;
-
-                    // document.getElementById('distributoramount').value = totalWinpointSum*(data.distributorComission/100).toFixed(2);
-                    document.getElementById('distributoramount').value = (totalWinpointSum * (data.distributorComission /
-                        100)).toFixed(2);
-                    document.getElementById('agentamount').value = (totalWinpointSum * (data.agentComission / 100))
-                        .toFixed(2);
+                    document.getElementById('agentamount').value = totalWinpointSum * (data.agentComission / 100).toFixed(2);
 
                     //if totalEarnings is zero then hide the distributorDropdown, agentSummaryTable
                     if (data.earning == 0) {
                         document.getElementById('distributorDropdown').style.display = 'none';
                         document.getElementById('agentSummaryTable').style.display = 'none';
                     }
-
-
                 })
                 .catch(error => console.error('Error fetching live game values:', error));
         }
@@ -322,9 +290,11 @@
                         const agentpercentage = $('#agentPercent').val();
 
                         $('#distWinAmount').text(data.totalWinpointSum_distributor);
-                        const commission = ((data.totalWinpointSum_distributor) * (
-                            distributorpercentage / 100)).toFixed(2);
+                        const commission = ((data.totalWinpointSum_distributor) * (distributorpercentage / 100)).toFixed(2);
+                        
+                        // Update both commission display fields
                         $('#distCommission').text(commission);
+                        $('#distributoramount').val(commission);
 
                         const releaseAllowed = !(parseInt(commission) <= 0);
 
@@ -335,30 +305,28 @@
                             data.agent.forEach(function(agent) {
                                 console.log('Agent object:', agent);
 
-                                // Determine correct agent id field
                                 const agentId = agent._id || agent.id || agent.agent_id;
-                                const agentCommission = (agent.winAmount * (
-                                    agentpercentage / 100)).toFixed(2);
+                                const agentCommission = (agent.winAmount * (agentpercentage / 100)).toFixed(2);
                                 const isDisabled = parseInt(agentCommission) <= 0;
 
-                                const row = /* HTML */ `
-                        <tr>
-                            <td><p class="text-xs font-weight-bold mb-0">${agent.name}</p></td>
-                            <td><p class="text-xs font-weight-bold mb-0">${agent.date || '-'}</p></td>
-                            <td><p class="text-xs mb-0 text-secondary">${agent.endpoint}</p></td>
-                            <td><p class="text-xs mb-0 text-success fw-bold agent-win-amount">₹${agent.winAmount}</p></td>
-                            <td><p class="text-xs mb-0 text-secondary agent-commission">₹${agentCommission}</p></td>
-                            <td>
-                                <button type="button" class="btn btn-sm btn-success agent-release-btn"
-                                    data-agentid="${agentId}"
-                                    data-agent-name="${agent.name}"
-                                    data-win-amount="${agent.winAmount}"
-                                    data-agent-commission="${agentCommission}"
-                                    ${isDisabled ? 'disabled style="opacity:0.6; cursor:not-allowed;"' : ''}>
-                                    Release
-                                </button>
-                            </td>
-                        </tr>`;
+                                const row = `
+                                <tr>
+                                    <td><p class="text-xs font-weight-bold mb-0">${agent.name}</p></td>
+                                    <td><p class="text-xs font-weight-bold mb-0">${agent.date || '-'}</p></td>
+                                    <td><p class="text-xs mb-0 text-secondary">${agent.endpoint}</p></td>
+                                    <td><p class="text-xs mb-0 text-success fw-bold agent-win-amount">₹${agent.winAmount}</p></td>
+                                    <td><p class="text-xs mb-0 text-secondary agent-commission">₹${agentCommission}</p></td>
+                                    <td>
+                                        <button type="button" class="btn btn-sm btn-success agent-release-btn"
+                                            data-agentid="${agentId}"
+                                            data-agent-name="${agent.name}"
+                                            data-win-amount="${agent.winAmount}"
+                                            data-agent-commission="${agentCommission}"
+                                            ${isDisabled ? 'disabled style="opacity:0.6; cursor:not-allowed;"' : ''}>
+                                            Release
+                                        </button>
+                                    </td>
+                                </tr>`;
                                 agentTableBody.append(row);
                             });
                         } else {
@@ -386,15 +354,12 @@
                 const winAmount = parseInt($button.data('win-amount'));
                 const commissionAmount = parseFloat($button.data('agent-commission'));
 
-                if (!distributorId || !agentId || isNaN(commissionAmount) || commissionAmount <= 0 || isNaN(
-                        winAmount) || winAmount <= 0) {
+                if (!distributorId || !agentId || isNaN(commissionAmount) || commissionAmount <= 0 || isNaN(winAmount) || winAmount <= 0) {
                     alert('Invalid agent data.');
                     return;
                 }
 
-                if (!confirm(
-                        `Are you sure you want to release ₹${(commissionAmount/100).toFixed(2)} commission to ${agentName}?`
-                    )) {
+                if (!confirm(`Are you sure you want to release ₹${(commissionAmount/100).toFixed(2)} commission to ${agentName}?`)) {
                     return;
                 }
 
@@ -412,7 +377,6 @@
                         _token: '{{ csrf_token() }}'
                     },
                     success: function(res) {
-                        // Update the UI without reloading the page
                         $row.find('.agent-win-amount').text('₹0');
                         $row.find('.agent-commission').text('₹0');
                         $button.prop('disabled', true).css({
@@ -420,12 +384,11 @@
                             'cursor': 'not-allowed'
                         });
 
-                        // Update the distributor totals
                         const currentWin = parseInt($('#distWinAmount').text());
                         const currentComm = parseFloat($('#distCommission').text());
                         $('#distWinAmount').text(currentWin - winAmount);
-                        $('#distCommission').text((currentComm - (commissionAmount / 100))
-                            .toFixed(2));
+                        $('#distCommission').text((currentComm - (commissionAmount / 100)).toFixed(2));
+                        $('#distributoramount').val((currentComm - (commissionAmount / 100)).toFixed(2));
 
                         alert('Agent Commission Released Successfully!');
                         fetchLiveGameValues();
@@ -441,6 +404,7 @@
                 $('#distEndpoint').text('N/A');
                 $('#distWinAmount').text('0');
                 $('#distCommission').text('0');
+                $('#distributoramount').val('0');
                 $('#distributor').val('');
                 $('#releaseButton').prop('disabled', true);
                 $('#agentTableBody').html('<tr><td colspan="6" class="text-muted">No agents to display.</td></tr>');
@@ -449,7 +413,4 @@
             $('#releaseButton').prop('disabled', true);
         });
     </script>
-
-
-
 @endsection
