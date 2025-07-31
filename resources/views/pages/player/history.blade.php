@@ -23,59 +23,65 @@
                             </div>
 
                             <!-- <div class="d-flex flex-wrap align-items-end gap-2 mt-2 mt-md-0"> -->
-                                <!-- Show Dropdown -->
-                                <div class="d-flex align-items-center mb-2">
-                                    <label for="per_page" class="mb-0 me-2 text-sm text-dark fw-bold">Show:</label>
-                                    <div class="input-group input-group-outline border-radius-lg shadow-sm">
-                                        <select name="per_page" id="per_page" class="form-select border-0 ps-3 pe-4"
-                                            style="min-width: 60px;">
-                                            <option value="5" {{ request('per_page') == 5 ? 'selected' : '' }}>5</option>
-                                            <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
-                                            <option value="20" {{ request('per_page') == 20 ? 'selected' : '' }}>20</option>
-                                            <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
+                            <!-- Show Dropdown -->
+                            <div class="d-flex align-items-center mb-2">
+                                <label for="per_page" class="mb-0 me-2 text-sm text-dark fw-bold">Show:</label>
+                                <div class="input-group input-group-outline border-radius-lg shadow-sm">
+                                    <select name="per_page" id="per_page" class="form-select border-0 ps-3 pe-4"
+                                        style="min-width: 60px;">
+                                        <option value="5" {{ request('per_page') == 5 ? 'selected' : '' }}>5</option>
+                                        <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
+                                        <option value="20" {{ request('per_page') == 20 ? 'selected' : '' }}>20</option>
+                                        <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <form method="GET" action="{{ route('player.history', $player->_id) }}">
+                                <div class="d-flex justify-content-end gap-2 mt-5">
+                                    <div>
+                                        <label for="date_range" class="form-label mb-0">Quick Date Range</label>
+                                        <select name="date_range" id="date_range" class="form-control mb-0">
+                                            <option value="">Select a range</option>
+                                            <option value="2_days_ago"
+                                                {{ request('date_range') == '2_days_ago' ? 'selected' : '' }}>Last 2 Days
+                                            </option>
+                                            <option value="this_week"
+                                                {{ request('date_range') == 'this_week' ? 'selected' : '' }}>This Week
+                                            </option>
+                                            <option value="this_month"
+                                                {{ request('date_range') == 'this_month' ? 'selected' : '' }}>This Month
+                                            </option>
                                         </select>
                                     </div>
+
+                                    <div>
+                                        <label for="from_date" class="form-label mb-0">From Date</label>
+                                        <input type="date" name="from_date" id="from_date" class="form-control mb-0"
+                                            value="{{ request('from_date') }}">
+                                    </div>
+
+                                    <div>
+                                        <label for="to_date" class="form-label mb-0">To Date</label>
+                                        <input type="date" name="to_date" id="to_date" class="form-control mb-0"
+                                            value="{{ request('to_date') }}">
+                                    </div>
+
+                                    <button type="submit" class="btn btn-sm btn-primary mt-4 mb-0">Filter</button>
+                                    @if (request()->has('from_date') || request()->has('to_date') || request()->has('date_range'))
+                                        <a href="{{ route('player.history', $player->_id) }}"
+                                            class="btn btn-sm btn-secondary mt-4 mb-0">Reset</a>
+                                    @endif
                                 </div>
 
-                                <form method="GET" action="{{ route('player.history', $player->_id) }}">
-                                    <div class="d-flex justify-content-end gap-2 mt-5">
-                                        <div>
-                                            <label for="date_range" class="form-label mb-0">Quick Date Range</label>
-                                            <select name="date_range" id="date_range" class="form-control mb-0">
-                                                <option value="">Select a range</option>
-                                                <option value="2_days_ago" {{ request('date_range') == '2_days_ago' ? 'selected' : '' }}>Last 2 Days</option>
-                                                <option value="this_week" {{ request('date_range') == 'this_week' ? 'selected' : '' }}>This Week</option>
-                                                <option value="this_month" {{ request('date_range') == 'this_month' ? 'selected' : '' }}>This Month</option>
-                                            </select>
-                                        </div>
-
-                                        <div>
-                                            <label for="from_date" class="form-label mb-0">From Date</label>
-                                            <input type="date" name="from_date" id="from_date" class="form-control mb-0"
-                                                value="{{ request('from_date') }}">
-                                        </div>
-
-                                        <div>
-                                            <label for="to_date" class="form-label mb-0">To Date</label>
-                                            <input type="date" name="to_date" id="to_date" class="form-control mb-0"
-                                                value="{{ request('to_date') }}">
-                                        </div>
-
-                                        <button type="submit" class="btn btn-sm btn-primary mt-4 mb-0">Filter</button>
-                                        @if (request()->has('from_date') || request()->has('to_date') || request()->has('date_range'))
-                                            <a href="{{ route('player.history', $player->_id) }}"
-                                                class="btn btn-sm btn-secondary mt-4 mb-0">Reset</a>
-                                        @endif
-                                    </div>
-
-                                    <div class="d-flex justify-content-center mt-3 gap-2">
-                                        <a href="{{ route('export.game.history', $player->_id) }}"
-                                            class="btn btn-sm btn-primary">
-                                            <i class="fas fa-download me-1"></i> Export Data
-                                        </a>
-                                        <a href="{{ route('player.show') }}" class="btn btn-sm btn-outline-dark">← Back</a>
-                                    </div>
-                                </form>
+                                <div class="d-flex justify-content-center mt-3 gap-2">
+                                    <a href="{{ route('export.game.history', $player->_id) }}"
+                                        class="btn btn-sm btn-primary">
+                                        <i class="fas fa-download me-1"></i> Export Data
+                                    </a>
+                                    <a href="{{ route('player.show') }}" class="btn btn-sm btn-outline-dark">← Back</a>
+                                </div>
+                            </form>
                             <!-- </div> -->
                         </div>
                     </div>
@@ -105,7 +111,10 @@
                                                 $date = null;
                                                 if (!empty($entry['stime']) && is_string($entry['stime'])) {
                                                     try {
-                                                        $date = Carbon::createFromFormat('Y/m/d H:i:s', $entry['stime']);
+                                                        $date = Carbon::createFromFormat(
+                                                            'Y/m/d H:i:s',
+                                                            $entry['stime'],
+                                                        );
                                                     } catch (\Exception $e) {
                                                         try {
                                                             $date = Carbon::parse($entry['stime']);
@@ -140,7 +149,8 @@
 
                                                 <!-- Result -->
                                                 <td class="align-middle text-center">
-                                                    <span class="badge badge-sm bg-gradient-dark">{{ $entry['result'] }}</span>
+                                                    <span
+                                                        class="badge badge-sm bg-gradient-dark">{{ $entry['result'] }}</span>
                                                 </td>
 
                                                 <td class="align-middle" style="min-width: 100%;">
@@ -148,133 +158,134 @@
                                                     <div class="d-flex align-items-center mb-1">
                                                         <div class="fw-bold text-nowrap me-3 text-dark text-xs"
                                                             style="width: 80px;">Betvalue</div>
-                                                            <div class="text-center me-4" style="min-width: 40px;">
-                                                                <span
-                                                                    class="fw-bold px-2 py-1 rounded {{ $entry['result'] == 1 ? 'bg-success bg-opacity-25 text-dark' : 'text-dark' }}">
-                                                                    1
-                                                                </span>
-                                                            </div>
-                                                            <div class="text-center me-4" style="min-width: 40px;">
-                                                                <span
-                                                                    class="fw-bold px-2 py-1 rounded {{ $entry['result'] == 2 ? 'bg-success bg-opacity-25 text-dark' : 'text-dark' }}">
-                                                                    2
-                                                                </span>
-                                                            </div>
-                                                            <div class="text-center me-4" style="min-width: 40px;">
-                                                                <span
-                                                                    class="fw-bold px-2 py-1 rounded {{ $entry['result'] == 3 ? 'bg-success bg-opacity-25 text-dark' : 'text-dark' }}">
-                                                                    3
-                                                                </span>
-                                                            </div>
-                                                            <div class="text-center me-4" style="min-width: 40px;">
-                                                                <span
-                                                                    class="fw-bold px-2 py-1 rounded {{ $entry['result'] == 4 ? 'bg-success bg-opacity-25 text-dark' : 'text-dark' }}">
-                                                                    4
-                                                                </span>
-                                                            </div>
-                                                            <div class="text-center me-4" style="min-width: 40px;">
-                                                                <span
-                                                                    class="fw-bold px-2 py-1 rounded {{ $entry['result'] == 5 ? 'bg-success bg-opacity-25 text-dark' : 'text-dark' }}">
-                                                                    5
-                                                                </span>
-                                                            </div>
-                                                            <div class="text-center me-4" style="min-width: 40px;">
-                                                                <span
-                                                                    class="fw-bold px-2 py-1 rounded {{ $entry['result'] == 6 ? 'bg-success bg-opacity-25 text-dark' : 'text-dark' }}">
-                                                                    6
-                                                                </span>
-                                                            </div>
-                                                            <div class="text-center me-4" style="min-width: 40px;">
-                                                                <span
-                                                                    class="fw-bold px-2 py-1 rounded {{ $entry['result'] == 7 ? 'bg-success bg-opacity-25 text-dark' : 'text-dark' }}">
-                                                                    7
-                                                                </span>
-                                                            </div>
-                                                            <div class="text-center me-4" style="min-width: 40px;">
-                                                                <span
-                                                                    class="fw-bold px-2 py-1 rounded {{ $entry['result'] == 8 ? 'bg-success bg-opacity-25 text-dark' : 'text-dark' }}">
-                                                                    8
-                                                                </span>
-                                                            </div>
-                                                            <div class="text-center me-4" style="min-width: 40px;">
-                                                                <span
-                                                                    class="fw-bold px-2 py-1 rounded {{ $entry['result'] == 9 ? 'bg-success bg-opacity-25 text-dark' : 'text-dark' }}">
-                                                                    9
-                                                                </span>
-                                                            </div>
-                                                            <div class="text-center me-4" style="min-width: 40px;">
-                                                                <span
-                                                                    class="fw-bold px-2 py-1 rounded {{ $entry['result'] == 0 ? 'bg-success bg-opacity-25 text-dark' : 'text-dark' }}">
-                                                                    0
-                                                                </span>
-                                                            </div>
-                                                        <div class="me-3 fw-bold text-dark text-xl" style="width: 80px;">Total</div>
+                                                        <div class="text-center me-4" style="min-width: 40px;">
+                                                            <span
+                                                                class="fw-bold px-2 py-1 rounded {{ $entry['result'] == 1 ? 'bg-success bg-opacity-25 text-dark' : 'text-dark' }}">
+                                                                1
+                                                            </span>
+                                                        </div>
+                                                        <div class="text-center me-4" style="min-width: 40px;">
+                                                            <span
+                                                                class="fw-bold px-2 py-1 rounded {{ $entry['result'] == 2 ? 'bg-success bg-opacity-25 text-dark' : 'text-dark' }}">
+                                                                2
+                                                            </span>
+                                                        </div>
+                                                        <div class="text-center me-4" style="min-width: 40px;">
+                                                            <span
+                                                                class="fw-bold px-2 py-1 rounded {{ $entry['result'] == 3 ? 'bg-success bg-opacity-25 text-dark' : 'text-dark' }}">
+                                                                3
+                                                            </span>
+                                                        </div>
+                                                        <div class="text-center me-4" style="min-width: 40px;">
+                                                            <span
+                                                                class="fw-bold px-2 py-1 rounded {{ $entry['result'] == 4 ? 'bg-success bg-opacity-25 text-dark' : 'text-dark' }}">
+                                                                4
+                                                            </span>
+                                                        </div>
+                                                        <div class="text-center me-4" style="min-width: 40px;">
+                                                            <span
+                                                                class="fw-bold px-2 py-1 rounded {{ $entry['result'] == 5 ? 'bg-success bg-opacity-25 text-dark' : 'text-dark' }}">
+                                                                5
+                                                            </span>
+                                                        </div>
+                                                        <div class="text-center me-4" style="min-width: 40px;">
+                                                            <span
+                                                                class="fw-bold px-2 py-1 rounded {{ $entry['result'] == 6 ? 'bg-success bg-opacity-25 text-dark' : 'text-dark' }}">
+                                                                6
+                                                            </span>
+                                                        </div>
+                                                        <div class="text-center me-4" style="min-width: 40px;">
+                                                            <span
+                                                                class="fw-bold px-2 py-1 rounded {{ $entry['result'] == 7 ? 'bg-success bg-opacity-25 text-dark' : 'text-dark' }}">
+                                                                7
+                                                            </span>
+                                                        </div>
+                                                        <div class="text-center me-4" style="min-width: 40px;">
+                                                            <span
+                                                                class="fw-bold px-2 py-1 rounded {{ $entry['result'] == 8 ? 'bg-success bg-opacity-25 text-dark' : 'text-dark' }}">
+                                                                8
+                                                            </span>
+                                                        </div>
+                                                        <div class="text-center me-4" style="min-width: 40px;">
+                                                            <span
+                                                                class="fw-bold px-2 py-1 rounded {{ $entry['result'] == 9 ? 'bg-success bg-opacity-25 text-dark' : 'text-dark' }}">
+                                                                9
+                                                            </span>
+                                                        </div>
+                                                        <div class="text-center me-4" style="min-width: 40px;">
+                                                            <span
+                                                                class="fw-bold px-2 py-1 rounded {{ $entry['result'] == 0 ? 'bg-success bg-opacity-25 text-dark' : 'text-dark' }}">
+                                                                0
+                                                            </span>
+                                                        </div>
+                                                        <div class="me-3 fw-bold text-dark text-xl" style="width: 80px;">
+                                                            Total</div>
                                                     </div>
 
                                                     <!-- Row 2: Bet values -->
                                                     <div class="d-flex align-items-center">
                                                         <div class="me-3" style="width: 80px;"></div>
                                                         <?php /* @foreach ($entry['betValues'] as $index => $bet) */?>
-                                                            <div class="text-center me-4" style="min-width: 40px;">
-                                                                <span
-                                                                    class="{{ $entry['result'] == 1 ? 'fw-bold text-dark' : '' }}">
-                                                                    {{ $entry['betValues'][1] }}
-                                                                </span>
-                                                            </div>
-                                                            <div class="text-center me-4" style="min-width: 40px;">
-                                                                <span
-                                                                    class="{{ $entry['result'] == 2 ? 'fw-bold text-dark' : '' }}">
-                                                                    {{ $entry['betValues'][2] }}
-                                                                </span>
-                                                            </div>
-                                                            <div class="text-center me-4" style="min-width: 40px;">
-                                                                <span
-                                                                    class="{{ $entry['result'] == 3 ? 'fw-bold text-dark' : '' }}">
-                                                                    {{ $entry['betValues'][3] }}
-                                                                </span>
-                                                            </div>
-                                                            <div class="text-center me-4" style="min-width: 40px;">
-                                                                <span
-                                                                    class="{{ $entry['result'] == 4 ? 'fw-bold text-dark' : '' }}">
-                                                                    {{ $entry['betValues'][4] }}
-                                                                </span>
-                                                            </div>
-                                                            <div class="text-center me-4" style="min-width: 40px;">
-                                                                <span
-                                                                    class="{{ $entry['result'] == 5 ? 'fw-bold text-dark' : '' }}">
-                                                                    {{ $entry['betValues'][5] }}
-                                                                </span>
-                                                            </div>
-                                                            <div class="text-center me-4" style="min-width: 40px;">
-                                                                <span
-                                                                    class="{{ $entry['result'] == 6 ? 'fw-bold text-dark' : '' }}">
-                                                                    {{ $entry['betValues'][6] }}
-                                                                </span>
-                                                            </div>
-                                                            <div class="text-center me-4" style="min-width: 40px;">
-                                                                <span
-                                                                    class="{{ $entry['result'] == 7 ? 'fw-bold text-dark' : '' }}">
-                                                                    {{ $entry['betValues'][7] }}
-                                                                </span>
-                                                            </div>
-                                                            <div class="text-center me-4" style="min-width: 40px;">
-                                                                <span
-                                                                    class="{{ $entry['result'] == 8 ? 'fw-bold text-dark' : '' }}">
-                                                                    {{ $entry['betValues'][8] }}
-                                                                </span>
-                                                            </div>
-                                                            <div class="text-center me-4" style="min-width: 40px;">
-                                                                <span
-                                                                    class="{{ $entry['result'] == 9 ? 'fw-bold text-dark' : '' }}">
-                                                                    {{ $entry['betValues'][9] }}
-                                                                </span>
-                                                            </div>
-                                                            <div class="text-center me-4" style="min-width: 40px;">
-                                                                <span
-                                                                    class="{{ $entry['result'] == 0 ? 'fw-bold text-dark' : '' }}">
-                                                                    {{ $entry['betValues'][0] }}
-                                                                </span>
-                                                            </div>
+                                                        <div class="text-center me-4" style="min-width: 40px;">
+                                                            <span
+                                                                class="{{ $entry['result'] == 1 ? 'fw-bold text-dark' : '' }}">
+                                                                {{ $entry['betValues'][1] }}
+                                                            </span>
+                                                        </div>
+                                                        <div class="text-center me-4" style="min-width: 40px;">
+                                                            <span
+                                                                class="{{ $entry['result'] == 2 ? 'fw-bold text-dark' : '' }}">
+                                                                {{ $entry['betValues'][2] }}
+                                                            </span>
+                                                        </div>
+                                                        <div class="text-center me-4" style="min-width: 40px;">
+                                                            <span
+                                                                class="{{ $entry['result'] == 3 ? 'fw-bold text-dark' : '' }}">
+                                                                {{ $entry['betValues'][3] }}
+                                                            </span>
+                                                        </div>
+                                                        <div class="text-center me-4" style="min-width: 40px;">
+                                                            <span
+                                                                class="{{ $entry['result'] == 4 ? 'fw-bold text-dark' : '' }}">
+                                                                {{ $entry['betValues'][4] }}
+                                                            </span>
+                                                        </div>
+                                                        <div class="text-center me-4" style="min-width: 40px;">
+                                                            <span
+                                                                class="{{ $entry['result'] == 5 ? 'fw-bold text-dark' : '' }}">
+                                                                {{ $entry['betValues'][5] }}
+                                                            </span>
+                                                        </div>
+                                                        <div class="text-center me-4" style="min-width: 40px;">
+                                                            <span
+                                                                class="{{ $entry['result'] == 6 ? 'fw-bold text-dark' : '' }}">
+                                                                {{ $entry['betValues'][6] }}
+                                                            </span>
+                                                        </div>
+                                                        <div class="text-center me-4" style="min-width: 40px;">
+                                                            <span
+                                                                class="{{ $entry['result'] == 7 ? 'fw-bold text-dark' : '' }}">
+                                                                {{ $entry['betValues'][7] }}
+                                                            </span>
+                                                        </div>
+                                                        <div class="text-center me-4" style="min-width: 40px;">
+                                                            <span
+                                                                class="{{ $entry['result'] == 8 ? 'fw-bold text-dark' : '' }}">
+                                                                {{ $entry['betValues'][8] }}
+                                                            </span>
+                                                        </div>
+                                                        <div class="text-center me-4" style="min-width: 40px;">
+                                                            <span
+                                                                class="{{ $entry['result'] == 9 ? 'fw-bold text-dark' : '' }}">
+                                                                {{ $entry['betValues'][9] }}
+                                                            </span>
+                                                        </div>
+                                                        <div class="text-center me-4" style="min-width: 40px;">
+                                                            <span
+                                                                class="{{ $entry['result'] == 0 ? 'fw-bold text-dark' : '' }}">
+                                                                {{ $entry['betValues'][0] }}
+                                                            </span>
+                                                        </div>
                                                         <?php /*@endforeach */?>
                                                         <div class="d-flex align-items-center mt-1">
                                                             <div class="text-dark fw-bold ps-2">
@@ -294,7 +305,7 @@
 
                             <!-- Pagination -->
                             <div class="d-flex justify-content-center mt-4">
-                                @if($paginatedHistory)
+                                @if ($paginatedHistory)
                                     {{ $paginatedHistory->withQueryString()->links('vendor.pagination.bootstrap-4') }}
                                 @endif
                             </div>
@@ -347,9 +358,9 @@
     </style>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             // Handle per_page dropdown changes
-            document.getElementById('per_page').addEventListener('change', function () {
+            document.getElementById('per_page').addEventListener('change', function() {
                 const url = new URL(window.location.href);
                 url.searchParams.set('per_page', this.value);
                 url.searchParams.delete('page'); // Reset to first page
@@ -359,7 +370,7 @@
             // Preserve form inputs on page refresh
             const form = document.querySelector('form[method="GET"]');
             if (form) {
-                form.addEventListener('submit', function (e) {
+                form.addEventListener('submit', function(e) {
                     // No need to prevent default, let the form submit normally
                 });
             }
