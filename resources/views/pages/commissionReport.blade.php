@@ -245,9 +245,9 @@
                     document.getElementById('agentPercent').value = data.agentComission;
 
                     // document.getElementById('distributoramount').value = totalWinpointSum*(data.distributorComission/100).toFixed(2);
-                    document.getElementById('distributoramount').value = totalWinpointSum * (data.distributorComission /
-                        100).toFixed(2);
-                    document.getElementById('agentamount').value = totalWinpointSum * (data.agentComission / 100)
+                    document.getElementById('distributoramount').value = (totalWinpointSum * (data.distributorComission /
+                        100)).toFixed(2);
+                    document.getElementById('agentamount').value = (totalWinpointSum * (data.agentComission / 100))
                         .toFixed(2);
 
                     //if totalEarnings is zero then hide the distributorDropdown, agentSummaryTable
