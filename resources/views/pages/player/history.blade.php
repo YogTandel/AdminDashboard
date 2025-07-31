@@ -225,7 +225,6 @@
                                                     <!-- Row 2: Bet values -->
                                                     <div class="d-flex align-items-center">
                                                         <div class="me-3" style="width: 80px;"></div>
-                                                        <?php /* @foreach ($entry['betValues'] as $index => $bet) */?>
                                                         <div class="text-center me-4" style="min-width: 40px;">
                                                             <span
                                                                 class="{{ $entry['result'] == 1 ? 'fw-bold text-dark' : '' }}">
