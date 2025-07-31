@@ -369,7 +369,7 @@
                     return;
                 }
 
-                if (!confirm(`Are you sure you want to release ₹${(commissionAmount/100).toFixed(2)} commission to ${agentName}?`)) {
+                if (!confirm(`Are you sure you want to release ₹${(commissionAmount).toFixed(2)} commission to ${agentName}?`)) {
                     return;
                 }
 
