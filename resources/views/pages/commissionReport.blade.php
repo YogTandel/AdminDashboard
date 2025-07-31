@@ -131,9 +131,9 @@
 
                                 <!-- Last Release -->
                                 <!-- <div class="d-flex flex-column" style="min-width: 140px;">
-                                    <label class="form-label">Last Release</label>
-                                    <div class="form-control bg-light" id="releaseDateBox">N/A</div>
-                                </div> -->
+                                        <label class="form-label">Last Release</label>
+                                        <div class="form-control bg-light" id="releaseDateBox">N/A</div>
+                                    </div> -->
 
                                 <!-- Endpoint -->
                                 <div class="d-flex flex-column" style="min-width: 190px;">
@@ -160,10 +160,10 @@
 
                                 <!-- Release Button -->
                                 <!-- <div class="d-flex flex-column" style="min-width: 140px;">
-                                    <label class="form-label mb-1 invisible">Placeholder</label> -->
-                                    <!-- <button type="button" class="btn btn-success w-100 mb-0" id="releaseButton">
-                                                                                                Release
-                                                                                            </button> -->
+                                        <label class="form-label mb-1 invisible">Placeholder</label> -->
+                                <!-- <button type="button" class="btn btn-success w-100 mb-0" id="releaseButton">
+                                                                                                    Release
+                                                                                                </button> -->
                                 <!-- </div> -->
 
                                 <input type="hidden" id="totalBet" value="0">
@@ -245,9 +245,9 @@
                     document.getElementById('agentPercent').value = data.agentComission;
 
                     // document.getElementById('distributoramount').value = totalWinpointSum*(data.distributorComission/100).toFixed(2);
-                    document.getElementById('distributoramount').value = (totalWinpointSum * (data.distributorComission /
-                        100)).toFixed(2);
-                    document.getElementById('agentamount').value = (totalWinpointSum * (data.agentComission / 100))
+                    document.getElementById('distributoramount').value = totalWinpointSum * (data.distributorComission /
+                        100).toFixed(2);
+                    document.getElementById('agentamount').value = totalWinpointSum * (data.agentComission / 100)
                         .toFixed(2);
 
                     //if totalEarnings is zero then hide the distributorDropdown, agentSummaryTable

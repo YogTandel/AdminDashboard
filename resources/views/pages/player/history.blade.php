@@ -143,14 +143,16 @@
                                                 <!-- Win -->
                                                 <td class="align-middle text-center  py-1">
                                                     <span
-                                                        class="badge bg-success text-white">{{ number_format($entry['winpoint']) }}</span>
+                                                        class="badge bg-success text-white">{{ number_format($entry['winpoint']) }}
+                                                    </span>
                                                 </td>
 
 
                                                 <!-- Result -->
                                                 <td class="align-middle text-center">
                                                     <span
-                                                        class="badge badge-sm bg-gradient-dark">{{ $entry['result'] }}</span>
+                                                        class="badge badge-sm bg-gradient-dark">{{ $entry['result'] }}
+                                                    </span>
                                                 </td>
 
                                                 <td class="align-middle" style="min-width: 100%;">
