@@ -143,78 +143,37 @@
                                                 <!-- Win -->
                                                 <td class="align-middle text-center  py-1">
                                                     <span
-                                                        class="badge bg-success text-white">{{ number_format($entry['winpoint']) }}</span>
+                                                        class="badge bg-success text-white">{{ number_format($entry['winpoint']) }}
+                                                    </span>
                                                 </td>
 
 
                                                 <!-- Result -->
                                                 <td class="align-middle text-center">
-                                                    <span
-                                                        class="badge badge-sm bg-gradient-dark">{{ $entry['result'] }}</span>
+                                                    <span class="badge badge-sm bg-gradient-dark">{{ $entry['result'] }}
+                                                    </span>
                                                 </td>
 
                                                 <td class="align-middle" style="min-width: 100%;">
+                                                    @php
+                                                        $resultDigits = str_split((string) $entry['result']);
+                                                    @endphp
+
                                                     <!-- Row 1: Position numbers (0-9) -->
                                                     <div class="d-flex align-items-center mb-1">
                                                         <div class="fw-bold text-nowrap me-3 text-dark text-xs"
                                                             style="width: 80px;">Betvalue</div>
+                                                        @for ($i = 1; $i <= 9; $i++)
+                                                            <div class="text-center me-4" style="min-width: 40px;">
+                                                                <span
+                                                                    class="fw-bold px-2 py-1 rounded {{ in_array((string) $i, $resultDigits) ? 'bg-success bg-opacity-25 text-dark' : 'text-dark' }}">
+                                                                    {{ $i }}
+                                                                </span>
+                                                            </div>
+                                                        @endfor
                                                         <div class="text-center me-4" style="min-width: 40px;">
                                                             <span
-                                                                class="fw-bold px-2 py-1 rounded {{ $entry['result'] == 1 ? 'bg-success bg-opacity-25 text-dark' : 'text-dark' }}">
-                                                                1
-                                                            </span>
-                                                        </div>
-                                                        <div class="text-center me-4" style="min-width: 40px;">
-                                                            <span
-                                                                class="fw-bold px-2 py-1 rounded {{ $entry['result'] == 2 ? 'bg-success bg-opacity-25 text-dark' : 'text-dark' }}">
-                                                                2
-                                                            </span>
-                                                        </div>
-                                                        <div class="text-center me-4" style="min-width: 40px;">
-                                                            <span
-                                                                class="fw-bold px-2 py-1 rounded {{ $entry['result'] == 3 ? 'bg-success bg-opacity-25 text-dark' : 'text-dark' }}">
-                                                                3
-                                                            </span>
-                                                        </div>
-                                                        <div class="text-center me-4" style="min-width: 40px;">
-                                                            <span
-                                                                class="fw-bold px-2 py-1 rounded {{ $entry['result'] == 4 ? 'bg-success bg-opacity-25 text-dark' : 'text-dark' }}">
-                                                                4
-                                                            </span>
-                                                        </div>
-                                                        <div class="text-center me-4" style="min-width: 40px;">
-                                                            <span
-                                                                class="fw-bold px-2 py-1 rounded {{ $entry['result'] == 5 ? 'bg-success bg-opacity-25 text-dark' : 'text-dark' }}">
-                                                                5
-                                                            </span>
-                                                        </div>
-                                                        <div class="text-center me-4" style="min-width: 40px;">
-                                                            <span
-                                                                class="fw-bold px-2 py-1 rounded {{ $entry['result'] == 6 ? 'bg-success bg-opacity-25 text-dark' : 'text-dark' }}">
-                                                                6
-                                                            </span>
-                                                        </div>
-                                                        <div class="text-center me-4" style="min-width: 40px;">
-                                                            <span
-                                                                class="fw-bold px-2 py-1 rounded {{ $entry['result'] == 7 ? 'bg-success bg-opacity-25 text-dark' : 'text-dark' }}">
-                                                                7
-                                                            </span>
-                                                        </div>
-                                                        <div class="text-center me-4" style="min-width: 40px;">
-                                                            <span
-                                                                class="fw-bold px-2 py-1 rounded {{ $entry['result'] == 8 ? 'bg-success bg-opacity-25 text-dark' : 'text-dark' }}">
-                                                                8
-                                                            </span>
-                                                        </div>
-                                                        <div class="text-center me-4" style="min-width: 40px;">
-                                                            <span
-                                                                class="fw-bold px-2 py-1 rounded {{ $entry['result'] == 9 ? 'bg-success bg-opacity-25 text-dark' : 'text-dark' }}">
-                                                                9
-                                                            </span>
-                                                        </div>
-                                                        <div class="text-center me-4" style="min-width: 40px;">
-                                                            <span
-                                                                class="fw-bold px-2 py-1 rounded {{ $entry['result'] == 0 ? 'bg-success bg-opacity-25 text-dark' : 'text-dark' }}">
+                                                                class="fw-bold px-2 py-1 rounded {{ in_array('0', $resultDigits) ? 'bg-success bg-opacity-25 text-dark' : 'text-dark' }}">
                                                                 0
                                                             </span>
                                                         </div>
@@ -225,67 +184,21 @@
                                                     <!-- Row 2: Bet values -->
                                                     <div class="d-flex align-items-center">
                                                         <div class="me-3" style="width: 80px;"></div>
+                                                        @for ($i = 1; $i <= 9; $i++)
+                                                            <div class="text-center me-4" style="min-width: 40px;">
+                                                                <span
+                                                                    class="{{ in_array((string) $i, $resultDigits) ? 'fw-bold text-dark' : '' }}">
+                                                                    {{ $entry['betValues'][$i] ?? 0 }}
+                                                                </span>
+                                                            </div>
+                                                        @endfor
                                                         <div class="text-center me-4" style="min-width: 40px;">
                                                             <span
-                                                                class="{{ $entry['result'] == 1 ? 'fw-bold text-dark' : '' }}">
-                                                                {{ $entry['betValues'][1] }}
+                                                                class="{{ in_array('0', $resultDigits) ? 'fw-bold text-dark' : '' }}">
+                                                                {{ $entry['betValues'][0] ?? 0 }}
                                                             </span>
                                                         </div>
-                                                        <div class="text-center me-4" style="min-width: 40px;">
-                                                            <span
-                                                                class="{{ $entry['result'] == 2 ? 'fw-bold text-dark' : '' }}">
-                                                                {{ $entry['betValues'][2] }}
-                                                            </span>
-                                                        </div>
-                                                        <div class="text-center me-4" style="min-width: 40px;">
-                                                            <span
-                                                                class="{{ $entry['result'] == 3 ? 'fw-bold text-dark' : '' }}">
-                                                                {{ $entry['betValues'][3] }}
-                                                            </span>
-                                                        </div>
-                                                        <div class="text-center me-4" style="min-width: 40px;">
-                                                            <span
-                                                                class="{{ $entry['result'] == 4 ? 'fw-bold text-dark' : '' }}">
-                                                                {{ $entry['betValues'][4] }}
-                                                            </span>
-                                                        </div>
-                                                        <div class="text-center me-4" style="min-width: 40px;">
-                                                            <span
-                                                                class="{{ $entry['result'] == 5 ? 'fw-bold text-dark' : '' }}">
-                                                                {{ $entry['betValues'][5] }}
-                                                            </span>
-                                                        </div>
-                                                        <div class="text-center me-4" style="min-width: 40px;">
-                                                            <span
-                                                                class="{{ $entry['result'] == 6 ? 'fw-bold text-dark' : '' }}">
-                                                                {{ $entry['betValues'][6] }}
-                                                            </span>
-                                                        </div>
-                                                        <div class="text-center me-4" style="min-width: 40px;">
-                                                            <span
-                                                                class="{{ $entry['result'] == 7 ? 'fw-bold text-dark' : '' }}">
-                                                                {{ $entry['betValues'][7] }}
-                                                            </span>
-                                                        </div>
-                                                        <div class="text-center me-4" style="min-width: 40px;">
-                                                            <span
-                                                                class="{{ $entry['result'] == 8 ? 'fw-bold text-dark' : '' }}">
-                                                                {{ $entry['betValues'][8] }}
-                                                            </span>
-                                                        </div>
-                                                        <div class="text-center me-4" style="min-width: 40px;">
-                                                            <span
-                                                                class="{{ $entry['result'] == 9 ? 'fw-bold text-dark' : '' }}">
-                                                                {{ $entry['betValues'][9] }}
-                                                            </span>
-                                                        </div>
-                                                        <div class="text-center me-4" style="min-width: 40px;">
-                                                            <span
-                                                                class="{{ $entry['result'] == 0 ? 'fw-bold text-dark' : '' }}">
-                                                                {{ $entry['betValues'][0] }}
-                                                            </span>
-                                                        </div>
-                                                        <?php /*@endforeach */?>
+
                                                         <div class="d-flex align-items-center mt-1">
                                                             <div class="text-dark fw-bold ps-2">
                                                                 {{ array_sum($entry['betValues']) }}
@@ -293,9 +206,6 @@
                                                         </div>
                                                     </div>
                                                 </td>
-
-
-
                                             </tr>
                                         @endforeach
                                     </tbody>

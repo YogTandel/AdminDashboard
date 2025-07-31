@@ -127,6 +127,7 @@
                                     <input type="hidden" name="distributor" id="distributor" value="">
                                 </div>
 
+
                                 <!-- Endpoint -->
                                 <div class="d-flex flex-column" style="min-width: 190px;">
                                     <label class="form-label mb-1"> Balance</label>
@@ -149,6 +150,8 @@
                                         <div class="form-control bg-light" id="distCommission">0</div>
                                     </div>
                                 </div>
+
+
 
                                 <input type="hidden" id="totalBet" value="0">
                                 <input type="hidden" id="distCommissionPercentage" value="0">
@@ -218,7 +221,14 @@
                     document.getElementById('totalEarnings').value = data.earning;
                     document.getElementById('distributorPercent').value = data.distributorComission;
                     document.getElementById('agentPercent').value = data.agentComission;
-                    document.getElementById('agentamount').value = totalWinpointSum * (data.agentComission / 100).toFixed(2);
+
+
+
+                    // document.getElementById('distributoramount').value = totalWinpointSum*(data.distributorComission/100).toFixed(2);
+                    document.getElementById('distributoramount').value = totalWinpointSum * (data.distributorComission /
+                        100).toFixed(2);
+                    document.getElementById('agentamount').value = totalWinpointSum * (data.agentComission / 100)
+                        .toFixed(2);
 
                     //if totalEarnings is zero then hide the distributorDropdown, agentSummaryTable
                     if (data.earning == 0) {
