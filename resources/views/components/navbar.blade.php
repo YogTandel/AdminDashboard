@@ -14,7 +14,6 @@
         </nav>
 
         <ul class="navbar-nav justify-content-end">
-            {{-- Display logged-in user info --}}
             @php
                 $user = null;
                 $endpointType = '';
