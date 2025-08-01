@@ -229,7 +229,8 @@
                                                             data-bs-toggle="tooltip" title="Copy Player Credentials">
                                                             <i class="fas fa-copy me-2" style="cursor: pointer;"></i>
                                                         </a>
-                                                        @if(auth()->user()->role !== 'distributor' && auth()->user()->role !== 'agent')
+                                                        
+                                                        @if(auth()->check()&& auth()->user()->role !== 'distributor' && auth()->check() && auth()->user()->role !== 'agent')
                                                             <a href="javascript:;"
                                                                 class="text-secondary font-weight-bold text-xs me-2"
                                                                 title="Edit Player" 
