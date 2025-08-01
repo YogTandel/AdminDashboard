@@ -221,12 +221,14 @@
                     document.getElementById('totalEarnings').value = data.earning;
                     document.getElementById('distributorPercent').value = data.distributorComission;
                     document.getElementById('agentPercent').value = data.agentComission;
-
+                    
+                    totalWinpointSum =data.totalWinpointSum;
 
 
                     // document.getElementById('distributoramount').value = totalWinpointSum*(data.distributorComission/100).toFixed(2);
                     document.getElementById('distributoramount').value = totalWinpointSum * (data.distributorComission /
                         100).toFixed(2);
+                    //alert(totalWinpointSum);    
                     document.getElementById('agentamount').value = totalWinpointSum * (data.agentComission / 100)
                         .toFixed(2);
 
@@ -304,8 +306,8 @@
                         
                         // Update both commission display fields
                         $('#distCommission').text(commission);
-                        $('#distributoramount').val(commission);
-
+                        //$('#distributoramount').val(commission);
+                        
                         const releaseAllowed = !(parseInt(commission) <= 0);
 
                         const agentTableBody = $('#agentTableBody');
@@ -397,10 +399,12 @@
                         const currentWin = parseInt($('#distWinAmount').text());
                         const currentComm = parseFloat($('#distCommission').text());
                         $('#distWinAmount').text(currentWin - winAmount);
-                        $('#distCommission').text((currentComm - (commissionAmount / 100)).toFixed(2));
-                        $('#distributoramount').val((currentComm - (commissionAmount / 100)).toFixed(2));
+                        //$('#distCommission').text((currentComm - (commissionAmount / 100)).toFixed(2));
+                        //$('#distributoramount').val((currentComm - (commissionAmount / 100)).toFixed(2));
 
-                        alert('Agent Commission Released Successfully!');
+                        //alert('Agent Commission Released Successfully!');
+                        //alert(totalWinpointSum+"-"+winAmount);
+                        //totalWinpointSum=totalWinpointSum_distributor-winAmount;
                         fetchLiveGameValues();
                     },
                     error: function(xhr) {

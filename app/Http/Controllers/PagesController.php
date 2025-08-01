@@ -1008,73 +1008,7 @@ class PagesController extends Controller
         return response()->json(['endpoint' => $admin->endpoint ?? 'N/A']);
     }
 
-    public function commissionReport()
-    {
-        $agents = User::where('role', 'agent')
-            ->where('status', 'Active')
-            ->get();
-        //print_r($agents);
-        $totalWinpointSum = 0;
-
-        foreach ($agents as $agent) {
-            // $releaseDate      = $agent->release_commission_date ?? null;
-            // $releaseTimestamp = $releaseDate ? Carbon::parse($releaseDate)->timestamp : null;
-            $releaseTimestamp = $agent->release_commission_date;
-
-            // $players = User::where('role', 'player')
-            //     ->where('agent_id', new ObjectId($agent->_id))
-            //     ->get(['gameHistory']);
-            $players = User::raw(function ($collection) use ($agent) {
-                return $collection->aggregate([
-                    [
-                        '$match' => [
-                            'role'     => 'player',
-                            'agent_id' => new ObjectId($agent->_id),
-                        ],
-                    ],
-                    [
-                        '$project' => [
-                            'gameHistory' => [
-                                '$filter' => [
-                                    'input' => '$gameHistory',
-                                    'as'    => 'history',
-                                    'cond'  => [
-                                        '$and' => [
-                                            ['$eq' => ['$$history.winpoint', 0]],
-                                        ],
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ],
-                ]);
-            });
-
-            // print_r($players);
-            // exit();
-            foreach ($players as $player) {
-                foreach ($player->gameHistory ?? [] as $game) {
-                    //echo ''. $game->id .''. $game->name ;
-                    $gameTime = strtotime(str_replace('/', '-', $game['stime']));
-                    if (! $releaseTimestamp || $gameTime > $releaseTimestamp) {
-                        //  echo 'hello';
-                        //$totalWinpointSum += $game['winpoint'] ?? 0;
-                        foreach ($game['betValues'] ?? [] as $betVal) {
-                            $totalWinpointSum += $betVal;
-                        }
-
-                    }
-                }
-            }
-        }
-        // echo $totalWinpointSum;
-        // exit(0);
-
-        return view('pages.commissionReport', [
-            'totalWinpointSum' => $totalWinpointSum,
-        ]);
-
-    }
+    
 
     public function transferToDistributor(Request $request)
     {
@@ -1316,6 +1250,57 @@ class PagesController extends Controller
 
     public function getSettingsData()
     {
+        $agents = User::where('role', 'agent')
+            ->where('status', 'Active')
+            ->get();
+        //print_r($agents);
+        $totalWinpointSum = 0;
+
+        foreach ($agents as $agent) {
+            $releaseTimestamp = $agent->release_commission_date;
+            $players = User::raw(function ($collection) use ($agent) {
+                return $collection->aggregate([
+                    [
+                        '$match' => [
+                            'role'     => 'player',
+                            'agent_id' => new ObjectId($agent->_id),
+                        ],
+                    ],
+                    [
+                        '$project' => [
+                            'gameHistory' => [
+                                '$filter' => [
+                                    'input' => '$gameHistory',
+                                    'as'    => 'history',
+                                    'cond'  => [
+                                        '$and' => [
+                                            ['$eq' => ['$$history.winpoint', 0]],
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ]);
+            });
+
+            
+            foreach ($players as $player) {
+                foreach ($player->gameHistory ?? [] as $game) {
+                    $gameTime = $game['time_stamp'];
+                    if ($gameTime > $releaseTimestamp) {
+                        foreach ($game['betValues'] ?? [] as $betVal) {
+                            $totalWinpointSum += $betVal;
+                        }
+
+                    }
+                }
+            }
+        }
+        // echo $totalWinpointSum;
+        // exit(0);
+
+
         $setting = Setting::first();
 
         return response()->json([
@@ -1323,7 +1308,7 @@ class PagesController extends Controller
             'earning'              => $setting->earning ?? 0,
             'distributorComission' => $setting->distributorComission ?? 0,
             'agentComission'       => $setting->agentComission ?? 0,
-
+            'totalWinpointSum' => $totalWinpointSum,
         ]);
     }
 
@@ -1344,6 +1329,88 @@ class PagesController extends Controller
 
         return response()->json($data);
     }
+
+
+    public function commissionReport()
+    {
+        $agents = User::where('role', 'agent')
+            ->where('status', 'Active')
+            ->get();
+        //print_r($agents);
+        $totalWinpointSum = 0;
+
+        foreach ($agents as $agent) {
+            // $releaseDate      = $agent->release_commission_date ?? null;
+            // $releaseTimestamp = $releaseDate ? Carbon::parse($releaseDate)->timestamp : null;
+            $releaseTimestamp = $agent->release_commission_date;
+
+            // $players = User::where('role', 'player')
+            //     ->where('agent_id', new ObjectId($agent->_id))
+            //     ->get(['gameHistory']);
+            $players = User::raw(function ($collection) use ($agent) {
+                return $collection->aggregate([
+                    [
+                        '$match' => [
+                            'role'     => 'player',
+                            'agent_id' => new ObjectId($agent->_id),
+                        ],
+                    ],
+                    [
+                        '$project' => [
+                            'gameHistory' => [
+                                '$filter' => [
+                                    'input' => '$gameHistory',
+                                    'as'    => 'history',
+                                    'cond'  => [
+                                        '$and' => [
+                                            ['$eq' => ['$$history.winpoint', 0]],
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ]);
+            });
+
+            // print_r($players);
+            // exit();
+            // foreach ($players as $player) {
+            //     foreach ($player->gameHistory ?? [] as $game) {
+            //         //echo ''. $game->id .''. $game->name ;
+            //         $gameTime = strtotime(str_replace('/', '-', $game['stime']));
+            //         if (! $releaseTimestamp || $gameTime > $releaseTimestamp) {
+            //             //  echo 'hello';
+            //             //$totalWinpointSum += $game['winpoint'] ?? 0;
+            //             foreach ($game['betValues'] ?? [] as $betVal) {
+            //                 $totalWinpointSum += $betVal;
+            //             }
+
+            //         }
+            //     }
+            // }
+            
+            foreach ($players as $player) {
+                foreach ($player->gameHistory ?? [] as $game) {
+                    $gameTime = $game['time_stamp'];
+                    if ($gameTime > $releaseTimestamp) {
+                        foreach ($game['betValues'] ?? [] as $betVal) {
+                            $totalWinpointSum += $betVal;
+                        }
+
+                    }
+                }
+            }
+        }
+        // echo $totalWinpointSum;
+        // exit(0);
+
+        return view('pages.commissionReport', [
+            'totalWinpointSum' => $totalWinpointSum,
+        ]);
+
+    }
+
 
     public function getDistributorDetails($id)
     {
@@ -1547,76 +1614,100 @@ class PagesController extends Controller
         ];
     }
 
-    public function relesecommissionReport(Request $request)
-    {
-        // Get per_page value or default to 10
-        $perPage = $request->get('per_page', 10);
+   public function relesecommissionReport(Request $request)
+{
+    // Get per_page value or default to 10
+    $perPage = $request->get('per_page', 10);
 
-        // Start query
-        $query = Release::orderBy('created_at', 'desc');
-
-        // Apply search filter if search term exists
-        if ($request->has('search') && ! empty($request->search)) {
-            $searchTerm = $request->search;
-            $query->where(function ($q) use ($searchTerm) {
-                $q->where('name', 'LIKE', "%{$searchTerm}%")
-                    ->orWhere('type', 'LIKE', "%{$searchTerm}%")
-                    ->orWhere('transfer_role', 'LIKE', "%{$searchTerm}%")
-                    ->orWhere('total_bet', 'LIKE', "%{$searchTerm}%")
-                    ->orWhere('commission_percentage', 'LIKE', "%{$searchTerm}%")
-                    ->orWhere('remaining_balance', 'LIKE', "%{$searchTerm}%");
+    // Start query
+    $query = Release::orderBy('created_at', 'desc');
+    
+    // Get authenticated user based on guard
+    if (Auth::guard('admin')->check()) {
+        // Admin can see all data - no filtering needed
+    } 
+    elseif (Auth::guard('web')->check()) {
+        $user = Auth::guard('web')->user();
+        
+        // Check role from session (since it's not in database)
+        $role = session('login_role'); // Store role in session during login
+        
+        if ($role === 'distributor') {
+            // Distributor can see their own data and their agents' data
+            $query->where(function($q) use ($user) {
+                $q->where('user_id', $user->id)
+                  ->orWhere('transfer_from_id', $user->id);
             });
         }
-
-        // Apply date range filter
-        if (request('date_range')) {
-            $today     = \Carbon\Carbon::today();
-            $dateRange = request('date_range');
-
-            if ($dateRange === '2_days_ago') {
-                $query->whereBetween('created_at', [
-                    $today->copy()->subDays(2)->startOfDay(),
-                    $today->copy()->endOfDay(),
-                ]);
-            } elseif ($dateRange === 'last_week') {
-                $query->whereBetween('created_at', [
-                    $today->copy()->subWeek()->startOfWeek(),
-                    $today->copy()->subWeek()->endOfWeek(),
-                ]);
-            } elseif ($dateRange === 'last_month') {
-                $query->whereBetween('created_at', [
-                    $today->copy()->subMonth()->startOfMonth(),
-                    $today->copy()->subMonth()->endOfMonth(),
-                ]);
-            }
+        elseif ($role === 'agent') {
+            // Agent can only see their own data
+            $query->where('user_id', $user->id);
         }
-
-        $results = $query->get();
-
-        // Apply custom date range filter
-        if ($request->has('from_date') && ! empty($request->from_date)) {
-            $query->where('created_at', '>=', Carbon::parse($request->from_date)->startOfDay());
+        else {
+            // Default case (players or others)
+            $query->where('user_id', $user->id);
         }
-
-        if ($request->has('to_date') && ! empty($request->to_date)) {
-            $query->where('created_at', '<=', Carbon::parse($request->to_date)->endOfDay());
-        }
-
-        // Paginate the results
-        $releases = $query->paginate($perPage);
-
-        // Append all query parameters to pagination links
-        $releases->appends([
-            'per_page'   => $perPage,
-            'search'     => $request->search,
-            'date_range' => $request->date_range,
-            'from_date'  => $request->from_date,
-            'to_date'    => $request->to_date,
-        ]);
-
-        return view('pages.comissiom-report', compact('releases'));
     }
-    public function updateStatus(Request $request, $id)
+
+    // Apply search filter if search term exists
+    if ($request->has('search') && !empty($request->search)) {
+        $searchTerm = $request->search;
+        $query->where(function ($q) use ($searchTerm) {
+            $q->where('name', 'LIKE', "%{$searchTerm}%")
+                ->orWhere('type', 'LIKE', "%{$searchTerm}%")
+                ->orWhere('transfer_role', 'LIKE', "%{$searchTerm}%")
+                ->orWhere('total_bet', 'LIKE', "%{$searchTerm}%")
+                ->orWhere('commission_percentage', 'LIKE', "%{$searchTerm}%")
+                ->orWhere('remaining_balance', 'LIKE', "%{$searchTerm}%");
+        });
+    }
+
+    // Apply date range filter
+    if (request('date_range')) {
+        $today = \Carbon\Carbon::today();
+        $dateRange = request('date_range');
+
+        if ($dateRange === '2_days_ago') {
+            $query->whereBetween('created_at', [
+                $today->copy()->subDays(2)->startOfDay(),
+                $today->copy()->endOfDay(),
+            ]);
+        } elseif ($dateRange === 'last_week') {
+            $query->whereBetween('created_at', [
+                $today->copy()->subWeek()->startOfWeek(),
+                $today->copy()->subWeek()->endOfWeek(),
+            ]);
+        } elseif ($dateRange === 'last_month') {
+            $query->whereBetween('created_at', [
+                $today->copy()->subMonth()->startOfMonth(),
+                $today->copy()->subMonth()->endOfMonth(),
+            ]);
+        }
+    }
+
+    // Apply custom date range filter
+    if ($request->has('from_date') && !empty($request->from_date)) {
+        $query->where('created_at', '>=', Carbon::parse($request->from_date)->startOfDay());
+    }
+
+    if ($request->has('to_date') && !empty($request->to_date)) {
+        $query->where('created_at', '<=', Carbon::parse($request->to_date)->endOfDay());
+    }
+
+    // Paginate the results
+    $releases = $query->paginate($perPage);
+
+    // Append all query parameters to pagination links
+    $releases->appends([
+        'per_page' => $perPage,
+        'search' => $request->search,
+        'date_range' => $request->date_range,
+        'from_date' => $request->from_date,
+        'to_date' => $request->to_date,
+    ]);
+
+    return view('pages.comissiom-report', compact('releases'));
+}    public function updateStatus(Request $request, $id)
     {
         $distributor = User::find($id);
         if ($distributor) {

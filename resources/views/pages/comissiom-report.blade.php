@@ -9,15 +9,7 @@
     </div>
 
     <div class="container py-4">
-        <h3 class="mb-4 text-dark" style="font-weight: 600; font-size: 1.2rem;">
-            @if (auth('admin')->check())
-                All Commission History
-            @elseif(auth('web')->check())
-                My Commission History
-            @else
-                Commission History
-            @endif
-        </h3>
+        
 
         <div class="d-flex justify-content-between align-items-center flex-wrap mb-2">
             <h4 class="mb-0 ms-4 mt-3 text-bolder">Release History</h4>
