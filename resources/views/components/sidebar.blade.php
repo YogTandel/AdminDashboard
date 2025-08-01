@@ -122,15 +122,17 @@
             </li>
 
             <!-- Live Game -->
-            <li class="nav-item">
-                <a class="nav-link {{ Request::is('livegame') ? 'active' : '' }}" href="{{ route('livegame') }}">
-                    <div
-                        class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                        <i class="fas fa-gamepad text-dark"></i>
-                    </div>
-                    <span class="nav-link-text ms-1">Live Game</span>
-                </a>
-            </li>
+            @if ($role !== 'admin')
+                <li class="nav-item">
+                    <a class="nav-link {{ Request::is('livegame') ? 'active' : '' }}" href="{{ route('livegame') }}">
+                        <div
+                            class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+                            <i class="fas fa-gamepad text-dark"></i>
+                        </div>
+                        <span class="nav-link-text ms-1">Live Game</span>
+                    </a>
+                </li>
+            @endif
 
             @if ($role !== 'admin')
                 {{-- Transfer Menu --}}
