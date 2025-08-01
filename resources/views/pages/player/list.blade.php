@@ -229,25 +229,30 @@
                                                             data-bs-toggle="tooltip" title="Copy Player Credentials">
                                                             <i class="fas fa-copy me-2" style="cursor: pointer;"></i>
                                                         </a>
-                                                        <a href="javascript:;"
-                                                            class="text-secondary font-weight-bold text-xs me-2"
-                                                            title="Edit Player" data-bs-toggle="modal"
-                                                            data-bs-target="#editModal{{ $player->id }}">
-                                                            <i class="fas fa-edit me-1"></i>
-                                                        </a>
-                                                        @include('pages.player.edit')
-                                                        <form action="{{ route('player.delete', $player->id) }}"
-                                                            method="post" style="display:flex;">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button class="text-danger font-weight-bold text-xs me-2"
-                                                                onclick="return confirm('Are you sure?')"
-                                                                data-bs-toggle="tooltip" data-bs-placement="top"
-                                                                title="Delete Player"
-                                                                style="background: none; border: none; padding: 0;">
-                                                                <i class="fas fa-trash"></i>
-                                                            </button>
-                                                        </form>
+                                                        @if(auth()->user()->role !== 'distributor' && auth()->user()->role !== 'agent')
+                                                            <a href="javascript:;"
+                                                                class="text-secondary font-weight-bold text-xs me-2"
+                                                                title="Edit Player" 
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#editModal{{ $player->id }}">
+                                                                <i class="fas fa-edit me-1"></i>
+                                                            </a>
+                                                            @include('pages.player.edit')
+
+                                                            <!-- Delete Button -->
+                                                            <form action="{{ route('player.delete', $player->id) }}" method="post" style="display:flex;">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button class="text-danger font-weight-bold text-xs me-2"
+                                                                    onclick="return confirm('Are you sure?')"
+                                                                    data-bs-toggle="tooltip" 
+                                                                    data-bs-placement="top"
+                                                                    title="Delete Player"
+                                                                    style="background: none; border: none; padding: 0;">
+                                                                    <i class="fas fa-trash"></i>
+                                                                </button>
+                                                            </form>
+                                                        @endif
                                                         <a href="{{ route('player.history', $player->_id) }}"
                                                             class="text-secondary font-weight-bold text-xs me-2"
                                                             data-bs-toggle="tooltip" data-bs-placement="top"

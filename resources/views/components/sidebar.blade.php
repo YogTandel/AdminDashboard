@@ -122,7 +122,7 @@
             </li>
 
             <!-- Live Game -->
-            @if ($role !== 'admin')
+            @if ($role == 'admin')
                 <li class="nav-item">
                     <a class="nav-link {{ Request::is('livegame') ? 'active' : '' }}" href="{{ route('livegame') }}">
                         <div

@@ -260,27 +260,29 @@
                                                     </a>
 
                                                     <!-- Edit -->
-                                                    <a href="javascript:;"
-                                                        class="text-secondary font-weight-bold text-xs me-2"
-                                                        title="Edit Agent" data-bs-toggle="modal"
-                                                        data-bs-target="#editModal{{ $agent->id }}">
-                                                        <i class="fas fa-edit"></i>
-                                                    </a>
+                                                    @if(auth()->user()->role !== 'distributor')
+                                                        <a href="javascript:;"
+                                                            class="text-secondary font-weight-bold text-xs me-2"
+                                                            title="Edit Agent" 
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#editModal{{ $agent->id }}">
+                                                            <i class="fas fa-edit"></i>
+                                                        </a>
+                                                        @include('pages.agent.edit')
 
-                                                    @include('pages.agent.edit')
-
-                                                    <!-- Delete -->
-                                                    <form action="{{ route('agent.delete', $agent->id) }}" method="post"
-                                                        style="display:flex;">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button class="text-danger font-weight-bold text-xs me-2"
-                                                            onclick="return confirm('Are you sure?')"
-                                                            data-bs-toggle="tooltip" title="Delete Agent"
-                                                            style="background: none; border: none; padding: 0;">
-                                                            <i class="fas fa-trash"></i>
-                                                        </button>
-                                                    </form>
+                                                        <!-- Delete -->
+                                                        <form action="{{ route('agent.delete', $agent->id) }}" method="post" style="display:flex;">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button class="text-danger font-weight-bold text-xs me-2"
+                                                                onclick="return confirm('Are you sure?')"
+                                                                data-bs-toggle="tooltip" 
+                                                                title="Delete Agent"
+                                                                style="background: none; border: none; padding: 0;">
+                                                                <i class="fas fa-trash"></i>
+                                                            </button>
+                                                        </form>
+                                                    @endif
 
                                                     <!-- Block/Unblock -->
                                                     <a href="javascript:;" class="font-weight-bold text-xs toggle-status"
