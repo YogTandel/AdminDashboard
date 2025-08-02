@@ -21,6 +21,14 @@ class PagesController extends Controller
         $perPage = request()->get('per_page', 10);
         $query = User::query();
 
+        // Get logged-in user
+        $authUser = Auth::guard('admin')->user() ?? Auth::guard('web')->user();
+
+        // If user is distributor, show only their agents
+        if ($authUser->role === 'distributor') {
+            $query = $query->where('distributor_id', new ObjectId($authUser->_id)); // Use _id for MongoDB
+        }
+
         // Search filter
         if (request()->has('search')) {
             $query = $query->where('player', 'like', '%' . request()->search . '%');
@@ -70,9 +78,6 @@ class PagesController extends Controller
         // Fetch all distributors for dropdown
         $distributors = User::where('role', 'distributor')->get();
 
-        $authUser = Auth::guard('admin')->user() ?? Auth::guard('web')->user();
-        /* print_r($authUser->role);
-        exit; */
         return view('pages.agent.list', compact('agents', 'perPage', 'distributors', 'authUser'));
     }
 
@@ -134,6 +139,9 @@ class PagesController extends Controller
         $perPage = request()->get('per_page', 10);
         $query = User::query();
 
+        // Get authenticated user
+        $authUser = Auth::guard('admin')->user() ?? Auth::guard('web')->user();
+
         // Search filter
         if (request()->has('search')) {
             $query->where('player', 'like', '%' . request()->search . '%');
@@ -175,19 +183,60 @@ class PagesController extends Controller
             $query->where('DateOfCreation', '<=', (float) $to);
         }
 
+        // Filter players based on user role
+        if ($authUser->role === 'distributor') {
+
+            $players = $query->where('role', 'player')
+            ->where('distributor', $authUser->_id)
+            ->with(['agentUser'])
+            ->paginate($perPage)
+            ->appends(request()->query());
+
+            // echo $authUser->_id;
+            // print_r($players);
+
+            // exit(0);
+
+            
+
+        } elseif ($authUser->role === 'agent') {
+
+             $players = $query->where('role', 'player')
+            ->where('agent_id', new ObjectId($authUser->_id))
+            ->with(['agentUser'])
+            ->paginate($perPage)
+            ->appends(request()->query());
+
+        } else{
+             $players = $query->where('role', 'player')
+            ->with(['agentUser'])
+            ->paginate($perPage)
+            ->appends(request()->query());
+
+        }
+
+
         // Players list with relation
         $players = $query->where('role', 'player')
             ->with(['agentUser'])
             ->paginate($perPage)
             ->appends(request()->query());
 
-        // Dropdown lists
-        $agents = User::where('role', 'agent')->get(['_id', 'player']);
-        $distributors = User::where('role', 'distributor')->get(['_id', 'player']);
 
-        $authUser = Auth::guard('admin')->user() ?? Auth::guard('web')->user();
-        /* print_r($authUser->role);
-        exit; */
+
+        // Dropdown lists - filter agents based on user role
+        if ($authUser->role === 'distributor') {
+            $agents = User::where('role', 'agent')
+                ->where('distributor_id', new ObjectId($authUser->_id))
+                ->get(['_id', 'player']);
+        } elseif ($authUser->role === 'agent') {
+            $agents = User::where('_id', new ObjectId($authUser->_id))
+                ->get(['_id', 'player']);
+        } else {
+            $agents = User::where('role', 'agent')->get(['_id', 'player']);
+        }
+
+        $distributors = User::where('role', 'distributor')->get(['_id', 'player']);
 
         return view('pages.player.list', compact('players', 'perPage', 'agents', 'distributors', 'authUser'));
     }
@@ -1634,13 +1683,13 @@ class PagesController extends Controller
                 $agents = User::where('role', 'agent')
                     ->where('distributor_id', new ObjectId($user->_id))
                     ->get();
-                   
+
 
                 $agentIds = $agents->pluck('_id')->toArray();
 
                 //print_r( $agentIds);
 
-                 //exit(0);
+                //exit(0);
                 // Option 1: Get distributor + agent history (same as before)
                 $query->where(function ($q) use ($user, $agentIds) {
                     $q->where('transfer_to', $user->_id) // Distributor's own records
