@@ -1849,4 +1849,8 @@ class PagesController extends Controller
         ]);
     }
 
+    public function Weeklyreport(){
+        return view('pages.Weeklyreport');
+    }
+
 }

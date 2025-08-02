@@ -95,10 +95,8 @@ Route::get('/commission-report/{id}', [PagesController::class, 'commissionReport
 
 Route::post('/admin/transfer-to-distributor', [PagesController::class, 'transferToDistributor'])
     ->name('admin.transfer.to.distributor');
-
 Route::post('/distributor/transfer-to-agent', [PagesController::class, 'transferToAgent'])
     ->name('user.transfer.to.agent');
-
 Route::post('/agent/transfer-to-player', [PagesController::class, 'transferToPlayer'])
     ->name('agent.transfer.to.player');
 
@@ -123,3 +121,6 @@ Route::post('/distributor/toggle-status/{id}', [PagesController::class, 'distogg
 Route::post('/player/toggle-status/{id}', [PagesController::class, 'playertoggleStatus'])->name('player.toggleStatus');
 
 Route::get('/live-game-value', [PagesController::class, 'liveGamevalue']);
+
+
+Route::get('/Weeklyreport', [PagesController::class, 'Weeklyreport'])->name('Weekly-report');

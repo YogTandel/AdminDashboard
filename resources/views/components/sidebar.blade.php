@@ -192,11 +192,26 @@
                     <div
                         class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="fas fa-percentage" style="
-                color: {{ Request::is('relesecommission-report*') ? '#fb6340' : '#344767' }};
-                transition: color 0.3s ease;
-            "></i>
+                            color: {{ Request::is('relesecommission-report*') ? '#fb6340' : '#344767' }};
+                            transition: color 0.3s ease;">
+                        </i>
                     </div>
                     <span class="nav-link-text ms-1">Commission Report</span>
+                </a>
+            </li>
+
+
+            <li class="nav-item">
+                <a class="nav-link {{ Request::is('Weekly-report') ? 'active' : '' }}"
+                    href="{{ route('Weekly-report') }}">
+                    <div
+                        class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+                        <i class="fas fa-percentage" style="
+                            color: {{ Request::is('relesecommission-report*') ? '#fb6340' : '#344767' }};
+                            transition: color 0.3s ease;">
+                        </i>
+                    </div>
+                    <span class="nav-link-text ms-1">Weekly Report</span>
                 </a>
             </li>
 
