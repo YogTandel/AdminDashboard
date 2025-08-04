@@ -69,6 +69,28 @@
             </div>
         </div>
     </div>
+   <div class="last10-container d-flex align-items-baseline gap-2 me-5 justify-content-center">
+    <div class="fs-6 fw-bold text-dark me-2">Last 10 data :-</div>
+    <div class="d-flex flex-wrap gap-3 align-items-center">
+        @for($i = 1; $i <= 10; $i++)
+            <span id="result-badge-{{$i}}" 
+                  class="badge rounded-pill px-2 py-1" 
+                  style="font-size: 1rem;
+                         min-width: 30px;
+                         text-align: center;
+                         background-color: {{ [
+                             '#FFECEC', '#FFEFD8', '#F0FFE2', '#E2F9FF', 
+                             '#EEE2FF', '#FFE2F5', '#E2FFEE', '#FFF5E2',
+                             '#E2ECFF', '#FFE8E2'
+                         ][$i-1] }};
+                         color: #333;">
+                  --
+            </span>
+        @endfor
+    </div>
+</div>
+
+     
 
     <div class="row g-2 container-fluid py-4">
         @for ($i = 1; $i <= 10; $i++)
@@ -151,6 +173,81 @@
         fetchLiveGameValues();
         setInterval(fetchLiveGameValues, 5000);
     </script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const config = {
+        refreshInterval: 5000,
+        apiEndpoint: "{{ route('last10.results') }}"
+    };
+
+    // Predefined colors for each badge position
+    const badgeColors = [
+        { bg: '#0c0e0eff', text: '#ffff' }, // Light red
+        { bg: '#0c0e0eff', text: '#ffff' },  // Light orange
+        { bg: '#0c0e0eff', text: '#ffff' },  // Light green
+        { bg: '#0c0e0eff', text: '#ffff' },  // Light blue
+        { bg: '#0c0e0eff', text: '#ffff' },  // Light purple
+        { bg: '#0c0e0eff', text: '#ffff' },  // Light pink
+        { bg: '#0c0e0eff', text: '#ffff' },  // Light teal
+        { bg: '#0c0e0eff', text: '#ffff' },  // Light deep orange
+        { bg: '#0c0e0eff', text: '#ffff' },  // Light blue
+        { bg: '#0c0e0eff', text: '#ffff' }   // Light brown
+    ];
+
+    // Get all badge elements
+    const badges = Array.from({length: 10}, (_, i) => 
+        document.getElementById(`result-badge-${i+1}`)).filter(Boolean);
+
+    // Initialize badges with their unique colors
+    function initBadges() {
+        badges.forEach((badge, index) => {
+            if (badge) {
+                badge.textContent = '--';
+                badge.style.backgroundColor = badgeColors[index].bg;
+                badge.style.color = badgeColors[index].text;
+                badge.className = 'badge rounded-pill p-2 me-0';
+            }
+        });
+    }
+
+    // Update badges with data (maintaining their unique colors)
+    function updateBadges(data) {
+        data.forEach((result, index) => {
+            if (badges[index]) {
+                badges[index].textContent = result;
+                // Keep the same background color but update text if needed
+                badges[index].style.color = (
+                    result === 'W' ? '#388E3C' :
+                    result === 'L' ? '#D32F2F' :
+                    !isNaN(result) ? badgeColors[index].text : '#6c757d'
+                );
+            }
+        });
+    }
+
+    // Fetch data from server
+    async function fetchData() {
+        try {
+            const response = await fetch(config.apiEndpoint);
+            const {success, data} = await response.json();
+            
+            if (success) {
+                updateBadges(data);
+            } else {
+                initBadges(); // Reset to defaults on error
+            }
+        } catch (error) {
+            console.error('Fetch error:', error);
+            initBadges();
+        }
+    }
+
+    // Initialize and start polling
+    initBadges();
+    fetchData();
+    setInterval(fetchData, config.refreshInterval);
+});
+</script>
 
     <script>
         function fetchBetTotals() {
@@ -274,172 +371,6 @@
             // setInterval(loadPlayers, 15000);
         });
     </script>
-
-    {{-- <script>
-        let timeOffset = 0;
-        let targetTime = 0;
-        let countdownInterval;
-
-        // Set server time based on received server timestamp (in milliseconds)
-        function setServerTime(serverTimeMilliseconds) {
-            // Convert server milliseconds to ticks
-            const serverTimeTicks = (serverTimeMilliseconds * 10000) + 621355968000000000;
-
-            // Convert server ticks to seconds
-            const serverTimeSeconds = Math.floor(serverTimeTicks / 10000000);
-
-            // Get local time in ticks
-            const localTimeMilliseconds = Date.now();
-            const localTimeTicks = (localTimeMilliseconds * 10000) + 621355968000000000;
-
-            // Convert local ticks to seconds
-            const localTimeSeconds = Math.floor(localTimeTicks / 10000000);
-
-            // Calculate offset
-            timeOffset = serverTimeSeconds - localTimeSeconds;
-
-            // console.log(`✅ [setServerTime] Time offset set: ${timeOffset} seconds`);
-        }
-
-        // Start countdown loop (similar to Update in Unity)
-        function startCountdown(targetTimeInSeconds) {
-            targetTime = targetTimeInSeconds;
-
-            // console.log(`🔄 [startCountdown] Target Time set to: ${targetTime} (epoch seconds)`);
-
-            // Clear existing interval if any
-            if (countdownInterval) {
-                clearInterval(countdownInterval);
-                // console.log("⏹️ [startCountdown] Existing countdown interval cleared");
-            }
-
-            countdownInterval = setInterval(updateCountdown, 1000); // Update every 1 second
-            // console.log("▶️ [startCountdown] Countdown interval started");
-        }
-
-        // Update countdown display
-        function updateCountdown() {
-            const currentTime = Math.floor(Date.now() / 1000) + timeOffset;
-            let timeRemaining = targetTime - currentTime;
-
-            // console.log(`⏰ [updateCountdown] Current Time: ${currentTime}, Time Remaining: ${timeRemaining}`);
-
-            if (timeRemaining <= 0) {
-                document.getElementById('timer-badge').innerText = '00:00';
-                clearInterval(countdownInterval);
-                // console.log("🛑 [updateCountdown] Countdown ended, interval cleared");
-                return;
-            }
-
-            const minutes = Math.floor(timeRemaining / 60);
-            const seconds = timeRemaining % 60;
-
-            const formattedSeconds = seconds < 10 ? '0' + seconds : seconds;
-
-            // Update your DOM elements
-            document.getElementById('timer-badge').innerText = `00:${formattedSeconds}`;
-
-
-            // If you have a separate timer-badge like in Unity
-            // document.getElementById('timer-badge').innerText = formattedSeconds;
-
-            // console.log(`✅ [updateCountdown] Updated timer display to 00:${formattedSeconds}`);
-        }
-
-        // Adjusted countdown similar to updatetimerbadge(systemTime) in Unity
-        function updatetimerbadge(systemTime) {
-            const currentTime = Math.floor(Date.now() / 1000) + timeOffset;
-            let timeRemaining = targetTime - currentTime;
-
-            if (timeRemaining <= 0) {
-                document.getElementById('timer-badge').innerText = '0';
-                console.log("🛑 [updatetimerbadge] Countdown ended");
-                return;
-            }
-
-            let seconds = timeRemaining % 60;
-            seconds -= 3; // adjustment like your Unity code
-
-            const formattedSeconds = seconds < 10 && seconds >= 0 ? '0' + seconds : seconds.toString();
-
-            document.getElementById('timer-badge').innerText = formattedSeconds;
-
-            // console.log(`✅ [updatetimerbadge] Updated timer-badge to: ${formattedSeconds}`);
-        }
-
-        const socket = new WebSocket('ws://128.199.64.164:3101');
-
-        socket.onopen = function(event) {
-            console.log("✅ [WebSocket] Connection opened");
-        };
-
-        socket.onmessage = function(event) {
-            console.log("📩 [WebSocket] Message received:", event);
-
-            const data = JSON.parse(event.data);
-            console.log("📦 [WebSocket] Parsed data:", data);
-
-            if (data.eventName === "TIMER") {
-                // console.log("⏰ [WebSocket] TIMER event received with currentTime:", data.currentTime);
-
-                setServerTime(data.systemTime);
-
-                const utcMillisecondsTime = data.currentTime;
-
-                // In JS, Date uses ms since Unix epoch, similar to .NET DateTimeOffset.FromUnixTimeMilliseconds
-                const utcDateTime = new Date(utcMillisecondsTime);
-
-                // Convert to ticks
-                const utcDateTimeTicks = (utcMillisecondsTime * 10000) + 621355968000000000;
-
-                // Convert ticks to seconds (same as C# targetTime logic)
-                targetTime = Math.floor(utcDateTimeTicks / 10000000);
-
-                console.log(`✅ [handleTimerEvent] targetTime set to: ${targetTime}`);
-
-                // Call update countdown text logic
-                updateCountdown(data.systemTime);
-
-            }
-        };
-
-        socket.onclose = function(event) {
-            console.log("❌ [WebSocket] Connection closed", event);
-        };
-
-        function sendMessage() {
-            const message = {
-                eventName: "TIMER",
-            };
-
-            const jsonMessage = JSON.stringify(message);
-            socket.send(jsonMessage);
-        }
-
-        setTimeout(function() {
-            sendMessage();
-        }, 3000);
-    </script> --}}
-
-    {{-- <script>
-        const socket = new WebSocket('ws://localhost:8080');
-
-        socket.onopen = function(event) {
-            // Handle connection open
-        };
-
-        socket.onmessage = function(event) {
-            // Handle received message
-        };
-
-        socket.onclose = function(event) {
-            // Handle connection close
-        };
-
-        function sendMessage(message) {
-            socket.send(message);
-        }
-    </script> --}}
 
     <script>
         let timeOffset = 0;

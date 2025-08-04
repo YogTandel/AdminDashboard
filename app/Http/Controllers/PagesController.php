@@ -187,31 +187,31 @@ class PagesController extends Controller
         if ($authUser->role === 'distributor') {
 
             $players = $query->where('role', 'player')
-            ->where('distributor', $authUser->_id)
-            ->with(['agentUser'])
-            ->paginate($perPage)
-            ->appends(request()->query());
+                ->where('distributor', $authUser->_id)
+                ->with(['agentUser'])
+                ->paginate($perPage)
+                ->appends(request()->query());
 
             // echo $authUser->_id;
             // print_r($players);
 
             // exit(0);
 
-            
+
 
         } elseif ($authUser->role === 'agent') {
 
-             $players = $query->where('role', 'player')
-            ->where('agent_id', new ObjectId($authUser->_id))
-            ->with(['agentUser'])
-            ->paginate($perPage)
-            ->appends(request()->query());
+            $players = $query->where('role', 'player')
+                ->where('agent_id', new ObjectId($authUser->_id))
+                ->with(['agentUser'])
+                ->paginate($perPage)
+                ->appends(request()->query());
 
-        } else{
-             $players = $query->where('role', 'player')
-            ->with(['agentUser'])
-            ->paginate($perPage)
-            ->appends(request()->query());
+        } else {
+            $players = $query->where('role', 'player')
+                ->with(['agentUser'])
+                ->paginate($perPage)
+                ->appends(request()->query());
 
         }
 
@@ -633,9 +633,49 @@ class PagesController extends Controller
             'earning' => $setting->earning ?? 0,
             'earningPercentage' => $setting->earningPercentage,
             'result' => $setting->result ?? '--',
+            
         ]);
     }
 
+  
+public function getLast10Data()
+{
+    try {
+        $record = DB::table('settings')->first();
+        
+        if (!$record) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No settings record found',
+                'data' => array_fill(0, 10, '--')
+            ]);
+        }
+
+        // Handle both array and JSON string formats
+        $last10data = $record->last10data;
+        if (is_string($last10data)) {
+            $last10data = json_decode($last10data, true) ?? array_fill(0, 10, '--');
+        }
+
+        // Ensure we have exactly 10 items
+        $last10data = array_slice((array)$last10data, 0, 10);
+        while (count($last10data) < 10) {
+            $last10data[] = '--';
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $last10data
+        ]);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error fetching data: ' . $e->getMessage(),
+            'data' => array_fill(0, 10, '--')
+        ]);
+    }
+}
     public function getBetTotals()
     {
         $bets = DB::table('bets')->get();
@@ -1848,9 +1888,61 @@ class PagesController extends Controller
             'message' => 'Player status updated.',
         ]);
     }
+    public function Weeklyreport()
+    {
+        $agents = User::where('role', 'agent')
+            ->where('status', 'Active')
+            ->get();
 
-    public function Weeklyreport(){
-        return view('pages.Weeklyreport');
+        $dailyTotals = [];
+
+        // Initialize last 7 days with 0
+        for ($i = 0; $i < 7; $i++) {
+            $date = date('Y-m-d', strtotime("-$i days"));
+            $dailyTotals[$date] = 0;
+        }
+
+        foreach ($agents as $agent) {
+            $players = User::raw(function ($collection) use ($agent) {
+                return $collection->aggregate([
+                    [
+                        '$match' => [
+                            'role' => 'player',
+                            'agent_id' => new ObjectId($agent->_id),
+                        ],
+                    ],
+                    [
+                        '$project' => [
+                            'gameHistory' => 1, // No filtering, fetch full history
+                        ],
+                    ],
+                ]);
+            });
+
+            foreach ($players as $player) {
+                foreach ($player->gameHistory ?? [] as $game) {
+                    if (!empty($game['stime'])) {
+                        $gameTime = strtotime(str_replace('/', '-', $game['stime']));
+                        $dateKey = date('Y-m-d', $gameTime);
+
+                        if (array_key_exists($dateKey, $dailyTotals)) {
+                            foreach ($game['betValues'] ?? [] as $betVal) {
+                                if (is_numeric($betVal)) {
+                                    $dailyTotals[$dateKey] += $betVal;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return view('pages.WeeklyReport', [
+            'dailyTotals' => array_reverse($dailyTotals),
+        ]);
     }
+
+
+
 
 }

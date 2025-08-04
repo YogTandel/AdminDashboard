@@ -124,3 +124,6 @@ Route::get('/live-game-value', [PagesController::class, 'liveGamevalue']);
 
 
 Route::get('/Weeklyreport', [PagesController::class, 'Weeklyreport'])->name('Weekly-report');
+
+
+Route::get('/last10-results', [PagesController::class, 'getLast10Data'])->name('last10.results');
