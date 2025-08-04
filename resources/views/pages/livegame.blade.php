@@ -69,26 +69,29 @@
             </div>
         </div>
     </div>
-   <div class="last10-container d-flex align-items-baseline gap-2 me-5 justify-content-center">
+   <div class="last10-container d-flex align-items-center gap-2 me-5 justify-content-center">
     <div class="fs-6 fw-bold text-dark me-2">Last 10 data :-</div>
-    <div class="d-flex flex-wrap gap-3 align-items-center">
+    <div class="d-flex flex-wrap gap-2 align-items-center">
         @for($i = 1; $i <= 10; $i++)
             <span id="result-badge-{{$i}}" 
-                  class="badge rounded-pill px-2 py-1" 
+                  class="d-flex align-items-center justify-content-center" 
                   style="font-size: 1rem;
-                         min-width: 30px;
+                         width: 50px;
+                         height: 30px;
                          text-align: center;
                          background-color: {{ [
                              '#FFECEC', '#FFEFD8', '#F0FFE2', '#E2F9FF', 
                              '#EEE2FF', '#FFE2F5', '#E2FFEE', '#FFF5E2',
                              '#E2ECFF', '#FFE8E2'
                          ][$i-1] }};
-                         color: #333;">
+                         color: #333;
+                         border-radius: 4px !important;">
                   --
             </span>
         @endfor
     </div>
 </div>
+
 
      
 
@@ -182,16 +185,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Predefined colors for each badge position
     const badgeColors = [
-        { bg: '#0c0e0eff', text: '#ffff' }, // Light red
-        { bg: '#0c0e0eff', text: '#ffff' },  // Light orange
-        { bg: '#0c0e0eff', text: '#ffff' },  // Light green
-        { bg: '#0c0e0eff', text: '#ffff' },  // Light blue
-        { bg: '#0c0e0eff', text: '#ffff' },  // Light purple
-        { bg: '#0c0e0eff', text: '#ffff' },  // Light pink
-        { bg: '#0c0e0eff', text: '#ffff' },  // Light teal
-        { bg: '#0c0e0eff', text: '#ffff' },  // Light deep orange
-        { bg: '#0c0e0eff', text: '#ffff' },  // Light blue
-        { bg: '#0c0e0eff', text: '#ffff' }   // Light brown
+        { bg: '#333b3bff', text: '#ffff' }, // Light red
+        { bg: '#333b3bff', text: '#ffff' },  // Light orange
+        { bg: '#333b3bff', text: '#ffff' },  // Light green
+        { bg: '#333b3bff', text: '#ffff' },  // Light blue
+        { bg: '#333b3bff', text: '#ffff' },  // Light purple
+        { bg: '#333b3bff', text: '#ffff' },  // Light pink
+        { bg: '#333b3bff', text: '#ffff' },  // Light teal
+        { bg: '#333b3bff', text: '#ffff' },  // Light deep orange
+        { bg: '#333b3bff', text: '#ffff' },  // Light blue
+        { bg: '#333b3bff', text: '#ffff' }   // Light brown
     ];
 
     // Get all badge elements
