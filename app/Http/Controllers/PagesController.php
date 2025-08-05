@@ -1910,7 +1910,6 @@ class PagesController extends Controller
         $dailyTotals = [];
         $winTotals = [];
 
-        // છેલ્લાં 7 દિવસ માટે શૂન્યથી શરૂઆત
         for ($i = 0; $i < 7; $i++) {
             $date = date('Y-m-d', strtotime("-$i days"));
             $dailyTotals[$date] = 0;

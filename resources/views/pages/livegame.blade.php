@@ -98,7 +98,7 @@
     <div class="row g-2 container-fluid py-4">
         @for ($i = 1; $i <= 10; $i++)
             @php
-                $displayNumber = $i % 10; // This will give 1-9 then 0
+                $displayNumber = $i % 10; 
             @endphp
             <div class="col-12 col-sm-6 col-md-1 ms-2" id="card-{{ $displayNumber }}">
                 <div class="p-3 rounded text-white card-bg-{{ $displayNumber }}">
