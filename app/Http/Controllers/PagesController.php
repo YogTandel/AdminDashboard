@@ -1890,16 +1890,17 @@ class PagesController extends Controller
 
     public function playertoggleStatus($id)
     {
-        $player = User::where('_id', $id)->where('role', 'player')->firstOrFail();
+    $player = User::find($id);
 
-        $player->status = $player->status === 'Active' ? 'Inactive' : 'Active';
-        $player->save();
-
-        return response()->json([
-            'status' => $player->status,
-            'message' => 'Player status updated.',
-        ]);
+    if (!$player) {
+        return response()->json(['message' => 'Player not found.'], 404);
     }
+
+    $player->status = $player->status === 'Active' ? 'Inactive' : 'Active';
+    $player->save();
+
+    return response()->json(['status' => $player->status]);
+}
     public function Weeklyreport()
     {
         $agents = User::where('role', 'agent')

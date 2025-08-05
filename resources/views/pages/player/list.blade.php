@@ -261,13 +261,13 @@
                                                             <i class="fas fa-history"></i>
                                                         </a>
                                                         <a href="javascript:;"
-                                                            class="font-weight-bold text-xs toggle-status"
-                                                            data-bs-toggle="tooltip"
-                                                            title="{{ $player->status === 'Active' ? 'Block Player' : 'Unblock Player' }}"
-                                                            data-agent-id="{{ $player->id }}">
-                                                            <i
-                                                                class="fas {{ $player->status === 'Active' ? 'fa-ban text-danger' : 'fa-check text-success' }}"></i>
-                                                        </a>
+   class="font-weight-bold text-xs toggle-status"
+   data-bs-toggle="tooltip"
+   title="{{ $player->status === 'Active' ? 'Block Player' : 'Unblock Player' }}"
+   data-player-id="{{ $player->id }}">
+   <i class="fas {{ $player->status === 'Active' ? 'fa-ban text-danger' : 'fa-check text-success' }}"></i>
+</a>
+
                                                     </div>
                                                 </td>
                                             </tr>
@@ -288,67 +288,72 @@
     </div>
 
     @push('scripts')
-        <script>
-            function copyPlayerToClipboard(id) {
-                const name = document.getElementById('name-' + id)?.innerText.trim();
-                const password = document.getElementById('password-' + id)?.innerText.trim();
+     <script>
+    // Clipboard Copy Function (no change)
+    function copyPlayerToClipboard(id) {
+        const name = document.getElementById('name-' + id)?.innerText.trim();
+        const password = document.getElementById('password-' + id)?.innerText.trim();
 
-                if (!name || !password) {
-                    alert("Name or password missing");
-                    return;
-                }
+        if (!name || !password) {
+            alert("Name or password missing");
+            return;
+        }
 
-                const text = `Name: ${name}\nPassword: ${password}`;
+        const text = `Name: ${name}\nPassword: ${password}`;
 
-                navigator.clipboard.writeText(text).then(() => {
-                    alert("Copied to clipboard!");
-                }).catch((err) => {
-                    console.error("Clipboard write failed", err);
-                    alert("Failed to copy.");
-                });
+        navigator.clipboard.writeText(text).then(() => {
+            alert("Copied to clipboard!");
+        }).catch((err) => {
+            console.error("Clipboard write failed", err);
+            alert("Failed to copy.");
+        });
+    }
+
+    // Unified status toggle using jQuery only
+   $(document).on('click', '.toggle-status', function (e) {
+    e.preventDefault();
+
+    const playerId = $(this).data('player-id');
+    const $icon = $(this).find('i');
+    const $link = $(this);
+    const $row = $(this).closest('tr');
+    
+    // SPECIFICALLY target the Status badge (6th td in the row)
+    const $statusBadge = $row.find('td:nth-child(9) .badge-sm');
+
+    $.ajax({
+        url: '/player/toggle-status/' + playerId,
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        success: function (response) {
+            if (response.status === 'Active') {
+                // Update icon
+                $icon.removeClass('fa-check text-success').addClass('fa-ban text-danger');
+                $link.attr('title', 'Block Player');
+                
+                // Update status badge
+                $statusBadge.removeClass('bg-gradient-danger').addClass('bg-gradient-success');
+                $statusBadge.text('Active');
+            } else {
+                // Update icon
+                $icon.removeClass('fa-ban text-danger').addClass('fa-check text-success');
+                $link.attr('title', 'Unblock Player');
+                
+                // Update status badge
+                $statusBadge.removeClass('bg-gradient-success').addClass('bg-gradient-danger');
+                $statusBadge.text('Inactive');
             }
+        },
+        error: function (xhr, status, error) {
+            alert('Error occurred while updating status.');
+            console.error('AJAX error:', xhr.responseText);
+        }
+    });
+});
+</script>
 
-            document.addEventListener('DOMContentLoaded', function() {
-                document.querySelectorAll('.toggle-status').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const playerId = this.dataset.playerId;
-                        const icon = this.querySelector('i');
-                        const statusBadge = document.getElementById(`status-badge-${playerId}`);
-                        const tooltipTitle = this;
 
-                        fetch(`/player/toggle-status/${playerId}`, {
-                                method: 'POST',
-                                headers: {
-                                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                    'Accept': 'application/json',
-                                    'Content-Type': 'application/json',
-                                }
-                            })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.status === 'Active') {
-                                    icon.classList.remove('fa-check', 'text-success');
-                                    icon.classList.add('fa-ban', 'text-danger');
-                                    tooltipTitle.setAttribute('title', 'Block Agent');
-                                    statusBadge.classList.remove('bg-gradient-danger');
-                                    statusBadge.classList.add('bg-gradient-success');
-                                } else {
-                                    icon.classList.remove('fa-ban', 'text-danger');
-                                    icon.classList.add('fa-check', 'text-success');
-                                    tooltipTitle.setAttribute('title', 'Unblock Agent');
-                                    statusBadge.classList.remove('bg-gradient-success');
-                                    statusBadge.classList.add('bg-gradient-danger');
-                                }
-
-                                statusBadge.innerText = data.status.toUpperCase();
-                            })
-                            .catch(error => {
-                                alert('Something went wrong.');
-                                console.error(error);
-                            });
-                    });
-                });
-            });
-        </script>
     @endpush
 @endsection
