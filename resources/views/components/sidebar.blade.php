@@ -230,7 +230,7 @@
             @endif
 
             <!-- Change Password -->
-            @if ($admin || $user)
+            @if ($role !== 'admin')
                 <li class="nav-item">
                     <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
                         <div
