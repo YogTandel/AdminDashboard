@@ -299,16 +299,27 @@ class PagesController extends Controller
             $filteredHistory = collect($player->gameHistory);
 
             // Handle Quick Date Range
-            $today = \Carbon\Carbon::today();
-            if ($dateRange === '2_days_ago') {
-                $from = $today->copy()->subDays(2)->format('Y-m-d');
-                $to = $today->format('Y-m-d');
-            } elseif ($dateRange === 'this_week') {
-                $from = $today->copy()->startOfWeek()->format('Y-m-d');
-                $to = $today->format('Y-m-d');
-            } elseif ($dateRange === 'this_month') {
-                $from = $today->copy()->startOfMonth()->format('Y-m-d');
-                $to = $today->format('Y-m-d');
+            if ($dateRange) {
+                $today = Carbon::today();
+
+                if ($dateRange === '2_days_ago') {
+                    $from = $today->copy()->subDays(2)->startOfDay()->format('YmdHis');
+                    $to = $today->copy()->subDay()->endOfDay()->format('YmdHis');
+                } elseif ($dateRange === 'last_week') {
+                    $from = $today->copy()->subWeek()->startOfWeek()->format('YmdHis');
+                    $to = $today->copy()->subWeek()->endOfWeek()->format('YmdHis');
+                } elseif ($dateRange === 'last_month') {
+                    $from = $today->copy()->subMonth()->startOfMonth()->format('YmdHis');
+                    $to = $today->copy()->subMonth()->endOfMonth()->format('YmdHis');
+                }
+            } elseif ($from || $to) {
+                // Handle manual date inputs
+                if ($from) {
+                    $from = Carbon::createFromFormat('Y-m-d', $from)->startOfDay()->format('YmdHis');
+                }
+                if ($to) {
+                    $to = Carbon::createFromFormat('Y-m-d', $to)->endOfDay()->format('YmdHis');
+                }
             }
 
             // Filter with dates
@@ -316,11 +327,11 @@ class PagesController extends Controller
                 $filteredHistory = $filteredHistory->filter(function ($entry) use ($from) {
                     if (isset($entry['stime'])) {
                         try {
-                            $entryDate = \Carbon\Carbon::createFromFormat('Y/m/d H:i:s', $entry['stime'])->format('Y-m-d');
+                            $entryDate = \Carbon\Carbon::createFromFormat('Y/m/d H:i:s', $entry['stime'])->format('YmdHis');
                             return $entryDate >= $from;
                         } catch (\Exception $e) {
                             try {
-                                $entryDate = \Carbon\Carbon::parse($entry['stime'])->format('Y-m-d');
+                                $entryDate = \Carbon\Carbon::parse($entry['stime'])->format('YmdHis');
                                 return $entryDate >= $from;
                             } catch (\Exception $e) {
                                 return false;
@@ -335,11 +346,11 @@ class PagesController extends Controller
                 $filteredHistory = $filteredHistory->filter(function ($entry) use ($to) {
                     if (isset($entry['stime'])) {
                         try {
-                            $entryDate = \Carbon\Carbon::createFromFormat('Y/m/d H:i:s', $entry['stime'])->format('Y-m-d');
+                            $entryDate = \Carbon\Carbon::createFromFormat('Y/m/d H:i:s', $entry['stime'])->format('YmdHis');
                             return $entryDate <= $to;
                         } catch (\Exception $e) {
                             try {
-                                $entryDate = \Carbon\Carbon::parse($entry['stime'])->format('Y-m-d');
+                                $entryDate = \Carbon\Carbon::parse($entry['stime'])->format('YmdHis');
                                 return $entryDate <= $to;
                             } catch (\Exception $e) {
                                 return false;
@@ -349,6 +360,7 @@ class PagesController extends Controller
                     return false;
                 });
             }
+
 
             // Sort by date descending (newest first)
             $filteredHistory = $filteredHistory->sortByDesc(function ($entry) {
@@ -633,49 +645,49 @@ class PagesController extends Controller
             'earning' => $setting->earning ?? 0,
             'earningPercentage' => $setting->earningPercentage,
             'result' => $setting->result ?? '--',
-            
+
         ]);
     }
 
-  
-public function getLast10Data()
-{
-    try {
-        $record = DB::table('settings')->first();
-        
-        if (!$record) {
+
+    public function getLast10Data()
+    {
+        try {
+            $record = DB::table('settings')->first();
+
+            if (!$record) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No settings record found',
+                    'data' => array_fill(0, 10, '--')
+                ]);
+            }
+
+            // Handle both array and JSON string formats
+            $last10data = $record->last10data;
+            if (is_string($last10data)) {
+                $last10data = json_decode($last10data, true) ?? array_fill(0, 10, '--');
+            }
+
+            // Ensure we have exactly 10 items
+            $last10data = array_slice((array) $last10data, 0, 10);
+            while (count($last10data) < 10) {
+                $last10data[] = '--';
+            }
+
+            return response()->json([
+                'success' => true,
+                'data' => $last10data
+            ]);
+
+        } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'No settings record found',
+                'message' => 'Error fetching data: ' . $e->getMessage(),
                 'data' => array_fill(0, 10, '--')
             ]);
         }
-
-        // Handle both array and JSON string formats
-        $last10data = $record->last10data;
-        if (is_string($last10data)) {
-            $last10data = json_decode($last10data, true) ?? array_fill(0, 10, '--');
-        }
-
-        // Ensure we have exactly 10 items
-        $last10data = array_slice((array)$last10data, 0, 10);
-        while (count($last10data) < 10) {
-            $last10data[] = '--';
-        }
-
-        return response()->json([
-            'success' => true,
-            'data' => $last10data
-        ]);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Error fetching data: ' . $e->getMessage(),
-            'data' => array_fill(0, 10, '--')
-        ]);
     }
-}
     public function getBetTotals()
     {
         $bets = DB::table('bets')->get();
@@ -1888,68 +1900,68 @@ public function getLast10Data()
             'message' => 'Player status updated.',
         ]);
     }
-   public function Weeklyreport()
-{
-    $agents = User::where('role', 'agent')
-        ->where('status', 'Active')
-        ->get();
+    public function Weeklyreport()
+    {
+        $agents = User::where('role', 'agent')
+            ->where('status', 'Active')
+            ->get();
 
-    $dailyTotals = [];
-    $winTotals = [];
+        $dailyTotals = [];
+        $winTotals = [];
 
-    // છેલ્લાં 7 દિવસ માટે શૂન્યથી શરૂઆત
-    for ($i = 0; $i < 7; $i++) {
-        $date = date('Y-m-d', strtotime("-$i days"));
-        $dailyTotals[$date] = 0;
-        $winTotals[$date] = 0;
-    }
+        // છેલ્લાં 7 દિવસ માટે શૂન્યથી શરૂઆત
+        for ($i = 0; $i < 7; $i++) {
+            $date = date('Y-m-d', strtotime("-$i days"));
+            $dailyTotals[$date] = 0;
+            $winTotals[$date] = 0;
+        }
 
-    foreach ($agents as $agent) {
-        $players = User::raw(function ($collection) use ($agent) {
-            return $collection->aggregate([
-                [
-                    '$match' => [
-                        'role' => 'player',
-                        'agent_id' => new ObjectId($agent->_id),
+        foreach ($agents as $agent) {
+            $players = User::raw(function ($collection) use ($agent) {
+                return $collection->aggregate([
+                    [
+                        '$match' => [
+                            'role' => 'player',
+                            'agent_id' => new ObjectId($agent->_id),
+                        ],
                     ],
-                ],
-                [
-                    '$project' => [
-                        'gameHistory' => 1,
+                    [
+                        '$project' => [
+                            'gameHistory' => 1,
+                        ],
                     ],
-                ],
-            ]);
-        });
+                ]);
+            });
 
-        foreach ($players as $player) {
-            foreach ($player->gameHistory ?? [] as $game) {
-                if (!empty($game['stime'])) {
-                    $gameTime = strtotime(str_replace('/', '-', $game['stime']));
-                    $dateKey = date('Y-m-d', $gameTime);
+            foreach ($players as $player) {
+                foreach ($player->gameHistory ?? [] as $game) {
+                    if (!empty($game['stime'])) {
+                        $gameTime = strtotime(str_replace('/', '-', $game['stime']));
+                        $dateKey = date('Y-m-d', $gameTime);
 
-                    if (array_key_exists($dateKey, $dailyTotals)) {
-                        // Bet Value Total
-                        foreach ($game['betValues'] ?? [] as $betVal) {
-                            if (is_numeric($betVal)) {
-                                $dailyTotals[$dateKey] += $betVal;
+                        if (array_key_exists($dateKey, $dailyTotals)) {
+                            // Bet Value Total
+                            foreach ($game['betValues'] ?? [] as $betVal) {
+                                if (is_numeric($betVal)) {
+                                    $dailyTotals[$dateKey] += $betVal;
+                                }
                             }
-                        }
 
-                        // Win Amount Total
-                        if (isset($game['winpoint']) && is_numeric($game['winpoint'])) {
-                            $winTotals[$dateKey] += $game['winpoint'];
+                            // Win Amount Total
+                            if (isset($game['winpoint']) && is_numeric($game['winpoint'])) {
+                                $winTotals[$dateKey] += $game['winpoint'];
+                            }
                         }
                     }
                 }
             }
         }
-    }
 
-    return view('pages.WeeklyReport', [
-        'dailyTotals' => $dailyTotals,
-        'winTotals' => $winTotals,
-    ]);
-}
+        return view('pages.WeeklyReport', [
+            'dailyTotals' => $dailyTotals,
+            'winTotals' => $winTotals,
+        ]);
+    }
 
 
 
