@@ -1888,59 +1888,69 @@ public function getLast10Data()
             'message' => 'Player status updated.',
         ]);
     }
-    public function Weeklyreport()
-    {
-        $agents = User::where('role', 'agent')
-            ->where('status', 'Active')
-            ->get();
+   public function Weeklyreport()
+{
+    $agents = User::where('role', 'agent')
+        ->where('status', 'Active')
+        ->get();
 
-        $dailyTotals = [];
+    $dailyTotals = [];
+    $winTotals = [];
 
-        // Initialize last 7 days with 0
-        for ($i = 0; $i < 7; $i++) {
-            $date = date('Y-m-d', strtotime("-$i days"));
-            $dailyTotals[$date] = 0;
-        }
+    // છેલ્લાં 7 દિવસ માટે શૂન્યથી શરૂઆત
+    for ($i = 0; $i < 7; $i++) {
+        $date = date('Y-m-d', strtotime("-$i days"));
+        $dailyTotals[$date] = 0;
+        $winTotals[$date] = 0;
+    }
 
-        foreach ($agents as $agent) {
-            $players = User::raw(function ($collection) use ($agent) {
-                return $collection->aggregate([
-                    [
-                        '$match' => [
-                            'role' => 'player',
-                            'agent_id' => new ObjectId($agent->_id),
-                        ],
+    foreach ($agents as $agent) {
+        $players = User::raw(function ($collection) use ($agent) {
+            return $collection->aggregate([
+                [
+                    '$match' => [
+                        'role' => 'player',
+                        'agent_id' => new ObjectId($agent->_id),
                     ],
-                    [
-                        '$project' => [
-                            'gameHistory' => 1, // No filtering, fetch full history
-                        ],
+                ],
+                [
+                    '$project' => [
+                        'gameHistory' => 1,
                     ],
-                ]);
-            });
+                ],
+            ]);
+        });
 
-            foreach ($players as $player) {
-                foreach ($player->gameHistory ?? [] as $game) {
-                    if (!empty($game['stime'])) {
-                        $gameTime = strtotime(str_replace('/', '-', $game['stime']));
-                        $dateKey = date('Y-m-d', $gameTime);
+        foreach ($players as $player) {
+            foreach ($player->gameHistory ?? [] as $game) {
+                if (!empty($game['stime'])) {
+                    $gameTime = strtotime(str_replace('/', '-', $game['stime']));
+                    $dateKey = date('Y-m-d', $gameTime);
 
-                        if (array_key_exists($dateKey, $dailyTotals)) {
-                            foreach ($game['betValues'] ?? [] as $betVal) {
-                                if (is_numeric($betVal)) {
-                                    $dailyTotals[$dateKey] += $betVal;
-                                }
+                    if (array_key_exists($dateKey, $dailyTotals)) {
+                        // Bet Value Total
+                        foreach ($game['betValues'] ?? [] as $betVal) {
+                            if (is_numeric($betVal)) {
+                                $dailyTotals[$dateKey] += $betVal;
                             }
+                        }
+
+                        // Win Amount Total
+                        if (isset($game['winpoint']) && is_numeric($game['winpoint'])) {
+                            $winTotals[$dateKey] += $game['winpoint'];
                         }
                     }
                 }
             }
         }
-
-        return view('pages.WeeklyReport', [
-            'dailyTotals' => array_reverse($dailyTotals),
-        ]);
     }
+
+    return view('pages.WeeklyReport', [
+        'dailyTotals' => $dailyTotals,
+        'winTotals' => $winTotals,
+    ]);
+}
+
 
 
 

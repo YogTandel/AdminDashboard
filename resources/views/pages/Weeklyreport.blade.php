@@ -15,14 +15,20 @@
                 <th>Profit</th>
             </tr>
         </thead>
-        <tbody>
-            @foreach($dailyTotals as $date => $total)
-                <tr>
-                    <td>{{ \Carbon\Carbon::parse($date)->format('d-m-Y') }}</td>
-                    <td class="text-end">{{ number_format($total, 2) }}</td>
-                </tr>
-            @endforeach
-        </tbody>
+         <tbody>
+        @foreach($dailyTotals as $date => $total)
+            @php
+                $win = $winTotals[$date] ?? 0;
+                $profit = $total - $win;
+            @endphp
+            <tr>
+                <td class="text-center">{{ \Carbon\Carbon::parse($date)->format('d-m-Y') }}</td>
+                <td class="text-center">{{ number_format($total, 2) }}</td>
+                <td class="text-center">{{ number_format($win, 2) }}</td>
+                <td class="text-center">{{ number_format($profit, 2) }}</td>
+            </tr>
+        @endforeach
+    </tbody>
     </table>
 </div>
 @endsection
