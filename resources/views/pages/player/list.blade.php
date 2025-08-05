@@ -230,8 +230,10 @@
                                                             <i class="fas fa-copy me-2" style="cursor: pointer;"></i>
                                                         </a>
                                                         
-                                                        @if(auth()->check()&& auth()->user()->role !== 'distributor' && auth()->check() && auth()->user()->role !== 'agent')
-                                                            <a href="javascript:;"
+                                                        @if (auth()->check() && auth()->user()->role === 'distributor')
+                                                       
+                                                    @else       
+                                                    <a href="javascript:;"
                                                                 class="text-secondary font-weight-bold text-xs me-2"
                                                                 title="Edit Player" 
                                                                 data-bs-toggle="modal"
@@ -261,12 +263,12 @@
                                                             <i class="fas fa-history"></i>
                                                         </a>
                                                         <a href="javascript:;"
-   class="font-weight-bold text-xs toggle-status"
-   data-bs-toggle="tooltip"
-   title="{{ $player->status === 'Active' ? 'Block Player' : 'Unblock Player' }}"
-   data-player-id="{{ $player->id }}">
-   <i class="fas {{ $player->status === 'Active' ? 'fa-ban text-danger' : 'fa-check text-success' }}"></i>
-</a>
+                                                            class="font-weight-bold text-xs toggle-status"
+                                                            data-bs-toggle="tooltip"
+                                                            title="{{ $player->status === 'Active' ? 'Block Player' : 'Unblock Player' }}"
+                                                            data-player-id="{{ $player->id }}">
+                                                            <i class="fas {{ $player->status === 'Active' ? 'fa-ban text-danger' : 'fa-check text-success' }}"></i>
+                                                        </a>
 
                                                     </div>
                                                 </td>

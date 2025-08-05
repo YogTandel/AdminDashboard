@@ -260,7 +260,9 @@
                                                     </a>
 
                                                     <!-- Edit -->
-                                                     @if (auth()->check() && auth()->user()->role !== 'distributor')
+                                                    @if (auth()->check() && auth()->user()->role === 'distributor')
+                                                       
+                                                    @else
                                                         <a href="javascript:;"
                                                             class="text-secondary font-weight-bold text-xs me-2"
                                                             title="Edit Agent" 
