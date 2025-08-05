@@ -5,7 +5,7 @@
 @section('content')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <div class="container">
+    <div class="container ">
         <div class="card-header d-flex justify-content-between align-items-center mt-3">
             <div class="ms-5 d-flex align-items-center flex-wrap gap-4">
                 <div class="w-100 mt-1">
@@ -28,8 +28,8 @@
 
                 </div>
 
-                {{-- Standing --}}
-                <div class="d-flex align-items-center">
+                {{-- Standing --}} 
+                <div class="d-flex align-items-center ms-5">
                     <span class="text-dark me-2" style="font-size: 1.5rem; font-weight: 700;">Standing:</span>
                     <span id="live-standing" class="badge bg-dark" style="font-size: 1rem;">--</span>
                 </div>
@@ -51,16 +51,16 @@
 
 
                 {{-- Custom Bet --}}
-                <form action="{{ route('custom.bet.update') }}" method="POST" class="d-flex align-items-center">
+                <!-- <form action="{{ route('custom.bet.update') }}" method="POST" class="d-flex align-items-center">
                     @csrf
                     <span class="text-dark" style="font-size: 1.5rem; font-weight: 700;">Custom Bet:</span>
                     <input type="number" name="custom_bet" class="form-control form-control-sm" placeholder=""
                         style="width: 100px;" min="0" max="9" required value="{{ old('custom_bet') }}" />
                     <button type="submit" class="btn btn-primary btn-sm ms-2 mt-3" style="width: 100px;">Submit</button>
-                </form>
+                </form> -->
 
                 {{-- Timer Badge --}}
-                <div class="ms-2">
+                <div class="ms-5 ">
                     <span id="timer-badge" class="badge bg-dark"
                         style="font-size: 16px; color: #FF0000; font-family: 'Share Tech Mono', monospace;">
                         00:00
@@ -69,7 +69,7 @@
             </div>
         </div>
     </div>
-   <div class="last10-container d-flex align-items-center gap-2 me-5 justify-content-center">
+   <div class="last10-container d-flex align-items-center gap-2 me-5 justify-content-center mt-4 ">
     <div class="fs-6 fw-bold text-dark me-2">Last 10 data :-</div>
     <div class="d-flex flex-wrap gap-2 align-items-center">
         @for($i = 1; $i <= 10; $i++)
@@ -461,6 +461,44 @@ document.addEventListener('DOMContentLoaded', function() {
 
         startTimerSocket();
     </script>
+
+  <script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add click event to number cards
+    @for($i = 0; $i <= 9; $i++)
+        document.getElementById('card-{{$i}}').addEventListener('click', function() {
+            if(confirm('Are you sure you want to bet on {{$i}}?')) {
+                submitCustomBet({{$i}});
+            }
+        });
+    @endfor
+
+    function submitCustomBet(betNumber) {
+        // Create a form dynamically
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '{{ route("custom.bet.update") }}';
+        
+        // Add CSRF token
+        const csrfToken = document.createElement('input');
+        csrfToken.type = 'hidden';
+        csrfToken.name = '_token';
+        csrfToken.value = '{{ csrf_token() }}';
+        form.appendChild(csrfToken);
+        
+        // Add custom_bet field
+        const betInput = document.createElement('input');
+        betInput.type = 'hidden';
+        betInput.name = 'custom_bet';
+        betInput.value = betNumber;
+        form.appendChild(betInput);
+        
+        // Submit the form
+        document.body.appendChild(form);
+        form.submit();
+    }
+});
+</script>
 
 
 @endsection
