@@ -191,11 +191,14 @@
                                                     <p class="text-xs font-weight-bold mb-0">{{ $player->agent }}</p>
                                                 </td>
                                                 <td class="align-middle text-center text-sm">
-                                                    <span
-                                                        class="badge badge-sm {{ $player->login_status ? 'bg-gradient-success' : 'bg-gradient-danger' }}">
-                                                        {{ $player->login_status ? 'True' : 'False' }}
-                                                    </span>
-                                                </td>
+    <span
+        class="badge badge-sm {{ $player->login_status ? 'bg-gradient-success' : 'bg-gradient-danger' }} toggle-login-status"
+        data-player-id="{{ $player->id }}"
+        style="cursor: pointer;">
+        {{ $player->login_status ? 'True' : 'False' }}
+    </span>
+</td>
+
                                                 <td class="align-middle text-center text-sm">
                                                     <span
                                                         class="badge badge-sm {{ $player->status === 'Active' ? 'bg-gradient-success' : 'bg-gradient-danger' }}">
@@ -356,4 +359,33 @@
 
 
     @endpush
+    @push('scripts')
+<script>
+    $(document).on('click', '.toggle-login-status', function () {
+        const playerId = $(this).data('player-id');
+        const $badge = $(this);
+        const currentStatus = $badge.text().trim();
+
+        if (currentStatus === 'True') {
+            $.ajax({
+                url: '/player/toggle-login-status/' + playerId,
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                success: function (response) {
+                    if (response.status === false || response.status === 0) {
+                        $badge.removeClass('bg-gradient-success').addClass('bg-gradient-danger');
+                        $badge.text('False');
+                    }
+                },
+                error: function () {
+                    alert('Error updating login status.');
+                }
+            });
+        }
+    });
+</script>
+@endpush
+
 @endsection
