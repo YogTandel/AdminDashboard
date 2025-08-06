@@ -230,35 +230,30 @@
                                                             <i class="fas fa-copy me-2" style="cursor: pointer;"></i>
                                                         </a>
                                                         
-                                                   @auth
-                                                            @php
-                                                                $userRole = auth()->user()->role ?? '';
-                                                                $hideButtons = in_array(strtolower($userRole), ['distributor', 'agent']);
-                                                            @endphp
+                                                    @if (Auth::guard('admin')->check())      
+                                                    <a href="javascript:;"
+                                                                class="text-secondary font-weight-bold text-xs me-2"
+                                                                title="Edit Player" 
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#editModal{{ $player->id }}">
+                                                                <i class="fas fa-edit me-1"></i>
+                                                            </a>
+                                                            @include('pages.player.edit')
 
-                                                            @if (!$hideButtons)
-                                                                <a href="javascript:;"
-                                                                    class="text-secondary font-weight-bold text-xs me-2"
-                                                                    title="Edit Agent" 
-                                                                    data-bs-toggle="modal"
-                                                                    data-bs-target="#editModal{{ $agent->id }}">
-                                                                    <i class="fas fa-edit"></i>
-                                                                </a>
-                                                                @include('pages.agent.edit')
-
-                                                                <form action="{{ route('agent.delete', $agent->id) }}" method="post" style="display:flex;">
-                                                                    @csrf
-                                                                    @method('DELETE')
-                                                                    <button class="text-danger font-weight-bold text-xs me-2"
-                                                                        onclick="return confirm('Are you sure?')"
-                                                                        data-bs-toggle="tooltip" 
-                                                                        title="Delete Agent"
-                                                                        style="background: none; border: none; padding: 0;">
-                                                                        <i class="fas fa-trash"></i>
-                                                                    </button>
-                                                                </form>
-                                                            @endif
-                                                        @endauth
+                                                            <!-- Delete Button -->
+                                                            <form action="{{ route('player.delete', $player->id) }}" method="post" style="display:flex;">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button class="text-danger font-weight-bold text-xs me-2"
+                                                                    onclick="return confirm('Are you sure?')"
+                                                                    data-bs-toggle="tooltip" 
+                                                                    data-bs-placement="top"
+                                                                    title="Delete Player"
+                                                                    style="background: none; border: none; padding: 0;">
+                                                                    <i class="fas fa-trash"></i>
+                                                                </button>
+                                                            </form>
+                                                        @endif
                                                         <a href="{{ route('player.history', $player->_id) }}"
                                                             class="text-secondary font-weight-bold text-xs me-2"
                                                             data-bs-toggle="tooltip" data-bs-placement="top"

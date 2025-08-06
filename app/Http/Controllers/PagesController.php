@@ -237,6 +237,7 @@ class PagesController extends Controller
         }
 
         $distributors = User::where('role', 'distributor')->get(['_id', 'player']);
+        
 
         return view('pages.player.list', compact('players', 'perPage', 'agents', 'distributors', 'authUser'));
     }
