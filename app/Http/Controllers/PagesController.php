@@ -1958,7 +1958,7 @@ class PagesController extends Controller
             }
         }
 
-        return view('pages.weeklyReport', [
+        return view('pages.WeeklyReport', [
             'dailyTotals' => $dailyTotals,
             'winTotals' => $winTotals,
         ]);
