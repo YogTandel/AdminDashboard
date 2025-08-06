@@ -131,7 +131,7 @@
                                                                 {{ $date ? $date->format('Y-m-d') : 'Invalid' }}
                                                             </h6>
                                                             <p class="text-xs text-secondary mb-0">
-                                                                {{ $date ? $date->format('H:i:s') : '' }}
+                                                                {{ $date ? $date->format('h:i:s A') : '' }}
                                                             </p>
                                                         </div>
                                                     </div>
