@@ -202,18 +202,20 @@
 
 
             <li class="nav-item">
-                <a class="nav-link {{ Request::is('Weekly-report') ? 'active' : '' }}"
+                <a class="nav-link {{ request()->routeIs('Weekly-report') ? 'active' : '' }}"
                     href="{{ route('Weekly-report') }}">
-                    <div
-                        class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                        <i class="fas fa-percentage" style="
-                            color: {{ Request::is('relesecommission-report*') ? '#fb6340' : '#344767' }};
-                            transition: color 0.3s ease;">
-                        </i>
+
+                    <div class="icon icon-shape icon-sm shadow border-radius-md text-center me-2 d-flex align-items-center justify-content-center
+                   {{ request()->routeIs('Weekly-report') ? 'bg-warning text-white' : 'bg-white' }}">
+
+                        <i class="fas fa-calendar-week 
+                   {{ request()->routeIs('Weekly-report') ? 'text-white' : 'text-dark' }}"></i>
                     </div>
+
                     <span class="nav-link-text ms-1">Weekly Report</span>
                 </a>
             </li>
+
 
 
             <!-- Setting (Only for Admin) -->
