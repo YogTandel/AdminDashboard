@@ -5,10 +5,7 @@
 @section('content')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <div class="container ">
-        <div class="card-header d-flex justify-content-between align-items-center mt-3">
-            <div class="ms-5 d-flex align-items-center flex-wrap gap-4">
-                <div class="w-100 mt-1">
+    <div class="w-100 mt-1">
 
                     {{-- Success Message --}}
                     @if (session('success'))
@@ -28,116 +25,106 @@
 
                 </div>
 
-                {{-- Standing --}} 
-                <div class="d-flex align-items-center ms-5 me-2">
+    <div class="container">
+        <!-- Top Stats Row - Now properly aligned -->
+        <div class="row mt-3 justify-content-center">
+            <div class="col-auto mb-3">
+                <div class="d-flex align-items-center">
                     <span class="text-dark me-2" style="font-size: 1.5rem; font-weight: 700;">Standing:</span>
                     <span id="live-standing" class="badge bg-dark" style="font-size: 1rem;">--</span>
                 </div>
-
-                {{-- Earning --}}
-                <div class="d-flex align-items-center me-2">
+            </div>
+            
+            <div class="col-auto mb-2">
+                <div class="d-flex align-items-center">
                     <span class="text-dark me-2" style="font-size: 1.5rem; font-weight: 700;">Earning:</span>
                     <span id="live-earning11" class="badge bg-gradient-success me-2" style="font-size: 1rem;">--</span>
                 </div>
-
-                {{-- Result --}}
-                <div class="d-flex align-items-center me-5">
+            </div>
+            
+            <div class="col-auto">
+                <div class="d-flex align-items-center">
                     <span class="text-dark me-2" style="font-size: 1.5rem; font-weight: 700;">Result:</span>
-                    <span id="live-result" class="badge text-white "
-                        style="background: linear-gradient(135deg, #f093fb, #f5576c); font-size: 1rem; font-weight: 700;">
-                        --
-                    </span>
+                    <span id="live-result" class="badge text-white" style="background: linear-gradient(135deg, #f093fb, #f5576c); font-size: 1rem; font-weight: 700;">--</span>
                 </div>
+            </div>
+            
+            <div class="col-auto mb-2">
+                <span id="timer-badge" class="badge bg-dark" style="font-size: 16px; color: #FF0000; font-family: 'Share Tech Mono', monospace;">
+                    00:00
+                </span>
+            </div>
+        </div>
 
-
-                {{-- Custom Bet --}}
-                <!-- <form action="{{ route('custom.bet.update') }}" method="POST" class="d-flex align-items-center">
-                    @csrf
-                    <span class="text-dark" style="font-size: 1.5rem; font-weight: 700;">Custom Bet:</span>
-                    <input type="number" name="custom_bet" class="form-control form-control-sm" placeholder=""
-                        style="width: 100px;" min="0" max="9" required value="{{ old('custom_bet') }}" />
-                    <button type="submit" class="btn btn-primary btn-sm ms-2 mt-3" style="width: 100px;">Submit</button>
-                </form> -->
-
-                {{-- Timer Badge --}}
-                <div class="ms-5">
-                    <span id="timer-badge" class="badge bg-dark"
-                        style="font-size: 16px; color: #FF0000; font-family: 'Share Tech Mono', monospace;">
-                        00:00
-                    </span>
+        <!-- Last 10 Results - Centered properly -->
+        <div class="row justify-content-center mt-3">
+            <div class="col-12 text-center mb-2">
+                <div class="fs-6 fw-bold text-dark">Last 10 data:</div>
+            </div>
+            <div class="col-12">
+                <div class="d-flex flex-wrap justify-content-center gap-2">
+                    @for($i = 1; $i <= 10; $i++)
+                        <span id="result-badge-{{$i}}" 
+                              class="d-flex align-items-center justify-content-center" 
+                              style="font-size: 1rem;
+                                     width: 50px;
+                                     height: 30px;
+                                     text-align: center;
+                                     background-color: {{ [
+                                         '#FFECEC', '#FFEFD8', '#F0FFE2', '#E2F9FF', 
+                                         '#EEE2FF', '#FFE2F5', '#E2FFEE', '#FFF5E2',
+                                         '#E2ECFF', '#FFE8E2'
+                                     ][$i-1] }};
+                                     color: #333;
+                                     border-radius: 4px !important;">
+                              --
+                        </span>
+                    @endfor
                 </div>
             </div>
         </div>
-    </div>
-   <div class="last10-container d-flex align-items-center gap-2 me-5 justify-content-center mt-4 ">
-    <div class="fs-6 fw-bold text-dark me-2">Last 10 data :-</div>
-    <div class="d-flex flex-wrap gap-2 align-items-center">
-        @for($i = 1; $i <= 10; $i++)
-            <span id="result-badge-{{$i}}" 
-                  class="d-flex align-items-center justify-content-center" 
-                  style="font-size: 1rem;
-                         width: 50px;
-                         height: 30px;
-                         text-align: center;
-                         background-color: {{ [
-                             '#FFECEC', '#FFEFD8', '#F0FFE2', '#E2F9FF', 
-                             '#EEE2FF', '#FFE2F5', '#E2FFEE', '#FFF5E2',
-                             '#E2ECFF', '#FFE8E2'
-                         ][$i-1] }};
-                         color: #333;
-                         border-radius: 4px !important;">
-                  --
-            </span>
-        @endfor
-    </div>
-</div>
 
+        <!-- Number Cards - Adjusted size for laptop -->
+        <div class="row justify-content-center g-2 py-4">
+            @for ($i = 1; $i <= 10; $i++)
+                @php
+                    $displayNumber = $i % 10; 
+                @endphp
+                <div class="col-auto" id="card-{{ $displayNumber }}">
+                    <div class="p-3 rounded text-white card-bg-{{ $displayNumber }}" style="width: 100px;">
+                        <p class="font-weight-bolder mb-2 text-center" style="font-size: 1.5rem; font-weight: 800;">{{ $displayNumber }}</p>
+                        <h5 class="text-sm value text-center mb-0">0</h5>
+                    </div>
+                </div>
+            @endfor
 
-     
-
-    <div class="row g-2 container-fluid py-4">
-        @for ($i = 1; $i <= 10; $i++)
-            @php
-                $displayNumber = $i % 10; 
-            @endphp
-            <div class="col-12 col-sm-6 col-md-1 ms-2" id="card-{{ $displayNumber }}">
-                <div class="p-3 rounded text-white card-bg-{{ $displayNumber }}">
-                    <p class="font-weight-bolder mb-3" style="font-size: 1.5rem; font-weight: 800;">{{ $displayNumber }}</p>
-                    <h5 class="text-sm value">0</h5>
+            <div class="col-auto" id="card-total">
+                <div class="p-3 rounded text-white card-bg-total" style="width: 100px;">
+                    <p class="font-weight-bolder mb-2 text-center" style="font-size: 1.5rem; font-weight: 800;">Total</p>
+                    <h5 class="text-sm value text-center mb-0">0</h5>
                 </div>
             </div>
-        @endfor
-
-        <div class="col-12 col-sm-6 col-md-1 ms-2" id="card-total">
-            <div class="p-3 rounded text-white card-bg-total">
-                <p class="font-weight-bolder mb-3" style="font-size: 1.5rem; font-weight: 800;">Total</p>
-                <h5 class="text-sm value">0</h5>
-            </div>
         </div>
-    </div>
-    <div class="container-fluid py-4">
-        <div class="row">
+
+        <!-- Players Table -->
+        <div class="row py-4">
             <div class="col-12">
                 <div class="card mb-4">
                     <div class="card-header pb-0 d-flex justify-content-between align-items-center">
                         <h6 class="text-dark fw-bolder text-center" style="font-size: 1.5rem;">Live Player</h6>
                     </div>
                     <div class="card-body px-0 pt-0 pb-2 mt-2">
-                        <div class="table-responsive p-0">
+                        <div class="table-responsive">
                             <table class="table align-items-center mb-0" style="table-layout: fixed; width: 100%;">
                                 <thead>
                                     <tr>
-                                        <th class="text-uppercase text-dark fw-bold text-center"
-                                            style="font-size: 1rem; width: 22%;">Name</th>
+                                        <th class="text-uppercase text-dark fw-bold text-center" style="font-size: 1rem; width: 22%;">Name</th>
                                         @for ($i = 1; $i <= 9; $i++)
-                                            <th class="text-uppercase text-dark fw-bold text-center"
-                                                style="font-size: 1rem;">
+                                            <th class="text-uppercase text-dark fw-bold text-center" style="font-size: 1rem;">
                                                 {{ $i }}</th>
                                         @endfor
-                                        <th class="text-uppercase text-dark fw-bold text-center" style="font-size: 1rem;">0
-                                        </th>
-                                        <th class="text-uppercase text-dark fw-bold text-center" style="font-size: 1rem;">
-                                            Total</th>
+                                        <th class="text-uppercase text-dark fw-bold text-center" style="font-size: 1rem;">0</th>
+                                        <th class="text-uppercase text-dark fw-bold text-center" style="font-size: 1rem;">Total</th>
                                     </tr>
                                 </thead>
                                 <tbody id="player-table-body"></tbody>
@@ -148,9 +135,47 @@
             </div>
             <x-footer />
         </div>
+
+        <!-- Success/Error Messages -->
+        @if (session('success'))
+            <div id="alertMessage" class="alert alert-success alert-dismissible fade show position-fixed bottom-0 end-0 m-3" role="alert" style="z-index: 9999;">
+                {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
+        @if (session('error'))
+            <div id="alertMessage" class="alert alert-danger alert-dismissible fade show position-fixed bottom-0 end-0 m-3" role="alert" style="z-index: 9999;">
+                {{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
     </div>
 
+    <style>
+        .card-bg-0 { background: linear-gradient(135deg, #ff9a9e, #fad0c4); }
+        .card-bg-1 { background: linear-gradient(135deg, #a18cd1, #fbc2eb); }
+        .card-bg-2 { background: linear-gradient(135deg, #f6d365, #fda085); }
+        .card-bg-3 { background: linear-gradient(135deg, #fdcbf1, #e6dee9); }
+        .card-bg-4 { background: linear-gradient(135deg, #a1c4fd, #c2e9fb); }
+        .card-bg-5 { background: linear-gradient(135deg, #84fab0, #8fd3f4); }
+        .card-bg-6 { background: linear-gradient(135deg, #cfd910df, rgb(153, 191, 211)); }
+        .card-bg-7 { background: linear-gradient(135deg, #f093fb, #f5576c); }
+        .card-bg-8 { background: linear-gradient(135deg, #43e97b, #38f9d7); }
+        .card-bg-9 { background: linear-gradient(135deg, #30cfd0, #330867); }
+        .card-bg-total { background: linear-gradient(135deg, #a18cd1, #fbc2eb); }
 
+        @media (max-width: 768px) {
+            /* Adjust card size for mobile */
+            .card-bg-0, .card-bg-1, .card-bg-2, .card-bg-3, 
+            .card-bg-4, .card-bg-5, .card-bg-6, .card-bg-7, 
+            .card-bg-8, .card-bg-9, .card-bg-total {
+                width: 80px !important;
+            }
+        }
+    </style>
+
+    <!-- All JavaScript remains exactly the same -->
     <script>
         setTimeout(function() {
             const alertEl = document.getElementById('alertMessage');
@@ -174,83 +199,76 @@
         }
 
         fetchLiveGameValues();
-        setInterval(fetchLiveGameValues, 5000);
+        setInterval(fetchLiveGameValues, 10000);
     </script>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const config = {
-        refreshInterval: 5000,
-        apiEndpoint: "{{ route('last10.results') }}"
-    };
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const config = {
+                refreshInterval: 5000,
+                apiEndpoint: "{{ route('last10.results') }}"
+            };
 
-    // Predefined colors for each badge position
-    const badgeColors = [
-        { bg: '#2aabf0ff', text: '#ffff' }, // Light red
-        { bg: '#2aabf0ff', text: '#ffff' },  // Light orange
-        { bg: '#2aabf0ff', text: '#ffff' },  // Light green
-        { bg: '#2aabf0ff', text: '#ffff' },  // Light blue
-        { bg: '#2aabf0ff', text: '#ffff' },  // Light purple
-        { bg: '#2aabf0ff', text: '#ffff' },  // Light pink
-        { bg: '#2aabf0ff', text: '#ffff' },  // Light teal
-        { bg: '#2aabf0ff', text: '#ffff' },  // Light deep orange
-        { bg: '#2aabf0ff', text: '#ffff' },  // Light blue
-        { bg: '#2aabf0ff', text: '#ffff' }   // Light brown
-    ];
+            const badgeColors = [
+                { bg: '#2aabf0ff', text: '#ffff' },
+                { bg: '#2aabf0ff', text: '#ffff' },
+                { bg: '#2aabf0ff', text: '#ffff' },
+                { bg: '#2aabf0ff', text: '#ffff' },
+                { bg: '#2aabf0ff', text: '#ffff' },
+                { bg: '#2aabf0ff', text: '#ffff' },
+                { bg: '#2aabf0ff', text: '#ffff' },
+                { bg: '#2aabf0ff', text: '#ffff' },
+                { bg: '#2aabf0ff', text: '#ffff' },
+                { bg: '#2aabf0ff', text: '#ffff' }
+            ];
 
-    // Get all badge elements
-    const badges = Array.from({length: 10}, (_, i) => 
-        document.getElementById(`result-badge-${i+1}`)).filter(Boolean);
+            const badges = Array.from({length: 10}, (_, i) => 
+                document.getElementById(`result-badge-${i+1}`)).filter(Boolean);
 
-    // Initialize badges with their unique colors
-    function initBadges() {
-        badges.forEach((badge, index) => {
-            if (badge) {
-                badge.textContent = '--';
-                badge.style.backgroundColor = badgeColors[index].bg;
-                badge.style.color = badgeColors[index].text;
-                badge.className = 'badge rounded-pill p-2 me-0';
+            function initBadges() {
+                badges.forEach((badge, index) => {
+                    if (badge) {
+                        badge.textContent = '--';
+                        badge.style.backgroundColor = badgeColors[index].bg;
+                        badge.style.color = badgeColors[index].text;
+                        badge.className = 'badge rounded-pill p-2 me-0';
+                    }
+                });
             }
-        });
-    }
 
-    // Update badges with data (maintaining their unique colors)
-    function updateBadges(data) {
-        data.forEach((result, index) => {
-            if (badges[index]) {
-                badges[index].textContent = result;
-                // Keep the same background color but update text if needed
-                badges[index].style.color = (
-                    result === 'W' ? '#388E3C' :
-                    result === 'L' ? '#D32F2F' :
-                    !isNaN(result) ? badgeColors[index].text : '#6c757d'
-                );
+            function updateBadges(data) {
+                data.forEach((result, index) => {
+                    if (badges[index]) {
+                        badges[index].textContent = result;
+                        badges[index].style.color = (
+                            result === 'W' ? '#388E3C' :
+                            result === 'L' ? '#D32F2F' :
+                            !isNaN(result) ? badgeColors[index].text : '#6c757d'
+                        );
+                    }
+                });
             }
-        });
-    }
 
-    // Fetch data from server
-    async function fetchData() {
-        try {
-            const response = await fetch(config.apiEndpoint);
-            const {success, data} = await response.json();
-            
-            if (success) {
-                updateBadges(data);
-            } else {
-                initBadges(); // Reset to defaults on error
+            async function fetchData() {
+                try {
+                    const response = await fetch(config.apiEndpoint);
+                    const {success, data} = await response.json();
+                    
+                    if (success) {
+                        updateBadges(data);
+                    } else {
+                        initBadges();
+                    }
+                } catch (error) {
+                    console.error('Fetch error:', error);
+                    initBadges();
+                }
             }
-        } catch (error) {
-            console.error('Fetch error:', error);
+
             initBadges();
-        }
-    }
-
-    // Initialize and start polling
-    initBadges();
-    fetchData();
-    setInterval(fetchData, config.refreshInterval);
-});
-</script>
+            fetchData();
+            setInterval(fetchData, config.refreshInterval);
+        });
+    </script>
 
     <script>
         function fetchBetTotals() {
@@ -270,56 +288,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         $(document).ready(function() {
-            fetchBetTotals(); // First load
-            setInterval(fetchBetTotals, 5000); // Auto update every 5 seconds
+            fetchBetTotals();
+            setInterval(fetchBetTotals, 5000);
         });
     </script>
-
-    <style>
-        .card-bg-0 {
-            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
-        }
-
-        .card-bg-1 {
-            background: linear-gradient(135deg, #a18cd1, #fbc2eb);
-        }
-
-        .card-bg-2 {
-            background: linear-gradient(135deg, #f6d365, #fda085);
-        }
-
-        .card-bg-3 {
-            background: linear-gradient(135deg, #fdcbf1, #e6dee9);
-        }
-
-        .card-bg-4 {
-            background: linear-gradient(135deg, #a1c4fd, #c2e9fb);
-        }
-
-        .card-bg-5 {
-            background: linear-gradient(135deg, #84fab0, #8fd3f4);
-        }
-
-        .card-bg-6 {
-            background: linear-gradient(135deg, #cfd910df, rgb(153, 191, 211));
-        }
-
-        .card-bg-7 {
-            background: linear-gradient(135deg, #f093fb, #f5576c);
-        }
-
-        .card-bg-8 {
-            background: linear-gradient(135deg, #43e97b, #38f9d7);
-        }
-
-        .card-bg-9 {
-            background: linear-gradient(135deg, #30cfd0, #330867);
-        }
-
-        .card-bg-total {
-            background: linear-gradient(135deg, #a18cd1, #fbc2eb);
-        }
-    </style>
 
     <script>
         function loadPlayers() {
@@ -337,27 +309,24 @@ document.addEventListener('DOMContentLoaded', function() {
                         let stime = player.stime;
 
                         let row = `<tr>`;
-                        row += `<td class="text-center text-dark fw-bold">${ name }</td>`;
+                        row += `<td class="text-center text-dark fw-bold">${name}</td>`;
 
-                        row += `<td class="text-center">${ betValues[1] ?? 0 }</td>`;
-                        row += `<td class="text-center">${ betValues[2] ?? 0 }</td>`;
-                        row += `<td class="text-center">${ betValues[3] ?? 0 }</td>`;
-                        row += `<td class="text-center">${ betValues[4] ?? 0 }</td>`;
-                        row += `<td class="text-center">${ betValues[5] ?? 0 }</td>`;
-                        row += `<td class="text-center">${ betValues[6] ?? 0 }</td>`;
-                        row += `<td class="text-center">${ betValues[7] ?? 0 }</td>`;
-                        row += `<td class="text-center">${ betValues[8] ?? 0 }</td>`;
-                        row += `<td class="text-center">${ betValues[9] ?? 0 }</td>`;
-                        row += `<td class="text-center">${ betValues[0] ?? 0 }</td>`;
+                        row += `<td class="text-center">${betValues[1] ?? 0}</td>`;
+                        row += `<td class="text-center">${betValues[2] ?? 0}</td>`;
+                        row += `<td class="text-center">${betValues[3] ?? 0}</td>`;
+                        row += `<td class="text-center">${betValues[4] ?? 0}</td>`;
+                        row += `<td class="text-center">${betValues[5] ?? 0}</td>`;
+                        row += `<td class="text-center">${betValues[6] ?? 0}</td>`;
+                        row += `<td class="text-center">${betValues[7] ?? 0}</td>`;
+                        row += `<td class="text-center">${betValues[8] ?? 0}</td>`;
+                        row += `<td class="text-center">${betValues[9] ?? 0}</td>`;
+                        row += `<td class="text-center">${betValues[0] ?? 0}</td>`;
 
-
-
-                        row += `<td class="text-center fw-bold">${ total }</td>`;
+                        row += `<td class="text-center fw-bold">${total}</td>`;
                         row += `</tr>`;
 
                         tableBody += row;
                     });
-
 
                     $('#player-table-body').html(tableBody);
                 },
@@ -367,11 +336,8 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
 
-        // Initial load
         $(document).ready(function() {
             loadPlayers();
-            // Optional: Auto refresh every 15 seconds
-            // setInterval(loadPlayers, 15000);
         });
     </script>
 
@@ -391,11 +357,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
         function handleTimerEvent(currentTimeMilliseconds, systemTimeMilliseconds) {
             const receiveTime = Date.now();
-            const networkDelay = (receiveTime - lastTimerSentAt) / 1000; // delay in seconds
+            const networkDelay = (receiveTime - lastTimerSentAt) / 1000;
 
             setServerTime(systemTimeMilliseconds);
             const utcDateTime = new Date(currentTimeMilliseconds);
-            targetTime = Math.floor(utcDateTime.getTime() / 1000) + networkDelay; // adjust forward
+            targetTime = Math.floor(utcDateTime.getTime() / 1000) + networkDelay;
 
             console.log(
                 `✅ [handleTimerEvent] targetTime set to: ${targetTime} (+${networkDelay.toFixed(2)}s delay compensated)`
@@ -419,7 +385,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const message = {
                 data: "Timer request"
             };
-            lastTimerSentAt = Date.now(); // record send time
+            lastTimerSentAt = Date.now();
             socket.send(JSON.stringify(message));
             console.log("📤 [WebSocket] Timer request sent");
         }
@@ -462,43 +428,36 @@ document.addEventListener('DOMContentLoaded', function() {
         startTimerSocket();
     </script>
 
-  <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Add click event to number cards
-    @for($i = 0; $i <= 9; $i++)
-        document.getElementById('card-{{$i}}').addEventListener('click', function() {
-            if(confirm('Are you sure you want to bet on {{$i}}?')) {
-                submitCustomBet({{$i}});
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            @for($i = 0; $i <= 9; $i++)
+                document.getElementById('card-{{$i}}').addEventListener('click', function() {
+                    if(confirm('Are you sure you want to bet on {{$i}}?')) {
+                        submitCustomBet({{$i}});
+                    }
+                });
+            @endfor
+
+            function submitCustomBet(betNumber) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '{{ route("custom.bet.update") }}';
+                
+                const csrfToken = document.createElement('input');
+                csrfToken.type = 'hidden';
+                csrfToken.name = '_token';
+                csrfToken.value = '{{ csrf_token() }}';
+                form.appendChild(csrfToken);
+                
+                const betInput = document.createElement('input');
+                betInput.type = 'hidden';
+                betInput.name = 'custom_bet';
+                betInput.value = betNumber;
+                form.appendChild(betInput);
+                
+                document.body.appendChild(form);
+                form.submit();
             }
         });
-    @endfor
-
-    function submitCustomBet(betNumber) {
-        // Create a form dynamically
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '{{ route("custom.bet.update") }}';
-        
-        // Add CSRF token
-        const csrfToken = document.createElement('input');
-        csrfToken.type = 'hidden';
-        csrfToken.name = '_token';
-        csrfToken.value = '{{ csrf_token() }}';
-        form.appendChild(csrfToken);
-        
-        // Add custom_bet field
-        const betInput = document.createElement('input');
-        betInput.type = 'hidden';
-        betInput.name = 'custom_bet';
-        betInput.value = betNumber;
-        form.appendChild(betInput);
-        
-        // Submit the form
-        document.body.appendChild(form);
-        form.submit();
-    }
-});
-</script>
-
-
+    </script>
 @endsection

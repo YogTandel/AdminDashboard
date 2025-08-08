@@ -191,13 +191,13 @@
                                                     <p class="text-xs font-weight-bold mb-0">{{ $player->agent }}</p>
                                                 </td>
                                                 <td class="align-middle text-center text-sm">
-    <span
-        class="badge badge-sm {{ $player->login_status ? 'bg-gradient-success' : 'bg-gradient-danger' }} toggle-login-status"
-        data-player-id="{{ $player->id }}"
-        style="cursor: pointer;">
-        {{ $player->login_status ? 'True' : 'False' }}
-    </span>
-</td>
+                                                    <span
+                                                        class="badge badge-sm {{ $player->login_status ? 'bg-gradient-success' : 'bg-gradient-danger' }} toggle-login-status"
+                                                        data-player-id="{{ $player->id }}"
+                                                        style="cursor: pointer;">
+                                                        {{ $player->login_status ? 'True' : 'False' }}
+                                                    </span>
+                                                </td>
 
                                                 <td class="align-middle text-center text-sm">
                                                     <span
