@@ -95,7 +95,7 @@
                         <div class="table-responsive p-0">
                             <table class="table align-items-center mb-0">
                                 <thead>
-                                    <tr>
+                                    <tr class="text-center">
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">No
                                         </th>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Name
@@ -127,7 +127,7 @@
                                         </tr>
                                     @else
                                         @foreach ($distributors as $index => $distributor)
-                                            <tr>
+                                            <tr class="text-center">
                                                 <td>
                                                     <h6 class="mb-0 text-sm">{{ $index + 1 }}</h6>
                                                 </td>

@@ -97,7 +97,7 @@
                         <div class="table-responsive p-0">
                             <table class="table align-items-center mb-0">
                                 <thead>
-                                    <tr>
+                                    <tr class="text-center">
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                             No
                                         </th>
@@ -153,7 +153,7 @@
                                         </tr>
                                     @else
                                         @foreach ($players as $index => $player)
-                                            <tr>
+                                            <tr class="text-center">
                                                 <td>
                                                     <div class="d-flex px-2 py-1">
                                                         <div class="d-flex flex-column justify-content-center">

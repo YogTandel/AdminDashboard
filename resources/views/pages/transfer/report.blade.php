@@ -146,7 +146,7 @@
                 </div>
             </div>
         @else
-            <div class="alert alert-info small">No transfer records found.</div>
+            <div class="alert alert-info small mt-2">No transfer records found.</div>
         @endif
     </div>
 
