@@ -193,8 +193,7 @@
                                                 <td class="align-middle text-center text-sm">
                                                     <span
                                                         class="badge badge-sm {{ $player->login_status ? 'bg-gradient-success' : 'bg-gradient-danger' }} toggle-login-status"
-                                                        data-player-id="{{ $player->id }}"
-                                                        style="cursor: pointer;">
+                                                        data-player-id="{{ $player->id }}" style="cursor: pointer;">
                                                         {{ $player->login_status ? 'True' : 'False' }}
                                                     </span>
                                                 </td>
@@ -232,25 +231,24 @@
                                                             data-bs-toggle="tooltip" title="Copy Player Credentials">
                                                             <i class="fas fa-copy me-2" style="cursor: pointer;"></i>
                                                         </a>
-                                                        
-                                                    @if (Auth::guard('admin')->check())      
-                                                    <a href="javascript:;"
+
+                                                        @if (Auth::guard('admin')->check())
+                                                            <a href="javascript:;"
                                                                 class="text-secondary font-weight-bold text-xs me-2"
-                                                                title="Edit Player" 
-                                                                data-bs-toggle="modal"
+                                                                title="Edit Player" data-bs-toggle="modal"
                                                                 data-bs-target="#editModal{{ $player->id }}">
                                                                 <i class="fas fa-edit me-1"></i>
                                                             </a>
                                                             @include('pages.player.edit')
 
                                                             <!-- Delete Button -->
-                                                            <form action="{{ route('player.delete', $player->id) }}" method="post" style="display:flex;">
+                                                            <form action="{{ route('player.delete', $player->id) }}"
+                                                                method="post" style="display:flex;">
                                                                 @csrf
                                                                 @method('DELETE')
                                                                 <button class="text-danger font-weight-bold text-xs me-2"
                                                                     onclick="return confirm('Are you sure?')"
-                                                                    data-bs-toggle="tooltip" 
-                                                                    data-bs-placement="top"
+                                                                    data-bs-toggle="tooltip" data-bs-placement="top"
                                                                     title="Delete Player"
                                                                     style="background: none; border: none; padding: 0;">
                                                                     <i class="fas fa-trash"></i>
@@ -268,7 +266,8 @@
                                                             data-bs-toggle="tooltip"
                                                             title="{{ $player->status === 'Active' ? 'Block Player' : 'Unblock Player' }}"
                                                             data-player-id="{{ $player->id }}">
-                                                            <i class="fas {{ $player->status === 'Active' ? 'fa-ban text-danger' : 'fa-check text-success' }}"></i>
+                                                            <i
+                                                                class="fas {{ $player->status === 'Active' ? 'fa-ban text-danger' : 'fa-check text-success' }}"></i>
                                                         </a>
 
                                                     </div>
@@ -291,101 +290,99 @@
     </div>
 
     @push('scripts')
-     <script>
-    // Clipboard Copy Function (no change)
-    function copyPlayerToClipboard(id) {
-        const name = document.getElementById('name-' + id)?.innerText.trim();
-        const password = document.getElementById('password-' + id)?.innerText.trim();
+        <script>
+            // Clipboard Copy Function (no change)
+            function copyPlayerToClipboard(id) {
+                const name = document.getElementById('name-' + id)?.innerText.trim();
+                const password = document.getElementById('password-' + id)?.innerText.trim();
 
-        if (!name || !password) {
-            alert("Name or password missing");
-            return;
-        }
+                if (!name || !password) {
+                    alert("Name or password missing");
+                    return;
+                }
 
-        const text = `Name: ${name}\nPassword: ${password}`;
+                const text = `Name: ${name}\nPassword: ${password}`;
 
-        navigator.clipboard.writeText(text).then(() => {
-            alert("Copied to clipboard!");
-        }).catch((err) => {
-            console.error("Clipboard write failed", err);
-            alert("Failed to copy.");
-        });
-    }
-
-    // Unified status toggle using jQuery only
-   $(document).on('click', '.toggle-status', function (e) {
-    e.preventDefault();
-
-    const playerId = $(this).data('player-id');
-    const $icon = $(this).find('i');
-    const $link = $(this);
-    const $row = $(this).closest('tr');
-    
-    // SPECIFICALLY target the Status badge (6th td in the row)
-    const $statusBadge = $row.find('td:nth-child(9) .badge-sm');
-
-    $.ajax({
-        url: '/player/toggle-status/' + playerId,
-        method: 'POST',
-        headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        },
-        success: function (response) {
-            if (response.status === 'Active') {
-                // Update icon
-                $icon.removeClass('fa-check text-success').addClass('fa-ban text-danger');
-                $link.attr('title', 'Block Player');
-                
-                // Update status badge
-                $statusBadge.removeClass('bg-gradient-danger').addClass('bg-gradient-success');
-                $statusBadge.text('Active');
-            } else {
-                // Update icon
-                $icon.removeClass('fa-ban text-danger').addClass('fa-check text-success');
-                $link.attr('title', 'Unblock Player');
-                
-                // Update status badge
-                $statusBadge.removeClass('bg-gradient-success').addClass('bg-gradient-danger');
-                $statusBadge.text('Inactive');
+                navigator.clipboard.writeText(text).then(() => {
+                    alert("Copied to clipboard!");
+                }).catch((err) => {
+                    console.error("Clipboard write failed", err);
+                    alert("Failed to copy.");
+                });
             }
-        },
-        error: function (xhr, status, error) {
-            alert('Error occurred while updating status.');
-            console.error('AJAX error:', xhr.responseText);
-        }
-    });
-});
-</script>
 
+            // Unified status toggle using jQuery only
+            $(document).on('click', '.toggle-status', function(e) {
+                e.preventDefault();
 
+                const playerId = $(this).data('player-id');
+                const $icon = $(this).find('i');
+                const $link = $(this);
+                const $row = $(this).closest('tr');
+
+                // SPECIFICALLY target the Status badge (6th td in the row)
+                const $statusBadge = $row.find('td:nth-child(9) .badge-sm');
+
+                $.ajax({
+                    url: '/player/toggle-status/' + playerId,
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        if (response.status === 'Active') {
+                            // Update icon
+                            $icon.removeClass('fa-check text-success').addClass('fa-ban text-danger');
+                            $link.attr('title', 'Block Player');
+
+                            // Update status badge
+                            $statusBadge.removeClass('bg-gradient-danger').addClass('bg-gradient-success');
+                            $statusBadge.text('Active');
+                        } else {
+                            // Update icon
+                            $icon.removeClass('fa-ban text-danger').addClass('fa-check text-success');
+                            $link.attr('title', 'Unblock Player');
+
+                            // Update status badge
+                            $statusBadge.removeClass('bg-gradient-success').addClass('bg-gradient-danger');
+                            $statusBadge.text('Inactive');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        alert('Error occurred while updating status.');
+                        console.error('AJAX error:', xhr.responseText);
+                    }
+                });
+            });
+        </script>
     @endpush
     @push('scripts')
-<script>
-    $(document).on('click', '.toggle-login-status', function () {
-        const playerId = $(this).data('player-id');
-        const $badge = $(this);
-        const currentStatus = $badge.text().trim();
+        <script>
+            $(document).on('click', '.toggle-login-status', function() {
+                const playerId = $(this).data('player-id');
+                const $badge = $(this);
+                const currentStatus = $badge.text().trim();
 
-        if (currentStatus === 'True') {
-            $.ajax({
-                url: '/player/toggle-login-status/' + playerId,
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                success: function (response) {
-                    if (response.status === false || response.status === 0) {
-                        $badge.removeClass('bg-gradient-success').addClass('bg-gradient-danger');
-                        $badge.text('False');
-                    }
-                },
-                error: function () {
-                    alert('Error updating login status.');
+                if (currentStatus === 'True') {
+                    $.ajax({
+                        url: '/player/toggle-login-status/' + playerId,
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        success: function(response) {
+                            if (response.status === false || response.status === 0) {
+                                $badge.removeClass('bg-gradient-success').addClass('bg-gradient-danger');
+                                $badge.text('False');
+                            }
+                        },
+                        error: function() {
+                            alert('Error updating login status.');
+                        }
+                    });
                 }
             });
-        }
-    });
-</script>
-@endpush
+        </script>
+    @endpush
 
 @endsection
