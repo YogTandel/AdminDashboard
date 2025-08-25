@@ -38,16 +38,19 @@
                             <form method="GET" action="{{ route('player.history', $player->_id) }}">
                                 <div class="d-flex justify-content-end gap-2 mt-5">
                                     <div>
-                                         <!-- Date Range -->
+                                        <!-- Date Range -->
                                         <label for="date_range" class="form-label mb-0">Quick Date Range</label>
                                         <select name="date_range" class="form-select form-select-sm"
                                             onchange="this.form.submit()" style="width: 150px;">
                                             <option value="">Date Range</option>
-                                            <option value="2_days_ago" {{ request('date_range') == '2_days_ago' ? 'selected' : '' }}>Last 2
+                                            <option value="2_days_ago"
+                                                {{ request('date_range') == '2_days_ago' ? 'selected' : '' }}>Last 2
                                                 Days</option>
-                                            <option value="last_week" {{ request('date_range') == 'last_week' ? 'selected' : '' }}>Last Week
+                                            <option value="last_week"
+                                                {{ request('date_range') == 'last_week' ? 'selected' : '' }}>Last Week
                                             </option>
-                                            <option value="last_month" {{ request('date_range') == 'last_month' ? 'selected' : '' }}>Last
+                                            <option value="last_month"
+                                                {{ request('date_range') == 'last_month' ? 'selected' : '' }}>Last
                                                 Month</option>
                                         </select>
                                     </div>
@@ -264,9 +267,9 @@
     </style>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             // Handle per_page dropdown changes
-            document.getElementById('per_page').addEventListener('change', function () {
+            document.getElementById('per_page').addEventListener('change', function() {
                 const url = new URL(window.location.href);
                 url.searchParams.set('per_page', this.value);
                 url.searchParams.delete('page'); // Reset to first page
@@ -276,7 +279,7 @@
             // Preserve form inputs on page refresh
             const form = document.querySelector('form[method="GET"]');
             if (form) {
-                form.addEventListener('submit', function (e) {
+                form.addEventListener('submit', function(e) {
                     // No need to prevent default, let the form submit normally
                 });
             }
