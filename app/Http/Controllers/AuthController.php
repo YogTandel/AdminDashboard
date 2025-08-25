@@ -54,7 +54,7 @@ class AuthController extends Controller
 
             if ($user) {
                 Log::info('Agent inserted', ['id' => $user->_id ?? $user->id]);
-                return redirect()->route('agent.show')->with('success', 'Agent added successfully');
+                return redirect()->route('agentlist.show')->with('success', 'Agent added successfully');
             } else {
                 Log::warning('Agent creation returned null');
                 return back()->withErrors(['error' => 'Creation returned null']);
