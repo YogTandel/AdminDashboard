@@ -884,8 +884,8 @@ class PagesController extends Controller
 
             // Create transfer record with comma-separated allowed roles
             DB::connection('mongodb')->table('transfers')->insert([
-                'transfer_by'       => $transfer_by->id,
-                'transfer_to'       => $transfer_to->id,
+                'transfer_by'       => new ObjectId($transfer_by->id),
+                'transfer_to'       => new ObjectId($transfer_to->id),
                 'transfer_to_model' => $isRecipientAdmin ? 'admin' : 'user',
                 'type'              => implode(',', $allowedRecipients),
                 'amount'            => $validated['amount'],
@@ -931,7 +931,9 @@ class PagesController extends Controller
 
         // If a normal user is logged in, restrict to their transfers
         if ($user) {
-            $query->where('transfer_by', $user->id);
+            $query->where('transfer_by', new ObjectId($user->id))->orWhere('transfer_to', new ObjectId($user->id));
+            /* echo $user->id;
+            dd($query->get()); */
         }
 
         // Apply search filter if search term exists
@@ -1026,6 +1028,9 @@ class PagesController extends Controller
         $users = User::whereIn('_id', $userIds)->get()->mapWithKeys(function ($user) {
             return [(string) $user->_id => $user];
         });
+
+        /* dd($users);
+        exit; */
 
         foreach ($transfers as $transfer) {
             // Convert transfer IDs to strings for comparison
