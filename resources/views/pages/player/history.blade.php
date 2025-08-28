@@ -100,8 +100,9 @@
                                             <th style="width: 10%;"
                                                 class="text-uppercase text-secondary text-xxs font-weight-bolder  text-center">
                                                 Result</th>
-
-                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder  ">Betvalue
+                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder">Betvalue
+                                            </th>
+                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder">Endpoint
                                             </th>
                                         </tr>
                                     </thead>
@@ -124,7 +125,6 @@
                                                     }
                                                 }
                                             @endphp
-
                                             <tr>
                                                 <!-- Date -->
                                                 <td>
@@ -205,6 +205,13 @@
                                                             </div>
                                                         </div>
                                                     </div>
+                                                </td>
+
+                                                <!-- Endpoint -->
+                                                <td class="align-middle text-center">
+                                                    <span class="fw-bold text-dark">
+                                                        {{ $entry['endpoint'] }}
+                                                    </span>
                                                 </td>
                                             </tr>
                                         @endforeach
