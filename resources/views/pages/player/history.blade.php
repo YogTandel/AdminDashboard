@@ -96,13 +96,20 @@
                                                 class="text-uppercase text-secondary text-xxs font-weight-bolder ">Date</th>
                                             <th style="width: 10%;"
                                                 class="text-uppercase text-secondary text-xxs font-weight-bolder  text-center">
+                                                Result
+                                            </th>
+                                            <th style="width: 10%;"
+                                                class="text-uppercase text-secondary text-xxs font-weight-bolder  text-center">
                                                 WinPoint</th>
                                             <th style="width: 10%;"
                                                 class="text-uppercase text-secondary text-xxs font-weight-bolder  text-center">
-                                                Result</th>
-                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder">Betvalue
-                                            </th>
-                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder">Endpoint
+                                                TB - Win</th>
+                                            <th style="width: 10%;"
+                                                class="text-uppercase text-secondary text-xxs font-weight-bolder  text-center">
+                                                Balance</th>
+                                            <th
+                                                class="text-uppercase text-secondary text-xxs font-weight-bolder text-center">
+                                                Betvalue
                                             </th>
                                         </tr>
                                     </thead>
@@ -140,6 +147,19 @@
                                                     </div>
                                                 </td>
 
+
+                                                <!-- Result -->
+                                                <td class="align-middle text-center">
+                                                    <span class="badge badge-sm bg-gradient-dark">{{ $entry['result'] }}
+                                                        @php
+                                                            if ($entry['result_type'] == 18) {
+                                                                echo '- J';
+                                                            }
+
+                                                        @endphp
+                                                    </span>
+                                                </td>
+
                                                 <!-- Win -->
                                                 <td class="align-middle text-center  py-1">
                                                     <span
@@ -148,9 +168,22 @@
                                                 </td>
 
 
-                                                <!-- Result -->
+
+
+                                                <!-- Play Point -->
                                                 <td class="align-middle text-center">
-                                                    <span class="badge badge-sm bg-gradient-dark">{{ $entry['result'] }}
+                                                    <span class="badge badge-sm bg-gradient-dark">
+                                                        {{ number_format($entry['endpoint']) }}
+                                                    </span>
+                                                </td>
+
+                                                <td class="align-middle text-center">
+                                                    <span class="fw-bold text-dark">
+                                                        @if (!isset($entry['current_balance']))
+                                                            0
+                                                        @else
+                                                            {{ $entry['current_balance'] }}
+                                                        @endif
                                                     </span>
                                                 </td>
 
@@ -161,8 +194,7 @@
 
                                                     <!-- Row 1: Position numbers (0-9) -->
                                                     <div class="d-flex align-items-center mb-1">
-                                                        <div class="fw-bold text-nowrap me-3 text-dark text-xs"
-                                                            style="width: 80px;">Betvalue</div>
+
                                                         @for ($i = 1; $i <= 9; $i++)
                                                             <div class="text-center me-4" style="min-width: 40px;">
                                                                 <span
@@ -183,7 +215,7 @@
 
                                                     <!-- Row 2: Bet values -->
                                                     <div class="d-flex align-items-center">
-                                                        <div class="me-3" style="width: 80px;"></div>
+
                                                         @for ($i = 1; $i <= 9; $i++)
                                                             <div class="text-center me-4" style="min-width: 40px;">
                                                                 <span
@@ -207,12 +239,6 @@
                                                     </div>
                                                 </td>
 
-                                                <!-- Endpoint -->
-                                                <td class="align-middle text-center">
-                                                    <span class="fw-bold text-dark">
-                                                        {{ $entry['endpoint'] }}
-                                                    </span>
-                                                </td>
                                             </tr>
                                         @endforeach
                                     </tbody>
