@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [AuthController::class, 'showLogin'])->name('show.login');
+Route::get('/login/admin', [AuthController::class, 'showAdminLogin'])->name('show.admin.login');
 Route::get('/register', [AuthController::class, 'showRegister'])->name('show.register');
 Route::get('/changepassword', [AuthController::class, 'showChangePassword'])->name('show.changepassword');
 Route::post('/register', [AuthController::class, 'register'])->name('register');
@@ -122,11 +123,8 @@ Route::post('/player/toggle-status/{id}', [PagesController::class, 'playertoggle
 
 Route::get('/live-game-value', [PagesController::class, 'liveGamevalue'])->middleware('auth:web,admin');
 
-
 Route::get('/Weeklyreport', [PagesController::class, 'Weeklyreport'])->name('Weekly-report')->middleware('auth:web,admin');
 
-
 Route::get('/last10-results', [PagesController::class, 'getLast10Data'])->name('last10.results')->middleware('auth:web,admin');
-
 
 Route::post('/player/toggle-login-status/{id}', [PagesController::class, 'toggleLoginStatus']);
