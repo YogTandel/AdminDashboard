@@ -81,7 +81,8 @@
                                 <button type="submit" class="btn bg-gradient-info mb-2"style="font-size:13px">
                                     Update Commissions
                                 </button>
-                                <a href="{{ route('commission.report') }}" class="btn bg-gradient-success mb-2" style="font-size:13px">
+                                <a href="{{ route('commission.report') }}" class="btn bg-gradient-success mb-2"
+                                    style="font-size:13px">
                                     Release Commission
                                 </a>
                             </div>
@@ -103,23 +104,31 @@
                         <div class="d-flex justify-content-between mb-3">
                             <div><strong>Standing:</strong> <span
                                     class="text-primary">{{ $settings->standing ?? 'N/A' }}</span></div>
-                            <div><strong>Admin% Earning:</strong> <span class="text-success">{{ $settings->earning }}</span>
+                            <div><strong>Admin% Earning:</strong> <span
+                                    class="text-success">{{ $settings->earning }}</span>
                             </div>
                         </div>
                         <div class="d-flex flex-wrap gap-2">
                             <form action="{{ route('settings.standingToEarning') }}" method="POST"
-                                id="standingToEarningForm">
+                                id="standingToEarningForm"
+                                onsubmit="return confirm('Are you sure you want to convert Standing to Earning?')">
                                 @csrf
-                                <button type="submit" class="equal-btn btn-orange " style="font-size:15px">Standing To Earning</button>
+                                <button type="submit" class="equal-btn btn-orange" style="font-size:15px">
+                                    Standing To Earning
+                                </button>
                             </form>
 
-                            <form action="{{ route('settings.earningToZero') }}" method="POST" id="earningToZeroForm">
+                            <form action="{{ route('settings.earningToZero') }}" method="POST" id="earningToZeroForm"
+                                onsubmit="return confirm('Are you sure you want to reset Earning to 0?')">
                                 @csrf
-                                <button type="submit" class="equal-btn btn-red" style="font-size:15px">Earning to 0</button>
+                                <button type="submit" class="equal-btn btn-red" style="font-size:15px">
+                                    Earning to 0
+                                </button>
                             </form>
 
-                            <!-- Your existing button HTML remains exactly the same -->
-                            <button id="toggleSetToMinimumBtn" type="button" class="equal-btn btn-green" style="font-size:15px">
+                            <!-- This one is a normal button, so use JS -->
+                            <button id="toggleSetToMinimumBtn" type="button" class="equal-btn btn-green"
+                                style="font-size:15px">
                                 Set To Minimum
                             </button>
                         </div>
@@ -144,8 +153,8 @@
                                     <span class="input-group-text">%</span>
                                     <input type="number" name="earningPercentage" class="form-control"
                                         placeholder="Enter Earning Percentage"
-                                        value="{{ $settings->earningPercentage ?? '' }}" min="0" max="100" step="0.01"
-                                        required>
+                                        value="{{ $settings->earningPercentage ?? '' }}" min="0" max="100"
+                                        step="0.01" required>
                                 </div>
                                 <div class="d-grid mt-3">
                                     <button type="submit" class="btn bg-gradient-info"style="font-size:14px">
@@ -172,7 +181,8 @@
                                 <input type="number" class="form-control" name="add_points"
                                     placeholder="Enter Points to Add" required>
                                 <div class="d-grid mt-2">
-                                    <button type="submit" class="btn btn-success shadow-soft"style="font-size:14px">Add To Admin</button>
+                                    <button type="submit" class="btn btn-success shadow-soft"style="font-size:14px">Add
+                                        To Admin</button>
                                 </div>
                             </div>
                         </form>
@@ -182,7 +192,8 @@
                             <input type="number" class="form-control" name="remove_points"
                                 placeholder="Enter Points to Remove" required min="1">
                             <div class="d-grid mt-2">
-                                <button type="submit" class="btn btn-danger shadow-soft"style="font-size:14px">Remove from Admin</button>
+                                <button type="submit" class="btn btn-danger shadow-soft"style="font-size:14px">Remove
+                                    from Admin</button>
                             </div>
                         </form>
                     </div>
@@ -249,38 +260,38 @@
             }
         }
 
-        $(document).ready(function () {
+        $(document).ready(function() {
             updateButtonColor(initialValue);
 
             // Form submissions with loader
-            $('#commissionForm').on('submit', function () {
+            $('#commissionForm').on('submit', function() {
                 showLoader();
             });
 
-            $('#standingToEarningForm').on('submit', function () {
+            $('#standingToEarningForm').on('submit', function() {
                 showLoader();
             });
 
-            $('#earningToZeroForm').on('submit', function () {
+            $('#earningToZeroForm').on('submit', function() {
                 showLoader();
             });
 
-            $('#profitForm').on('submit', function () {
+            $('#profitForm').on('submit', function() {
                 showLoader();
             });
 
-            $('#addPointsForm').on('submit', function () {
+            $('#addPointsForm').on('submit', function() {
                 showLoader();
             });
 
-            $('#removePointsForm').on('submit', function () {
+            $('#removePointsForm').on('submit', function() {
                 showLoader();
             });
 
             // Toggle Set To Minimum button
 
             function updateButtonColor(isSetToMinimum) {
-                if(isSetToMinimum) {
+                if (isSetToMinimum) {
                     $('#toggleSetToMinimumBtn').text('ON - Set To Minimum');
                     $('#toggleSetToMinimumBtn').removeClass('btn-red').addClass('btn-green');
                 } else {
@@ -288,7 +299,7 @@
                     $('#toggleSetToMinimumBtn').removeClass('btn-green').addClass('btn-red');
                 }
             }
-            $('#toggleSetToMinimumBtn').click(function () {
+            $('#toggleSetToMinimumBtn').click(function() {
                 showLoader();
                 $.ajax({
                     url: "{{ route('toggle.setToMinimum') }}",
@@ -296,7 +307,7 @@
                     data: {
                         _token: "{{ csrf_token() }}"
                     },
-                    success: function (response) {
+                    success: function(response) {
                         if (response.setTominimum !== undefined) {
                             updateButtonColor(response.setTominimum);
                         } else {
@@ -304,7 +315,7 @@
                         }
                         hideLoader();
                     },
-                    error: function () {
+                    error: function() {
                         alert('Error toggling Set To Minimum');
                         hideLoader();
                     }
@@ -316,18 +327,18 @@
             $.ajax({
                 url: "{{ route('admin.endpoint') }}",
                 method: 'GET',
-                success: function (response) {
+                success: function(response) {
                     $('#admin-endpoint').text("Balance: " + response.endpoint);
                     hideLoader();
                 },
-                error: function () {
+                error: function() {
                     $('#admin-endpoint').text("Balance: Error loading");
                     hideLoader();
                 }
             });
 
             // Auto-dismiss alerts
-            setTimeout(function () {
+            setTimeout(function() {
                 $('.alert-success-auto').fadeOut('slow');
                 $('.alert-danger-auto').fadeOut('slow');
             }, 5000);
