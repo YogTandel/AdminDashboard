@@ -48,10 +48,12 @@
                                         class="btn btn-secondary btn-sm px-3 mt-3">Reset</a>
                                 @endif
                             </form>
-                            <button type="button" class="btn btn-primary mb-0" data-bs-toggle="modal"
-                                data-bs-target="#exampleModalAddplayer">
-                                <i class="fas fa-plus"></i>&nbsp;&nbsp;Add Player
-                            </button>
+                            @if (auth('admin')->check())
+                                <button type="button" class="btn btn-primary mb-0" data-bs-toggle="modal"
+                                    data-bs-target="#exampleModalAddplayer">
+                                    <i class="fas fa-plus"></i>&nbsp;&nbsp;Add Player
+                                </button>
+                            @endif
                             @include('pages.player.create')
                         </div>
                     </div>

@@ -83,12 +83,13 @@
                                         class="btn btn-secondary btn-sm px-3 mt-3">Reset</a>
                                 @endif
                             </form>
-
-                            <!-- Add Agent -->
-                            <button type="button" class="btn bg-primary mb-0 text-white" data-bs-toggle="modal"
-                                data-bs-target="#exampleModalAddAgent">
-                                <i class="fas fa-plus"></i>&nbsp;&nbsp;Add Agent
-                            </button>
+                            @if (auth('admin')->check() || auth()->user()->role === 'distributor')
+                                <!-- Add Agent -->
+                                <button type="button" class="btn bg-primary mb-0 text-white" data-bs-toggle="modal"
+                                    data-bs-target="#exampleModalAddAgent">
+                                    <i class="fas fa-plus"></i>&nbsp;&nbsp;Add Agent
+                                </button>
+                            @endif
                             @include('pages.agent.create')
                         </div>
                     </div>
@@ -261,25 +262,23 @@
 
                                                     <!-- Edit -->
                                                     @if (auth()->check() && auth()->user()->role === 'distributor')
-                                                       
                                                     @else
                                                         <a href="javascript:;"
                                                             class="text-secondary font-weight-bold text-xs me-2"
-                                                            title="Edit Agent" 
-                                                            data-bs-toggle="modal"
+                                                            title="Edit Agent" data-bs-toggle="modal"
                                                             data-bs-target="#editModal{{ $agent->id }}">
                                                             <i class="fas fa-edit"></i>
                                                         </a>
                                                         @include('pages.agent.edit')
 
                                                         <!-- Delete -->
-                                                        <form action="{{ route('agent.delete', $agent->id) }}" method="post" style="display:flex;">
+                                                        <form action="{{ route('agent.delete', $agent->id) }}"
+                                                            method="post" style="display:flex;">
                                                             @csrf
                                                             @method('DELETE')
                                                             <button class="text-danger font-weight-bold text-xs me-2"
                                                                 onclick="return confirm('Are you sure?')"
-                                                                data-bs-toggle="tooltip" 
-                                                                title="Delete Agent"
+                                                                data-bs-toggle="tooltip" title="Delete Agent"
                                                                 style="background: none; border: none; padding: 0;">
                                                                 <i class="fas fa-trash"></i>
                                                             </button>
@@ -608,8 +607,13 @@
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
     </style>
 @endsection

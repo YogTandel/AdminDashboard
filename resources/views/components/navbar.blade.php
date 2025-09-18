@@ -29,11 +29,18 @@
                     $endpointValue = $user->endpoint ?? 'N/A';
                 }
             @endphp
+            @php
+                $admin1 = Auth::guard('admin')->user();
+                $user1 = Auth::guard('web')->user();
+                $role = $admin1 ? 'admin' : ($user1 ? $user1->role : null);
+            @endphp
 
-            <div class="d-flex align-items-center">
-                <span class="text-dark me-2" style="font-size: 1.5rem; font-weight: 700;">Profit:</span>
-                <span id="live-earning" class="badge bg-gradient-success me-3" style="font-size: 1rem;">--</span>
-            </div>
+            @if ($role == 'admin')
+                <div class="d-flex align-items-center">
+                    <span class="text-dark me-2" style="font-size: 1.5rem; font-weight: 700;">Profit:</span>
+                    <span id="live-earning" class="badge bg-gradient-success me-3" style="font-size: 1rem;">--</span>
+                </div>
+            @endif
             @if ($user)
                 <li class="nav-item d-flex align-items-center">
                     <a class="nav-link text-body font-weight-bold px-0">
