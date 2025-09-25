@@ -260,7 +260,6 @@
                                                         <i class="fas fa-copy" style="cursor: pointer;"></i>
                                                     </a>
 
-
                                                     <!-- Edit -->
                                                     @if (auth()->check() && auth()->user()->role === 'distributor')
                                                     @else
