@@ -53,13 +53,7 @@
                         </div>
                     </div>
 
-                    <!-- Card 4 -->
-                    <div class="col-12 col-sm-6 col-md-3">
-                        <div class="p-3 bg-danger rounded">
-                            <p class="text-white font-weight-bolder mb-3">Total Chips</p>
-                            <h5 class="text-white text-sm">{{ $totalChips }}</h5>
-                        </div>
-                    </div>
+
 
                     <!-- Card 5 -->
                     <div class="col-12 col-sm-6 col-md-3">
@@ -85,13 +79,7 @@
                         </div>
                     </div>
 
-                    <!-- Card 8 -->
-                    <div class="col-12 col-sm-6 col-md-3">
-                        <div class="p-3 bg-danger rounded">
-                            <p class="text-white font-weight-bolder mb-3">Total Kata</p>
-                            <h5 class="text-white text-sm">{{ $totalKata }}</h5>
-                        </div>
-                    </div>
+
 
                     <!-- Card 9 -->
                     <div class="col-12 col-sm-6 col-md-3">
@@ -114,14 +102,6 @@
                         <div class="p-3 bg-dark rounded">
                             <p class="text-white font-weight-bolder mb-3">Total Deactive Player</p>
                             <h5 class="text-white text-sm">{{ $deactivePlayers }}</h5>
-                        </div>
-                    </div>
-
-                    <!-- Card 12 -->
-                    <div class="col-12 col-sm-6 col-md-3">
-                        <div class="p-3 bg-danger rounded">
-                            <p class="text-white font-weight-bolder mb-3">Total Bulk</p>
-                            <h5 class="text-white text-sm">{{ $totalBulk }}</h5>
                         </div>
                     </div>
                 @elseauth('web')
