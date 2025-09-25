@@ -11,21 +11,39 @@
                         <h6>Player Users</h6>
                         <div class="d-flex align-items-center gap-2 flex-wrap mt-3 me-3">
                             <!-- Show Dropdown -->
-                            <form method="GET" class="d-flex align-items-center mb-0">
+                            <form method="GET" action="{{ route('player.show') }}" class="d-flex align-items-center mb-0">
                                 <label for="per_page" class="mb-0 me-2 text-sm text-dark fw-bold">Show:</label>
                                 <div class="input-group input-group-outline border-radius-lg shadow-sm">
                                     <select name="per_page" id="per_page" class="form-select border-0 ps-3 pe-4"
                                         onchange="this.form.submit()" style="min-width: 60px;">
                                         <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
                                         <option value="15" {{ request('per_page') == 15 ? 'selected' : '' }}>15</option>
+                                        <option value="20" {{ request('per_page') == 20 ? 'selected' : '' }}>20</option>
                                     </select>
                                 </div>
 
-                                @foreach (request()->query() as $key => $value)
-                                    @if ($key != 'per_page')
-                                        <input type="hidden" name="{{ $key }}" value="{{ $value }}">
-                                    @endif
-                                @endforeach
+                                <!-- Preserve other parameters -->
+                                @if (request()->has('search'))
+                                    <input type="hidden" name="search" value="{{ request('search') }}">
+                                @endif
+                                @if (request()->has('distributor_name'))
+                                    <input type="hidden" name="distributor_name" value="{{ request('distributor_name') }}">
+                                @endif
+                                @if (request()->has('agent_name'))
+                                    <input type="hidden" name="agent_name" value="{{ request('agent_name') }}">
+                                @endif
+                                @if (request()->has('status'))
+                                    <input type="hidden" name="status" value="{{ request('status') }}">
+                                @endif
+                                @if (request()->has('date_range'))
+                                    <input type="hidden" name="date_range" value="{{ request('date_range') }}">
+                                @endif
+                                @if (request()->has('from_date'))
+                                    <input type="hidden" name="from_date" value="{{ request('from_date') }}">
+                                @endif
+                                @if (request()->has('to_date'))
+                                    <input type="hidden" name="to_date" value="{{ request('to_date') }}">
+                                @endif
                             </form>
 
                             <!-- Search Form -->
@@ -34,8 +52,8 @@
                                     <span class="input-group-text bg-transparent border-0 text-secondary">
                                         <i class="fas fa-search"></i>
                                     </span>
-                                    <label class="form-label"></label>
                                     <input type="search" name="search" class="form-control border-0"
+                                        placeholder="Search players..." value="{{ request('search') }}"
                                         onfocus="this.parentElement.classList.add('is-focused')"
                                         onfocusout="this.parentElement.classList.remove('is-focused')">
                                 </div>
@@ -46,7 +64,7 @@
                                 </button>
                                 @if (request()->has('search') && request('search') != '')
                                     <a href="{{ route('player.show') }}"
-                                        class="btn btn-secondary btn-sm px-3 mt-3">Reset</a>
+                                        class="btn btn-secondary btn-sm px-3 ms-2">Reset</a>
                                 @endif
                             </form>
 
@@ -61,15 +79,15 @@
                     </div>
 
                     <!-- Second Row: Filters -->
-                    <form method="GET" class="d-flex justify-content-end align-items-center flex-wrap gap-2 mt-2 me-3">
+                    <form action="{{ route('player.show') }}" method="GET"
+                        class="d-flex justify-content-end align-items-center flex-wrap gap-2 mt-2 me-3 p-3">
                         <!-- Date Range -->
-                        <select name="date_range" class="form-select form-select-sm" onchange="this.form.submit()"
-                            style="width: 150px;">
+                        <select name="date_range" class="form-select form-select-sm" style="width: 150px;">
                             <option value="">Date Range</option>
                             <option value="2_days_ago" {{ request('date_range') == '2_days_ago' ? 'selected' : '' }}>Last 2
                                 Days</option>
-                            <option value="last_week" {{ request('date_range') == 'last_week' ? 'selected' : '' }}>Last Week
-                            </option>
+                            <option value="last_week" {{ request('date_range') == 'last_week' ? 'selected' : '' }}>Last
+                                Week</option>
                             <option value="last_month" {{ request('date_range') == 'last_month' ? 'selected' : '' }}>Last
                                 Month</option>
                         </select>
@@ -85,32 +103,29 @@
 
                         <!-- Distributor Filter -->
                         @if (auth('admin')->check())
-                            <select name="distributor_id" class="form-select form-select-sm" onchange="this.form.submit()"
-                                style="width: 160px;">
+                            <select name="distributor_name" class="form-select form-select-sm" style="width: 160px;">
                                 <option value="">All Distributors</option>
                                 @foreach ($distributors as $distributor)
-                                    <option value="{{ $distributor->id }}"
-                                        {{ request('distributor_id') == $distributor->id ? 'selected' : '' }}>
+                                    <option value="{{ $distributor->player }}"
+                                        {{ request('distributor_name') == $distributor->player ? 'selected' : '' }}>
                                         {{ $distributor->player }}
                                     </option>
                                 @endforeach
                             </select>
 
                             <!-- Agent Filter -->
-                            <select name="agent_id" class="form-select form-select-sm" onchange="this.form.submit()"
-                                style="width: 160px;">
+                            <select name="agent_name" class="form-select form-select-sm" style="width: 160px;">
                                 <option value="">All Agents</option>
                                 @foreach ($agents as $agent)
-                                    <option value="{{ $agent->id }}"
-                                        {{ request('agent_id') == $agent->id ? 'selected' : '' }}>
+                                    <option value="{{ $agent->player }}"
+                                        {{ request('agent_name') == $agent->player ? 'selected' : '' }}>
                                         {{ $agent->player }}
                                     </option>
                                 @endforeach
                             </select>
 
                             <!-- Status Filter -->
-                            <select name="status" class="form-select form-select-sm" onchange="this.form.submit()"
-                                style="width: 120px;">
+                            <select name="status" class="form-select form-select-sm" style="width: 120px;">
                                 <option value="">All Status</option>
                                 <option value="Active" {{ request('status') == 'Active' ? 'selected' : '' }}>Active
                                 </option>
@@ -130,10 +145,10 @@
                         @if (request()->has('from_date') ||
                                 request()->has('to_date') ||
                                 request()->has('date_range') ||
-                                request()->has('distributor_id') ||
-                                request()->has('agent_id') ||
+                                request()->has('distributor_name') ||
+                                request()->has('agent_name') ||
                                 request()->has('status'))
-                            <a href="{{ route('player.show') }}" class="btn btn-secondary btn-sm px-3 mt-3">Reset</a>
+                            <a href="{{ route('player.show') }}" class="btn btn-secondary btn-sm">Reset</a>
                         @endif
                     </form>
 
@@ -181,7 +196,14 @@
                                 <tbody>
                                     @if ($players->isEmpty())
                                         <tr>
-                                            <td colspan="11" class="text-center">No players data found.</td>
+                                            <td colspan="12" class="text-center py-4">
+                                                <i class="fas fa-inbox fa-2x text-secondary mb-2 d-block"></i>
+                                                No players data found.
+                                                @if (request()->hasAny(['search', 'distributor_name', 'agent_name', 'status', 'from_date', 'to_date', 'date_range']))
+                                                    <br><small class="text-info">Try adjusting your filters or <a
+                                                            href="{{ route('player.show') }}">reset filters</a></small>
+                                                @endif
+                                            </td>
                                         </tr>
                                     @else
                                         @foreach ($players as $index => $player)
@@ -189,7 +211,8 @@
                                                 <td>
                                                     <div class="d-flex px-2 py-1">
                                                         <div class="d-flex flex-column justify-content-center">
-                                                            <h6 class="mb-0 text-sm">{{ $index + 1 }}</h6>
+                                                            <h6 class="mb-0 text-sm">{{ $players->firstItem() + $index }}
+                                                            </h6>
                                                         </div>
                                                     </div>
                                                 </td>
@@ -216,10 +239,11 @@
                                                 </td>
                                                 <td class="align-middle text-center text-sm">
                                                     <p class="text-xs font-weight-bold mb-0">
-                                                        {{ $player->distributorUser?->player }}</p>
+                                                        {{ $player->distributorUser?->player ?? 'N/A' }}</p>
                                                 </td>
                                                 <td class="align-middle text-center text-sm">
-                                                    <p class="text-xs font-weight-bold mb-0">{{ $player->agent }}</p>
+                                                    <p class="text-xs font-weight-bold mb-0">
+                                                        {{ $player->agent }}</p>
                                                 </td>
                                                 <td class="align-middle text-center text-sm">
                                                     <span
@@ -244,6 +268,7 @@
                                                 </td>
                                                 <td class="align-middle">
                                                     <div class="d-flex align-items-center justify-content-around">
+                                                        <!-- Your action buttons remain the same -->
                                                         @if (auth()->check() && auth()->user()->role === 'agent')
                                                             <a href="javascript:;"
                                                                 class="text-success font-weight-bold text-xs me-2"
@@ -255,12 +280,14 @@
                                                         @include('pages.player.refil2', [
                                                             'user' => $player,
                                                         ])
+
                                                         <a href="javascript:void(0);"
                                                             onclick="copyToClipboard('{{ $player->player }} - {{ $player->original_password }}')"
                                                             class="text-secondary font-weight-bold text-xs ms-2 me-2"
-                                                            data-bs-toggle="tooltip" title="Copy Distributor">
+                                                            data-bs-toggle="tooltip" title="Copy Player">
                                                             <i class="fas fa-copy" style="cursor: pointer;"></i>
                                                         </a>
+
                                                         @if (Auth::guard('admin')->check())
                                                             <a href="javascript:;"
                                                                 class="text-secondary font-weight-bold text-xs me-2"
@@ -272,8 +299,7 @@
 
                                                             <form action="{{ route('player.delete', $player->id) }}"
                                                                 method="post" style="display:flex;">
-                                                                @csrf
-                                                                @method('DELETE')
+                                                                @csrf @method('DELETE')
                                                                 <button class="text-danger font-weight-bold text-xs me-2"
                                                                     onclick="return confirm('Are you sure?')"
                                                                     data-bs-toggle="tooltip" data-bs-placement="top"
@@ -283,12 +309,14 @@
                                                                 </button>
                                                             </form>
                                                         @endif
+
                                                         <a href="{{ route('player.history', $player->_id) }}"
                                                             class="text-secondary font-weight-bold text-xs me-2"
                                                             data-bs-toggle="tooltip" data-bs-placement="top"
                                                             title="Player History">
                                                             <i class="fas fa-history"></i>
                                                         </a>
+
                                                         <a href="javascript:;"
                                                             class="font-weight-bold text-xs toggle-status"
                                                             data-bs-toggle="tooltip"
@@ -306,9 +334,11 @@
                             </table>
 
                             {{-- Pagination --}}
-                            <div class="d-flex justify-content-center mt-3 pagination pagination-info">
-                                {{ $players->links('vendor.pagination.bootstrap-4') }}
-                            </div>
+                            @if ($players->hasPages())
+                                <div class="d-flex justify-content-center mt-3 pagination pagination-info">
+                                    {{ $players->appends(request()->query())->links('vendor.pagination.bootstrap-4') }}
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -317,19 +347,16 @@
         </div>
     </div>
 
-
     @push('scripts')
         <script>
-            // Clipboard Copy Function (no change)
             function copyToClipboard(text) {
                 if (navigator.clipboard && window.isSecureContext) {
                     navigator.clipboard.writeText(text).then(() => {
-                        showToast("Copied: " + text);
+                        alert("Copied: " + text);
                     }).catch(err => {
                         console.error("Failed to copy: ", err);
                     });
                 } else {
-                    // Fallback for insecure context
                     let textarea = document.createElement("textarea");
                     textarea.value = text;
                     textarea.style.position = "fixed";
@@ -339,7 +366,7 @@
                     textarea.select();
                     try {
                         document.execCommand('copy');
-                        showToast("Copied: " + text);
+                        alert("Copied: " + text);
                     } catch (err) {
                         console.error("Fallback copy failed", err);
                     }
@@ -347,16 +374,12 @@
                 }
             }
 
-            // Unified status toggle using jQuery only
             $(document).on('click', '.toggle-status', function(e) {
                 e.preventDefault();
-
                 const playerId = $(this).data('player-id');
                 const $icon = $(this).find('i');
                 const $link = $(this);
                 const $row = $(this).closest('tr');
-
-                // SPECIFICALLY target the Status badge (6th td in the row)
                 const $statusBadge = $row.find('td:nth-child(9) .badge-sm');
 
                 $.ajax({
@@ -367,33 +390,24 @@
                     },
                     success: function(response) {
                         if (response.status === 'Active') {
-                            // Update icon
                             $icon.removeClass('fa-check text-success').addClass('fa-ban text-danger');
                             $link.attr('title', 'Block Player');
-
-                            // Update status badge
-                            $statusBadge.removeClass('bg-gradient-danger').addClass('bg-gradient-success');
-                            $statusBadge.text('Active');
+                            $statusBadge.removeClass('bg-gradient-danger').addClass('bg-gradient-success')
+                                .text('Active');
                         } else {
-                            // Update icon
                             $icon.removeClass('fa-ban text-danger').addClass('fa-check text-success');
                             $link.attr('title', 'Unblock Player');
-
-                            // Update status badge
-                            $statusBadge.removeClass('bg-gradient-success').addClass('bg-gradient-danger');
-                            $statusBadge.text('Inactive');
+                            $statusBadge.removeClass('bg-gradient-success').addClass('bg-gradient-danger')
+                                .text('Inactive');
                         }
                     },
-                    error: function(xhr, status, error) {
+                    error: function(xhr) {
                         alert('Error occurred while updating status.');
                         console.error('AJAX error:', xhr.responseText);
                     }
                 });
             });
-        </script>
-    @endpush
-    @push('scripts')
-        <script>
+
             $(document).on('click', '.toggle-login-status', function() {
                 const playerId = $(this).data('player-id');
                 const $badge = $(this);
@@ -408,8 +422,8 @@
                         },
                         success: function(response) {
                             if (response.status === false || response.status === 0) {
-                                $badge.removeClass('bg-gradient-success').addClass('bg-gradient-danger');
-                                $badge.text('False');
+                                $badge.removeClass('bg-gradient-success').addClass('bg-gradient-danger')
+                                    .text('False');
                             }
                         },
                         error: function() {
@@ -420,5 +434,4 @@
             });
         </script>
     @endpush
-
 @endsection

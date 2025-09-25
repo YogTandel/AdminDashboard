@@ -147,6 +147,33 @@ class PagesController extends Controller
             $query->where('player', 'like', '%' . request()->search . '%');
         }
 
+        // Distributor filter by name
+        if (request()->has('distributor_name') && request()->distributor_name != '') {
+            $distributorName = request()->distributor_name;
+            $distributorIds  = User::where('role', 'distributor')
+                ->where('player', 'like', '%' . $distributorName . '%')
+                ->pluck('_id')
+                ->toArray();
+
+            $query->whereIn('distributor_id', $distributorIds);
+        }
+
+        // Agent filter by name
+        if (request()->has('agent_name') && request()->agent_name != '') {
+            $agentName = request()->agent_name;
+            $agentIds  = User::where('role', 'agent')
+                ->where('player', 'like', '%' . $agentName . '%')
+                ->pluck('_id')
+                ->toArray();
+
+            $query->whereIn('agent_id', $agentIds);
+        }
+
+        // Status filter
+        if (request()->has('status') && request()->status != '') {
+            $query->where('status', request()->status);
+        }
+
         // Date range filter
         $from      = request()->input('from_date');
         $to        = request()->input('to_date');
@@ -185,37 +212,18 @@ class PagesController extends Controller
 
         // Filter players based on user role
         if ($authUser->role === 'distributor') {
-
-            $players = $query->where('role', 'player')
-                ->where('distributor', $authUser->_id)
-                ->with(['agentUser'])
-                ->paginate($perPage)
-                ->appends(request()->query());
-
-            // echo $authUser->_id;
-            // print_r($players);
-
-            // exit(0);
+            $query->where('role', 'player')
+                ->where('distributor', $authUser->_id);
 
         } elseif ($authUser->role === 'agent') {
-
-            $players = $query->where('role', 'player')
-                ->where('agent_id', new ObjectId($authUser->_id))
-                ->with(['agentUser'])
-                ->paginate($perPage)
-                ->appends(request()->query());
-
+            $query->where('role', 'player')
+                ->where('agent_id', new ObjectId($authUser->_id));
         } else {
-            $players = $query->where('role', 'player')
-                ->with(['agentUser'])
-                ->paginate($perPage)
-                ->appends(request()->query());
-
+            $query->where('role', 'player');
         }
 
         // Players list with relation
-        $players = $query->where('role', 'player')
-            ->with(['agentUser'])
+        $players = $query->with(['agentUser', 'distributorUser'])
             ->paginate($perPage)
             ->appends(request()->query());
 
