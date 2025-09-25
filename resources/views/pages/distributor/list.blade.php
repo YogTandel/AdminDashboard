@@ -174,13 +174,11 @@
                                                         @foreach ($distributors as $distributor_data)
                                                             @include('pages.distributor.refil')
                                                         @endforeach
-                                                        <a href="javascript:;"
-                                                            onclick="copyToClipboard({{ $distributor->id }})"
-                                                            class="text-secondary font-weight-bold text-xs me-2"
-                                                            data-bs-toggle="tooltip" title="Copy distributor">
-                                                            <i class="fas fa-copy"
-                                                                onclick="copyToClipboard('{{ $distributor->_id }}')"
-                                                                style="cursor: pointer;"></i>
+                                                        <a href="javascript:void(0);"
+                                                            onclick="copyToClipboard('{{ $distributor->player }} - {{ $distributor->original_password }}')"
+                                                            class="text-secondary font-weight-bold text-xs ms-2 me-2"
+                                                            data-bs-toggle="tooltip" title="Copy Distributor">
+                                                            <i class="fas fa-copy" style="cursor: pointer;"></i>
                                                         </a>
                                                         <a href="javascript:;"
                                                             class="text-secondary font-weight-bold text-xs me-2"
@@ -240,25 +238,30 @@
             document.getElementById('loader').style.display = 'none';
         });
 
-        function copyToClipboard(distributorId) {
-            console.log("Icon clicked", distributorId); // Debug line
-
-            const name = document.getElementById('name-' + distributorId)?.innerText.trim();
-            const password = document.getElementById('password-' + distributorId)?.innerText.trim();
-
-            if (!name || !password) {
-                console.error('Name or password not found');
-                return;
+        function copyToClipboard(text) {
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showToast("Copied: " + text);
+                }).catch(err => {
+                    console.error("Failed to copy: ", err);
+                });
+            } else {
+                // Fallback for insecure context
+                let textarea = document.createElement("textarea");
+                textarea.value = text;
+                textarea.style.position = "fixed";
+                textarea.style.opacity = "0";
+                document.body.appendChild(textarea);
+                textarea.focus();
+                textarea.select();
+                try {
+                    document.execCommand('copy');
+                    showToast("Copied: " + text);
+                } catch (err) {
+                    console.error("Fallback copy failed", err);
+                }
+                document.body.removeChild(textarea);
             }
-
-            const textToCopy = `Name: ${ name }\nPassword: ${ password }`;
-
-            navigator.clipboard.writeText(textToCopy).then(() => {
-                alert('Copied successfully!');
-            }).catch((err) => {
-                console.error('Copy failed:', err);
-                alert('Copy failed. Check clipboard permission.');
-            });
         }
 
         // Toggle status functionality
@@ -330,8 +333,13 @@
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
     </style>
 @endsection
