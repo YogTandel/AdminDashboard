@@ -1971,4 +1971,61 @@ class PagesController extends Controller
         return response()->json(['status' => $player->login_status]);
     }
 
+    public function filterShow(Request $request)
+    {
+        $query = User::where('role', 'player');
+
+        // Distributor Filter
+        if ($request->has('distributor_id') && $request->distributor_id != '') {
+            $query->where('distributor_id', $request->distributor_id);
+        }
+
+        // Agent Filter
+        if ($request->has('agent_id') && $request->agent_id != '') {
+            $query->where('agent_id', $request->agent_id);
+        }
+
+        // Status Filter
+        if ($request->has('status') && $request->status != '') {
+            $query->where('status', $request->status);
+        }
+
+        // Search filter
+        if ($request->has('search') && $request->search != '') {
+            $query->where('player', 'LIKE', '%' . $request->search . '%');
+        }
+
+        // Date filters
+        if ($request->has('from_date') && $request->has('to_date') && $request->from_date != '' && $request->to_date != '') {
+            $query->whereBetween('created_at', [$request->from_date, $request->to_date]);
+        }
+
+        // Date Range
+        if ($request->has('date_range') && $request->date_range != '') {
+            if ($request->date_range == '2_days_ago') {
+                $query->where('created_at', '>=', now()->subDays(2));
+            } elseif ($request->date_range == 'last_week') {
+                $query->where('created_at', '>=', now()->subWeek());
+            } elseif ($request->date_range == 'last_month') {
+                $query->where('created_at', '>=', now()->subMonth());
+            }
+        }
+
+        $players = $query->paginate($request->get('per_page', 10));
+
+        // Distributors
+        $distributors = User::where('role', 'distributor')->get();
+
+        // Agents: if distributor selected, only get agents under that distributor
+        if ($request->has('distributor_id') && $request->distributor_id != '') {
+            $agents = User::where('role', 'agent')
+                ->where('distributor_id', $request->distributor_id)
+                ->get();
+        } else {
+            $agents = User::where('role', 'agent')->get();
+        }
+
+        return view('pages.player.list', compact('players', 'distributors', 'agents'));
+    }
+
 }

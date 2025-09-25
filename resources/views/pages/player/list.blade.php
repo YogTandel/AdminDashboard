@@ -21,13 +21,14 @@
                                     </select>
                                 </div>
 
-                                <!-- Add all current query parameters as hidden inputs -->
                                 @foreach (request()->query() as $key => $value)
                                     @if ($key != 'per_page')
                                         <input type="hidden" name="{{ $key }}" value="{{ $value }}">
                                     @endif
                                 @endforeach
                             </form>
+
+                            <!-- Search Form -->
                             <form action="{{ route('player.show') }}" method="GET" class="d-flex align-items-center">
                                 <div class="input-group input-group-outline rounded-pill me-2 shadow-sm">
                                     <span class="input-group-text bg-transparent border-0 text-secondary">
@@ -48,6 +49,7 @@
                                         class="btn btn-secondary btn-sm px-3 mt-3">Reset</a>
                                 @endif
                             </form>
+
                             @if (auth('admin')->check())
                                 <button type="button" class="btn btn-primary mb-0" data-bs-toggle="modal"
                                     data-bs-target="#exampleModalAddplayer">
@@ -57,7 +59,8 @@
                             @include('pages.player.create')
                         </div>
                     </div>
-                    <!-- Second Row: Date Filter -->
+
+                    <!-- Second Row: Filters -->
                     <form method="GET" class="d-flex justify-content-end align-items-center flex-wrap gap-2 mt-2 me-3">
                         <!-- Date Range -->
                         <select name="date_range" class="form-select form-select-sm" onchange="this.form.submit()"
@@ -80,72 +83,99 @@
                         <input type="date" name="to_date" class="form-control form-control-sm"
                             value="{{ request('to_date') }}" style="width: 150px;">
 
-                        <!-- Search Hidden -->
+                        <!-- Distributor Filter -->
+                        @if (auth('admin')->check())
+                            <select name="distributor_id" class="form-select form-select-sm" onchange="this.form.submit()"
+                                style="width: 160px;">
+                                <option value="">All Distributors</option>
+                                @foreach ($distributors as $distributor)
+                                    <option value="{{ $distributor->id }}"
+                                        {{ request('distributor_id') == $distributor->id ? 'selected' : '' }}>
+                                        {{ $distributor->player }}
+                                    </option>
+                                @endforeach
+                            </select>
+
+                            <!-- Agent Filter -->
+                            <select name="agent_id" class="form-select form-select-sm" onchange="this.form.submit()"
+                                style="width: 160px;">
+                                <option value="">All Agents</option>
+                                @foreach ($agents as $agent)
+                                    <option value="{{ $agent->id }}"
+                                        {{ request('agent_id') == $agent->id ? 'selected' : '' }}>
+                                        {{ $agent->player }}
+                                    </option>
+                                @endforeach
+                            </select>
+
+                            <!-- Status Filter -->
+                            <select name="status" class="form-select form-select-sm" onchange="this.form.submit()"
+                                style="width: 120px;">
+                                <option value="">All Status</option>
+                                <option value="Active" {{ request('status') == 'Active' ? 'selected' : '' }}>Active
+                                </option>
+                                <option value="Inactive" {{ request('status') == 'Inactive' ? 'selected' : '' }}>Inactive
+                                </option>
+                            </select>
+                        @endif
+
+                        <!-- Hidden Inputs -->
                         @if (request()->has('search'))
                             <input type="hidden" name="search" value="{{ request('search') }}">
                         @endif
                         <input type="hidden" name="per_page" value="{{ request('per_page', 10) }}">
 
-                        <!-- Filter Button -->
-                        <button type="submit" class="btn btn-sm btn-primary  mb-0">Filter</button>
-                        <input type="hidden" name="per_page" value="{{ request('per_page', 10) }}">
-
-                        <!-- Reset Button -->
-                        @if (request()->has('from_date') || request()->has('to_date') || request()->has('date_range'))
+                        <!-- Filter & Reset -->
+                        <button type="submit" class="btn btn-sm btn-primary mb-0">Filter</button>
+                        @if (request()->has('from_date') ||
+                                request()->has('to_date') ||
+                                request()->has('date_range') ||
+                                request()->has('distributor_id') ||
+                                request()->has('agent_id') ||
+                                request()->has('status'))
                             <a href="{{ route('player.show') }}" class="btn btn-secondary btn-sm px-3 mt-3">Reset</a>
                         @endif
                     </form>
+
                     <div class="card-body px-0 pt-0 pb-2">
                         <div class="table-responsive p-0">
                             <table class="table align-items-center mb-0">
                                 <thead>
                                     <tr class="text-center">
-                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                            No
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">No
                                         </th>
                                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                            Name
-                                        </th>
+                                            Name</th>
                                         <th
                                             class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                                            Password
-                                        </th>
+                                            Password</th>
                                         <th
                                             class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                                            Role
-                                        </th>
+                                            Role</th>
                                         <th
                                             class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                            Balance
-                                        </th>
+                                            Balance</th>
                                         <th
                                             class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                            Distributor
-                                        </th>
+                                            Distributor</th>
                                         <th
                                             class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                            Agent
-                                        </th>
+                                            Agent</th>
                                         <th
                                             class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                            Login
-                                        </th>
+                                            Login</th>
                                         <th
                                             class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                            Status
-                                        </th>
+                                            Status</th>
                                         <th
                                             class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                            Win
-                                        </th>
+                                            Win</th>
                                         <th
                                             class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                            Date
-                                        </th>
+                                            Date</th>
                                         <th
                                             class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                            Action
-                                        </th>
+                                            Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -186,8 +216,7 @@
                                                 </td>
                                                 <td class="align-middle text-center text-sm">
                                                     <p class="text-xs font-weight-bold mb-0">
-                                                        {{ $player->distributorUser?->player }}
-                                                    </p>
+                                                        {{ $player->distributorUser?->player }}</p>
                                                 </td>
                                                 <td class="align-middle text-center text-sm">
                                                     <p class="text-xs font-weight-bold mb-0">{{ $player->agent }}</p>
@@ -199,7 +228,6 @@
                                                         {{ $player->login_status ? 'True' : 'False' }}
                                                     </span>
                                                 </td>
-
                                                 <td class="align-middle text-center text-sm">
                                                     <span
                                                         class="badge badge-sm {{ $player->status === 'Active' ? 'bg-gradient-success' : 'bg-gradient-danger' }}">
@@ -242,7 +270,6 @@
                                                             </a>
                                                             @include('pages.player.edit')
 
-                                                            <!-- Delete Button -->
                                                             <form action="{{ route('player.delete', $player->id) }}"
                                                                 method="post" style="display:flex;">
                                                                 @csrf
@@ -270,7 +297,6 @@
                                                             <i
                                                                 class="fas {{ $player->status === 'Active' ? 'fa-ban text-danger' : 'fa-check text-success' }}"></i>
                                                         </a>
-
                                                     </div>
                                                 </td>
                                             </tr>
@@ -278,6 +304,7 @@
                                     @endif
                                 </tbody>
                             </table>
+
                             {{-- Pagination --}}
                             <div class="d-flex justify-content-center mt-3 pagination pagination-info">
                                 {{ $players->links('vendor.pagination.bootstrap-4') }}
@@ -289,6 +316,7 @@
             <x-footer />
         </div>
     </div>
+
 
     @push('scripts')
         <script>
