@@ -253,12 +253,13 @@
                                                     @endforeach
 
                                                     <!-- Copy -->
-                                                    <a href="javascript:;"
-                                                        onclick="copyToClipboard(`{{ $agent->player }} - {{ $agent->original_password }}`)"
+                                                    <a href="javascript:void(0);"
+                                                        onclick="copyToClipboard('{{ $agent->player }} - {{ $agent->original_password }}')"
                                                         class="text-secondary font-weight-bold text-xs ms-2 me-2"
                                                         data-bs-toggle="tooltip" title="Copy agent">
                                                         <i class="fas fa-copy" style="cursor: pointer;"></i>
                                                     </a>
+
 
                                                     <!-- Edit -->
                                                     @if (auth()->check() && auth()->user()->role === 'distributor')
@@ -554,13 +555,39 @@
 
         // Copy to clipboard functionality
         function copyToClipboard(text) {
-            navigator.clipboard.writeText(text)
-                .then(() => {
-                    alert("Copied: " + text);
-                })
-                .catch(err => {
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showToast("Copied: " + text);
+                }).catch(err => {
                     console.error("Failed to copy: ", err);
                 });
+            } else {
+                // Fallback for insecure context
+                let textarea = document.createElement("textarea");
+                textarea.value = text;
+                textarea.style.position = "fixed";
+                textarea.style.opacity = "0";
+                document.body.appendChild(textarea);
+                textarea.focus();
+                textarea.select();
+                try {
+                    document.execCommand('copy');
+                    showToast("Copied: " + text);
+                } catch (err) {
+                    console.error("Fallback copy failed", err);
+                }
+                document.body.removeChild(textarea);
+            }
+        }
+
+        // Optional toast instead of alert
+        function showToast(message) {
+            const toast = document.createElement("div");
+            toast.className = "alert alert-info position-fixed top-0 end-0 m-3";
+            toast.style.zIndex = "2000";
+            toast.innerHTML = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2000);
         }
     </script>
 
