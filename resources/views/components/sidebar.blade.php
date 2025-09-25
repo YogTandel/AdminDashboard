@@ -221,8 +221,6 @@
                 </a>
             </li>
 
-
-
             <!-- Setting (Only for Admin) -->
             @if ($role === 'admin')
                 <li class="nav-item">
@@ -237,17 +235,15 @@
             @endif
 
             <!-- Change Password -->
-            @if ($role !== 'admin')
-                <li class="nav-item">
-                    <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
-                        <div
-                            class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                            <i class="fas fa-key text-dark"></i>
-                        </div>
-                        <span class="nav-link-text ms-1">Change Password</span>
-                    </a>
-                </li>
-            @endif
+            <li class="nav-item">
+                <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
+                    <div
+                        class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+                        <i class="fas fa-key text-dark"></i>
+                    </div>
+                    <span class="nav-link-text ms-1">Change Password</span>
+                </a>
+            </li>
 
 
             <!-- Logout -->

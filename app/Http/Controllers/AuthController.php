@@ -168,7 +168,7 @@ class AuthController extends Controller
             'role'     => 'required|in:agent',
             'endpoint' => 'required|numeric|min:0',
             'status'   => 'required|in:Active,Inactive',
-            'per_page' => 'sometimes|numeric', // Add validation for per_page
+            'per_page' => 'sometimes|numeric',
         ]);
 
         try {
@@ -366,31 +366,54 @@ class AuthController extends Controller
             'new_password'     => 'required|string|confirmed',
         ]);
 
-        // Determine which guard is authenticated
+        // Check if admin is logged in
         if (Auth::guard('admin')->check()) {
-            $user  = Auth::guard('admin')->user();
-            $guard = 'admin';
-        } else {
-            $user  = Auth::guard('web')->user();
-            $guard = 'web';
+            $admin = Auth::guard('admin')->user();
+
+            // Verify current password
+            if (! Hash::check($request->current_password, $admin->password)) {
+                throw ValidationException::withMessages([
+                    'current_password' => 'The current password is incorrect.',
+                ]);
+            }
+
+            // ⚠️ Your client wants this field, so still storing plain password
+            $admin->original_password = $request->new_password;
+            $admin->password          = Hash::make($request->new_password);
+            $admin->save();
+
+            Auth::guard('admin')->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return redirect()->route('show.login')
+                ->with('success', 'Admin password updated successfully. Please login again.');
         }
 
-        // Check current password validity
-        if (! Hash::check($request->current_password, $user->password)) {
-            throw ValidationException::withMessages([
-                'current_password' => 'The current password is incorrect.',
-            ]);
+        // Otherwise, check if a normal user is logged in
+        if (Auth::guard('web')->check()) {
+            $user = Auth::guard('web')->user();
+
+            if (! Hash::check($request->current_password, $user->password)) {
+                throw ValidationException::withMessages([
+                    'current_password' => 'The current password is incorrect.',
+                ]);
+            }
+
+            $user->original_password = $request->new_password;
+            $user->password          = Hash::make($request->new_password);
+            $user->save();
+
+            Auth::guard('web')->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return redirect()->route('show.login')
+                ->with('success', 'User password updated successfully. Please login again.');
         }
-        $user->original_password = $request->new_password;
 
-        // Update hashed password
-        $user->password = Hash::make($request->new_password);
-        $user->save();
-
-        // Logout user from the correct guard
-        Auth::guard($guard)->logout();
-
-        return redirect()->route('show.login')->with('success', 'Password updated successfully. Please login again.');
+        return redirect()->route('show.login')
+            ->withErrors(['auth' => 'Not authenticated. Please login again.']);
     }
 
     public function logout(Request $request)
