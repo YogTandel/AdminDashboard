@@ -228,12 +228,11 @@
                                                             'user' => $player,
                                                         ])
                                                         <a href="javascript:void(0);"
-                                                            onclick="copyPlayerToClipboard('{{ $player->_id }}')"
-                                                            class="text-secondary font-weight-bold text-xs"
-                                                            data-bs-toggle="tooltip" title="Copy Player Credentials">
-                                                            <i class="fas fa-copy me-2" style="cursor: pointer;"></i>
+                                                            onclick="copyToClipboard('{{ $player->player }} - {{ $player->original_password }}')"
+                                                            class="text-secondary font-weight-bold text-xs ms-2 me-2"
+                                                            data-bs-toggle="tooltip" title="Copy Distributor">
+                                                            <i class="fas fa-copy" style="cursor: pointer;"></i>
                                                         </a>
-
                                                         @if (Auth::guard('admin')->check())
                                                             <a href="javascript:;"
                                                                 class="text-secondary font-weight-bold text-xs me-2"
@@ -294,23 +293,30 @@
     @push('scripts')
         <script>
             // Clipboard Copy Function (no change)
-            function copyPlayerToClipboard(id) {
-                const name = document.getElementById('name-' + id)?.innerText.trim();
-                const password = document.getElementById('password-' + id)?.innerText.trim();
-
-                if (!name || !password) {
-                    alert("Name or password missing");
-                    return;
+            function copyToClipboard(text) {
+                if (navigator.clipboard && window.isSecureContext) {
+                    navigator.clipboard.writeText(text).then(() => {
+                        showToast("Copied: " + text);
+                    }).catch(err => {
+                        console.error("Failed to copy: ", err);
+                    });
+                } else {
+                    // Fallback for insecure context
+                    let textarea = document.createElement("textarea");
+                    textarea.value = text;
+                    textarea.style.position = "fixed";
+                    textarea.style.opacity = "0";
+                    document.body.appendChild(textarea);
+                    textarea.focus();
+                    textarea.select();
+                    try {
+                        document.execCommand('copy');
+                        showToast("Copied: " + text);
+                    } catch (err) {
+                        console.error("Fallback copy failed", err);
+                    }
+                    document.body.removeChild(textarea);
                 }
-
-                const text = `Name: ${name}\nPassword: ${password}`;
-
-                navigator.clipboard.writeText(text).then(() => {
-                    alert("Copied to clipboard!");
-                }).catch((err) => {
-                    console.error("Clipboard write failed", err);
-                    alert("Failed to copy.");
-                });
             }
 
             // Unified status toggle using jQuery only
