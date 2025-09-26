@@ -28,6 +28,21 @@
     <div id="mainContent" style="display: none;">
         <div class="container-fluid py-4">
             <div class="row g-3">
+                @php
+                    $user = null;
+                    $endpointType = '';
+                    $endpointValue = '';
+
+                    if (Auth::guard('admin')->check()) {
+                        $user = Auth::guard('admin')->user();
+                        $endpointType = 'Admin';
+                        $endpointValue = $user->endpoint ?? 'N/A';
+                    } elseif (Auth::guard('web')->check()) {
+                        $user = Auth::guard('web')->user();
+                        $endpointType = 'Agent';
+                        $endpointValue = $user->endpoint ?? 'N/A';
+                    }
+                @endphp
                 @if (auth('admin')->check())
                     <!-- Card 1 -->
                     <div class="col-12 col-sm-6 col-md-3">
@@ -103,6 +118,13 @@
                             <h5 class="text-white text-sm">{{ $deactivePlayers }}</h5>
                         </div>
                     </div>
+
+                    <div class="col-12 col-sm-6 col-md-3">
+                        <div class="p-3 bg-primary rounded">
+                            <p class="text-white font-weight-bolder mb-3">Total Balance</p>
+                            <h5 class="text-white text-sm">{{ $endpointValue }}</h5>
+                        </div>
+                    </div>
                 @elseauth('web')
                     @if (auth()->user()->role === 'distributor')
 
@@ -153,6 +175,13 @@
                                 <h5 class="text-white text-sm">{{ $deactivePlayers }}</h5>
                             </div>
                         </div>
+
+                        <div class="col-12 col-sm-6 col-md-3">
+                            <div class="p-3 bg-primary rounded">
+                                <p class="text-white font-weight-bolder mb-3">Total Balance</p>
+                                <h5 class="text-white text-sm">{{ $endpointValue }}</h5>
+                            </div>
+                        </div>
                     @elseif(auth()->user()->role === 'agent')
                         <!-- Card 1 -->
                         <div class="col-12 col-sm-6 col-md-4">
@@ -199,6 +228,13 @@
                             <div class="p-3 bg-dark rounded">
                                 <p class="text-white font-weight-bolder mb-3">Total Deactive Player</p>
                                 <h5 class="text-white text-sm">{{ $deactivePlayers }}</h5>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-sm-6 col-md-3">
+                            <div class="p-3 bg-primary rounded">
+                                <p class="text-white font-weight-bolder mb-3">Total Balance</p>
+                                <h5 class="text-white text-sm">{{ $endpointValue }}</h5>
                             </div>
                         </div>
 
