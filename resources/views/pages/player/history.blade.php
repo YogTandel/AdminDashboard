@@ -22,10 +22,9 @@
                                 </div>
                             </div>
 
-                            <!-- <div class="d-flex flex-wrap align-items-end gap-2 mt-2 mt-md-0"> -->
-                            <!-- Show Dropdown -->
-                            <div class="d-flex align-items-center mb-2">
-                                <label for="per_page" class="mb-0 me-2 text-sm text-dark fw-bold">Show:</label>
+                            <!-- Per Page Dropdown -->
+                            <div class="d-flex align-items-center mt-3 mt-md-0">
+                                <label for="per_page" class="mb-0 me-2 text-sm fw-bold text-dark">Show:</label>
                                 <div class="input-group input-group-outline border-radius-lg shadow-sm">
                                     <select name="per_page" id="per_page" class="form-select border-0 ps-3 pe-4"
                                         style="min-width: 60px;">
@@ -35,82 +34,91 @@
                                     </select>
                                 </div>
                             </div>
-                            <form method="GET" action="{{ route('player.history', $player->_id) }}">
-                                <div class="d-flex justify-content-end gap-2 mt-5">
-                                    <div>
-                                        <!-- Date Range -->
-                                        <label for="date_range" class="form-label mb-0">Quick Date Range</label>
-                                        <select name="date_range" class="form-select form-select-sm"
-                                            onchange="this.form.submit()" style="width: 150px;">
-                                            <option value="">Date Range</option>
-                                            <option value="2_days_ago"
-                                                {{ request('date_range') == '2_days_ago' ? 'selected' : '' }}>Last 2
-                                                Days</option>
-                                            <option value="last_week"
-                                                {{ request('date_range') == 'last_week' ? 'selected' : '' }}>Last Week
-                                            </option>
-                                            <option value="last_month"
-                                                {{ request('date_range') == 'last_month' ? 'selected' : '' }}>Last
-                                                Month</option>
-                                        </select>
-                                    </div>
+                        </div>
 
-                                    <div>
-                                        <label for="from_date" class="form-label mb-0">From Date</label>
-                                        <input type="date" name="from_date" id="from_date" class="form-control mb-0"
-                                            value="{{ request('from_date') }}">
-                                    </div>
+                        <!-- Filter Form -->
+                        <form method="GET" action="{{ route('player.history', $player->_id) }}" class="mt-4">
+                            <div class="row g-2 align-items-end">
+                                <!-- Quick Date Range -->
+                                <div class="col-12 col-md-auto">
+                                    <label for="date_range" class="form-label mb-0">Quick Date Range</label>
+                                    <select name="date_range" class="form-select form-select-sm"
+                                        onchange="this.form.submit()">
+                                        <option value="">Date Range</option>
+                                        <option value="2_days_ago"
+                                            {{ request('date_range') == '2_days_ago' ? 'selected' : '' }}>
+                                            Last 2 Days
+                                        </option>
+                                        <option value="last_week"
+                                            {{ request('date_range') == 'last_week' ? 'selected' : '' }}>
+                                            Last Week
+                                        </option>
+                                        <option value="last_month"
+                                            {{ request('date_range') == 'last_month' ? 'selected' : '' }}>
+                                            Last Month
+                                        </option>
+                                    </select>
+                                </div>
 
-                                    <div>
-                                        <label for="to_date" class="form-label mb-0">To Date</label>
-                                        <input type="date" name="to_date" id="to_date" class="form-control mb-0"
-                                            value="{{ request('to_date') }}">
-                                    </div>
+                                <!-- From Date -->
+                                <div class="col-12 col-md-auto">
+                                    <label for="from_date" class="form-label mb-0">From Date</label>
+                                    <input type="date" name="from_date" id="from_date"
+                                        class="form-control form-control-sm" value="{{ request('from_date') }}">
+                                </div>
 
-                                    <button type="submit" class="btn btn-sm btn-primary mt-4 mb-0">Filter</button>
+                                <!-- To Date -->
+                                <div class="col-12 col-md-auto">
+                                    <label for="to_date" class="form-label mb-0">To Date</label>
+                                    <input type="date" name="to_date" id="to_date" class="form-control form-control-sm"
+                                        value="{{ request('to_date') }}">
+                                </div>
+
+                                <!-- Filter + Reset -->
+                                <div class="col-12 col-md-auto d-flex gap-2">
+                                    <button type="submit" class="btn btn-sm btn-primary">Filter</button>
                                     @if (request()->has('from_date') || request()->has('to_date') || request()->has('date_range'))
                                         <a href="{{ route('player.history', $player->_id) }}"
-                                            class="btn btn-sm btn-secondary mt-4 mb-0">Reset</a>
+                                            class="btn btn-sm btn-secondary">Reset</a>
                                     @endif
                                 </div>
 
-                                <div class="d-flex justify-content-center mt-3 gap-2">
-                                    <a href="{{ route('export.game.history', $player->_id) }}"
-                                        class="btn btn-sm btn-primary">
-                                        <i class="fas fa-download me-1"></i> Export Data
-                                    </a>
-                                    <a href="{{ route('player.show') }}" class="btn btn-sm btn-outline-dark">← Back</a>
+                                <!-- Right-aligned Export + Back -->
+                                <div class="col-12 col-md text-md-end">
+                                    <div class="d-flex flex-wrap justify-content-center justify-content-md-end gap-2">
+                                        <a href="{{ route('export.game.history', $player->_id) }}"
+                                            class="btn btn-sm btn-primary">
+                                            <i class="fas fa-download me-1"></i> Export Data
+                                        </a>
+                                        <a href="{{ route('player.show') }}" class="btn btn-sm btn-outline-dark">← Back</a>
+                                    </div>
                                 </div>
-                            </form>
-                            <!-- </div> -->
-                        </div>
+                            </div>
+                        </form>
                     </div>
 
                     <div class="card-body px-0 pt-0 pb-2 mt-3">
                         @if (!empty($player->gameHistory))
                             <div class="table-responsive p-0">
                                 <table class="table align-items-center mb-0">
-                                    <thead>
+                                    <thead class="bg-light">
                                         <tr>
-                                            <th style="width: 10%;"
-                                                class="text-uppercase text-secondary text-xxs font-weight-bolder ">Date</th>
-                                            <th style="width: 10%;"
-                                                class="text-uppercase text-secondary text-xxs font-weight-bolder  text-center">
-                                                Result
-                                            </th>
-                                            <th style="width: 10%;"
-                                                class="text-uppercase text-secondary text-xxs font-weight-bolder  text-center">
+                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder">Date</th>
+                                            <th
+                                                class="text-uppercase text-secondary text-xxs font-weight-bolder text-center">
+                                                Result</th>
+                                            <th
+                                                class="text-uppercase text-secondary text-xxs font-weight-bolder text-center">
                                                 WinPoint</th>
-                                            <th style="width: 10%;"
-                                                class="text-uppercase text-secondary text-xxs font-weight-bolder  text-center">
+                                            <th
+                                                class="text-uppercase text-secondary text-xxs font-weight-bolder text-center">
                                                 TB - Win</th>
-                                            <th style="width: 10%;"
-                                                class="text-uppercase text-secondary text-xxs font-weight-bolder  text-center">
+                                            <th
+                                                class="text-uppercase text-secondary text-xxs font-weight-bolder text-center">
                                                 Balance</th>
                                             <th
                                                 class="text-uppercase text-secondary text-xxs font-weight-bolder text-center">
-                                                Betvalue
-                                            </th>
+                                                Betvalue</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -131,114 +139,87 @@
                                                         }
                                                     }
                                                 }
+                                                $resultDigits = str_split((string) $entry['result']);
                                             @endphp
                                             <tr>
                                                 <!-- Date -->
                                                 <td>
-                                                    <div class="d-flex px-2 py-1">
-                                                        <div class="d-flex flex-column justify-content-center">
-                                                            <h6 class="mb-0 text-sm">
-                                                                {{ $date ? $date->format('Y-m-d') : 'Invalid' }}
-                                                            </h6>
-                                                            <p class="text-xs text-secondary mb-0">
-                                                                {{ $date ? $date->format('h:i:s A') : '' }}
-                                                            </p>
-                                                        </div>
+                                                    <div class="d-flex flex-column">
+                                                        <h6 class="mb-0 text-sm">
+                                                            {{ $date ? $date->format('Y-m-d') : 'Invalid' }}</h6>
+                                                        <p class="text-xs text-secondary mb-0">
+                                                            {{ $date ? $date->format('h:i:s A') : '' }}</p>
                                                     </div>
                                                 </td>
 
-
                                                 <!-- Result -->
                                                 <td class="align-middle text-center">
-                                                    <span class="badge badge-sm bg-gradient-dark">{{ $entry['result'] }}
-                                                        @php
-                                                            if ($entry['result_type'] == 18) {
-                                                                echo '- J';
-                                                            }
-
-                                                        @endphp
-                                                    </span>
-                                                </td>
-
-                                                <!-- Win -->
-                                                <td class="align-middle text-center  py-1">
-                                                    <span
-                                                        class="badge bg-success text-white">{{ number_format($entry['winpoint']) }}
-                                                    </span>
-                                                </td>
-
-
-
-
-                                                <!-- Play Point -->
-                                                <td class="align-middle text-center">
-                                                    <span class="badge badge-sm bg-gradient-dark">
-                                                        {{ number_format($entry['endpoint']) }}
-                                                    </span>
-                                                </td>
-
-                                                <td class="align-middle text-center">
-                                                    <span class="fw-bold text-dark">
-                                                        @if (!isset($entry['current_balance']))
-                                                            0
-                                                        @else
-                                                            {{ $entry['current_balance'] }}
+                                                    <span class="badge bg-gradient-dark">
+                                                        {{ $entry['result'] }} @if ($entry['result_type'] == 18)
+                                                            - J
                                                         @endif
                                                     </span>
                                                 </td>
 
-                                                <td class="align-middle" style="min-width: 100%;">
-                                                    @php
-                                                        $resultDigits = str_split((string) $entry['result']);
-                                                    @endphp
+                                                <!-- Win -->
+                                                <td class="align-middle text-center">
+                                                    <span
+                                                        class="badge bg-success">{{ number_format($entry['winpoint']) }}</span>
+                                                </td>
 
-                                                    <!-- Row 1: Position numbers (0-9) -->
-                                                    <div class="d-flex align-items-center mb-1">
+                                                <!-- TB - Win -->
+                                                <td class="align-middle text-center">
+                                                    <span
+                                                        class="badge bg-gradient-dark">{{ number_format($entry['endpoint']) }}</span>
+                                                </td>
 
-                                                        @for ($i = 1; $i <= 9; $i++)
-                                                            <div class="text-center me-4" style="min-width: 40px;">
+                                                <!-- Balance -->
+                                                <td class="align-middle text-center">
+                                                    <span
+                                                        class="fw-bold text-dark">{{ $entry['current_balance'] ?? 0 }}</span>
+                                                </td>
+
+                                                <!-- Betvalues -->
+                                                <td class="align-middle">
+                                                    <div class="betvalue-wrapper">
+                                                        <!-- Row 1: Numbers -->
+                                                        <div class="d-flex flex-wrap justify-content-start mb-1">
+                                                            @for ($i = 1; $i <= 9; $i++)
+                                                                <div class="text-center me-2 mb-2" style="min-width: 32px;">
+                                                                    <span
+                                                                        class="fw-bold px-2 py-1 rounded {{ in_array((string) $i, $resultDigits) ? 'bg-success bg-opacity-25 text-dark' : 'text-dark' }}">
+                                                                        {{ $i }}
+                                                                    </span>
+                                                                </div>
+                                                            @endfor
+                                                            <div class="text-center me-2 mb-2" style="min-width: 32px;">
                                                                 <span
-                                                                    class="fw-bold px-2 py-1 rounded {{ in_array((string) $i, $resultDigits) ? 'bg-success bg-opacity-25 text-dark' : 'text-dark' }}">
-                                                                    {{ $i }}
-                                                                </span>
+                                                                    class="fw-bold px-2 py-1 rounded {{ in_array('0', $resultDigits) ? 'bg-success bg-opacity-25 text-dark' : 'text-dark' }}">0</span>
                                                             </div>
-                                                        @endfor
-                                                        <div class="text-center me-4" style="min-width: 40px;">
-                                                            <span
-                                                                class="fw-bold px-2 py-1 rounded {{ in_array('0', $resultDigits) ? 'bg-success bg-opacity-25 text-dark' : 'text-dark' }}">
-                                                                0
-                                                            </span>
-                                                        </div>
-                                                        <div class="me-3 fw-bold text-dark text-xl" style="width: 80px;">
-                                                            Total</div>
-                                                    </div>
-
-                                                    <!-- Row 2: Bet values -->
-                                                    <div class="d-flex align-items-center">
-
-                                                        @for ($i = 1; $i <= 9; $i++)
-                                                            <div class="text-center me-4" style="min-width: 40px;">
-                                                                <span
-                                                                    class="{{ in_array((string) $i, $resultDigits) ? 'fw-bold text-dark' : '' }}">
-                                                                    {{ $entry['betValues'][$i] ?? 0 }}
-                                                                </span>
-                                                            </div>
-                                                        @endfor
-                                                        <div class="text-center me-4" style="min-width: 40px;">
-                                                            <span
-                                                                class="{{ in_array('0', $resultDigits) ? 'fw-bold text-dark' : '' }}">
-                                                                {{ $entry['betValues'][0] ?? 0 }}
-                                                            </span>
+                                                            <div class="fw-bold text-dark ms-2">Total</div>
                                                         </div>
 
-                                                        <div class="d-flex align-items-center mt-1">
-                                                            <div class="text-dark fw-bold ps-2">
-                                                                {{ array_sum($entry['betValues']) }}
+                                                        <!-- Row 2: Values -->
+                                                        <div class="d-flex flex-wrap justify-content-start">
+                                                            @for ($i = 1; $i <= 9; $i++)
+                                                                <div class="text-center me-2 mb-2" style="min-width: 32px;">
+                                                                    <span
+                                                                        class="{{ in_array((string) $i, $resultDigits) ? 'fw-bold text-dark' : '' }}">
+                                                                        {{ $entry['betValues'][$i] ?? 0 }}
+                                                                    </span>
+                                                                </div>
+                                                            @endfor
+                                                            <div class="text-center me-2 mb-2" style="min-width: 32px;">
+                                                                <span
+                                                                    class="{{ in_array('0', $resultDigits) ? 'fw-bold text-dark' : '' }}">
+                                                                    {{ $entry['betValues'][0] ?? 0 }}
+                                                                </span>
                                                             </div>
+                                                            <div class="fw-bold text-dark ms-2">
+                                                                {{ array_sum($entry['betValues']) }}</div>
                                                         </div>
                                                     </div>
                                                 </td>
-
                                             </tr>
                                         @endforeach
                                     </tbody>
@@ -301,21 +282,12 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Handle per_page dropdown changes
             document.getElementById('per_page').addEventListener('change', function() {
                 const url = new URL(window.location.href);
                 url.searchParams.set('per_page', this.value);
-                url.searchParams.delete('page'); // Reset to first page
+                url.searchParams.delete('page');
                 window.location.href = url.toString();
             });
-
-            // Preserve form inputs on page refresh
-            const form = document.querySelector('form[method="GET"]');
-            if (form) {
-                form.addEventListener('submit', function(e) {
-                    // No need to prevent default, let the form submit normally
-                });
-            }
         });
     </script>
 @endsection
