@@ -143,35 +143,26 @@ class PagesController extends Controller
         $authUser = Auth::guard('admin')->user() ?? Auth::guard('web')->user();
 
         // Search filter
-        if (request()->has('search')) {
-            $query->where('player', 'like', '%' . request()->search . '%');
+        if ($search = request()->search) {
+            $query->where('player', 'like', '%' . $search . '%');
         }
 
-        // Distributor filter by name
-        if (request()->has('distributor_name') && request()->distributor_name != '') {
-            $distributorName = request()->distributor_name;
-            $distributorIds  = User::where('role', 'distributor')
-                ->where('player', 'like', '%' . $distributorName . '%')
-                ->pluck('_id')
-                ->toArray();
-
-            $query->whereIn('distributor_id', $distributorIds);
+        // Distributor filter by name (relationship works if distributor field stores ID)
+        if ($distributorName = request()->distributor_name) {
+            $query->whereHas('distributorUser', function ($q) use ($distributorName) {
+                $q->where('player', 'like', '%' . $distributorName . '%');
+            });
         }
 
         // Agent filter by name
-        if (request()->has('agent_name') && request()->agent_name != '') {
-            $agentName = request()->agent_name;
-            $agentIds  = User::where('role', 'agent')
-                ->where('player', 'like', '%' . $agentName . '%')
-                ->pluck('_id')
-                ->toArray();
-
-            $query->whereIn('agent_id', $agentIds);
+        // FIX: Use direct 'agent' field because in DB agent name is stored directly
+        if ($agentName = request()->agent_name) {
+            $query->where('agent', 'like', '%' . $agentName . '%');
         }
 
         // Status filter
-        if (request()->has('status') && request()->status != '') {
-            $query->where('status', request()->status);
+        if ($status = request()->status) {
+            $query->where('status', $status);
         }
 
         // Date range filter
@@ -192,8 +183,8 @@ class PagesController extends Controller
                 $from = $today->copy()->subMonth()->startOfMonth()->format('YmdHis');
                 $to   = $today->copy()->subMonth()->endOfMonth()->format('YmdHis');
             }
-        } elseif ($from || $to) {
-            // Handle manual date inputs
+        } else {
+            // Manual dates
             if ($from) {
                 $from = Carbon::createFromFormat('Y-m-d', $from)->startOfDay()->format('YmdHis');
             }
@@ -202,7 +193,6 @@ class PagesController extends Controller
             }
         }
 
-        // Apply date filters
         if ($from) {
             $query->where('DateOfCreation', '>=', (float) $from);
         }
@@ -210,30 +200,29 @@ class PagesController extends Controller
             $query->where('DateOfCreation', '<=', (float) $to);
         }
 
-        // Filter players based on user role
+        // Role-based filtering
         if ($authUser->role === 'distributor') {
             $query->where('role', 'player')
-                ->where('distributor', $authUser->_id);
-
+                ->where('distributor', $authUser->_id); // distributor field stores ID
         } elseif ($authUser->role === 'agent') {
             $query->where('role', 'player')
-                ->where('agent_id', new ObjectId($authUser->_id));
+                ->where('agent_id', $authUser->_id);
         } else {
             $query->where('role', 'player');
         }
 
-        // Players list with relation
+        // Players list with relationships
         $players = $query->with(['agentUser', 'distributorUser'])
             ->paginate($perPage)
             ->appends(request()->query());
 
-        // Dropdown lists - filter agents based on user role
+        // Dropdown lists for filters
         if ($authUser->role === 'distributor') {
             $agents = User::where('role', 'agent')
-                ->where('distributor_id', new ObjectId($authUser->_id))
+                ->where('distributor', $authUser->_id)
                 ->get(['_id', 'player']);
         } elseif ($authUser->role === 'agent') {
-            $agents = User::where('_id', new ObjectId($authUser->_id))
+            $agents = User::where('_id', $authUser->_id)
                 ->get(['_id', 'player']);
         } else {
             $agents = User::where('role', 'agent')->get(['_id', 'player']);
