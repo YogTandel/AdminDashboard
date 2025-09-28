@@ -139,25 +139,31 @@ class PagesController extends Controller
         $perPage = request()->get('per_page', 10);
         $query   = User::query();
 
-        // Get authenticated user
+        // Get authenticated user (from admin guard or web guard)
         $authUser = Auth::guard('admin')->user() ?? Auth::guard('web')->user();
+        $isAdmin  = Auth::guard('admin')->check();
 
         // Search filter
         if ($search = request()->search) {
             $query->where('player', 'like', '%' . $search . '%');
         }
 
-        // Distributor filter by name (relationship works if distributor field stores ID)
-        if ($distributorName = request()->distributor_name) {
-            $query->whereHas('distributorUser', function ($q) use ($distributorName) {
-                $q->where('player', 'like', '%' . $distributorName . '%');
-            });
-        }
+        /**
+         * Distributor & Agent name filters
+         * Apply ONLY if logged in as Admin (via admin guard)
+         */
+        if ($isAdmin) {
+            // Distributor filter by name
+            if ($distributorName = request()->distributor_name) {
+                $query->whereHas('distributorUser', function ($q) use ($distributorName) {
+                    $q->where('player', 'like', '%' . $distributorName . '%');
+                });
+            }
 
-        // Agent filter by name
-        // FIX: Use direct 'agent' field because in DB agent name is stored directly
-        if ($agentName = request()->agent_name) {
-            $query->where('agent', 'like', '%' . $agentName . '%');
+            // Agent filter by name
+            if ($agentName = request()->agent_name) {
+                $query->where('agent', 'like', '%' . $agentName . '%');
+            }
         }
 
         // Status filter
@@ -200,13 +206,15 @@ class PagesController extends Controller
             $query->where('DateOfCreation', '<=', (float) $to);
         }
 
-        // Role-based filtering
-        if ($authUser->role === 'distributor') {
-            $query->where('role', 'player')
-                ->where('distributor', $authUser->_id); // distributor field stores ID
-        } elseif ($authUser->role === 'agent') {
-            $query->where('role', 'player')
-                ->where('agent_id', $authUser->_id);
+        // Role-based filtering for web guard users
+        if (! $isAdmin) {
+            if ($authUser->role === 'distributor') {
+                $query->where('role', 'player')
+                    ->where('distributor', $authUser->_id); // distributor = id ✅
+            } elseif ($authUser->role === 'agent') {
+                $query->where('role', 'player')
+                    ->where('agent', $authUser->player); // agent = name ✅
+            }
         } else {
             $query->where('role', 'player');
         }
@@ -217,11 +225,11 @@ class PagesController extends Controller
             ->appends(request()->query());
 
         // Dropdown lists for filters
-        if ($authUser->role === 'distributor') {
+        if (! $isAdmin && $authUser->role === 'distributor') {
             $agents = User::where('role', 'agent')
                 ->where('distributor', $authUser->_id)
                 ->get(['_id', 'player']);
-        } elseif ($authUser->role === 'agent') {
+        } elseif (! $isAdmin && $authUser->role === 'agent') {
             $agents = User::where('_id', $authUser->_id)
                 ->get(['_id', 'player']);
         } else {
@@ -230,7 +238,7 @@ class PagesController extends Controller
 
         $distributors = User::where('role', 'distributor')->get(['_id', 'player']);
 
-        return view('pages.player.list', compact('players', 'perPage', 'agents', 'distributors', 'authUser'));
+        return view('pages.player.list', compact('players', 'perPage', 'agents', 'distributors', 'authUser', 'isAdmin'));
     }
 
     public function transactionreport()
