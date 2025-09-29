@@ -212,6 +212,7 @@
                                                     'user' => $player,
                                                 ])
                                             @endif
+                                            @include('pages.player.edit')
                                             <tr class="text-center">
                                                 <td>
                                                     <div class="d-flex px-2 py-1">
@@ -300,7 +301,7 @@
                                                                 data-bs-target="#editModal{{ $player->id }}">
                                                                 <i class="fas fa-edit me-1"></i>
                                                             </a>
-                                                            @include('pages.player.edit')
+
 
                                                             <form action="{{ route('player.delete', $player->id) }}"
                                                                 method="post" style="display:flex;">

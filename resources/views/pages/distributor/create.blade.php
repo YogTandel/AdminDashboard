@@ -13,8 +13,8 @@
                             @csrf
                             <label>Distributor Name</label>
                             <div class="input-group mb-3">
-                                <input type="text" class="form-control" placeholder="Enter Distributor" aria-label="player"
-                                    name="player" aria-describedby="player-addon" required>
+                                <input type="text" class="form-control" placeholder="Enter Distributor"
+                                    aria-label="player" name="player" aria-describedby="player-addon" required>
                             </div>
 
                             <label>Password</label>
@@ -24,7 +24,7 @@
                             </div>
 
                             <input type="hidden" name="role" value="distributor">
-                            
+
                             <input type="hidden" name="endpoint" value="0">
 
                             <label>STATUS</label>

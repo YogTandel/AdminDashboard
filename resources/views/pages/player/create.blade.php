@@ -39,14 +39,9 @@
                                 <select id="distributor" class="form-control @error('distributor') is-invalid @enderror"
                                     name="distributor" required>
                                     <option value="">-- Select Distributor --</option>
-                                    @if ($authUser->role == '')
-                                        @foreach ($distributors as $distributor)
-                                            <option value="{{ $distributor->_id }}"
-                                                data-name="{{ $distributor->player }}">
-                                                {{ $distributor->player }}
-                                            </option>
-                                        @endforeach
-                                    @elseif($authUser->role == 'distributor')
+
+
+                                    @if ($authUser->role == 'distributor')
                                         {
                                         <option value="{{ $authUser->_id }}" data-name="{{ $authUser->player }}">
                                             {{ $authUser->player }}
@@ -58,6 +53,14 @@
                                             data-name="{{ $authUser->distributor }}">
                                             {{ $authUser->distributor }}
                                         </option>
+                                        }
+                                    @else{
+                                        @foreach ($distributors as $distributor)
+                                            <option value="{{ $distributor->_id }}"
+                                                data-name="{{ $distributor->player }}">
+                                                {{ $distributor->player }}
+                                            </option>
+                                        @endforeach
                                         }
                                     @endif
                                 </select>
@@ -141,8 +144,7 @@
                                 .player + '">' + agent.player + '</option>'
                             );
                         });
-                    }
-                    else if(authU == 'agent') {
+                    } else if (authU == 'agent') {
                         $.each(data, function(key, agent) {
                             if (authI == agent._id) {
                                 $('#agent_id').append(

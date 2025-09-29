@@ -39,14 +39,7 @@
                                 <select id="distributor_id" name="distributor_id"
                                     class="form-control @error('distributor_id') is-invalid @enderror" required>
                                     <option value="">-- Select Distributor --</option>
-                                    @if ($authUser->role == '')
-                                        @foreach ($distributors as $distributor)
-                                            <option value="{{ $distributor->_id }}"
-                                                data-name="{{ $distributor->player }}">
-                                                {{ $distributor->player }}
-                                            </option>
-                                        @endforeach
-                                    @elseif($authUser->role == 'distributor')
+                                    @if ($authUser->role == 'distributor')
                                         {
                                         <option value="{{ $authUser->_id }}" data-name="{{ $authUser->player }}">
                                             {{ $authUser->player }}
@@ -58,6 +51,14 @@
                                             data-name="{{ $authUser->distributor }}">
                                             {{ $authUser->distributor }}
                                         </option>
+                                        }
+                                    @else{
+                                        @foreach ($distributors as $distributor)
+                                            <option value="{{ $distributor->_id }}"
+                                                data-name="{{ $distributor->player }}">
+                                                {{ $distributor->player }}
+                                            </option>
+                                        @endforeach
                                         }
                                     @endif
                                 </select>
