@@ -329,71 +329,88 @@
                                                     </div>
 
                                                     {{-- Mobile: collapse into 3-dots dropdown --}}
-                                                    <div class="dropdown d-md-none">
-                                                        <button class="btn btn-sm" type="button"
-                                                            id="dropdownMenu{{ $player->id }}"
-                                                            data-bs-toggle="dropdown" aria-expanded="false">
-                                                            <i class="fas fa-ellipsis-v"></i>
-                                                        </button>
-                                                        <ul class="dropdown-menu dropdown-menu-end"
-                                                            aria-labelledby="dropdownMenu{{ $player->id }}">
-                                                            @if (auth()->check() && auth()->user()->role === 'agent')
+                                                    <div class="d-md-none">
+                                                        <!-- Toggle Status button OUTSIDE dropdown -->
+                                                        <a class="btn btn-sm toggle-status" href="javascript:;"
+                                                            data-player-id="{{ $player->id }}">
+                                                            <i
+                                                                class="fas {{ $player->status === 'Active' ? 'fa-ban text-danger' : 'fa-check text-success' }} me-1"></i>
+                                                            {{ $player->status === 'Active' ? 'Block' : 'Unblock' }}
+                                                        </a>
+
+                                                        <!-- Dropdown for other actions -->
+                                                        <div class="dropdown d-inline">
+                                                            <button class="btn btn-sm" type="button"
+                                                                id="dropdownMenu{{ $player->id }}"
+                                                                data-bs-toggle="dropdown" aria-expanded="false">
+                                                                <i class="fas fa-ellipsis-v"></i>
+                                                            </button>
+
+                                                            <ul class="dropdown-menu dropdown-menu-end"
+                                                                aria-labelledby="dropdownMenu{{ $player->id }}">
+
+                                                                {{-- Transfer (agent only) --}}
+                                                                @if (auth()->check() && auth()->user()->role === 'agent')
+                                                                    <li>
+                                                                        <a class="dropdown-item text-success"
+                                                                            href="javascript:;" data-bs-toggle="modal"
+                                                                            data-bs-target="#transferModal{{ $player->id }}">
+                                                                            <i
+                                                                                class="fa-solid fa-indian-rupee-sign me-1"></i>
+                                                                            Transfer
+                                                                        </a>
+                                                                    </li>
+                                                                @endif
+
+                                                                {{-- Refill --}}
+                                                                <li>@include('pages.player.refil2', [
+                                                                    'user' => $player,
+                                                                ])</li>
+
+                                                                {{-- Copy --}}
                                                                 <li>
-                                                                    <a class="dropdown-item text-success"
-                                                                        href="javascript:;" data-bs-toggle="modal"
-                                                                        data-bs-target="#transferModal{{ $player->id }}">
-                                                                        <i class="fa-solid fa-indian-rupee-sign me-1"></i>
-                                                                        Transfer
+                                                                    <a class="dropdown-item" href="javascript:void(0);"
+                                                                        onclick="copyToClipboard('{{ $player->player }} - {{ $player->original_password }}')">
+                                                                        <i class="fas fa-copy me-1"></i> Copy Player
                                                                     </a>
                                                                 </li>
-                                                            @endif
-                                                            <li>@include('pages.player.refil2', [
-                                                                'user' => $player,
-                                                            ])</li>
-                                                            <li>
-                                                                <a class="dropdown-item" href="javascript:void(0);"
-                                                                    onclick="copyToClipboard('{{ $player->player }} - {{ $player->original_password }}')">
-                                                                    <i class="fas fa-copy me-1"></i> Copy Player
-                                                                </a>
-                                                            </li>
-                                                            @if (Auth::guard('admin')->check())
+
+                                                                {{-- Edit (admin only) --}}
+                                                                @if (Auth::guard('admin')->check())
+                                                                    <li>
+                                                                        <a class="dropdown-item" href="javascript:;"
+                                                                            data-bs-toggle="modal"
+                                                                            data-bs-target="#editModal{{ $player->id }}">
+                                                                            <i class="fas fa-edit me-1"></i> Edit
+                                                                        </a>
+                                                                    </li>
+                                                                @endif
+
+                                                                {{-- History --}}
                                                                 <li>
-                                                                    <a class="dropdown-item" href="javascript:;"
-                                                                        data-bs-toggle="modal"
-                                                                        data-bs-target="#editModal{{ $player->id }}">
-                                                                        <i class="fas fa-edit me-1"></i> Edit
+                                                                    <a class="dropdown-item"
+                                                                        href="{{ route('player.history', $player->_id) }}">
+                                                                        <i class="fas fa-history me-1"></i> History
                                                                     </a>
                                                                 </li>
-                                                            @endif
-                                                            <li>
-                                                                <a class="dropdown-item"
-                                                                    href="{{ route('player.history', $player->_id) }}">
-                                                                    <i class="fas fa-history me-1"></i> History
-                                                                </a>
-                                                            </li>
-                                                            @if (Auth::guard('admin')->check())
-                                                                <li>
-                                                                    <form
-                                                                        action="{{ route('player.delete', $player->id) }}"
-                                                                        method="post"
-                                                                        onsubmit="return confirm('Are you sure?')">
-                                                                        @csrf @method('DELETE')
-                                                                        <button class="dropdown-item text-danger"
-                                                                            type="submit">
-                                                                            <i class="fas fa-trash me-1"></i> Delete
-                                                                        </button>
-                                                                    </form>
-                                                                </li>
-                                                            @endif
-                                                            <li>
-                                                                <a class="dropdown-item toggle-status" href="javascript:;"
-                                                                    data-player-id="{{ $player->id }}">
-                                                                    <i
-                                                                        class="fas {{ $player->status === 'Active' ? 'fa-ban text-danger' : 'fa-check text-success' }} me-1"></i>
-                                                                    {{ $player->status === 'Active' ? 'Block Player' : 'Unblock Player' }}
-                                                                </a>
-                                                            </li>
-                                                        </ul>
+
+                                                                {{-- Delete (admin only) --}}
+                                                                @if (Auth::guard('admin')->check())
+                                                                    <li>
+                                                                        <form
+                                                                            action="{{ route('player.delete', $player->id) }}"
+                                                                            method="post"
+                                                                            onsubmit="return confirm('Are you sure?')">
+                                                                            @csrf @method('DELETE')
+                                                                            <button class="dropdown-item text-danger"
+                                                                                type="submit">
+                                                                                <i class="fas fa-trash me-1"></i> Delete
+                                                                            </button>
+                                                                        </form>
+                                                                    </li>
+                                                                @endif
+                                                            </ul>
+                                                        </div>
                                                     </div>
                                                 </td>
 
@@ -501,6 +518,26 @@
                         }
                     });
                 }
+            });
+        </script>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                document.querySelectorAll(".toggle-status").forEach(function(el) {
+                    el.addEventListener("click", function() {
+                        let playerId = this.getAttribute("data-player-id");
+                        let confirmAction = confirm(
+                            "Are you sure you want to toggle status for Player ID: " + playerId +
+                            "?");
+
+                        if (confirmAction) {
+                            alert("✅ Status will be toggled for Player " + playerId);
+                            // 👉 place your toggle logic here (AJAX, form submit, etc.)
+                        } else {
+                            alert("❌ Action cancelled");
+                        }
+                    });
+                });
             });
         </script>
     @endpush
