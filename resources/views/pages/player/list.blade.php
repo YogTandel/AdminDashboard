@@ -207,11 +207,17 @@
                                         </tr>
                                     @else
                                         @foreach ($players as $index => $player)
+                                            @if (auth()->check() && auth()->user()->role === 'agent')
+                                                @include('pages.player.refil2', [
+                                                    'user' => $player,
+                                                ])
+                                            @endif
                                             <tr class="text-center">
                                                 <td>
                                                     <div class="d-flex px-2 py-1">
                                                         <div class="d-flex flex-column justify-content-center">
-                                                            <h6 class="mb-0 text-sm">{{ $players->firstItem() + $index }}
+                                                            <h6 class="mb-0 text-sm">
+                                                                {{ $players->firstItem() + $index }}
                                                             </h6>
                                                         </div>
                                                     </div>
@@ -259,7 +265,8 @@
                                                     </span>
                                                 </td>
                                                 <td class="align-middle text-center text-sm">
-                                                    <p class="text-xs font-weight-bold mb-0">{{ $player->winamount }}</p>
+                                                    <p class="text-xs font-weight-bold mb-0">{{ $player->winamount }}
+                                                    </p>
                                                 </td>
                                                 <td class="align-middle text-center">
                                                     <span class="text-secondary text-xs font-weight-bold">
@@ -278,9 +285,6 @@
                                                                 <i class="fa-solid fa-indian-rupee-sign me-1"></i>
                                                             </a>
                                                         @endif
-                                                        @include('pages.player.refil2', [
-                                                            'user' => $player,
-                                                        ])
 
                                                         <a href="javascript:void(0);"
                                                             onclick="copyToClipboard('{{ $player->player }} - {{ $player->original_password }}')"
@@ -362,11 +366,6 @@
                                                                     </li>
                                                                 @endif
 
-                                                                {{-- Refill --}}
-                                                                <li>@include('pages.player.refil2', [
-                                                                    'user' => $player,
-                                                                ])</li>
-
                                                                 {{-- Copy --}}
                                                                 <li>
                                                                     <a class="dropdown-item" href="javascript:void(0);"
@@ -404,7 +403,8 @@
                                                                             @csrf @method('DELETE')
                                                                             <button class="dropdown-item text-danger"
                                                                                 type="submit">
-                                                                                <i class="fas fa-trash me-1"></i> Delete
+                                                                                <i class="fas fa-trash me-1"></i>
+                                                                                Delete
                                                                             </button>
                                                                         </form>
                                                                     </li>
@@ -413,7 +413,6 @@
                                                         </div>
                                                     </div>
                                                 </td>
-
                                             </tr>
                                         @endforeach
                                     @endif
