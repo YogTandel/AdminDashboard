@@ -182,10 +182,9 @@
                                                 <!-- Betvalues -->
                                                 <td class="align-middle">
                                                     <div class="betvalue-wrapper">
-
                                                         <!-- Row 1: Numbers -->
                                                         <div
-                                                            class="d-flex flex-wrap justify-content-start mb-1 betvalue-numbers">
+                                                            class="d-flex flex-wrap justify-content-center mb-1 betvalue-numbers">
                                                             @for ($i = 1; $i <= 9; $i++)
                                                                 <div class="text-center me-2 mb-2 betvalue-cell">
                                                                     <span
@@ -204,7 +203,8 @@
                                                         </div>
 
                                                         <!-- Row 2: Values -->
-                                                        <div class="d-flex flex-wrap justify-content-start betvalue-values">
+                                                        <div
+                                                            class="d-flex flex-wrap justify-content-center betvalue-values">
                                                             @for ($i = 1; $i <= 9; $i++)
                                                                 <div class="text-center me-2 mb-2 betvalue-cell">
                                                                     <span
@@ -223,7 +223,6 @@
                                                                 {{ array_sum($entry['betValues']) }}
                                                             </div>
                                                         </div>
-
                                                     </div>
                                                 </td>
                                             </tr>
@@ -291,7 +290,7 @@
         }
 
         .betvalue-cell {
-            min-width: 32px;
+            min-width: 40px;
         }
 
         .total-label,
@@ -305,22 +304,16 @@
             .betvalue-wrapper {
                 display: block;
                 font-size: 1rem;
-                /* bigger text for readability */
             }
 
             .betvalue-numbers,
             .betvalue-values {
                 display: grid !important;
-                grid-template-columns: repeat(5, 1fr);
-                /* 5 items per row */
+                grid-template-columns: repeat(11, 1fr);
+                justify-items: center;
                 gap: 6px;
             }
 
-            .betvalue-cell {
-                min-width: auto;
-            }
-
-            /* Total moves below */
             .total-label,
             .total-value {
                 display: block;

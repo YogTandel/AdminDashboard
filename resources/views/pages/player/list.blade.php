@@ -334,13 +334,30 @@
 
                                                     {{-- Mobile: collapse into 3-dots dropdown --}}
                                                     <div class="d-md-none">
-                                                        <!-- Toggle Status button OUTSIDE dropdown -->
-                                                        <a class="btn btn-sm toggle-status" href="javascript:;"
-                                                            data-player-id="{{ $player->id }}">
-                                                            <i
-                                                                class="fas {{ $player->status === 'Active' ? 'fa-ban text-danger' : 'fa-check text-success' }} me-1"></i>
-                                                            {{ $player->status === 'Active' ? 'Block' : 'Unblock' }}
-                                                        </a>
+                                                        <div>
+                                                            <!-- Toggle Status button OUTSIDE dropdown -->
+                                                            <a class="btn btn-sm toggle-status" href="javascript:;"
+                                                                data-player-id="{{ $player->id }}">
+                                                                <i
+                                                                    class="fas {{ $player->status === 'Active' ? 'fa-ban text-danger' : 'fa-check text-success' }} me-1"></i>
+                                                            </a>
+
+                                                            {{-- Delete (admin only) --}}
+                                                            @if (Auth::guard('admin')->check())
+                                                                <li>
+                                                                    <form
+                                                                        action="{{ route('player.delete', $player->id) }}"
+                                                                        method="post"
+                                                                        onsubmit="return confirm('Are you sure?')">
+                                                                        @csrf @method('DELETE')
+                                                                        <button class="btn btn-sm text-danger"
+                                                                            type="submit">
+                                                                            <i class="fas fa-trash me-1"></i>
+                                                                        </button>
+                                                                    </form>
+                                                                </li>
+                                                            @endif
+                                                        </div>
 
                                                         <!-- Dropdown for other actions -->
                                                         <div class="dropdown d-inline">
@@ -392,23 +409,6 @@
                                                                         <i class="fas fa-history me-1"></i> History
                                                                     </a>
                                                                 </li>
-
-                                                                {{-- Delete (admin only) --}}
-                                                                @if (Auth::guard('admin')->check())
-                                                                    <li>
-                                                                        <form
-                                                                            action="{{ route('player.delete', $player->id) }}"
-                                                                            method="post"
-                                                                            onsubmit="return confirm('Are you sure?')">
-                                                                            @csrf @method('DELETE')
-                                                                            <button class="dropdown-item text-danger"
-                                                                                type="submit">
-                                                                                <i class="fas fa-trash me-1"></i>
-                                                                                Delete
-                                                                            </button>
-                                                                        </form>
-                                                                    </li>
-                                                                @endif
                                                             </ul>
                                                         </div>
                                                     </div>
