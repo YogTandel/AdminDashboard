@@ -34,8 +34,12 @@
                 $user1 = Auth::guard('web')->user();
                 $role = $admin1 ? 'admin' : ($user1 ? $user1->role : null);
             @endphp
+            @php
+                $isAdmin = Auth::guard('admin')->check();
+                $isUser = Auth::guard('web')->check();
+            @endphp
 
-            @if ($role == 'admin')
+            @if ($isAdmin)
                 <div class="d-flex align-items-center">
                     <span class="text-dark me-2" style="font-size: 1.5rem; font-weight: 700;">Profit:</span>
                     <span id="live-earning" class="badge bg-gradient-success me-3" style="font-size: 1rem;">--</span>
@@ -44,34 +48,9 @@
             @if ($user)
                 <li class="nav-item d-flex align-items-center">
                     <a class="nav-link text-body font-weight-bold px-0">
-                        <i class="ps-3 fa fa-user me-sm-1"></i>
-                        <span class="d-sm-inline d-none">
+                        <span >
                             {{ $user->player }} — Balance: {{ $endpointValue }}
                         </span>
-                    </a>
-                </li>
-            @endif
-
-            {{-- Logout button --}}
-            @php
-                $isAdmin = Auth::guard('admin')->check();
-                $isUser = Auth::guard('web')->check();
-            @endphp
-
-            @if ($isAdmin || $isUser)
-                <li class="nav-item d-flex align-items-center">
-                    <form action="{{ route('logout') }}" method="POST">
-                        @csrf
-                        <button type="submit" class="nav-link text-body font-weight-bold px-0 bg-transparent border-0">
-                            <i class="ps-3 fas fa-sign-out-alt me-sm-1"></i>
-                        </button>
-                    </form>
-                </li>
-            @else
-                <li class="nav-item d-flex align-items-center">
-                    <a href="{{ route('show.login') }}" class="nav-link text-body font-weight-bold px-0">
-                        <i class="ps-3 fa fa-user me-sm-1"></i>
-                        <span class="d-sm-inline d-none">Login</span>
                     </a>
                 </li>
             @endif
