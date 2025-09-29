@@ -182,42 +182,48 @@
                                                 <!-- Betvalues -->
                                                 <td class="align-middle">
                                                     <div class="betvalue-wrapper">
+
                                                         <!-- Row 1: Numbers -->
-                                                        <div class="d-flex flex-wrap justify-content-start mb-1">
+                                                        <div
+                                                            class="d-flex flex-wrap justify-content-start mb-1 betvalue-numbers">
                                                             @for ($i = 1; $i <= 9; $i++)
-                                                                <div class="text-center me-2 mb-2" style="min-width: 32px;">
+                                                                <div class="text-center me-2 mb-2 betvalue-cell">
                                                                     <span
                                                                         class="fw-bold px-2 py-1 rounded {{ in_array((string) $i, $resultDigits) ? 'bg-success bg-opacity-25 text-dark' : 'text-dark' }}">
                                                                         {{ $i }}
                                                                     </span>
                                                                 </div>
                                                             @endfor
-                                                            <div class="text-center me-2 mb-2" style="min-width: 32px;">
+                                                            <div class="text-center me-2 mb-2 betvalue-cell">
                                                                 <span
-                                                                    class="fw-bold px-2 py-1 rounded {{ in_array('0', $resultDigits) ? 'bg-success bg-opacity-25 text-dark' : 'text-dark' }}">0</span>
+                                                                    class="fw-bold px-2 py-1 rounded {{ in_array('0', $resultDigits) ? 'bg-success bg-opacity-25 text-dark' : 'text-dark' }}">
+                                                                    0
+                                                                </span>
                                                             </div>
-                                                            <div class="fw-bold text-dark ms-2">Total</div>
+                                                            <div class="fw-bold text-dark ms-2 total-label">Total</div>
                                                         </div>
 
                                                         <!-- Row 2: Values -->
-                                                        <div class="d-flex flex-wrap justify-content-start">
+                                                        <div class="d-flex flex-wrap justify-content-start betvalue-values">
                                                             @for ($i = 1; $i <= 9; $i++)
-                                                                <div class="text-center me-2 mb-2" style="min-width: 32px;">
+                                                                <div class="text-center me-2 mb-2 betvalue-cell">
                                                                     <span
                                                                         class="{{ in_array((string) $i, $resultDigits) ? 'fw-bold text-dark' : '' }}">
                                                                         {{ $entry['betValues'][$i] ?? 0 }}
                                                                     </span>
                                                                 </div>
                                                             @endfor
-                                                            <div class="text-center me-2 mb-2" style="min-width: 32px;">
+                                                            <div class="text-center me-2 mb-2 betvalue-cell">
                                                                 <span
                                                                     class="{{ in_array('0', $resultDigits) ? 'fw-bold text-dark' : '' }}">
                                                                     {{ $entry['betValues'][0] ?? 0 }}
                                                                 </span>
                                                             </div>
-                                                            <div class="fw-bold text-dark ms-2">
-                                                                {{ array_sum($entry['betValues']) }}</div>
+                                                            <div class="fw-bold text-dark ms-2 total-value">
+                                                                {{ array_sum($entry['betValues']) }}
+                                                            </div>
                                                         </div>
+
                                                     </div>
                                                 </td>
                                             </tr>
@@ -277,6 +283,53 @@
             text-decoration: none;
             background-color: #e9ecef;
             border-color: #dee2e6;
+        }
+
+        /* Desktop (default) */
+        .betvalue-wrapper {
+            font-size: 0.85rem;
+        }
+
+        .betvalue-cell {
+            min-width: 32px;
+        }
+
+        .total-label,
+        .total-value {
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        /* Mobile view */
+        @media (max-width: 768px) {
+            .betvalue-wrapper {
+                display: block;
+                font-size: 1rem;
+                /* bigger text for readability */
+            }
+
+            .betvalue-numbers,
+            .betvalue-values {
+                display: grid !important;
+                grid-template-columns: repeat(5, 1fr);
+                /* 5 items per row */
+                gap: 6px;
+            }
+
+            .betvalue-cell {
+                min-width: auto;
+            }
+
+            /* Total moves below */
+            .total-label,
+            .total-value {
+                display: block;
+                width: 100%;
+                text-align: center;
+                margin-top: 6px;
+                font-size: 1rem;
+                font-weight: bold;
+            }
         }
     </style>
 
