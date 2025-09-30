@@ -499,7 +499,7 @@
         }
 
         function startTimerSocket() {
-            const socket = new WebSocket('ws://128.199.64.164:3101');
+            const socket = new WebSocket('ws://178.16.138.62:3101');
 
             socket.onopen = function() {
                 console.log("✅ [WebSocket] Connection opened");
