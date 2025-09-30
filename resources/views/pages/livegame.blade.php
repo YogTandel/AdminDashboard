@@ -6,24 +6,23 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <div class="w-100 mt-1">
+        {{-- Success Message --}}
+        @if (session('success'))
+            <div id="alertMessage" class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
 
-                    {{-- Success Message --}}
-                    @if (session('success'))
-                        <div id="alertMessage" class="alert alert-success alert-dismissible fade show" role="alert">
-                            {{ session('success') }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    @endif
+        {{-- Error Message --}}
+        @if (session('error'))
+            <div id="alertMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
 
-                    {{-- Error Message --}}
-                    @if (session('error'))
-                        <div id="alertMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
-                            {{ session('error') }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    @endif
-
-                </div>
+    </div>
 
     <div class="container">
         <!-- Top Stats Row - Now properly aligned -->
@@ -34,23 +33,25 @@
                     <span id="live-standing" class="badge bg-dark" style="font-size: 1rem;">--</span>
                 </div>
             </div>
-            
+
             <div class="col-auto mb-2">
                 <div class="d-flex align-items-center">
                     <span class="text-dark me-2" style="font-size: 1.5rem; font-weight: 700;">Earning:</span>
                     <span id="live-earning11" class="badge bg-gradient-success me-2" style="font-size: 1rem;">--</span>
                 </div>
             </div>
-            
+
             <div class="col-auto">
                 <div class="d-flex align-items-center">
                     <span class="text-dark me-2" style="font-size: 1.5rem; font-weight: 700;">Result:</span>
-                    <span id="live-result" class="badge text-white" style="background: linear-gradient(135deg, #f093fb, #f5576c); font-size: 1rem; font-weight: 700;">--</span>
+                    <span id="live-result" class="badge text-white"
+                        style="background: linear-gradient(135deg, #f093fb, #f5576c); font-size: 1rem; font-weight: 700;">--</span>
                 </div>
             </div>
-            
+
             <div class="col-auto mb-2">
-                <span id="timer-badge" class="badge bg-dark" style="font-size: 16px; color: #FF0000; font-family: 'Share Tech Mono', monospace;">
+                <span id="timer-badge" class="badge bg-dark"
+                    style="font-size: 16px; color: #FF0000; font-family: 'Share Tech Mono', monospace;">
                     00:00
                 </span>
             </div>
@@ -63,21 +64,27 @@
             </div>
             <div class="col-12">
                 <div class="d-flex flex-wrap justify-content-center gap-2">
-                    @for($i = 1; $i <= 10; $i++)
-                        <span id="result-badge-{{$i}}" 
-                              class="d-flex align-items-center justify-content-center" 
-                              style="font-size: 1rem;
+                    @for ($i = 1; $i <= 10; $i++)
+                        <span id="result-badge-{{ $i }}" class="d-flex align-items-center justify-content-center"
+                            style="font-size: 1rem;
                                      width: 50px;
                                      height: 30px;
                                      text-align: center;
                                      background-color: {{ [
-                                         '#FFECEC', '#FFEFD8', '#F0FFE2', '#E2F9FF', 
-                                         '#EEE2FF', '#FFE2F5', '#E2FFEE', '#FFF5E2',
-                                         '#E2ECFF', '#FFE8E2'
-                                     ][$i-1] }};
+                                         '#FFECEC',
+                                         '#FFEFD8',
+                                         '#F0FFE2',
+                                         '#E2F9FF',
+                                         '#EEE2FF',
+                                         '#FFE2F5',
+                                         '#E2FFEE',
+                                         '#FFF5E2',
+                                         '#E2ECFF',
+                                         '#FFE8E2',
+                                     ][$i - 1] }};
                                      color: #333;
                                      border-radius: 4px !important;">
-                              --
+                            --
                         </span>
                     @endfor
                 </div>
@@ -88,11 +95,12 @@
         <div class="row justify-content-center g-2 py-4">
             @for ($i = 1; $i <= 10; $i++)
                 @php
-                    $displayNumber = $i % 10; 
+                    $displayNumber = $i % 10;
                 @endphp
                 <div class="col-auto" id="card-{{ $displayNumber }}">
                     <div class="p-3 rounded text-white card-bg-{{ $displayNumber }}" style="width: 100px;">
-                        <p class="font-weight-bolder mb-2 text-center" style="font-size: 1.5rem; font-weight: 800;">{{ $displayNumber }}</p>
+                        <p class="font-weight-bolder mb-2 text-center" style="font-size: 1.5rem; font-weight: 800;">
+                            {{ $displayNumber }}</p>
                         <h5 class="text-sm value text-center mb-0">0</h5>
                     </div>
                 </div>
@@ -118,13 +126,17 @@
                             <table class="table align-items-center mb-0" style="table-layout: fixed; width: 100%;">
                                 <thead>
                                     <tr>
-                                        <th class="text-uppercase text-dark fw-bold text-center" style="font-size: 1rem; width: 22%;">Name</th>
+                                        <th class="text-uppercase text-dark fw-bold text-center"
+                                            style="font-size: 1rem; width: 22%;">Name</th>
                                         @for ($i = 1; $i <= 9; $i++)
-                                            <th class="text-uppercase text-dark fw-bold text-center" style="font-size: 1rem;">
+                                            <th class="text-uppercase text-dark fw-bold text-center"
+                                                style="font-size: 1rem;">
                                                 {{ $i }}</th>
                                         @endfor
-                                        <th class="text-uppercase text-dark fw-bold text-center" style="font-size: 1rem;">0</th>
-                                        <th class="text-uppercase text-dark fw-bold text-center" style="font-size: 1rem;">Total</th>
+                                        <th class="text-uppercase text-dark fw-bold text-center" style="font-size: 1rem;">0
+                                        </th>
+                                        <th class="text-uppercase text-dark fw-bold text-center" style="font-size: 1rem;">
+                                            Total</th>
                                     </tr>
                                 </thead>
                                 <tbody id="player-table-body"></tbody>
@@ -138,14 +150,16 @@
 
         <!-- Success/Error Messages -->
         @if (session('success'))
-            <div id="alertMessage" class="alert alert-success alert-dismissible fade show position-fixed bottom-0 end-0 m-3" role="alert" style="z-index: 9999;">
+            <div id="alertMessage" class="alert alert-success alert-dismissible fade show position-fixed bottom-0 end-0 m-3"
+                role="alert" style="z-index: 9999;">
                 {{ session('success') }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         @endif
 
         @if (session('error'))
-            <div id="alertMessage" class="alert alert-danger alert-dismissible fade show position-fixed bottom-0 end-0 m-3" role="alert" style="z-index: 9999;">
+            <div id="alertMessage" class="alert alert-danger alert-dismissible fade show position-fixed bottom-0 end-0 m-3"
+                role="alert" style="z-index: 9999;">
                 {{ session('error') }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
@@ -153,24 +167,84 @@
     </div>
 
     <style>
-        .card-bg-0 { background: linear-gradient(135deg, #ff9a9e, #fad0c4); }
-        .card-bg-1 { background: linear-gradient(135deg, #a18cd1, #fbc2eb); }
-        .card-bg-2 { background: linear-gradient(135deg, #f6d365, #fda085); }
-        .card-bg-3 { background: linear-gradient(135deg, #fdcbf1, #e6dee9); }
-        .card-bg-4 { background: linear-gradient(135deg, #a1c4fd, #c2e9fb); }
-        .card-bg-5 { background: linear-gradient(135deg, #84fab0, #8fd3f4); }
-        .card-bg-6 { background: linear-gradient(135deg, #cfd910df, rgb(153, 191, 211)); }
-        .card-bg-7 { background: linear-gradient(135deg, #f093fb, #f5576c); }
-        .card-bg-8 { background: linear-gradient(135deg, #43e97b, #38f9d7); }
-        .card-bg-9 { background: linear-gradient(135deg, #30cfd0, #330867); }
-        .card-bg-total { background: linear-gradient(135deg, #a18cd1, #fbc2eb); }
+        .card-bg-0 {
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+        }
+
+        .card-bg-1 {
+            background: linear-gradient(135deg, #a18cd1, #fbc2eb);
+        }
+
+        .card-bg-2 {
+            background: linear-gradient(135deg, #f6d365, #fda085);
+        }
+
+        .card-bg-3 {
+            background: linear-gradient(135deg, #fdcbf1, #e6dee9);
+        }
+
+        .card-bg-4 {
+            background: linear-gradient(135deg, #a1c4fd, #c2e9fb);
+        }
+
+        .card-bg-5 {
+            background: linear-gradient(135deg, #84fab0, #8fd3f4);
+        }
+
+        .card-bg-6 {
+            background: linear-gradient(135deg, #cfd910df, rgb(153, 191, 211));
+        }
+
+        .card-bg-7 {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+        }
+
+        .card-bg-8 {
+            background: linear-gradient(135deg, #43e97b, #38f9d7);
+        }
+
+        .card-bg-9 {
+            background: linear-gradient(135deg, #30cfd0, #330867);
+        }
+
+        .card-bg-total {
+            background: linear-gradient(135deg, #a18cd1, #fbc2eb);
+        }
 
         @media (max-width: 768px) {
+
             /* Adjust card size for mobile */
-            .card-bg-0, .card-bg-1, .card-bg-2, .card-bg-3, 
-            .card-bg-4, .card-bg-5, .card-bg-6, .card-bg-7, 
-            .card-bg-8, .card-bg-9, .card-bg-total {
+            .card-bg-0,
+            .card-bg-1,
+            .card-bg-2,
+            .card-bg-3,
+            .card-bg-4,
+            .card-bg-5,
+            .card-bg-6,
+            .card-bg-7,
+            .card-bg-8,
+            .card-bg-9,
+            .card-bg-total {
                 width: 80px !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .table-responsive {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            table {
+                min-width: 800px;
+                /* force horizontal scroll */
+            }
+
+            th,
+            td {
+                font-size: 12px;
+                /* smaller text */
+                padding: 4px;
             }
         }
     </style>
@@ -208,20 +282,51 @@
                 apiEndpoint: "{{ route('last10.results') }}"
             };
 
-            const badgeColors = [
-                { bg: '#2aabf0ff', text: '#ffff' },
-                { bg: '#2aabf0ff', text: '#ffff' },
-                { bg: '#2aabf0ff', text: '#ffff' },
-                { bg: '#2aabf0ff', text: '#ffff' },
-                { bg: '#2aabf0ff', text: '#ffff' },
-                { bg: '#2aabf0ff', text: '#ffff' },
-                { bg: '#2aabf0ff', text: '#ffff' },
-                { bg: '#2aabf0ff', text: '#ffff' },
-                { bg: '#2aabf0ff', text: '#ffff' },
-                { bg: '#2aabf0ff', text: '#ffff' }
+            const badgeColors = [{
+                    bg: '#2aabf0ff',
+                    text: '#ffff'
+                },
+                {
+                    bg: '#2aabf0ff',
+                    text: '#ffff'
+                },
+                {
+                    bg: '#2aabf0ff',
+                    text: '#ffff'
+                },
+                {
+                    bg: '#2aabf0ff',
+                    text: '#ffff'
+                },
+                {
+                    bg: '#2aabf0ff',
+                    text: '#ffff'
+                },
+                {
+                    bg: '#2aabf0ff',
+                    text: '#ffff'
+                },
+                {
+                    bg: '#2aabf0ff',
+                    text: '#ffff'
+                },
+                {
+                    bg: '#2aabf0ff',
+                    text: '#ffff'
+                },
+                {
+                    bg: '#2aabf0ff',
+                    text: '#ffff'
+                },
+                {
+                    bg: '#2aabf0ff',
+                    text: '#ffff'
+                }
             ];
 
-            const badges = Array.from({length: 10}, (_, i) => 
+            const badges = Array.from({
+                    length: 10
+                }, (_, i) =>
                 document.getElementById(`result-badge-${i+1}`)).filter(Boolean);
 
             function initBadges() {
@@ -251,8 +356,11 @@
             async function fetchData() {
                 try {
                     const response = await fetch(config.apiEndpoint);
-                    const {success, data} = await response.json();
-                    
+                    const {
+                        success,
+                        data
+                    } = await response.json();
+
                     if (success) {
                         updateBadges(data);
                     } else {
@@ -430,10 +538,10 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            @for($i = 0; $i <= 9; $i++)
-                document.getElementById('card-{{$i}}').addEventListener('click', function() {
-                    if(confirm('Are you sure you want to bet on {{$i}}?')) {
-                        submitCustomBet({{$i}});
+            @for ($i = 0; $i <= 9; $i++)
+                document.getElementById('card-{{ $i }}').addEventListener('click', function() {
+                    if (confirm('Are you sure you want to bet on {{ $i }}?')) {
+                        submitCustomBet({{ $i }});
                     }
                 });
             @endfor
@@ -441,20 +549,20 @@
             function submitCustomBet(betNumber) {
                 const form = document.createElement('form');
                 form.method = 'POST';
-                form.action = '{{ route("custom.bet.update") }}';
-                
+                form.action = '{{ route('custom.bet.update') }}';
+
                 const csrfToken = document.createElement('input');
                 csrfToken.type = 'hidden';
                 csrfToken.name = '_token';
                 csrfToken.value = '{{ csrf_token() }}';
                 form.appendChild(csrfToken);
-                
+
                 const betInput = document.createElement('input');
                 betInput.type = 'hidden';
                 betInput.name = 'custom_bet';
                 betInput.value = betNumber;
                 form.appendChild(betInput);
-                
+
                 document.body.appendChild(form);
                 form.submit();
             }
