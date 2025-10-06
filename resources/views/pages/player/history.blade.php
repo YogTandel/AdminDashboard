@@ -124,21 +124,18 @@
                                     <tbody>
                                         @foreach ($player->gameHistory as $entry)
                                             @php
+
                                                 $date = null;
-                                                if (!empty($entry['stime']) && is_string($entry['stime'])) {
+                                                if (!empty($entry['time_stamp']) && is_numeric($entry['time_stamp'])) {
                                                     try {
-                                                        $date = Carbon::createFromFormat(
-                                                            'Y/m/d H:i:s',
-                                                            $entry['stime'],
-                                                        );
+                                                        $date = Carbon::createFromTimestampMs(
+                                                            $entry['time_stamp'],
+                                                        )->timezone('Asia/Kolkata');
                                                     } catch (\Exception $e) {
-                                                        try {
-                                                            $date = Carbon::parse($entry['stime']);
-                                                        } catch (\Exception $e) {
-                                                            $date = null;
-                                                        }
+                                                        $date = null;
                                                     }
                                                 }
+
                                                 $resultDigits = str_split((string) $entry['result']);
                                             @endphp
                                             <tr>
