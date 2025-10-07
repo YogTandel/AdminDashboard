@@ -624,6 +624,47 @@ class PagesController extends Controller
         return back()->with('success', 'Points were successfully deducted from Admin.');
     }
 
+    public function addPointsToEarning(Request $request)
+    {
+        $request->validate([
+            'points_to_earning' => 'required|numeric|min:1',
+        ]);
+
+        // Get admin record
+        $admin = DB::table('admins')->first();
+        if (! $admin) {
+            return back()->with('error', 'No Admin record found.');
+        }
+
+        // Get settings record
+        $settings = DB::table('settings')->first();
+        if (! $settings) {
+            return back()->with('error', 'No Settings record found.');
+        }
+
+        $points = $request->points_to_earning;
+
+        // Check if admin has enough balance (endpoint)
+        if ($admin->endpoint < $points) {
+            return back()->with('error', 'Not enough balance in Admin endpoint.');
+        }
+
+        // Deduct from Admin endpoint and add to Settings earning
+        DB::transaction(function () use ($admin, $settings, $points) {
+            DB::table('admins')->where('id', $admin->id)->update([
+                'endpoint'   => $admin->endpoint - $points,
+                'updated_at' => now(),
+            ]);
+
+            DB::table('settings')->where('id', $settings->id)->update([
+                'earning'    => $settings->earning + $points,
+                'updated_at' => now(),
+            ]);
+        });
+
+        return back()->with('success', '₹' . $points . ' transferred from Admin Balance to Earning successfully.');
+    }
+
     public function deselect(Request $request)
     {
         $request->session()->forget('selected_agent');

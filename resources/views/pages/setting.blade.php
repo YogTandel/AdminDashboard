@@ -196,6 +196,20 @@
                                     from Admin</button>
                             </div>
                         </form>
+                        <form action="{{ route('admin.addPointsToEarning') }}" method="POST"
+                            id="addPointsToEarningForm">
+                            @csrf
+                            <div class="mt-4">
+                                <label class="form-label">Add Points To Earning</label>
+                                <input type="number" class="form-control" name="points_to_earning"
+                                    placeholder="Enter Points to Transfer" required min="1">
+                                <div class="d-grid mt-2">
+                                    <button type="submit" class="btn btn-warning shadow-soft" style="font-size:14px">
+                                        Add Points To Earning
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>

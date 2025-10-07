@@ -129,3 +129,4 @@ Route::get('/last10-results', [PagesController::class, 'getLast10Data'])->name('
 
 Route::post('/player/toggle-login-status/{id}', [PagesController::class, 'toggleLoginStatus']);
 Route::get('/players/filter', [PagesController::class, 'filterShow'])->name('players.filter');
+Route::post('/admin/addPointsToEarning', [PagesController::class, 'addPointsToEarning'])->name('admin.addPointsToEarning');
