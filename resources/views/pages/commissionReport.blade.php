@@ -62,9 +62,18 @@
                                                     style="background-color: #e9ecef; pointer-events: none;">
                                             </div>
                                         </div>
-                                    </div>
 
-                                    <div class="d-flex flex-wrap gap-2 mt-3">
+                                        <!-- NEW Minus Value -->
+                                        <div class="col-md-12 mt-2">
+                                            <label class="form-label">Minus (₹)</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"
+                                                    style="pointer-events: none; background-color: #e9ecef;">₹</span>
+                                                <input type="text" id="distributorMinus" class="form-control" readonly
+                                                    value="-{{ number_format($totalWinpointSum * 0.01, 2) }}"
+                                                    style="background-color: #e9ecef; pointer-events: none;">
+                                            </div>
+                                        </div>
                                     </div>
                                 </form>
                             </div>
@@ -102,7 +111,20 @@
                                                 <span class="input-group-text"
                                                     style="pointer-events: none; background-color: #e9ecef;">₹</span>
                                                 <input type="text" id="agentamount" class="form-control" readonly
-                                                    value="" style="background-color: #e9ecef; pointer-events: none;">
+                                                    value="{{ number_format($totalWinpointSum * 0.05, 2) }}"
+                                                    style="background-color: #e9ecef; pointer-events: none;">
+                                            </div>
+                                        </div>
+
+                                        <!-- NEW Minus Value -->
+                                        <div class="col-md-12 mt-2">
+                                            <label class="form-label">Minus (₹)</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"
+                                                    style="pointer-events: none; background-color: #e9ecef;">₹</span>
+                                                <input type="text" id="agentMinus" class="form-control" readonly
+                                                    value="-{{ number_format($totalWinpointSum * 0.05, 2) }}"
+                                                    style="background-color: #e9ecef; pointer-events: none;">
                                             </div>
                                         </div>
                                     </div>
@@ -386,7 +408,7 @@
 
                         if (!confirm(
                                 `Are you sure you want to release ₹${(commissionAmount).toFixed(2)} commission to ${agentName}?`
-                                )) {
+                            )) {
                             return;
                         }
 
@@ -414,12 +436,6 @@
                                 const currentWin = parseInt($('#distWinAmount').text());
                                 const currentComm = parseFloat($('#distCommission').text());
                                 $('#distWinAmount').text(currentWin - winAmount);
-                                //$('#distCommission').text((currentComm - (commissionAmount / 100)).toFixed(2));
-                                //$('#distributoramount').val((currentComm - (commissionAmount / 100)).toFixed(2));
-
-                                //alert('Agent Commission Released Successfully!');
-                                //alert(totalWinpointSum+"-"+winAmount);
-                                //totalWinpointSum=totalWinpointSum_distributor-winAmount;
                                 fetchLiveGameValues();
                             },
                             error: function(xhr) {
