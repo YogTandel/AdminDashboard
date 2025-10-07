@@ -117,7 +117,7 @@
                         <div class="col-12">
                             <div class="card shadow-sm border-radius-xl mb-4">
                                 <div class="card-body py-4 px-4">
-                                    <div class="d-flex flex-wrap gap-4 align-items-end gap-5">
+                                    <div class="d-flex flex-wrap align-items-end gap-5">
                                         <div class="d-flex flex-column" style="min-width: 290px;">
                                             <label>Distributor</label>
                                             <div class="input-group">
