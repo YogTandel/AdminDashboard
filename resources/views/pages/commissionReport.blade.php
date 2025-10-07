@@ -64,7 +64,7 @@
                                         </div>
 
                                         <!-- NEW Minus Value -->
-                                        <div class="col-md-12 mt-2">
+                                        {{-- <div class="col-md-12 mt-2">
                                             <label class="form-label">Minus (₹)</label>
                                             <div class="input-group">
                                                 <span class="input-group-text"
@@ -73,7 +73,7 @@
                                                     value="-{{ number_format($totalWinpointSum * 0.01, 2) }}"
                                                     style="background-color: #e9ecef; pointer-events: none;">
                                             </div>
-                                        </div>
+                                        </div> --}}
                                     </div>
                                 </form>
                             </div>
@@ -117,7 +117,7 @@
                                         </div>
 
                                         <!-- NEW Minus Value -->
-                                        <div class="col-md-12 mt-2">
+                                        {{-- <div class="col-md-12 mt-2">
                                             <label class="form-label">Minus (₹)</label>
                                             <div class="input-group">
                                                 <span class="input-group-text"
@@ -126,7 +126,7 @@
                                                     value="-{{ number_format($totalWinpointSum * 0.05, 2) }}"
                                                     style="background-color: #e9ecef; pointer-events: none;">
                                             </div>
-                                        </div>
+                                        </div> --}}
                                     </div>
                                 </form>
                             </div>
