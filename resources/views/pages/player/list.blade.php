@@ -334,34 +334,28 @@
                                                     </div>
 
                                                     {{-- Mobile: collapse into 3-dots dropdown --}}
-                                                    <div class="d-md-none">
-                                                        <div>
-                                                            <!-- Toggle Status button OUTSIDE dropdown -->
-                                                            <a class="btn btn-sm toggle-status" href="javascript:;"
-                                                                data-player-id="{{ $player->id }}">
-                                                                <i
-                                                                    class="fas {{ $player->status === 'Active' ? 'fa-ban text-danger' : 'fa-check text-success' }} me-1"></i>
-                                                            </a>
+                                                    <div class="d-md-none d-flex align-items-center gap-2">
+                                                        <!-- Toggle Status button -->
+                                                        <a class="btn btn-sm toggle-status" href="javascript:;"
+                                                            data-player-id="{{ $player->id }}">
+                                                            <i
+                                                                class="fas {{ $player->status === 'Active' ? 'fa-ban text-danger' : 'fa-check text-success' }} me-1"></i>
+                                                        </a>
 
-                                                            {{-- Delete (admin only) --}}
-                                                            @if (Auth::guard('admin')->check())
-                                                                <li>
-                                                                    <form
-                                                                        action="{{ route('player.delete', $player->id) }}"
-                                                                        method="post"
-                                                                        onsubmit="return confirm('Are you sure?')">
-                                                                        @csrf @method('DELETE')
-                                                                        <button class="btn btn-sm text-danger"
-                                                                            type="submit">
-                                                                            <i class="fas fa-trash me-1"></i>
-                                                                        </button>
-                                                                    </form>
-                                                                </li>
-                                                            @endif
-                                                        </div>
+                                                        <!-- Delete (admin only) -->
+                                                        @if (Auth::guard('admin')->check())
+                                                            <form action="{{ route('player.delete', $player->id) }}"
+                                                                method="post" onsubmit="return confirm('Are you sure?')"
+                                                                class="m-0 p-0">
+                                                                @csrf @method('DELETE')
+                                                                <button class="btn btn-sm text-danger" type="submit">
+                                                                    <i class="fas fa-trash me-1"></i>
+                                                                </button>
+                                                            </form>
+                                                        @endif
 
                                                         <!-- Dropdown for other actions -->
-                                                        <div class="dropdown d-inline">
+                                                        <div class="dropdown">
                                                             <button class="btn btn-sm" type="button"
                                                                 id="dropdownMenu{{ $player->id }}"
                                                                 data-bs-toggle="dropdown" aria-expanded="false">
@@ -370,7 +364,6 @@
 
                                                             <ul class="dropdown-menu dropdown-menu-end"
                                                                 aria-labelledby="dropdownMenu{{ $player->id }}">
-
                                                                 {{-- Transfer (agent only) --}}
                                                                 @if (auth()->check() && auth()->user()->role === 'agent')
                                                                     <li>
@@ -413,6 +406,7 @@
                                                             </ul>
                                                         </div>
                                                     </div>
+
                                                 </td>
                                             </tr>
                                         @endforeach
