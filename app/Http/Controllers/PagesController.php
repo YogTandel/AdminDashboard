@@ -1480,13 +1480,8 @@ class PagesController extends Controller
         $totalWinpointSum = 0;
 
         foreach ($agents as $agent) {
-            // $releaseDate      = $agent->release_commission_date ?? null;
-            // $releaseTimestamp = $releaseDate ? Carbon::parse($releaseDate)->timestamp : null;
             $releaseTimestamp = $agent->release_commission_date;
 
-            // $players = User::where('role', 'player')
-            //     ->where('agent_id', new ObjectId($agent->_id))
-            //     ->get(['gameHistory']);
             $players = User::raw(function ($collection) use ($agent) {
                 return $collection->aggregate([
                     [
@@ -1495,40 +1490,8 @@ class PagesController extends Controller
                             'agent_id' => new ObjectId($agent->_id),
                         ],
                     ],
-                    /* [
-                        '$project' => [
-                            'gameHistory' => [
-                                '$filter' => [
-                                    'input' => '$gameHistory',
-                                    'as'    => 'history',
-                                    'cond'  => [
-                                        '$and' => [
-                                            ['$eq' => ['$$history.winpoint', 0]],
-                                        ],
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ], */
                 ]);
             });
-
-            // print_r($players);
-            // exit();
-            // foreach ($players as $player) {
-            //     foreach ($player->gameHistory ?? [] as $game) {
-            //         //echo ''. $game->id .''. $game->name ;
-            //         $gameTime = strtotime(str_replace('/', '-', $game['stime']));
-            //         if (! $releaseTimestamp || $gameTime > $releaseTimestamp) {
-            //             //  echo 'hello';
-            //             //$totalWinpointSum += $game['winpoint'] ?? 0;
-            //             foreach ($game['betValues'] ?? [] as $betVal) {
-            //                 $totalWinpointSum += $betVal;
-            //             }
-
-            //         }
-            //     }
-            // }
 
             foreach ($players as $player) {
                 foreach ($player->gameHistory ?? [] as $game) {
@@ -1542,13 +1505,10 @@ class PagesController extends Controller
                 }
             }
         }
-        // echo $totalWinpointSum;
-        // exit(0);
 
         return view('pages.commissionReport', [
             'totalWinpointSum' => $totalWinpointSum,
         ]);
-
     }
 
     public function getDistributorDetails($id)
