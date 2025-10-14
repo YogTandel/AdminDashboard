@@ -128,7 +128,7 @@
                 @elseauth('web')
                     @if (auth()->user()->role === 'distributor')
 
-                        <!-- Card 1 -->
+                       {{--  <!-- Card 1 -->
                         <div class="col-12 col-sm-6 col-md-4">
                             <div class="p-3 bg-primary rounded">
                                 <p class="text-white font-weight-bolder mb-3">Total Distributor</p>
@@ -174,7 +174,7 @@
                                 <p class="text-white font-weight-bolder mb-3">Total Deactive Player</p>
                                 <h5 class="text-white text-sm">{{ $deactivePlayers }}</h5>
                             </div>
-                        </div>
+                        </div> --}}
 
                         <div class="col-12 col-sm-6 col-md-3">
                             <div class="p-3 bg-primary rounded">
@@ -184,7 +184,7 @@
                         </div>
                     @elseif(auth()->user()->role === 'agent')
                         <!-- Card 1 -->
-                        <div class="col-12 col-sm-6 col-md-4">
+                        {{-- <div class="col-12 col-sm-6 col-md-4">
                             <div class="p-3 bg-primary rounded">
                                 <p class="text-white font-weight-bolder mb-3">Total Agent</p>
                                 <h5 class="text-white text-sm">{{ $totalAgents }}</h5>
@@ -229,7 +229,7 @@
                                 <p class="text-white font-weight-bolder mb-3">Total Deactive Player</p>
                                 <h5 class="text-white text-sm">{{ $deactivePlayers }}</h5>
                             </div>
-                        </div>
+                        </div> --}}
 
                         <div class="col-12 col-sm-6 col-md-3">
                             <div class="p-3 bg-primary rounded">
