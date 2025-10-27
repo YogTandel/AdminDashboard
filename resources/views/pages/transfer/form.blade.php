@@ -26,14 +26,22 @@
                                         echo "Transferring to agent: {$recipientName}";
                                     }
                                 } elseif ($user->role === 'agent') {
-                                    $recipient = \App\Models\User::where('status', 'Active')->first();
-                                    if ($recipient) {
-                                        $canTransfer = true;
-                                        $recipientId = $recipient->id;
-                                        $recipientName = $recipient->player ?? 'N/A';
-                                        echo "Transferring to distributor: {$recipientName}";
+                                    // Get the distributor linked to this agent (from distributor_id)
+                                    if (isset($user->distributor_id)) {
+                                        $recipient = \App\Models\User::where('_id', $user->distributor_id)
+                                            ->where('status', 'Active')
+                                            ->first();
+
+                                        if ($recipient) {
+                                            $canTransfer = true;
+                                            $recipientId = $recipient->_id; // Use _id since it's MongoDB
+                                            $recipientName = $recipient->player ?? 'N/A';
+                                            echo "Transferring to distributor: {$recipientName}";
+                                        } else {
+                                            echo 'Transferring to distributor: N/A';
+                                        }
                                     } else {
-                                        echo 'Transferring to distributor: N/A';
+                                        echo 'No distributor assigned to this agent.';
                                     }
                                 } elseif ($user->role === 'distributor') {
                                     $recipient = \App\Models\Admin::where('status', 'Active')->first();
