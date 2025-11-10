@@ -9,7 +9,7 @@
     </div>
 
     <div class="container py-4">
-        
+
 
         <div class="d-flex justify-content-between align-items-center flex-wrap mb-2">
             <h4 class="mb-0 ms-4 mt-3 text-bolder">Release History</h4>
@@ -22,7 +22,10 @@
                         <select name="per_page" id="per_page" class="form-select border-0 ps-3 pe-4"
                             onchange="this.form.submit()" style="min-width: 60px;">
                             <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
-                            <option value="15" {{ request('per_page') == 15 ? 'selected' : '' }}>15</option>
+                            <option value="20" {{ request('per_page') == 20 ? 'selected' : '' }}>20</option>
+                            <option value="30" {{ request('per_page') == 30 ? 'selected' : '' }}>30</option>
+                            <option value="40" {{ request('per_page') == 40 ? 'selected' : '' }}>40</option>
+                            <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
                         </select>
                     </div>
                     @if (request()->has('search'))

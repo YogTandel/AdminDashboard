@@ -43,12 +43,21 @@
 
                                 <div class="input-group input-group-outline border-radius-lg shadow-sm">
                                     <select name="per_page" id="per_page" class="form-select border-0 ps-3 pe-4"
-                                        style="min-width: 60px;">
+                                            style="min-width: 60px;">
                                         <option value="10"
                                             {{ (int) request()->query('per_page', 10) === 10 ? 'selected' : '' }}>10
                                         </option>
-                                        <option value="15"
-                                            {{ (int) request()->query('per_page', 10) === 15 ? 'selected' : '' }}>15
+                                        <option value="20"
+                                            {{ (int) request()->query('per_page', 10) === 20 ? 'selected' : '' }}>20
+                                        </option>
+                                        <option value="30"
+                                            {{ (int) request()->query('per_page', 10) === 30 ? 'selected' : '' }}>30
+                                        </option>
+                                        <option value="40"
+                                            {{ (int) request()->query('per_page', 10) === 40 ? 'selected' : '' }}>40
+                                        </option>
+                                        <option value="50"
+                                            {{ (int) request()->query('per_page', 50) === 20 ? 'selected' : '' }}>50
                                         </option>
                                     </select>
                                 </div>
@@ -69,9 +78,9 @@
                                     </span>
                                     <label class="form-label"></label>
                                     <input type="search" name="search" class="form-control border-0"
-                                        value="{{ request('search') }}"
-                                        onfocus="this.parentElement.classList.add('is-focused')"
-                                        onfocusout="this.parentElement.classList.remove('is-focused')">
+                                           value="{{ request('search') }}"
+                                           onfocus="this.parentElement.classList.add('is-focused')"
+                                           onfocusout="this.parentElement.classList.remove('is-focused')">
                                 </div>
 
                                 <button type="submit" class="btn bg-gradient-warning rounded-pill shadow-sm mb-0">
@@ -80,13 +89,13 @@
 
                                 @if (request()->has('search') && request('search') != '')
                                     <a href="{{ route('agentlist.show') }}"
-                                        class="btn btn-secondary btn-sm px-3 mt-3">Reset</a>
+                                       class="btn btn-secondary btn-sm px-3 mt-3">Reset</a>
                                 @endif
                             </form>
                             @if (auth('admin')->check() || auth()->user()->role === 'distributor')
                                 <!-- Add Agent -->
                                 <button type="button" class="btn bg-primary mb-0 text-white" data-bs-toggle="modal"
-                                    data-bs-target="#exampleModalAddAgent">
+                                        data-bs-target="#exampleModalAddAgent">
                                     <i class="fas fa-plus"></i>&nbsp;&nbsp;Add Agent
                                 </button>
                             @endif
@@ -96,30 +105,32 @@
 
                     <!-- Second Row: Date Filter -->
                     <form action="{{ route('agentlist.show') }}" method="GET"
-                        class="d-flex justify-content-end align-items-center flex-wrap gap-2 mt-2 me-3">
+                          class="d-flex justify-content-end align-items-center flex-wrap gap-2 mt-2 me-3">
                         <!-- Date Range -->
                         <select name="date_range" class="form-select form-select-sm" onchange="this.form.submit()"
-                            style="width: 150px;">
+                                style="width: 150px;">
                             <option value="">Date Range</option>
-                            <option value="2_days_ago" {{ request('date_range') == '2_days_ago' ? 'selected' : '' }}>Last 2
+                            <option value="2_days_ago" {{ request('date_range') == '2_days_ago' ? 'selected' : '' }}>
+                                Last 2
                                 Days
                             </option>
                             <option value="this_week" {{ request('date_range') == 'this_week' ? 'selected' : '' }}>Last
                                 Week
                             </option>
-                            <option value="last_month" {{ request('date_range') == 'last_month' ? 'selected' : '' }}>Last
+                            <option value="last_month" {{ request('date_range') == 'last_month' ? 'selected' : '' }}>
+                                Last
                                 Month
                             </option>
                         </select>
 
                         <!-- From Date -->
                         <input type="date" name="from_date" class="form-control form-control-sm"
-                            value="{{ request('from_date') }}" style="width: 150px;">
+                               value="{{ request('from_date') }}" style="width: 150px;">
 
                         <!-- To Date -->
                         <span class="text-sm mx-1">to</span>
                         <input type="date" name="to_date" class="form-control form-control-sm"
-                            value="{{ request('to_date') }}" style="width: 150px;">
+                               value="{{ request('to_date') }}" style="width: 150px;">
 
                         <!-- Search Hidden -->
                         @if (request()->has('search'))
@@ -142,166 +153,167 @@
                         <div class="table-responsive p-0">
                             <table class="table align-items-center mb-0">
                                 <thead>
-                                    <tr>
-                                        <th
-                                            class="text-uppercase text-secondary text-xxs font-weight-bolder opacity- text-center">
-                                            No
-                                        </th>
-                                        <th
-                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                            Name
-                                        </th>
-                                        <th
-                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                                            Password
-                                        </th>
-                                        <th
-                                            class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2 text-center">
-                                            Role
-                                        </th>
-                                        <th
-                                            class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">
-                                            Distributor
-                                        </th>
-                                        <th
-                                            class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">
-                                            Status
-                                        </th>
-                                        <th
-                                            class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">
-                                            Balance
-                                        </th>
-                                        <th
-                                            class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">
-                                            Created At
-                                        </th>
-                                        <th
-                                            class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">
-                                            Action
-                                        </th>
-                                    </tr>
+                                <tr>
+                                    <th
+                                        class="text-uppercase text-secondary text-xxs font-weight-bolder opacity- text-center">
+                                        No
+                                    </th>
+                                    <th
+                                        class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        Name
+                                    </th>
+                                    <th
+                                        class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                        Password
+                                    </th>
+                                    <th
+                                        class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2 text-center">
+                                        Role
+                                    </th>
+                                    <th
+                                        class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">
+                                        Distributor
+                                    </th>
+                                    <th
+                                        class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">
+                                        Status
+                                    </th>
+                                    <th
+                                        class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">
+                                        Balance
+                                    </th>
+                                    <th
+                                        class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">
+                                        Created At
+                                    </th>
+                                    <th
+                                        class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">
+                                        Action
+                                    </th>
+                                </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse ($agents as $index => $agent)
-                                        <tr>
-                                            <td class="text-center">
-                                                <p class="text-xs font-weight-bold mb-0 text-dark">{{ $index + 1 }}</p>
-                                            </td>
-                                            <td class="text-center">
-                                                <p class="text-xs font-weight-bold mb-0 text-dark">{{ $agent->player }}
-                                                </p>
-                                            </td>
-                                            <td class="text-center">
-                                                <p class="text-xs font-weight-bold mb-0 text-dark me-4">
-                                                    {{ $agent->original_password }}</p>
-                                            </td>
-                                            <td class="text-center">
-                                                <p class="text-xs font-weight-bold mb-0 text-dark">
-                                                    {{ ucfirst($agent->role) }}</p>
-                                            </td>
-                                            <td class="text-center">
-                                                <p class="text-xs font-weight-bold mb-0 text-dark">
-                                                    {{ $agent->distributor }}</p>
-                                            </td>
-                                            <td class="text-center text-dark">
+                                @forelse ($agents as $index => $agent)
+                                    <tr>
+                                        <td class="text-center">
+                                            <p class="text-xs font-weight-bold mb-0 text-dark">{{ $index + 1 }}</p>
+                                        </td>
+                                        <td class="text-center">
+                                            <p class="text-xs font-weight-bold mb-0 text-dark">{{ $agent->player }}
+                                            </p>
+                                        </td>
+                                        <td class="text-center">
+                                            <p class="text-xs font-weight-bold mb-0 text-dark me-4">
+                                                {{ $agent->original_password }}</p>
+                                        </td>
+                                        <td class="text-center">
+                                            <p class="text-xs font-weight-bold mb-0 text-dark">
+                                                {{ ucfirst($agent->role) }}</p>
+                                        </td>
+                                        <td class="text-center">
+                                            <p class="text-xs font-weight-bold mb-0 text-dark">
+                                                {{ $agent->distributor }}</p>
+                                        </td>
+                                        <td class="text-center text-dark">
                                                 <span id="status-badge-{{ $agent->id }}"
-                                                    class="badge {{ $agent->status === 'Active' ? 'bg-gradient-success' : 'bg-gradient-danger' }}">
+                                                      class="badge {{ $agent->status === 'Active' ? 'bg-gradient-success' : 'bg-gradient-danger' }}">
                                                     {{ strtoupper($agent->status) }}
                                                 </span>
-                                            </td>
-                                            <td class="text-center">
-                                                <p class="text-xs font-weight-bold mb-0 text-dark">{{ $agent->endpoint }}
-                                                </p>
-                                            </td>
-                                            <td class="text-center text-dark">
+                                        </td>
+                                        <td class="text-center">
+                                            <p class="text-xs font-weight-bold mb-0 text-dark">{{ $agent->endpoint }}
+                                            </p>
+                                        </td>
+                                        <td class="text-center text-dark">
                                                 <span class="text-secondary text-xs font-weight-bold">
                                                     {{ \Carbon\Carbon::createFromFormat('YmdHis', $agent->DateOfCreation)->setTimezone('Asia/Kolkata')->format('d M Y, H:i') }}
                                                 </span>
-                                            </td>
-                                            <td class="text-center">
-                                                <div class="d-flex justify-content-center gap-2 align-items-center">
-                                                    <!-- Radio Button -->
-                                                    @php $admin = Auth::guard('admin')->user(); @endphp
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="d-flex justify-content-center gap-2 align-items-center">
+                                                <!-- Radio Button -->
+                                                @php $admin = Auth::guard('admin')->user(); @endphp
 
-                                                    @if ($admin)
-                                                        <div class="form-check form-switch">
-                                                            <input class="form-check-input agent-radio" type="radio"
-                                                                name="agent_select" id="agentSwitch{{ $agent->id }}"
-                                                                value="{{ $agent->id }}"
-                                                                data-agent-id="{{ $agent->id }}"
-                                                                data-agent-name="{{ $agent->player }}"
-                                                                data-agent-balance="{{ $agent->balance }}"
-                                                                data-agent-distributor="{{ $agent->distributor }}"
-                                                                data-agent-endpoint="{{ $agent->endpoint }}"
-                                                                data-bs-toggle="tooltip"
-                                                                title="Select agent {{ $agent->player }}">
-                                                        </div>
-                                                    @endif
+                                                @if ($admin)
+                                                    <div class="form-check form-switch">
+                                                        <input class="form-check-input agent-radio" type="radio"
+                                                               name="agent_select" id="agentSwitch{{ $agent->id }}"
+                                                               value="{{ $agent->id }}"
+                                                               data-agent-id="{{ $agent->id }}"
+                                                               data-agent-name="{{ $agent->player }}"
+                                                               data-agent-balance="{{ $agent->balance }}"
+                                                               data-agent-distributor="{{ $agent->distributor }}"
+                                                               data-agent-endpoint="{{ $agent->endpoint }}"
+                                                               data-bs-toggle="tooltip"
+                                                               title="Select agent {{ $agent->player }}">
+                                                    </div>
+                                                @endif
 
-                                                    @if (auth()->check() && auth()->user()->role === 'distributor')
-                                                        <a href="javascript:;"
-                                                            class="text-success font-weight-bold text-xs me-2"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#refillModal1{{ $agent->id }}">
-                                                            <i class="fa-solid fa-indian-rupee-sign"></i>
-                                                        </a>
-                                                    @endif
-                                                    @foreach ($agents as $agent_data)
-                                                        @include('pages.agent.refil1', [
-                                                            'user' => $agent_data,
-                                                        ])
-                                                    @endforeach
-
-                                                    <!-- Copy -->
-                                                    <a href="javascript:void(0);"
-                                                        onclick="copyToClipboard('{{ $agent->player }} - {{ $agent->original_password }}')"
-                                                        class="text-secondary font-weight-bold text-xs ms-2 me-2"
-                                                        data-bs-toggle="tooltip" title="Copy agent">
-                                                        <i class="fas fa-copy" style="cursor: pointer;"></i>
+                                                @if (auth()->check() && auth()->user()->role === 'distributor')
+                                                    <a href="javascript:;"
+                                                       class="text-success font-weight-bold text-xs me-2"
+                                                       data-bs-toggle="modal"
+                                                       data-bs-target="#refillModal1{{ $agent->id }}">
+                                                        <i class="fa-solid fa-indian-rupee-sign"></i>
                                                     </a>
+                                                @endif
+                                                @foreach ($agents as $agent_data)
+                                                    @include('pages.agent.refil1', [
+                                                        'user' => $agent_data,
+                                                    ])
+                                                @endforeach
 
-                                                    <!-- Edit -->
-                                                    @if (auth()->check() && auth()->user()->role === 'distributor')
-                                                    @else
-                                                        <a href="javascript:;"
-                                                            class="text-secondary font-weight-bold text-xs me-2"
-                                                            title="Edit Agent" data-bs-toggle="modal"
-                                                            data-bs-target="#editModal{{ $agent->id }}">
-                                                            <i class="fas fa-edit"></i>
-                                                        </a>
-                                                        @include('pages.agent.edit')
+                                                <!-- Copy -->
+                                                <a href="javascript:void(0);"
+                                                   onclick="copyToClipboard('{{ $agent->player }} - {{ $agent->original_password }}')"
+                                                   class="text-secondary font-weight-bold text-xs ms-2 me-2"
+                                                   data-bs-toggle="tooltip" title="Copy agent">
+                                                    <i class="fas fa-copy" style="cursor: pointer;"></i>
+                                                </a>
 
-                                                        <!-- Delete -->
-                                                        <form action="{{ route('agent.delete', $agent->id) }}"
-                                                            method="post" style="display:flex;">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button class="text-danger font-weight-bold text-xs me-2"
+                                                <!-- Edit -->
+                                                @if (auth()->check() && auth()->user()->role === 'distributor')
+                                                @else
+                                                    <a href="javascript:;"
+                                                       class="text-secondary font-weight-bold text-xs me-2"
+                                                       title="Edit Agent" data-bs-toggle="modal"
+                                                       data-bs-target="#editModal{{ $agent->id }}">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                    @include('pages.agent.edit')
+
+                                                    <!-- Delete -->
+                                                    <form action="{{ route('agent.delete', $agent->id) }}"
+                                                          method="post" style="display:flex;">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button class="text-danger font-weight-bold text-xs me-2"
                                                                 onclick="return confirm('Are you sure?')"
                                                                 data-bs-toggle="tooltip" title="Delete Agent"
                                                                 style="background: none; border: none; padding: 0;">
-                                                                <i class="fas fa-trash"></i>
-                                                            </button>
-                                                        </form>
-                                                    @endif
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                @endif
 
-                                                    <!-- Block/Unblock -->
-                                                    <a href="javascript:;" class="font-weight-bold text-xs toggle-status"
-                                                        data-bs-toggle="tooltip"
-                                                        title="{{ $agent->status === 'Active' ? 'Block Agent' : 'Unblock Agent' }}"
-                                                        data-agent-id="{{ $agent->id }}">
-                                                        <i
-                                                            class="fas {{ $agent->status === 'Active' ? 'fa-ban text-danger' : 'fa-check text-success' }}"></i>
-                                                    </a>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="11" class="text-center text-secondary text-sm">No agents data
-                                                found.</td>
-                                        </tr>
-                                    @endforelse
+                                                <!-- Block/Unblock -->
+                                                <a href="javascript:;" class="font-weight-bold text-xs toggle-status"
+                                                   data-bs-toggle="tooltip"
+                                                   title="{{ $agent->status === 'Active' ? 'Block Agent' : 'Unblock Agent' }}"
+                                                   data-agent-id="{{ $agent->id }}">
+                                                    <i
+                                                        class="fas {{ $agent->status === 'Active' ? 'fa-ban text-danger' : 'fa-check text-success' }}"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="11" class="text-center text-secondary text-sm">No agents data
+                                            found.
+                                        </td>
+                                    </tr>
+                                @endforelse
                                 </tbody>
                             </table>
                         </div>
@@ -313,26 +325,26 @@
                 </div>
             </div>
 
-            <x-footer />
+            <x-footer/>
         </div>
     </div>
 
     <script>
         // Show loader when page starts loading
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('loader').style.display = 'flex';
         });
 
         // Hide loader when page is fully loaded
-        window.addEventListener('load', function() {
+        window.addEventListener('load', function () {
             document.getElementById('loader').style.display = 'none';
         });
 
         // Password copy functionality
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const form = document.querySelector('form[action="{{ route('agent.add') }}"]');
             if (form) {
-                form.addEventListener('submit', function() {
+                form.addEventListener('submit', function () {
                     const password = form.querySelector('input[name="password"]');
                     const originalPassword = form.querySelector('input[name="original_password"]');
                     if (password && originalPassword) {
@@ -343,22 +355,22 @@
         });
 
         // Toggle status functionality
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             document.querySelectorAll('.toggle-status').forEach(btn => {
-                btn.addEventListener('click', function() {
+                btn.addEventListener('click', function () {
                     const agentId = this.dataset.agentId;
                     const icon = this.querySelector('i');
                     const statusBadge = document.getElementById(`status-badge-${agentId}`);
                     const tooltipTitle = this;
 
                     fetch(`/agent/toggle-status/${agentId}`, {
-                            method: 'POST',
-                            headers: {
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                'Accept': 'application/json',
-                                'Content-Type': 'application/json',
-                            }
-                        })
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json',
+                        }
+                    })
                         .then(response => response.json())
                         .then(data => {
                             if (data.status === 'Active') {
@@ -386,7 +398,7 @@
         });
 
         // Agent selection
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             let selectedAgent = JSON.parse(sessionStorage.getItem('selectedAgent')) || null;
             const radioButtons = document.querySelectorAll('.agent-radio');
             const sidebarContent = document.getElementById('sidebar-setting-content');
@@ -399,7 +411,7 @@
 
             // Handle radio button clicks
             radioButtons.forEach(radio => {
-                radio.addEventListener('click', async function() {
+                radio.addEventListener('click', async function () {
                     const clickedAgentId = this.getAttribute('data-agent-id');
 
                     // If deselecting current agent
@@ -525,7 +537,7 @@
         });
 
         // Transfer functionality
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const transferLink = document.getElementById('transfer-link');
 
             // Update transfer link when agent is selected
@@ -545,7 +557,7 @@
             updateTransferLink();
 
             // Update when radio buttons are clicked
-            document.addEventListener('click', function(e) {
+            document.addEventListener('click', function (e) {
                 if (e.target.classList.contains('agent-radio')) {
                     setTimeout(updateTransferLink, 100);
                 }
@@ -591,12 +603,12 @@
     </script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const form = document.getElementById('perPageForm');
             const select = document.getElementById('per_page');
 
             if (select) {
-                select.addEventListener('change', function() {
+                select.addEventListener('change', function () {
                     // Update the force_per_page hidden field
                     const hiddenField = form.querySelector('input[name="force_per_page"]');
                     if (hiddenField) {
