@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\Admin;
@@ -18,7 +19,7 @@ class PagesController extends Controller
 {
     public function agentList(Request $request)
     {
-        $perPage = request()->get("per_page", 10);
+        $perPage = $request->get("per_page", 10);
         $query = User::query();
 
         // Get logged-in user
@@ -26,90 +27,64 @@ class PagesController extends Controller
 
         // If user is distributor, show only their agents
         if ($authUser->role === "distributor") {
-            $query = $query->where(
-                "distributor_id",
-                new ObjectId($authUser->_id),
-            ); // Use _id for MongoDB
+            $query->where("distributor_id", new ObjectId($authUser->_id));
         }
 
         // Search filter
-        if (request()->has("search")) {
-            $query = $query->where(
-                "player",
-                "like",
-                "%" . request()->search . "%",
-            );
+        if ($request->filled("search")) {
+            $query->where("player", "like", "%" . $request->search . "%");
+        }
+
+        // Distributor filter
+        if ($request->filled("distributor_name")) {
+            $query->where("distributor", "like", "%" . $request->distributor_name . "%");
         }
 
         // Date range filter
-        $from = request()->input("from_date");
-        $to = request()->input("to_date");
-        $dateRange = request()->input("date_range");
+        $from = $request->input("from_date");
+        $to = $request->input("to_date");
+        $dateRange = $request->input("date_range");
 
         if ($dateRange) {
             $today = Carbon::today();
 
             if ($dateRange === "2_days_ago") {
-                $from = $today
-                    ->copy()
-                    ->subDays(2)
-                    ->startOfDay()
-                    ->format("YmdHis");
+                $from = $today->copy()->subDays(2)->startOfDay()->format("YmdHis");
                 $to = $today->copy()->subDay()->endOfDay()->format("YmdHis");
             } elseif ($dateRange === "last_week") {
-                $from = $today
-                    ->copy()
-                    ->subWeek()
-                    ->startOfWeek()
-                    ->format("YmdHis");
+                $from = $today->copy()->subWeek()->startOfWeek()->format("YmdHis");
                 $to = $today->copy()->subWeek()->endOfWeek()->format("YmdHis");
             } elseif ($dateRange === "last_month") {
-                $from = $today
-                    ->copy()
-                    ->subMonth()
-                    ->startOfMonth()
-                    ->format("YmdHis");
-                $to = $today
-                    ->copy()
-                    ->subMonth()
-                    ->endOfMonth()
-                    ->format("YmdHis");
+                $from = $today->copy()->subMonth()->startOfMonth()->format("YmdHis");
+                $to = $today->copy()->subMonth()->endOfMonth()->format("YmdHis");
             }
         } elseif ($from || $to) {
-            // Handle manual date inputs
             if ($from) {
-                $from = Carbon::createFromFormat("Y-m-d", $from)
-                    ->startOfDay()
-                    ->format("YmdHis");
+                $from = Carbon::createFromFormat("Y-m-d", $from)->startOfDay()->format("YmdHis");
             }
             if ($to) {
-                $to = Carbon::createFromFormat("Y-m-d", $to)
-                    ->endOfDay()
-                    ->format("YmdHis");
+                $to = Carbon::createFromFormat("Y-m-d", $to)->endOfDay()->format("YmdHis");
             }
         }
 
         if ($from) {
-            $query->whereDate("created_at", ">=", $from);
+            $query->where("DateOfCreation", ">=", $from);
         }
 
         if ($to) {
-            $query->whereDate("created_at", "<=", $to);
+            $query->where("DateOfCreation", "<=", $to);
         }
 
         // Fetch agents
         $agents = $query
             ->where("role", "agent")
             ->paginate($perPage)
-            ->appends(request()->query());
+            ->appends($request->query());
 
         // Fetch all distributors for dropdown
         $distributors = User::where("role", "distributor")->get();
 
-        return view(
-            "pages.agent.list",
-            compact("agents", "perPage", "distributors", "authUser"),
-        );
+        return view("pages.agent.list", compact("agents", "perPage", "distributors", "authUser"));
     }
 
     public function distributor()
@@ -172,10 +147,10 @@ class PagesController extends Controller
 
         // Apply date filters
         if ($from) {
-            $query->where("DateOfCreation", ">=", (float) $from);
+            $query->where("DateOfCreation", ">=", (float)$from);
         }
         if ($to) {
-            $query->where("DateOfCreation", "<=", (float) $to);
+            $query->where("DateOfCreation", "<=", (float)$to);
         }
 
         $distributors = $query
@@ -277,10 +252,10 @@ class PagesController extends Controller
         }
 
         if ($from) {
-            $query->where("DateOfCreation", ">=", (float) $from);
+            $query->where("DateOfCreation", ">=", (float)$from);
         }
         if ($to) {
-            $query->where("DateOfCreation", "<=", (float) $to);
+            $query->where("DateOfCreation", "<=", (float)$to);
         }
 
         // Role-based filtering for web guard users
@@ -843,8 +818,8 @@ class PagesController extends Controller
         return back()->with(
             "success",
             "₹" .
-                $points .
-                " transferred from Admin Balance to Earning successfully.",
+            $points .
+            " transferred from Admin Balance to Earning successfully.",
         );
     }
 
@@ -892,7 +867,7 @@ class PagesController extends Controller
             }
 
             // Ensure we have exactly 10 items
-            $last10data = array_slice((array) $last10data, 0, 10);
+            $last10data = array_slice((array)$last10data, 0, 10);
             while (count($last10data) < 10) {
                 $last10data[] = "--";
             }
@@ -909,6 +884,7 @@ class PagesController extends Controller
             ]);
         }
     }
+
     public function getBetTotals()
     {
         $bets = DB::table("bets")->get();
@@ -916,8 +892,8 @@ class PagesController extends Controller
 
         foreach ($bets as $bet) {
             foreach ($bet->bet ?? [] as $key => $value) {
-                $index = (int) $key;
-                $totals[$index] += (int) $value;
+                $index = (int)$key;
+                $totals[$index] += (int)$value;
             }
         }
 
@@ -951,6 +927,7 @@ class PagesController extends Controller
 
         return response()->json(["players" => $result]);
     }
+
     public function exportGameHistory($playerId)
     {
         // Find player with role validation
@@ -1232,7 +1209,7 @@ class PagesController extends Controller
             )->get(["_id"]);
             $userIds = $matchedUsers
                 ->pluck("_id")
-                ->map(fn($id) => (string) $id)
+                ->map(fn($id) => (string)$id)
                 ->toArray();
 
             $query->where(function ($q) use ($searchTerm, $userIds) {
@@ -1320,7 +1297,7 @@ class PagesController extends Controller
 
         // Convert MongoDB IDs to strings for array keys
         $allAdmins = Admin::all()->mapWithKeys(function ($admin) {
-            return [(string) $admin->_id => $admin];
+            return [(string)$admin->_id => $admin];
         });
 
         $userIds = $transfers
@@ -1328,13 +1305,13 @@ class PagesController extends Controller
             ->merge($transfers->pluck("transfer_to"))
             ->unique()
             ->map(function ($id) {
-                return (string) $id;
+                return (string)$id;
             });
 
         $users = User::whereIn("_id", $userIds)
             ->get()
             ->mapWithKeys(function ($user) {
-                return [(string) $user->_id => $user];
+                return [(string)$user->_id => $user];
             });
 
         /* dd($users);
@@ -1342,8 +1319,8 @@ class PagesController extends Controller
 
         foreach ($transfers as $transfer) {
             // Convert transfer IDs to strings for comparison
-            $transferBy = (string) $transfer->transfer_by;
-            $transferTo = (string) $transfer->transfer_to;
+            $transferBy = (string)$transfer->transfer_by;
+            $transferTo = (string)$transfer->transfer_to;
 
             // Set agent name
             $transfer->agent_name =
@@ -1375,7 +1352,7 @@ class PagesController extends Controller
 
             $agents = $agents->map(function ($agent) {
                 return [
-                    "_id" => (string) $agent->_id,
+                    "_id" => (string)$agent->_id,
                     "player" => $agent->player,
                 ];
             });
@@ -1472,6 +1449,7 @@ class PagesController extends Controller
             ->back()
             ->with("success", "Balance transferred successfully.");
     }
+
     public function transferToAgent(Request $request)
     {
         $request->validate([
@@ -1594,7 +1572,7 @@ class PagesController extends Controller
             )->get(["_id"]);
             $userIds = $matchedUsers
                 ->pluck("_id")
-                ->map(fn($id) => (string) $id)
+                ->map(fn($id) => (string)$id)
                 ->toArray();
 
             $matchedAdmins = Admin::where(
@@ -1604,7 +1582,7 @@ class PagesController extends Controller
             )->get(["_id"]);
             $adminIds = $matchedAdmins
                 ->pluck("_id")
-                ->map(fn($id) => (string) $id)
+                ->map(fn($id) => (string)$id)
                 ->toArray();
 
             $allMatchedIds = array_merge($userIds, $adminIds);
@@ -1782,7 +1760,7 @@ class PagesController extends Controller
             // $releaseDate = $distributor->release_commission_date ?? null;
 
             return [
-                "id" => (string) $distributor->_id,
+                "id" => (string)$distributor->_id,
                 "name" => $distributor->player,
                 "endpoint" => $distributor->endpoint ?? 0,
                 // 'release_date' => $releaseDate,
@@ -1889,7 +1867,7 @@ class PagesController extends Controller
             }
 
             $agent_value[] = [
-                "id" => (string) $agent->_id,
+                "id" => (string)$agent->_id,
                 "name" => $agent->player,
                 "date" => optional($agent->release_commission_date)->format(
                     "Y-m-d",
@@ -1920,9 +1898,9 @@ class PagesController extends Controller
         $transferTo = $request->transfer_to;
         $distributor_id = $request->distributor_id;
         $type = $request->type;
-        $totalBet = (int) round($request->total_bet);
-        $commission_amount = (int) round($request->commission_amount);
-        $winAmount = (int) round($request->win_amount);
+        $totalBet = (int)round($request->total_bet);
+        $commission_amount = (int)round($request->commission_amount);
+        $winAmount = (int)round($request->win_amount);
 
         $setting = Setting::first();
         if (!$setting) {
@@ -1938,10 +1916,10 @@ class PagesController extends Controller
 
         // Calculate distributor commission (integer math)
         $commission_amount_distributor =
-            (int) ($winAmount * ($distributorComission / 100));
+            (int)($winAmount * ($distributorComission / 100));
 
         // System earning should also be stored as integer
-        $systemEarning = (int) $setting->earning;
+        $systemEarning = (int)$setting->earning;
 
         if (
             $systemEarning <
@@ -1973,8 +1951,8 @@ class PagesController extends Controller
         }
 
         // Get current balances (stored as integers)
-        $remainingBalance_agent = (int) $user->endpoint;
-        $remainingBalance_distributor = (int) $dis_dtd->endpoint;
+        $remainingBalance_agent = (int)$user->endpoint;
+        $remainingBalance_distributor = (int)$dis_dtd->endpoint;
 
         if ($type === "agent") {
             // Update balances with integer math
@@ -1996,7 +1974,7 @@ class PagesController extends Controller
             $setting->earning = $newSystemEarningPercent;
             $setting->save();
 
-            $user->release_commission_date = (int) (microtime(true) * 1000);
+            $user->release_commission_date = (int)(microtime(true) * 1000);
             $user->save();
             $dis_dtd->save();
         }
@@ -2086,7 +2064,7 @@ class PagesController extends Controller
                 // Option 1: Get distributor + agent history (same as before)
                 $query->where(function ($q) use ($user, $agentIds) {
                     $q->where("transfer_to", $user->_id) // Distributor's own records
-                        ->orWhereIn("transfer_to", $agentIds); // Agents' records
+                    ->orWhereIn("transfer_to", $agentIds); // Agents' records
                 });
             } elseif ($user->role === "agent") {
                 $query->where("transfer_to", $user->_id);
@@ -2164,6 +2142,7 @@ class PagesController extends Controller
 
         return view("pages.comissiom-report", compact("releases"));
     }
+
     public function updateStatus(Request $request, $id)
     {
         $distributor = User::find($id);
@@ -2240,6 +2219,7 @@ class PagesController extends Controller
             "message" => "Agent status updated successfully.",
         ]);
     }
+
     public function distoggleStatus($id)
     {
         $distributor = User::where("_id", $id)
@@ -2269,6 +2249,7 @@ class PagesController extends Controller
 
         return response()->json(["status" => $player->status]);
     }
+
     public function Weeklyreport()
     {
         $agents = User::where("role", "agent")

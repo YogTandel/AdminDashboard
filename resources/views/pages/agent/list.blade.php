@@ -138,6 +138,18 @@
                         @endif
                         <input type="hidden" name="per_page" value="{{ request('per_page', 10) }}">
 
+                        <!-- Distributor Filter -->
+                        <select name="distributor_name" class="form-select form-select-sm" onchange="this.form.submit()"
+                                style="width: 180px;">
+                            <option value="">All Distributors</option>
+                            @foreach ($distributors as $distributor)
+                                <option value="{{ $distributor->player }}"
+                                    {{ request('distributor_name') == $distributor->player ? 'selected' : '' }}>
+                                    {{ $distributor->player }}
+                                </option>
+                            @endforeach
+                        </select>
+
                         <!-- Filter Button -->
                         <button type="submit" class="btn btn-sm btn-primary mb-0">Filter</button>
                         <input type="hidden" name="per_page" value="{{ request('per_page', 10) }}">
