@@ -119,9 +119,9 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label text-xs font-weight-bold">Download URL</label>
+                        <label class="form-label text-xs font-weight-bold">URL</label>
                         <input type="text" class="form-control" id="add_url"
-                               placeholder="https://example.com/download">
+                               placeholder="https://example.com">
                     </div>
 
                     <div class="mb-3">
@@ -165,7 +165,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label text-xs font-weight-bold">Download URL</label>
+                        <label class="form-label text-xs font-weight-bold">URL</label>
                         <input type="text" class="form-control" id="edit_url">
                     </div>
 
