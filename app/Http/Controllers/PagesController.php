@@ -1183,11 +1183,15 @@ class PagesController extends Controller
         $perPage = $request->get("per_page", 10);
         $query = DB::connection("mongodb")->table("transfers")->orderBy("created_at", "desc");
 
-        // Restrict normal user
+        /** -------------------------------
+         * 👥 Restrict for Normal User
+         * ------------------------------- */
         if ($user) {
             $query->where(function ($q) use ($user) {
                 $q->where("transfer_by", new ObjectId($user->id))
-                    ->orWhere("transfer_to", new ObjectId($user->id));
+                    ->orWhere("transfer_to", new ObjectId($user->id))
+                    ->orWhere("transfer_by", (string)$user->id)
+                    ->orWhere("transfer_to", (string)$user->id);
             });
         }
 
@@ -1196,17 +1200,25 @@ class PagesController extends Controller
          * ------------------------------- */
         if ($request->filled("search")) {
             $searchTerm = strtolower($request->search);
+
             $matchedUsers = User::where("player", "LIKE", "%{$searchTerm}%")
                 ->pluck("_id")
                 ->map(fn($id) => (string)$id)
                 ->toArray();
 
-            $query->where(function ($q) use ($searchTerm, $matchedUsers) {
+            $matchedAdmins = Admin::where("player", "LIKE", "%{$searchTerm}%")
+                ->pluck("_id")
+                ->map(fn($id) => (string)$id)
+                ->toArray();
+
+            $matchedIds = array_merge($matchedUsers, $matchedAdmins);
+
+            $query->where(function ($q) use ($searchTerm, $matchedIds) {
                 $q->where("amount", "LIKE", "%{$searchTerm}%")
                     ->orWhere("remaining_balance", "LIKE", "%{$searchTerm}%")
                     ->orWhere("transfer_role", "LIKE", "%{$searchTerm}%")
-                    ->orWhereIn("transfer_by", $matchedUsers)
-                    ->orWhereIn("transfer_to", $matchedUsers);
+                    ->orWhereIn("transfer_by", $matchedIds)
+                    ->orWhereIn("transfer_to", $matchedIds);
             });
         }
 
@@ -1243,56 +1255,54 @@ class PagesController extends Controller
         }
 
         /** -------------------------------
-         * 👤 3. Agent & Distributor Filters (Bidirectional — Show if either side matches)
+         * 👤 3. Agent & Distributor Filters (Fixed with ObjectId + String)
          * ------------------------------- */
-        $agentCondition = null;
-        $distributorCondition = null;
 
-        // Resolve Agent ID
+        // 🔹 Agent Filter
         if ($request->filled("agent_name")) {
             $agentName = $request->agent_name;
             $agent = User::where("player", $agentName)->first();
-            $agentId = $agent ? (string)$agent->_id : null;
 
-            $agentCondition = function ($q) use ($agentName, $agentId) {
-                $q->where(function ($sub) use ($agentName, $agentId) {
-                    if ($agentId) {
-                        $sub->where("transfer_by", $agentId)
-                            ->orWhere("transfer_to", $agentId);
-                    }
-                    $sub->orWhere("agent_name", "LIKE", "%{$agentName}%")
+            if ($agent) {
+                $agentId = (string)$agent->_id;
+
+                $query->where(function ($q) use ($agentId, $agentName) {
+                    $q->whereIn("transfer_by", [$agentId, new ObjectId($agentId)])
+                        ->orWhereIn("transfer_to", [$agentId, new ObjectId($agentId)])
+                        ->orWhere("agent_name", "LIKE", "%{$agentName}%")
                         ->orWhere("distributor_name", "LIKE", "%{$agentName}%");
                 });
-            };
+            } else {
+                // fallback: match by name directly
+                $query->where(function ($q) use ($agentName) {
+                    $q->where("agent_name", "LIKE", "%{$agentName}%")
+                        ->orWhere("distributor_name", "LIKE", "%{$agentName}%");
+                });
+            }
         }
 
-        // Resolve Distributor ID
+        // 🔹 Distributor Filter
         if ($request->filled("distributor_name")) {
             $distributorName = $request->distributor_name;
-            $distributor = User::where("player", $distributorName)->first();
-            $distributorId = $distributor ? (string)$distributor->_id : null;
 
-            $distributorCondition = function ($q) use ($distributorName, $distributorId) {
-                $q->where(function ($sub) use ($distributorName, $distributorId) {
-                    if ($distributorId) {
-                        $sub->where("transfer_by", $distributorId)
-                            ->orWhere("transfer_to", $distributorId);
-                    }
-                    $sub->orWhere("agent_name", "LIKE", "%{$distributorName}%")
+            $distributor = User::where("player", $distributorName)->first()
+                ?? Admin::where("player", $distributorName)->first();
+
+            if ($distributor) {
+                $distributorId = (string)$distributor->_id;
+
+                $query->where(function ($q) use ($distributorId, $distributorName) {
+                    $q->whereIn("transfer_by", [$distributorId, new ObjectId($distributorId)])
+                        ->orWhereIn("transfer_to", [$distributorId, new ObjectId($distributorId)])
+                        ->orWhere("agent_name", "LIKE", "%{$distributorName}%")
                         ->orWhere("distributor_name", "LIKE", "%{$distributorName}%");
                 });
-            };
-        }
-
-        // ✅ Combine both: show records if either agent OR distributor condition matches
-        if ($agentCondition && $distributorCondition) {
-            $query->where(function ($q) use ($agentCondition, $distributorCondition) {
-                $q->where($agentCondition)->orWhere($distributorCondition);
-            });
-        } elseif ($agentCondition) {
-            $query->where($agentCondition);
-        } elseif ($distributorCondition) {
-            $query->where($distributorCondition);
+            } else {
+                $query->where(function ($q) use ($distributorName) {
+                    $q->where("agent_name", "LIKE", "%{$distributorName}%")
+                        ->orWhere("distributor_name", "LIKE", "%{$distributorName}%");
+                });
+            }
         }
 
         /** -------------------------------
@@ -1319,9 +1329,29 @@ class PagesController extends Controller
                 $allAdmins[$transferTo]->player ?? ($users[$transferTo]->player ?? "N/A");
         }
 
-        // Dropdowns
-        $agents = User::where("role", "agent")->orderBy("player")->get();
-        $distributors = User::where("role", "distributor")->orderBy("player")->get();
+        /** -------------------------------
+         * 🔽 Dropdown Data
+         * ------------------------------- */
+        $allTransferUserIds = DB::connection("mongodb")->table("transfers")
+            ->select("transfer_by", "transfer_to")
+            ->get()
+            ->pluck("transfer_by")
+            ->merge(DB::connection("mongodb")->table("transfers")->pluck("transfer_to"))
+            ->unique()
+            ->map(fn($id) => (string)$id)
+            ->filter()
+            ->toArray();
+
+        $agents = User::whereIn("_id", $allTransferUserIds)
+            ->where("role", "agent")
+            ->orderBy("player")
+            ->get();
+
+        $distributors = User::whereIn("_id", $allTransferUserIds)
+            ->where("role", "distributor")
+            ->orderBy("player")
+            ->get()
+            ->merge(Admin::orderBy("player")->get());
 
         return view("pages.transfer.report", compact("transfers", "agents", "distributors"));
     }

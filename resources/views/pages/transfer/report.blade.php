@@ -46,7 +46,7 @@
                 </form>
 
                 <!-- Search -->
-                <form action="" method="GET" class="d-flex align-items-center">
+                <form action="{{ route('transfer.report') }}" method="GET" class="d-flex align-items-center">
                     <div class="input-group input-group-outline rounded-pill me-2 shadow-sm">
                         <span class="input-group-text bg-transparent border-0 text-secondary">
                             <i class="fas fa-search"></i>
