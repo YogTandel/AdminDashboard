@@ -28,7 +28,7 @@
 
                     <div class="input-group input-group-outline border-radius-lg shadow-sm">
                         <select name="per_page" id="per_page" class="form-select border-0 ps-3 pe-4"
-                            style="min-width: 60px;">
+                                style="min-width: 60px;">
                             <option value="10" {{ request('per_page', 10) == 10 ? 'selected' : '' }}>10</option>
                             <option value="20" {{ request('per_page', 10) == 20 ? 'selected' : '' }}>20</option>
                             <option value="30" {{ request('per_page', 10) == 30 ? 'selected' : '' }}>30</option>
@@ -53,14 +53,14 @@
                         </span>
                         <label class="form-label"></label>
                         <input type="search" name="search" class="form-control border-0" value="{{ request('search') }}"
-                            onfocus="this.parentElement.classList.add('is-focused')"
-                            onfocusout="this.parentElement.classList.remove('is-focused')">
+                               onfocus="this.parentElement.classList.add('is-focused')"
+                               onfocusout="this.parentElement.classList.remove('is-focused')">
                     </div>
                     <input type="hidden" name="per_page" value="{{ request('per_page', 10) }}">
                     <button type="submit" class="btn bg-gradient-warning rounded-pill shadow-sm mb-0">
                         Search
                     </button>
-                    @if (request()->has('search') && request('search') != '')
+                    @if (request()->has('search') && request('search') !== '')
                         <a href="{{ route('transfer.report') }}" class="btn btn-secondary btn-sm px-3 mt-3">Reset</a>
                     @endif
 
@@ -71,26 +71,51 @@
         </div>
 
         <form action="{{ route('transfer.report') }}" method="GET"
-            class="d-flex justify-content-end align-items-center flex-wrap gap-2 mt-2 me-3">
+              class="d-flex justify-content-end align-items-center flex-wrap gap-2 mt-2 me-3">
+
+            <!-- Filter by Agent -->
+            <select name="agent_name" class="form-select form-select-sm" onchange="this.form.submit()"
+                    style="width: 180px;">
+                <option value="">All Agents</option>
+                @foreach ($agents as $agent)
+                    <option
+                        value="{{ $agent->player }}" {{ request('agent_name') === $agent->player ? 'selected' : '' }}>
+                        {{ $agent->player }}
+                    </option>
+                @endforeach
+            </select>
+
+            <!-- Filter by Distributor -->
+            <select name="distributor_name" class="form-select form-select-sm" onchange="this.form.submit()"
+                    style="width: 180px;">
+                <option value="">All Distributors</option>
+                @foreach ($distributors as $distributor)
+                    <option
+                        value="{{ $distributor->player }}" {{ request('distributor_name') === $distributor->player ? 'selected' : '' }}>
+                        {{ $distributor->player }}
+                    </option>
+                @endforeach
+            </select>
             <!-- Date Range -->
             <select name="date_range" class="form-select form-select-sm" onchange="this.form.submit()"
-                style="width: 150px;">
+                    style="width: 150px;">
                 <option value="">Date Range</option>
-                <option value="2_days_ago" {{ request('date_range') == '2_days_ago' ? 'selected' : '' }}>Last 2 Days
+                <option value="2_days_ago" {{ request('date_range') === '2_days_ago' ? 'selected' : '' }}>Last 2 Days
                 </option>
-                <option value="last_week" {{ request('date_range') == 'last_week' ? 'selected' : '' }}>Last Week</option>
-                <option value="last_month" {{ request('date_range') == 'last_month' ? 'selected' : '' }}>Last Month
+                <option value="last_week" {{ request('date_range') === 'last_week' ? 'selected' : '' }}>Last Week
+                </option>
+                <option value="last_month" {{ request('date_range') === 'last_month' ? 'selected' : '' }}>Last Month
                 </option>
             </select>
 
             <!-- From Date -->
             <input type="date" name="from_date" class="form-control form-control-sm" value="{{ request('from_date') }}"
-                style="width: 150px;">
+                   style="width: 150px;">
 
             <!-- To Date -->
             <span class="text-sm mx-1">to</span>
             <input type="date" name="to_date" class="form-control form-control-sm" value="{{ request('to_date') }}"
-                style="width: 150px;">
+                   style="width: 150px;">
 
             <!-- Search Hidden -->
             @if (request()->has('search'))
@@ -110,37 +135,38 @@
 
         @if (count($transfers) > 0)
             <div class="table-responsive mt-2">
-                <table class="table table-bordered table-hover table-striped" style="font-size: 0.8rem; color: #212529;">
+                <table class="table table-bordered table-hover table-striped"
+                       style="font-size: 0.8rem; color: #212529;">
                     <thead>
-                        <tr class="text-center">
-                            <th scope="col" class="text-dark">No</th>
-                            <th scope="col" class="text-dark">transfer by </th>
-                            <th scope="col" class="text-dark">transfer to </th>
-                            <th scope="col" class="text-dark">Amount</th>
-                            <th scope="col" class="text-dark">Role</th>
-                            <th scope="col" class="text-dark">Remaining Balance</th>
-                            <th scope="col" class="text-dark">Date</th>
-                        </tr>
+                    <tr class="text-center">
+                        <th scope="col" class="text-dark">No</th>
+                        <th scope="col" class="text-dark">transfer by</th>
+                        <th scope="col" class="text-dark">transfer to</th>
+                        <th scope="col" class="text-dark">Amount</th>
+                        <th scope="col" class="text-dark">Role</th>
+                        <th scope="col" class="text-dark">Remaining Balance</th>
+                        <th scope="col" class="text-dark">Date</th>
+                    </tr>
                     </thead>
                     <tbody>
-                        @foreach ($transfers as $index => $transfer)
-                            <tr class="text-center">
-                                <td>{{ $index + 1 }}</td>
-                                <td>{{ $transfer->agent_name }}</td>
-                                <td>
-                                    @if (str_contains($transfer->distributor_name, 'Admin'))
-                                        <span class="text-primary">{{ $transfer->distributor_name }}</span>
-                                    @else
-                                        {{ $transfer->distributor_name }}
-                                    @endif
-                                </td>
-                                <td>{{ number_format($transfer->amount) }}</td>
-                                <td>{{ $transfer->transfer_role }}</td>
-                                <td>{{ number_format($transfer->remaining_balance, 2) }}</td>
-                                <td>{{ \Carbon\Carbon::parse($transfer->created_at)->setTimezone('Asia/Kolkata')->format('d-M-Y h:i A') }}
-                                </td>
-                            </tr>
-                        @endforeach
+                    @foreach ($transfers as $index => $transfer)
+                        <tr class="text-center">
+                            <td>{{ $index + 1 }}</td>
+                            <td>{{ $transfer->agent_name }}</td>
+                            <td>
+                                @if (str_contains($transfer->distributor_name, 'Admin'))
+                                    <span class="text-primary">{{ $transfer->distributor_name }}</span>
+                                @else
+                                    {{ $transfer->distributor_name }}
+                                @endif
+                            </td>
+                            <td>{{ number_format($transfer->amount) }}</td>
+                            <td>{{ $transfer->transfer_role }}</td>
+                            <td>{{ number_format($transfer->remaining_balance, 2) }}</td>
+                            <td>{{ \Carbon\Carbon::parse($transfer->created_at)->setTimezone('Asia/Kolkata')->format('d-M-Y h:i A') }}
+                            </td>
+                        </tr>
+                    @endforeach
                     </tbody>
                 </table>
                 {{-- Pagination --}}
@@ -191,23 +217,23 @@
 
     <script>
         // Show loader when page is loading
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Show loader immediately when page starts loading
             document.getElementById('loader').style.display = 'flex';
 
             // Hide loader when page is fully loaded
-            window.addEventListener('load', function() {
+            window.addEventListener('load', function () {
                 document.getElementById('loader').style.display = 'none';
             });
         });
 
         // Show loader when page is being refreshed
-        window.addEventListener('beforeunload', function() {
+        window.addEventListener('beforeunload', function () {
             document.getElementById('loader').style.display = 'flex';
         });
 
         // Handle per_page form submission
-        document.getElementById('per_page')?.addEventListener('change', function() {
+        document.getElementById('per_page')?.addEventListener('change', function () {
             document.getElementById('perPageForm').submit();
         });
     </script>
