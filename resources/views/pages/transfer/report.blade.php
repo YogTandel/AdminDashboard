@@ -29,11 +29,11 @@
                     <div class="input-group input-group-outline border-radius-lg shadow-sm">
                         <select name="per_page" id="per_page" class="form-select border-0 ps-3 pe-4"
                                 style="min-width: 60px;">
-                            <option value="10" {{ request('per_page', 10) == 10 ? 'selected' : '' }}>10</option>
-                            <option value="20" {{ request('per_page', 10) == 20 ? 'selected' : '' }}>20</option>
-                            <option value="30" {{ request('per_page', 10) == 30 ? 'selected' : '' }}>30</option>
-                            <option value="40" {{ request('per_page', 10) == 40 ? 'selected' : '' }}>40</option>
-                            <option value="50" {{ request('per_page', 10) == 50 ? 'selected' : '' }}>50</option>
+                            <option value="10" {{ request('per_page', 10) === 10 ? 'selected' : '' }}>10</option>
+                            <option value="20" {{ request('per_page', 10) === 20 ? 'selected' : '' }}>20</option>
+                            <option value="30" {{ request('per_page', 10) === 30 ? 'selected' : '' }}>30</option>
+                            <option value="40" {{ request('per_page', 10) === 40 ? 'selected' : '' }}>40</option>
+                            <option value="50" {{ request('per_page', 10) === 50 ? 'selected' : '' }}>50</option>
                         </select>
                     </div>
 

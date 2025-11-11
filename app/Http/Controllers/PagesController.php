@@ -1243,44 +1243,56 @@ class PagesController extends Controller
         }
 
         /** -------------------------------
-         * 👤 3. Agent & Distributor Filters (Bidirectional)
+         * 👤 3. Agent & Distributor Filters (Bidirectional — Show if either side matches)
          * ------------------------------- */
+        $agentCondition = null;
+        $distributorCondition = null;
+
+        // Resolve Agent ID
         if ($request->filled("agent_name")) {
             $agentName = $request->agent_name;
             $agent = User::where("player", $agentName)->first();
+            $agentId = $agent ? (string)$agent->_id : null;
 
-            if ($agent) {
-                $agentId = (string)$agent->_id;
-                $query->where(function ($q) use ($agentId) {
-                    $q->where("transfer_by", $agentId)
-                        ->orWhere("transfer_to", $agentId);
-                });
-            } else {
-                // fallback: match by name directly in agent_name or distributor_name fields
-                $query->where(function ($q) use ($agentName) {
-                    $q->where("agent_name", "LIKE", "%{$agentName}%")
+            $agentCondition = function ($q) use ($agentName, $agentId) {
+                $q->where(function ($sub) use ($agentName, $agentId) {
+                    if ($agentId) {
+                        $sub->where("transfer_by", $agentId)
+                            ->orWhere("transfer_to", $agentId);
+                    }
+                    $sub->orWhere("agent_name", "LIKE", "%{$agentName}%")
                         ->orWhere("distributor_name", "LIKE", "%{$agentName}%");
                 });
-            }
+            };
         }
 
+        // Resolve Distributor ID
         if ($request->filled("distributor_name")) {
             $distributorName = $request->distributor_name;
             $distributor = User::where("player", $distributorName)->first();
+            $distributorId = $distributor ? (string)$distributor->_id : null;
 
-            if ($distributor) {
-                $distributorId = (string)$distributor->_id;
-                $query->where(function ($q) use ($distributorId) {
-                    $q->where("transfer_by", $distributorId)
-                        ->orWhere("transfer_to", $distributorId);
-                });
-            } else {
-                // fallback: match by name directly
-                $query->where(function ($q) use ($distributorName) {
-                    $q->where("agent_name", "LIKE", "%{$distributorName}%")
+            $distributorCondition = function ($q) use ($distributorName, $distributorId) {
+                $q->where(function ($sub) use ($distributorName, $distributorId) {
+                    if ($distributorId) {
+                        $sub->where("transfer_by", $distributorId)
+                            ->orWhere("transfer_to", $distributorId);
+                    }
+                    $sub->orWhere("agent_name", "LIKE", "%{$distributorName}%")
                         ->orWhere("distributor_name", "LIKE", "%{$distributorName}%");
                 });
-            }
+            };
+        }
+
+        // ✅ Combine both: show records if either agent OR distributor condition matches
+        if ($agentCondition && $distributorCondition) {
+            $query->where(function ($q) use ($agentCondition, $distributorCondition) {
+                $q->where($agentCondition)->orWhere($distributorCondition);
+            });
+        } elseif ($agentCondition) {
+            $query->where($agentCondition);
+        } elseif ($distributorCondition) {
+            $query->where($distributorCondition);
         }
 
         /** -------------------------------
