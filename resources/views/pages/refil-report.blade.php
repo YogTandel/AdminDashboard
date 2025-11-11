@@ -31,7 +31,7 @@
 
                     <div class="input-group input-group-outline border-radius-lg shadow-sm">
                         <select name="per_page" id="per_page" class="form-select border-0 ps-3 pe-4"
-                            onchange="this.form.submit()" style="min-width: 60px;">
+                                onchange="this.form.submit()" style="min-width: 60px;">
                             <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
                             <option value="20" {{ request('per_page') == 20 ? 'selected' : '' }}>20</option>
                             <option value="30" {{ request('per_page') == 30 ? 'selected' : '' }}>30</option>
@@ -52,8 +52,8 @@
                         </span>
                         <label class="form-label"></label>
                         <input type="search" name="search" class="form-control border-0"
-                            onfocus="this.parentElement.classList.add('is-focused')"
-                            onfocusout="this.parentElement.classList.remove('is-focused')">
+                               onfocus="this.parentElement.classList.add('is-focused')"
+                               onfocusout="this.parentElement.classList.remove('is-focused')">
                     </div>
                     <input type="hidden" name="per_page" value="{{ request('per_page', 10) }}">
 
@@ -68,26 +68,51 @@
         </div>
         <!-- Second Row: Date Filter -->
         <form action="{{ route('refil.report') }}" method="GET"
-            class="d-flex justify-content-end align-items-center flex-wrap gap-2 mt-2 me-3 mb-2">
+              class="d-flex justify-content-end align-items-center flex-wrap gap-2 mt-2 me-3 mb-2">
+            <!-- Filter by Agent -->
+            <select name="agent_name" class="form-select form-select-sm" onchange="this.form.submit()"
+                    style="width: 180px;">
+                <option value="">All Agents</option>
+                @foreach ($agents as $agent)
+                    <option
+                        value="{{ $agent->player }}" {{ request('agent_name') === $agent->player ? 'selected' : '' }}>
+                        {{ $agent->player }}
+                    </option>
+                @endforeach
+            </select>
+
+            <!-- Filter by Distributor -->
+            <select name="distributor_name" class="form-select form-select-sm" onchange="this.form.submit()"
+                    style="width: 180px;">
+                <option value="">All Distributors</option>
+                @foreach ($distributors as $distributor)
+                    <option
+                        value="{{ $distributor->player }}" {{ request('distributor_name') === $distributor->player ? 'selected' : '' }}>
+                        {{ $distributor->player }}
+                    </option>
+                @endforeach
+            </select>
+
             <!-- Date Range -->
             <select name="date_range" class="form-select form-select-sm" onchange="this.form.submit()"
-                style="width: 150px;">
+                    style="width: 150px;">
                 <option value="">Date Range</option>
-                <option value="2_days_ago" {{ request('date_range') == '2_days_ago' ? 'selected' : '' }}>Last 2 Days
+                <option value="2_days_ago" {{ request('date_range') === '2_days_ago' ? 'selected' : '' }}>Last 2 Days
                 </option>
-                <option value="last_week" {{ request('date_range') == 'last_week' ? 'selected' : '' }}>Last Week</option>
-                <option value="last_month" {{ request('date_range') == 'last_month' ? 'selected' : '' }}>Last Month
+                <option value="last_week" {{ request('date_range') === 'last_week' ? 'selected' : '' }}>Last Week
+                </option>
+                <option value="last_month" {{ request('date_range') === 'last_month' ? 'selected' : '' }}>Last Month
                 </option>
             </select>
 
             <!-- From Date -->
             <input type="date" name="from_date" class="form-control form-control-sm" value="{{ request('from_date') }}"
-                style="width: 150px;">
+                   style="width: 150px;">
 
             <!-- To Date -->
             <span class="text-sm mx-1">to</span>
             <input type="date" name="to_date" class="form-control form-control-sm" value="{{ request('to_date') }}"
-                style="width: 150px;">
+                   style="width: 150px;">
 
             <!-- Search Hidden -->
             @if (request()->has('search'))
@@ -108,39 +133,40 @@
 
         @if ($refils->count() > 0)
             <div class="table-responsive">
-                <table class="table table-bordered table-hover table-striped" style="font-size: 0.8rem; color: #212529;">
+                <table class="table table-bordered table-hover table-striped"
+                       style="font-size: 0.8rem; color: #212529;">
                     <thead>
-                        <tr class="text-center">
-                            <th>No</th>
-                            <th>Transfer By</th>
-                            <th>Transfer To</th>
-                            <th>Remaining Balance</th>
-                            <th>Amount</th>
-                            <th>Role</th>
-                            <th>Type</th>
-                            <th>Date</th>
-                        </tr>
+                    <tr class="text-center">
+                        <th>No</th>
+                        <th>Transfer By</th>
+                        <th>Transfer To</th>
+                        <th>Remaining Balance</th>
+                        <th>Amount</th>
+                        <th>Role</th>
+                        <th>Type</th>
+                        <th>Date</th>
+                    </tr>
                     </thead>
                     <tbody>
-                        @foreach ($refils as $index => $refil)
-                            <tr class="text-center">
-                                <td>{{ $index + 1 }}</td>
-                                <td>{{ $refil->agent_name }}</td>
-                                <td>
-                                    @if (str_contains($refil->distributor_name, 'Admin'))
-                                        <span class="text-primary">{{ $refil->distributor_name }}</span>
-                                    @else
-                                        {{ $refil->distributor_name }}
-                                    @endif
-                                </td>
-                                <td>{{ number_format($refil->remaining_balance, 2) }}</td>
-                                <td>{{ number_format($refil->amount) }}</td>
-                                <td>{{ ucfirst($refil->transfer_role) }}</td>
-                                <td>{{ $refil->type }}</td>
-                                <td>{{ \Carbon\Carbon::parse($refil->created_at)->setTimezone('Asia/Kolkata')->format('d-M-Y h:i A') }}
-                                </td>
-                            </tr>
-                        @endforeach
+                    @foreach ($refils as $index => $refil)
+                        <tr class="text-center">
+                            <td>{{ $index + 1 }}</td>
+                            <td>{{ $refil->agent_name }}</td>
+                            <td>
+                                @if (str_contains($refil->distributor_name, 'Admin'))
+                                    <span class="text-primary">{{ $refil->distributor_name }}</span>
+                                @else
+                                    {{ $refil->distributor_name }}
+                                @endif
+                            </td>
+                            <td>{{ number_format($refil->remaining_balance, 2) }}</td>
+                            <td>{{ number_format($refil->amount) }}</td>
+                            <td>{{ ucfirst($refil->transfer_role) }}</td>
+                            <td>{{ $refil->type }}</td>
+                            <td>{{ \Carbon\Carbon::parse($refil->created_at)->setTimezone('Asia/Kolkata')->format('d-M-Y h:i A') }}
+                            </td>
+                        </tr>
+                    @endforeach
                     </tbody>
                 </table>
                 {{-- Pagination --}}
@@ -191,18 +217,18 @@
 
     <script>
         // Show loader when page is loading
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Show loader immediately when page starts loading
             document.getElementById('loader').style.display = 'flex';
 
             // Hide loader when page is fully loaded
-            window.addEventListener('load', function() {
+            window.addEventListener('load', function () {
                 document.getElementById('loader').style.display = 'none';
             });
         });
 
         // Show loader when page is being refreshed
-        window.addEventListener('beforeunload', function() {
+        window.addEventListener('beforeunload', function () {
             document.getElementById('loader').style.display = 'flex';
         });
     </script>

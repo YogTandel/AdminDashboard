@@ -1521,61 +1521,53 @@ class PagesController extends Controller
             return redirect()->route("login");
         }
 
-        // Get per_page value or default to 10
         $perPage = $request->get("per_page", 10);
-
-        // Start query
         $query = DB::connection("mongodb")
             ->table("refils")
             ->orderBy("created_at", "desc");
 
-        // Apply user filter if logged in as user
+        // Restrict for normal user
         if ($user) {
-            $query->where("transfer_by", $user->id);
-        }
-
-        // Apply search filter if search term exists
-        if ($request->has("search") && !empty($request->search)) {
-            $searchTerm = strtolower($request->search);
-
-            // Step 1: Search users and admins by 'player' name
-            $matchedUsers = User::where(
-                "player",
-                "LIKE",
-                "%{$searchTerm}%",
-            )->get(["_id"]);
-            $userIds = $matchedUsers
-                ->pluck("_id")
-                ->map(fn($id) => (string)$id)
-                ->toArray();
-
-            $matchedAdmins = Admin::where(
-                "player",
-                "LIKE",
-                "%{$searchTerm}%",
-            )->get(["_id"]);
-            $adminIds = $matchedAdmins
-                ->pluck("_id")
-                ->map(fn($id) => (string)$id)
-                ->toArray();
-
-            $allMatchedIds = array_merge($userIds, $adminIds);
-
-            // Step 2: Apply search filter to all relevant fields
-            $query->where(function ($q) use ($searchTerm, $allMatchedIds) {
-                $q->where("amount", "LIKE", "%{$searchTerm}%")
-                    ->orWhere("type", "LIKE", "%{$searchTerm}%")
-                    ->orWhere("transfer_role", "LIKE", "%{$searchTerm}%")
-                    ->orWhereIn("transfer_by", $allMatchedIds)
-                    ->orWhereIn("transfer_to", $allMatchedIds);
+            $query->where(function ($q) use ($user) {
+                $q->where("transfer_by", new ObjectId($user->id))
+                    ->orWhere("transfer_to", new ObjectId($user->id));
             });
         }
 
-        // Apply date range filter
-        if (request("date_range")) {
-            $today = \Carbon\Carbon::today();
-            $dateRange = request("date_range");
+        /** -------------------------------
+         * 🔍 1. Search Filter
+         * ------------------------------- */
+        if ($request->filled("search")) {
+            $searchTerm = strtolower($request->search);
 
+            $matchedUsers = User::where("player", "LIKE", "%{$searchTerm}%")
+                ->pluck("_id")
+                ->map(fn($id) => (string)$id)
+                ->toArray();
+
+            $matchedAdmins = Admin::where("player", "LIKE", "%{$searchTerm}%")
+                ->pluck("_id")
+                ->map(fn($id) => (string)$id)
+                ->toArray();
+
+            $matchedIds = array_merge($matchedUsers, $matchedAdmins);
+
+            $query->where(function ($q) use ($searchTerm, $matchedIds) {
+                $q->where("amount", "LIKE", "%{$searchTerm}%")
+                    ->orWhere("type", "LIKE", "%{$searchTerm}%")
+                    ->orWhere("transfer_role", "LIKE", "%{$searchTerm}%")
+                    ->orWhereIn("transfer_by", $matchedIds)
+                    ->orWhereIn("transfer_to", $matchedIds);
+            });
+        }
+
+        /** -------------------------------
+         * 📅 2. Date Range Filter
+         * ------------------------------- */
+        $today = Carbon::today();
+        $dateRange = $request->input("date_range");
+
+        if ($dateRange) {
             if ($dateRange === "2_days_ago") {
                 $query->whereBetween("created_at", [
                     $today->copy()->subDays(2)->startOfDay(),
@@ -1592,78 +1584,94 @@ class PagesController extends Controller
                     $today->copy()->subMonth()->endOfMonth(),
                 ]);
             }
+        } elseif ($request->filled("from_date") || $request->filled("to_date")) {
+            if ($request->filled("from_date")) {
+                $query->where(
+                    "created_at",
+                    ">=",
+                    Carbon::parse($request->from_date)->startOfDay()
+                );
+            }
+            if ($request->filled("to_date")) {
+                $query->where(
+                    "created_at",
+                    "<=",
+                    Carbon::parse($request->to_date)->endOfDay()
+                );
+            }
         }
 
-        $results = $query->get();
+        /** -------------------------------
+         * 👤 3. Agent & Distributor Filters (Bidirectional)
+         * ------------------------------- */
+        if ($request->filled("agent_name")) {
+            $agentName = $request->agent_name;
+            $agent = User::where("player", $agentName)->first();
 
-        // Apply custom date range filter
-        if ($request->has("from_date") && !empty($request->from_date)) {
-            $query->where(
-                "created_at",
-                ">=",
-                Carbon::parse($request->from_date)->startOfDay(),
-            );
+            if ($agent) {
+                $agentId = (string)$agent->_id;
+                $query->where(function ($q) use ($agentId) {
+                    $q->where("transfer_by", $agentId)
+                        ->orWhere("transfer_to", $agentId);
+                });
+            } else {
+                $query->where(function ($q) use ($agentName) {
+                    $q->where("agent_name", "LIKE", "%{$agentName}%")
+                        ->orWhere("distributor_name", "LIKE", "%{$agentName}%");
+                });
+            }
         }
 
-        if ($request->has("to_date") && !empty($request->to_date)) {
-            $query->where(
-                "created_at",
-                "<=",
-                Carbon::parse($request->to_date)->endOfDay(),
-            );
+        if ($request->filled("distributor_name")) {
+            $distributorName = $request->distributor_name;
+            $distributor = User::where("player", $distributorName)->first();
+
+            if ($distributor) {
+                $distributorId = (string)$distributor->_id;
+                $query->where(function ($q) use ($distributorId) {
+                    $q->where("transfer_by", $distributorId)
+                        ->orWhere("transfer_to", $distributorId);
+                });
+            } else {
+                $query->where(function ($q) use ($distributorName) {
+                    $q->where("agent_name", "LIKE", "%{$distributorName}%")
+                        ->orWhere("distributor_name", "LIKE", "%{$distributorName}%");
+                });
+            }
         }
 
-        // Paginate the results
-        $refils = $query->paginate($perPage);
+        /** -------------------------------
+         * 🧾 4. Fetch & Map Results
+         * ------------------------------- */
+        $refils = $query->paginate($perPage)->appends($request->query());
 
-        // Append all query parameters to pagination links
-        $refils->appends([
-            "per_page" => $perPage,
-            "search" => $request->search,
-            "date_range" => $request->date_range,
-            "from_date" => $request->from_date,
-            "to_date" => $request->to_date,
-        ]);
-
-        if ($refils->isEmpty()) {
-            return view("pages.refil-report", compact("refils"));
-        }
-
-        // Fetch all related users and admins
-        $allAdmins = Admin::all()->keyBy("_id");
+        $allAdmins = Admin::all()->mapWithKeys(fn($a) => [(string)$a->_id => $a]);
         $userIds = $refils
             ->pluck("transfer_by")
             ->merge($refils->pluck("transfer_to"))
-            ->unique();
-        $users = User::whereIn("_id", $userIds)->get()->keyBy("_id");
+            ->unique()
+            ->map(fn($id) => (string)$id);
+
+        $users = User::whereIn("_id", $userIds)
+            ->get()
+            ->mapWithKeys(fn($u) => [(string)$u->_id => $u]);
 
         foreach ($refils as $refil) {
-            if ($users->has($refil->transfer_by)) {
-                $refil->agent_name =
-                    $users->get($refil->transfer_by)?->player ??
-                    "User (ID: " . $refil->transfer_by . ")";
-            } elseif ($allAdmins->has($refil->transfer_by)) {
-                $refil->agent_name =
-                    $allAdmins->get($refil->transfer_by)?->player ??
-                    "Admin (ID: " . $refil->transfer_by . ")";
-            } else {
-                $refil->agent_name =
-                    "N/A (User ID: " . $refil->transfer_by . ")";
-            }
+            $transferBy = (string)$refil->transfer_by;
+            $transferTo = (string)$refil->transfer_to;
 
-            if ($allAdmins->has($refil->transfer_to)) {
-                $refil->distributor_name =
-                    $allAdmins->get($refil->transfer_to)?->player ??
-                    "Admin (ID: " . $refil->transfer_to . ")";
-            } else {
-                $refil->distributor_name =
-                    $users->get($refil->transfer_to)?->player ??
-                    "N/A (ID: " . $refil->transfer_to . ")";
-            }
+            $refil->agent_name = $users[$transferBy]->player ?? "N/A";
+            $refil->distributor_name =
+                $allAdmins[$transferTo]->player ?? ($users[$transferTo]->player ?? "N/A");
         }
 
-        return view("pages.refil-report", compact("refils"));
+        // For filter dropdowns
+        $agents = User::where("role", "agent")->orderBy("player")->get();
+        $distributors = User::where("role", "distributor")->orderBy("player")->get();
+
+        return view("pages.refil-report", compact("refils", "agents", "distributors"));
     }
+
 
     public function getSettingsData()
     {
