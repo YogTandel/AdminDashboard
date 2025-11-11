@@ -13,6 +13,7 @@ return new class extends Migration {
         Schema::create('version_controls', function (Blueprint $table) {
             $table->id();
             $table->string('version');
+            $table->string('code');
             $table->boolean('enabled');
             $table->timestamps();
         });

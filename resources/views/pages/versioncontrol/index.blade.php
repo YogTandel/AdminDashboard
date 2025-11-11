@@ -18,6 +18,7 @@
                     <thead>
                     <tr>
                         <th>Version</th>
+                        <th>Code</th>
                         <th>Enabled</th>
                         <th>Actions</th>
                     </tr>
@@ -26,6 +27,7 @@
                     @foreach($versions as $v)
                         <tr data-id="{{ $v->_id }}" data-version="{{ $v->version }}" data-enabled="{{ $v->enabled }}">
                             <td class="ps-4">{{ $v->version }}</td>
+                            <td class="ps-4">{{ $v->code }}</td>
                             <td>
                                 @if($v->enabled)
                                     <span class="badge bg-success">Enabled</span>
@@ -60,6 +62,11 @@
                     </div>
 
                     <div class="mb-3">
+                        <label>Code</label>
+                        <input type="text" step="0.1" class="form-control" id="add_code">
+                    </div>
+
+                    <div class="mb-3">
                         <label>Enabled</label>
                         <select class="form-control" id="add_enabled">
                             <option value="1">Enabled</option>
@@ -91,6 +98,11 @@
                     </div>
 
                     <div class="mb-3">
+                        <label>Code</label>
+                        <input type="text" step="0.1" class="form-control" id="edit_code">
+                    </div>
+
+                    <div class="mb-3">
                         <label>Enabled</label>
                         <select class="form-control" id="edit_enabled">
                             <option value="1">Enabled</option>
@@ -114,6 +126,7 @@
                 headers: {"X-CSRF-TOKEN": "{{ csrf_token() }}", "Content-Type": "application/json"},
                 body: JSON.stringify({
                     version: document.querySelector('#add_version').value,
+                    code: document.querySelector('#add_code').value,
                     enabled: document.querySelector('#add_enabled').value,
                 })
             }).then(r => r.json()).then(() => {
@@ -126,6 +139,7 @@
                 let tr = this.closest("tr")
                 document.querySelector("#edit_id").value = tr.dataset.id
                 document.querySelector("#edit_version").value = tr.dataset.version
+                document.querySelector("#edit_code").value = tr.dataset.code
                 document.querySelector("#edit_enabled").value = tr.dataset.enabled === "1" ? "1" : "0"
                 new bootstrap.Modal(document.getElementById("editModal")).show();
             }
@@ -138,6 +152,7 @@
                 body: JSON.stringify({
                     id: document.querySelector('#edit_id').value,
                     version: document.querySelector('#edit_version').value,
+                    code: document.querySelector('#edit_code').value,
                     enabled: document.querySelector('#edit_enabled').value,
                 })
             }).then(r => r.json()).then(() => {

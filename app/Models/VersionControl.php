@@ -12,11 +12,13 @@ class VersionControl extends Model
 
     protected $fillable = [
         'version',
+        'code',
         'enabled',
     ];
 
     protected $casts = [
         'version' => 'string',
+        'code' => 'string',
         'enabled' => 'boolean',
     ];
 }

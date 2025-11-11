@@ -22,6 +22,7 @@ class HomeController extends Controller
     {
         VersionControl::create([
             'version' => $request->version,
+            'code' => $request->code,
             'enabled' => $request->enabled === "1" ? true : false,
         ]);
 
@@ -32,6 +33,7 @@ class HomeController extends Controller
     {
         VersionControl::where('_id', $request->id)->update([
             'version' => $request->version,
+            'code' => $request->code,
             'enabled' => $request->enabled === "1" ? true : false,
         ]);
 
