@@ -3,6 +3,7 @@
 @section('page-name', 'Version Control')
 
 @section('content')
+    <!--suppress JSUnresolvedReference -->
     <div class="container-fluid py-4">
 
         <div class="card">
@@ -125,7 +126,7 @@
                 let tr = this.closest("tr")
                 document.querySelector("#edit_id").value = tr.dataset.id
                 document.querySelector("#edit_version").value = tr.dataset.version
-                document.querySelector("#edit_enabled").value = tr.dataset.enabled == "1" ? "1" : "0"
+                document.querySelector("#edit_enabled").value = tr.dataset.enabled === "1" ? "1" : "0"
                 new bootstrap.Modal(document.getElementById("editModal")).show();
             }
         })
