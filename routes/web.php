@@ -127,6 +127,10 @@ Route::get('/Weeklyreport', [PagesController::class, 'Weeklyreport'])->name('Wee
 
 Route::get('/last10-results', [PagesController::class, 'getLast10Data'])->name('last10.results')->middleware('auth:web,admin');
 
+Route::get('/version-control', [HomeController::class, 'versionControl'])->name('version-control')->middleware('auth:web,admin');
+Route::post('/version-control/add', [HomeController::class, 'versionControlAdd'])->name('version-control.add')->middleware('auth:web,admin');
+Route::post('/version-control/edit', [HomeController::class, 'versionControlEdit'])->name('version-control.edit')->middleware('auth:web,admin');
+
 Route::post('/player/toggle-login-status/{id}', [PagesController::class, 'toggleLoginStatus']);
 Route::get('/players/filter', [PagesController::class, 'filterShow'])->name('players.filter');
 Route::post('/admin/addPointsToEarning', [PagesController::class, 'addPointsToEarning'])->name('admin.addPointsToEarning');

@@ -187,7 +187,6 @@
             @endif
 
             <!--commission report -->
-
             <li class="nav-item">
                 <a class="nav-link {{ Request::is('relesecommission-report*') ? 'active' : '' }}"
                    href="{{ route('relesecommission-report') }}">
@@ -231,6 +230,20 @@
                             <i class="fas fa-cog text-dark"></i>
                         </div>
                         <span class="nav-link-text ms-1">Settings</span>
+                    </a>
+                </li>
+            @endif
+
+            <!-- Version Control (Only for Admin) -->
+            @if ($role === 'admin')
+                <li class="nav-item">
+                    <a class="nav-link {{ Request::is('version-control') ? 'active' : '' }}"
+                       href="{{route('version-control')}}">
+                        <div
+                            class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+                            <i class="fas fa-code-branch text-dark"></i>
+                        </div>
+                        <span class="nav-link-text ms-1">Version Control</span>
                     </a>
                 </li>
             @endif
