@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection StaticClosureCanBeUsedInspection */
 
 namespace App\Http\Controllers;
 
