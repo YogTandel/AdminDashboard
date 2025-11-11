@@ -20,9 +20,15 @@ class HomeController extends Controller
 
     public function versionControlAdd(Request $request)
     {
+        // If this version is being enabled, disable all others first
+        if ($request->enabled === "1") {
+            VersionControl::where('enabled', true)->update(['enabled' => false]);
+        }
+
         VersionControl::create([
             'version' => $request->version,
             'code' => $request->code,
+            'url' => $request->url,
             'enabled' => $request->enabled === "1" ? true : false,
         ]);
 
@@ -31,9 +37,15 @@ class HomeController extends Controller
 
     public function versionControlEdit(Request $request)
     {
+        // If this version is being enabled, disable all others first
+        if ($request->enabled === "1") {
+            VersionControl::where('enabled', true)->update(['enabled' => false]);
+        }
+
         VersionControl::where('_id', $request->id)->update([
             'version' => $request->version,
             'code' => $request->code,
+            'url' => $request->url,
             'enabled' => $request->enabled === "1" ? true : false,
         ]);
 

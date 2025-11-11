@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->string('version');
             $table->string('code');
+            $table->string('url');
             $table->boolean('enabled');
             $table->timestamps();
         });
