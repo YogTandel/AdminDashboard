@@ -9,7 +9,7 @@
     </div>
 
     <div class="container py-1">
-        <h3 class="mb-4 text-dark" style="font-weight: 600; font-size: 1.2rem;">
+        <h3 class="mb-4 mt-2 text-dark" style="font-weight: 600; font-size: 1.2rem;">
             @if (auth('admin')->check())
                 All Transfer History
             @elseif(auth('web')->check())
