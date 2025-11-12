@@ -1196,29 +1196,61 @@ class PagesController extends Controller
         }
 
         /** -------------------------------
-         * 🔍 1. Search Filter
+         * 🔍 1. Search Filter (Player Fixed)
          * ------------------------------- */
         if ($request->filled("search")) {
-            $searchTerm = strtolower($request->search);
+            $searchTerm = trim($request->search);
 
-            $matchedUsers = User::where("player", "LIKE", "%{$searchTerm}%")
+            // Find all matching users (any role)
+            $matchedUsers = User::where("player", "like", "%{$searchTerm}%")
                 ->pluck("_id")
                 ->map(fn($id) => (string)$id)
                 ->toArray();
 
-            $matchedAdmins = Admin::where("player", "LIKE", "%{$searchTerm}%")
+            // Find all matching admins
+            $matchedAdmins = Admin::where("player", "like", "%{$searchTerm}%")
                 ->pluck("_id")
                 ->map(fn($id) => (string)$id)
                 ->toArray();
 
+            // Combine all matched IDs
             $matchedIds = array_merge($matchedUsers, $matchedAdmins);
 
-            $query->where(function ($q) use ($searchTerm, $matchedIds) {
-                $q->where("amount", "LIKE", "%{$searchTerm}%")
-                    ->orWhere("remaining_balance", "LIKE", "%{$searchTerm}%")
-                    ->orWhere("transfer_role", "LIKE", "%{$searchTerm}%")
-                    ->orWhereIn("transfer_by", $matchedIds)
-                    ->orWhereIn("transfer_to", $matchedIds);
+            // Convert to ObjectIds too (to handle MongoDB storage)
+            $matchedObjectIds = [];
+            foreach ($matchedIds as $id) {
+                try {
+                    $matchedObjectIds[] = new ObjectId($id);
+                } catch (\Exception $e) {
+                    // Skip invalid ids
+                }
+            }
+
+            $query->where(function ($q) use ($searchTerm, $matchedIds, $matchedObjectIds) {
+                // 🔹 Match common string fields
+                $q->where("amount", "like", "%{$searchTerm}%")
+                    ->orWhere("remaining_balance", "like", "%{$searchTerm}%")
+                    ->orWhere("transfer_role", "like", "%{$searchTerm}%")
+                    ->orWhere("agent_name", "like", "%{$searchTerm}%")
+                    ->orWhere("distributor_name", "like", "%{$searchTerm}%")
+                    ->orWhere("transfer_type", "like", "%{$searchTerm}%")
+                    ->orWhere("status", "like", "%{$searchTerm}%");
+
+                // 🔹 Match users/admins linked by string IDs
+                if (!empty($matchedIds)) {
+                    $q->orWhereIn("transfer_by", $matchedIds)
+                        ->orWhereIn("transfer_to", $matchedIds);
+                }
+
+                // 🔹 Match users/admins linked by ObjectIds
+                if (!empty($matchedObjectIds)) {
+                    $q->orWhereIn("transfer_by", $matchedObjectIds)
+                        ->orWhereIn("transfer_to", $matchedObjectIds);
+                }
+
+                // 🔹 Fallback: direct textual search (handles stored names)
+                $q->orWhere("transfer_by", "like", "%{$searchTerm}%")
+                    ->orWhere("transfer_to", "like", "%{$searchTerm}%");
             });
         }
 
