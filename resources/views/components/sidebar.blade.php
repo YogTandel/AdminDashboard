@@ -287,4 +287,11 @@
             padding-bottom: 20px;
         }
     }
+    #sidenav-main {
+        scroll-behavior: smooth;
+    }
+    .ps {
+        position: relative !important;
+        max-height: 100vh !important;
+    }
 </style>
