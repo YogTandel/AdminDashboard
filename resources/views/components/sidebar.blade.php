@@ -278,20 +278,3 @@
 </aside>
 
 @include('auth.changepassword')
-
-<style>
-    @media (max-width: 991px) {
-        #sidenav-main {
-            overflow-y: auto !important;
-            height: 100vh !important;
-            padding-bottom: 20px;
-        }
-    }
-    #sidenav-main {
-        scroll-behavior: smooth;
-    }
-    .ps {
-        position: relative !important;
-        max-height: 100vh !important;
-    }
-</style>
