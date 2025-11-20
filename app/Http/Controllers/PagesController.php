@@ -583,6 +583,74 @@ class PagesController extends Controller
         ]);
     }
 
+    public function standingHolding(Request $request)
+    {
+        $request->validate([
+            'amount' => 'required|numeric|min:1'
+        ]);
+
+        $settings = Setting::first();
+
+        if (!$settings) {
+            return response()->json(['error' => 'Settings not found'], 404);
+        }
+
+        $amount = floatval($request->amount);
+
+        if ($amount > $settings->standing) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Amount exceeds available standing.'
+            ]);
+        }
+
+        // Move partial amount
+        $settings->standing -= $amount;
+        $settings->holding += $amount;
+        $settings->save();
+
+        return response()->json([
+            'success' => true,
+            'standing' => number_format($settings->standing, 2),
+            'holding' => number_format($settings->holding, 2),
+            'message' => 'Amount successfully moved to holding.'
+        ]);
+    }
+
+    public function holdingToStanding(Request $request)
+    {
+        $request->validate([
+            'amount' => 'required|numeric|min:1'
+        ]);
+
+        $settings = Setting::first();
+
+        if (!$settings) {
+            return response()->json(['error' => 'Settings not found'], 404);
+        }
+
+        $amount = floatval($request->amount);
+
+        if ($amount > $settings->holding) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Amount exceeds available holding.'
+            ]);
+        }
+
+        // Reverse transfer
+        $settings->holding -= $amount;
+        $settings->standing += $amount;
+        $settings->save();
+
+        return response()->json([
+            'success' => true,
+            'standing' => number_format($settings->standing, 2),
+            'holding' => number_format($settings->holding, 2),
+            'message' => 'Amount successfully moved to standing.'
+        ]);
+    }
+
     public function updateCommissions(Request $request)
     {
         $validated = $request->validate([

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use MongoDB\Laravel\Eloquent\Model;
@@ -24,6 +25,7 @@ class Setting extends Model
         'result',
         'last10data',
         'is_nagative_agent',
+        'holding'
     ];
 
     /**
@@ -32,14 +34,15 @@ class Setting extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'agentComission'       => 'integer',
+        'agentComission' => 'integer',
         'distributorComission' => 'integer',
-        'earning'              => 'integer',
-        'earningPercentage'    => 'Double',
-        'setTominimum'         => 'boolean',
-        'standing'             => 'integer',
-        'customBet'            => 'integer',
-        'last10data'           => 'array',
+        'earning' => 'integer',
+        'earningPercentage' => 'Double',
+        'setTominimum' => 'boolean',
+        'standing' => 'integer',
+        'holding' => 'integer',
+        'customBet' => 'integer',
+        'last10data' => 'array',
     ];
 
     /**
@@ -48,12 +51,12 @@ class Setting extends Model
      * @var array
      */
     protected $attributes = [
-        'agentComission'       => 0,
+        'agentComission' => 0,
         'distributorComission' => 0,
-        'earningPercentage'    => 0,
-        'setTominimum'         => false,
-        'customBet'            => -1,
-        'result'               => '8',
+        'earningPercentage' => 0,
+        'setTominimum' => false,
+        'customBet' => -1,
+        'result' => '8',
     ];
 
     /**

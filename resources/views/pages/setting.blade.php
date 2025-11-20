@@ -6,7 +6,7 @@
     <div class="container-fluid py-4">
         <!-- Loading Spinner -->
         <div id="loadingSpinner" class="d-none"
-            style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 9999; display: flex; justify-content: center; align-items: center;">
+             style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 9999; display: flex; justify-content: center; align-items: center;">
             <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
                 <span class="visually-hidden">Loading...</span>
             </div>
@@ -62,8 +62,8 @@
                                     <div class="input-group">
                                         <span class="input-group-text">%</span>
                                         <input type="number" name="agent_commission" class="form-control"
-                                            placeholder="e.g. 5" value="{{ $settings->agentComission ?? 5 }}" min="0"
-                                            max="100" step="0.01" required>
+                                               placeholder="e.g. 5" value="{{ $settings->agentComission ?? 5 }}" min="0"
+                                               max="100" step="0.01" required>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -71,18 +71,19 @@
                                     <div class="input-group">
                                         <span class="input-group-text">%</span>
                                         <input type="number" name="distributor_commission" class="form-control"
-                                            placeholder="e.g. 0.10" value="{{ $settings->distributorComission ?? 0.1 }}"
-                                            min="0" max="100" step="0.01" required>
+                                               placeholder="e.g. 0.10"
+                                               value="{{ $settings->distributorComission ?? 0.1 }}"
+                                               min="0" max="100" step="0.01" required>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="d-flex flex-wrap gap-2 mt-3">
-                                <button type="submit" class="btn bg-gradient-info mb-2"style="font-size:13px">
+                                <button type="submit" class="btn bg-gradient-info mb-2" style="font-size:13px">
                                     Update Commissions
                                 </button>
                                 <a href="{{ route('commission.report') }}" class="btn bg-gradient-success mb-2"
-                                    style="font-size:13px">
+                                   style="font-size:13px">
                                     Release Commission
                                 </a>
                             </div>
@@ -110,8 +111,8 @@
                         </div>
                         <div class="d-flex flex-wrap gap-2">
                             <form action="{{ route('settings.standingToEarning') }}" method="POST"
-                                id="standingToEarningForm"
-                                onsubmit="return confirm('Are you sure you want to convert Standing to Earning?')">
+                                  id="standingToEarningForm"
+                                  onsubmit="return confirm('Are you sure you want to convert Standing to Earning?')">
                                 @csrf
                                 <button type="submit" class="equal-btn btn-orange" style="font-size:15px">
                                     Standing To Earning
@@ -119,7 +120,7 @@
                             </form>
 
                             <form action="{{ route('settings.earningToZero') }}" method="POST" id="earningToZeroForm"
-                                onsubmit="return confirm('Are you sure you want to reset Earning to 0?')">
+                                  onsubmit="return confirm('Are you sure you want to reset Earning to 0?')">
                                 @csrf
                                 <button type="submit" class="equal-btn btn-red" style="font-size:15px">
                                     Earning to 0
@@ -128,7 +129,7 @@
 
                             <!-- This one is a normal button, so use JS -->
                             <button id="toggleSetToMinimumBtn" type="button" class="equal-btn btn-green"
-                                style="font-size:15px">
+                                    style="font-size:15px">
                                 Set To Minimum
                             </button>
                         </div>
@@ -152,12 +153,12 @@
                                 <div class="input-group">
                                     <span class="input-group-text">%</span>
                                     <input type="number" name="earningPercentage" class="form-control"
-                                        placeholder="Enter Earning Percentage"
-                                        value="{{ $settings->earningPercentage ?? '' }}" min="0" max="100"
-                                        step="0.01" required>
+                                           placeholder="Enter Earning Percentage"
+                                           value="{{ $settings->earningPercentage ?? '' }}" min="0" max="100"
+                                           step="0.01" required>
                                 </div>
                                 <div class="d-grid mt-3">
-                                    <button type="submit" class="btn bg-gradient-info"style="font-size:14px">
+                                    <button type="submit" class="btn bg-gradient-info" style="font-size:14px">
                                         Update Earning%
                                     </button>
                                 </div>
@@ -179,10 +180,11 @@
                             <div class="mb-4">
                                 <label class="form-label">Add Points</label>
                                 <input type="number" class="form-control" name="add_points"
-                                    placeholder="Enter Points to Add" required>
+                                       placeholder="Enter Points to Add" required>
                                 <div class="d-grid mt-2">
-                                    <button type="submit" class="btn btn-success shadow-soft"style="font-size:14px">Add
-                                        To Admin</button>
+                                    <button type="submit" class="btn btn-success shadow-soft" style="font-size:14px">Add
+                                        To Admin
+                                    </button>
                                 </div>
                             </div>
                         </form>
@@ -190,19 +192,20 @@
                             @csrf
                             <label class="form-label">Remove Points</label>
                             <input type="number" class="form-control" name="remove_points"
-                                placeholder="Enter Points to Remove" required min="1">
+                                   placeholder="Enter Points to Remove" required min="1">
                             <div class="d-grid mt-2">
-                                <button type="submit" class="btn btn-danger shadow-soft"style="font-size:14px">Remove
-                                    from Admin</button>
+                                <button type="submit" class="btn btn-danger shadow-soft" style="font-size:14px">Remove
+                                    from Admin
+                                </button>
                             </div>
                         </form>
                         <form action="{{ route('admin.addPointsToEarning') }}" method="POST"
-                            id="addPointsToEarningForm">
+                              id="addPointsToEarningForm">
                             @csrf
                             <div class="mt-4">
                                 <label class="form-label">Add Points To Earning</label>
                                 <input type="number" class="form-control" name="points_to_earning"
-                                    placeholder="Enter Points to Transfer" required min="1">
+                                       placeholder="Enter Points to Transfer" required min="1">
                                 <div class="d-grid mt-2">
                                     <button type="submit" class="btn btn-warning shadow-soft" style="font-size:14px">
                                         Add Points To Earning
@@ -210,6 +213,40 @@
                                 </div>
                             </div>
                         </form>
+                        <!-- Standing Holding Section -->
+                        <div class="mb-4 p-3 border rounded shadow-sm">
+                            <h6 class="mb-3">Standing ↔ Holding</h6>
+
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <strong>Standing Amount:</strong>
+                                <span class="text-primary fw-bold" id="standing_amount_display">
+                                    ₹{{ number_format($settings->standing ?? 0, 2) }}
+                                </span>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <strong>Holding Amount:</strong>
+                                <span class="text-success fw-bold" id="holding_amount_display">
+                                        ₹{{ number_format($settings->holding ?? 0, 2) }}
+                                </span>
+                            </div>
+
+                            <label class="form-label">Enter Amount to Move</label>
+                            <input type="number" class="form-control" id="transferAmountInput"
+                                   placeholder="Enter custom amount" min="1">
+
+                            <div class="d-flex gap-2 mt-3">
+                                <button class="btn btn-dark flex-fill" id="standingToHoldingBtn">
+                                    Standing → Holding
+                                </button>
+
+                                <button class="btn btn-secondary flex-fill" id="holdingToStandingBtn">
+                                    Holding → Standing
+                                </button>
+                            </div>
+                        </div>
+
+
                     </div>
                 </div>
             </div>
@@ -274,31 +311,31 @@
             }
         }
 
-        $(document).ready(function() {
+        $(document).ready(function () {
             updateButtonColor(initialValue);
 
             // Form submissions with loader
-            $('#commissionForm').on('submit', function() {
+            $('#commissionForm').on('submit', function () {
                 showLoader();
             });
 
-            $('#standingToEarningForm').on('submit', function() {
+            $('#standingToEarningForm').on('submit', function () {
                 showLoader();
             });
 
-            $('#earningToZeroForm').on('submit', function() {
+            $('#earningToZeroForm').on('submit', function () {
                 showLoader();
             });
 
-            $('#profitForm').on('submit', function() {
+            $('#profitForm').on('submit', function () {
                 showLoader();
             });
 
-            $('#addPointsForm').on('submit', function() {
+            $('#addPointsForm').on('submit', function () {
                 showLoader();
             });
 
-            $('#removePointsForm').on('submit', function() {
+            $('#removePointsForm').on('submit', function () {
                 showLoader();
             });
 
@@ -313,7 +350,8 @@
                     $('#toggleSetToMinimumBtn').removeClass('btn-green').addClass('btn-red');
                 }
             }
-            $('#toggleSetToMinimumBtn').click(function() {
+
+            $('#toggleSetToMinimumBtn').click(function () {
                 showLoader();
                 $.ajax({
                     url: "{{ route('toggle.setToMinimum') }}",
@@ -321,7 +359,7 @@
                     data: {
                         _token: "{{ csrf_token() }}"
                     },
-                    success: function(response) {
+                    success: function (response) {
                         if (response.setTominimum !== undefined) {
                             updateButtonColor(response.setTominimum);
                         } else {
@@ -329,7 +367,7 @@
                         }
                         hideLoader();
                     },
-                    error: function() {
+                    error: function () {
                         alert('Error toggling Set To Minimum');
                         hideLoader();
                     }
@@ -341,23 +379,89 @@
             $.ajax({
                 url: "{{ route('admin.endpoint') }}",
                 method: 'GET',
-                success: function(response) {
+                success: function (response) {
                     $('#admin-endpoint').text("Balance: " + response.endpoint);
                     hideLoader();
                 },
-                error: function() {
+                error: function () {
                     $('#admin-endpoint').text("Balance: Error loading");
                     hideLoader();
                 }
             });
 
             // Auto-dismiss alerts
-            setTimeout(function() {
+            setTimeout(function () {
                 $('.alert-success-auto').fadeOut('slow');
                 $('.alert-danger-auto').fadeOut('slow');
             }, 5000);
         });
+
+        function updateDisplays(response) {
+            $('#standing_amount_display').text("₹" + response.standing);
+            $('#holding_amount_display').text("₹" + response.holding);
+            $('#transferAmountInput').val('');
+        }
+
+        // Standing → Holding
+        $('#standingToHoldingBtn').click(function () {
+            let amount = $('#transferAmountInput').val();
+
+            if (!amount || amount <= 0) {
+                alert("Please enter a valid amount.");
+                return;
+            }
+
+            showLoader();
+
+            $.post("{{ route('settings.standingHolding') }}", {
+                _token: "{{ csrf_token() }}",
+                amount: amount
+            })
+                .done(function (response) {
+                    hideLoader();
+                    if (response.success) {
+                        alert(response.message);
+                        updateDisplays(response);
+                    } else {
+                        alert(response.message);
+                    }
+                })
+                .fail(function () {
+                    hideLoader();
+                    alert("Something went wrong.");
+                });
+        });
+
+        // Holding → Standing
+        $('#holdingToStandingBtn').click(function () {
+            let amount = $('#transferAmountInput').val();
+
+            if (!amount || amount <= 0) {
+                alert("Please enter a valid amount.");
+                return;
+            }
+
+            showLoader();
+
+            $.post("{{ route('settings.holdingToStanding') }}", {
+                _token: "{{ csrf_token() }}",
+                amount: amount
+            })
+                .done(function (response) {
+                    hideLoader();
+                    if (response.success) {
+                        alert(response.message);
+                        updateDisplays(response);
+                    } else {
+                        alert(response.message);
+                    }
+                })
+                .fail(function () {
+                    hideLoader();
+                    alert("Something went wrong.");
+                });
+        });
     </script>
 
-    <x-footer />
+    <x-footer/>
 @endsection

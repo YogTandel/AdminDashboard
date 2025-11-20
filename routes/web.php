@@ -62,6 +62,11 @@ Route::post('/admin/add-points', [PagesController::class, 'addPointsToAdmin'])->
 Route::post('/admin/remove-points', [PagesController::class, 'removePointsFromAdmin'])->name('admin.removePoints');
 Route::post('/custom-bet-update', [PagesController::class, 'updateCustomBet'])->name('custom.bet.update');
 Route::get('/admin-endpoint', [PagesController::class, 'getAdminEndpoint'])->name('admin.endpoint');
+Route::post('/settings/standing-holding', [PagesController::class, 'standingHolding'])
+    ->name('settings.standingHolding');
+Route::post('/settings/holding-to-standing', [PagesController::class, 'holdingToStanding'])
+    ->name('settings.holdingToStanding');
+
 
 // live game
 Route::get('/livegame', [PagesController::class, 'livegame'])->name('livegame')->middleware('auth:web,admin');
