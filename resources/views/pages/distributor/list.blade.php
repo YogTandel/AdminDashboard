@@ -4,7 +4,6 @@
 @section('page-name', 'Distributor List')
 
 @section('content')
-    <!--suppress JSUnresolvedReference, JSUnnecessarySemicolon -->
     <div class="container-fluid py-4">
         <!-- Loader -->
         <div id="loader" class="loader-overlay" style="display: none;">
@@ -154,13 +153,11 @@
                                             <span
                                                 class="text-xs font-weight-bold">{{ $distributors->firstItem() + $index }}</span>
                                         </td>
+                                        <!-- Name without avatar -->
                                         <td>
-                                            <div class="d-flex align-items-center">
-                                                <span class="text-sm font-weight-bold me-2"
-                                                      id="name-{{ $distributor->id }}">
-                                                    {{ $distributor->player }}
-                                                </span>
-                                            </div>
+                                            <span class="text-sm font-weight-bold" id="name-{{ $distributor->id }}">
+                                                {{ $distributor->player }}
+                                            </span>
                                         </td>
                                         <td>
                                             <span class="text-xs text-secondary" id="password-{{ $distributor->id }}">
@@ -191,8 +188,10 @@
                                             </span>
                                         </td>
                                         <td class="text-center">
-                                            <div class="btn-group" role="group">
-                                                @php $admin = Auth::guard('admin')->user(); @endphp
+                                            @php $admin = Auth::guard('admin')->user(); @endphp
+
+                                                <!-- Desktop: Inline buttons -->
+                                            <div class="btn-group d-none d-md-inline-flex" role="group">
                                                 @if ($admin)
                                                     <a href="javascript:;" class="btn btn-link text-success px-2 mb-0"
                                                        data-bs-toggle="modal"
@@ -229,6 +228,62 @@
                                                     <i class="fas {{ $distributor->status === 'Active' ? 'fa-ban text-warning' : 'fa-check text-success' }} fa-sm"></i>
                                                 </a>
                                             </div>
+
+                                            <!-- Mobile: 3-dot Dropdown + Delete button -->
+                                            <div class="d-inline-flex align-items-center d-md-none">
+                                                <div class="dropdown">
+                                                    <button class="btn btn-link text-secondary px-2 mb-0" type="button"
+                                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                                        <i class="fas fa-ellipsis-v"></i>
+                                                    </button>
+                                                    <ul class="dropdown-menu dropdown-menu-end shadow">
+                                                        @if ($admin)
+                                                            <li>
+                                                                <a class="dropdown-item" href="javascript:;"
+                                                                   data-bs-toggle="modal"
+                                                                   data-bs-target="#refillModal{{ $distributor->id }}">
+                                                                    <i class="fa-solid fa-indian-rupee-sign text-success me-2 fa-fw"></i>
+                                                                    Refill Balance
+                                                                </a>
+                                                            </li>
+                                                        @endif
+                                                        <li>
+                                                            <a class="dropdown-item" href="javascript:void(0);"
+                                                               onclick="copyToClipboard('{{ $distributor->player }} - {{ $distributor->original_password }}')">
+                                                                <i class="fas fa-copy text-secondary me-2 fa-fw"></i>
+                                                                Copy Details
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="dropdown-item" href="javascript:;"
+                                                               data-bs-toggle="modal"
+                                                               data-bs-target="#Editmodal{{ $distributor->id }}">
+                                                                <i class="fas fa-edit text-info me-2 fa-fw"></i>
+                                                                Edit
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="dropdown-item distributor-toggle-status-mobile"
+                                                               href="javascript:;"
+                                                               data-distributor-id="{{ $distributor->id }}">
+                                                                <i class="fas {{ $distributor->status === 'Active' ? 'fa-ban text-warning' : 'fa-check text-success' }} me-2 fa-fw"></i>
+                                                                <span>{{ $distributor->status === 'Active' ? 'Block' : 'Unblock' }}</span>
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <!-- Delete button outside dropdown -->
+                                                <form action="{{ route('distributor.delete', $distributor->id) }}"
+                                                      method="post" class="d-inline">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-link text-danger px-2 mb-0"
+                                                            onclick="return confirm('Are you sure you want to delete this distributor?')"
+                                                            title="Delete">
+                                                        <i class="fas fa-trash fa-sm"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
                                         </td>
                                     </tr>
                                     @include('pages.distributor.refil')
@@ -236,7 +291,7 @@
                                 @empty
                                     <tr>
                                         <td colspan="8" class="text-center py-5">
-                                            <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                                            <i class="fas fa-users fa-3x text-muted mb-3 d-block"></i>
                                             <p class="text-muted mb-0">No distributors found</p>
                                         </td>
                                     </tr>
@@ -248,9 +303,9 @@
                         <!-- Pagination -->
                         @if($distributors->hasPages())
                             <div class="d-flex justify-content-between align-items-center px-3 pt-3">
-                            <span class="text-sm text-muted">
-                                Showing {{ $distributors->firstItem() }} to {{ $distributors->lastItem() }} of {{ $distributors->total() }} entries
-                            </span>
+                                <span class="text-sm text-muted">
+                                    Showing {{ $distributors->firstItem() }} to {{ $distributors->lastItem() }} of {{ $distributors->total() }} entries
+                                </span>
                                 {{ $distributors->links('vendor.pagination.bootstrap-4') }}
                             </div>
                         @endif
@@ -287,14 +342,6 @@
             }
         }
 
-        .avatar {
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
         .btn-group .btn-link {
             padding: 0.25rem 0.5rem;
         }
@@ -302,6 +349,42 @@
         .btn-group .btn-link:hover {
             background: rgba(0, 0, 0, 0.05);
             border-radius: 0.25rem;
+        }
+
+        /* Mobile dropdown styling */
+        .dropdown-menu {
+            border: none;
+            border-radius: 0.5rem;
+            min-width: 160px;
+            z-index: 1050;
+        }
+
+        .dropdown-item {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .dropdown-item i.fa-fw {
+            width: 1.25em;
+        }
+
+        /* Fix dropdown in table on mobile */
+        @media (max-width: 767.98px) {
+            td .dropdown {
+                position: static;
+            }
+
+            td .dropdown-menu {
+                position: absolute !important;
+                right: 1rem !important;
+                left: auto !important;
+                top: auto !important;
+                transform: none !important;
+            }
         }
     </style>
 
@@ -325,28 +408,53 @@
             });
         }
 
-        document.querySelectorAll('.distributor-toggle-status').forEach(btn => {
-            btn.addEventListener('click', function () {
-                const id = this.dataset.distributorId;
-                fetch(`/distributor/toggle-status/${id}`, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'Accept': 'application/json',
+        // Shared toggle status handler
+        function handleToggleStatus(btn) {
+            const id = btn.dataset.distributorId;
+            fetch(`/distributor/toggle-status/${id}`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json',
+                }
+            })
+                .then(r => r.json())
+                .then(data => {
+                    const badge = document.getElementById(`status-badge-${id}`);
+                    const isActive = data.status === 'Active';
+
+                    // Update badge
+                    badge.className = `badge badge-sm ${isActive ? 'bg-gradient-success' : 'bg-gradient-danger'}`;
+                    badge.textContent = data.status;
+
+                    // Update desktop icon
+                    const desktopBtn = document.getElementById(`toggle-status-${id}`);
+                    if (desktopBtn) {
+                        desktopBtn.querySelector('i').className = `fas fa-sm ${isActive ? 'fa-ban text-warning' : 'fa-check text-success'}`;
+                        desktopBtn.title = isActive ? 'Block' : 'Unblock';
+                    }
+
+                    // Update mobile dropdown
+                    const mobileBtn = document.querySelector(`.distributor-toggle-status-mobile[data-distributor-id="${id}"]`);
+                    if (mobileBtn) {
+                        mobileBtn.querySelector('i').className = `fas ${isActive ? 'fa-ban text-warning' : 'fa-check text-success'} me-2 fa-fw`;
+                        mobileBtn.querySelector('span').textContent = isActive ? 'Block' : 'Unblock';
                     }
                 })
-                    .then(r => r.json())
-                    .then(data => {
-                        const icon = this.querySelector('i');
-                        const badge = document.getElementById(`status-badge-${id}`);
-                        const isActive = data.status === 'Active';
+                .catch(() => alert('Something went wrong.'));
+        }
 
-                        icon.className = `fas fa-sm ${isActive ? 'fa-ban text-warning' : 'fa-check text-success'}`;
-                        badge.className = `badge badge-sm ${isActive ? 'bg-gradient-success' : 'bg-gradient-danger'}`;
-                        badge.textContent = data.status;
-                        this.title = isActive ? 'Block' : 'Unblock';
-                    })
-                    .catch(() => alert('Something went wrong.'));
+        // Desktop toggle
+        document.querySelectorAll('.distributor-toggle-status').forEach(btn => {
+            btn.addEventListener('click', function () {
+                handleToggleStatus(this);
+            });
+        });
+
+        // Mobile toggle
+        document.querySelectorAll('.distributor-toggle-status-mobile').forEach(btn => {
+            btn.addEventListener('click', function () {
+                handleToggleStatus(this);
             });
         });
     </script>
