@@ -1,4 +1,6 @@
-<?php /** @noinspection StaticClosureCanBeUsedInspection */
+<?php /** @noinspection TypesCastingCanBeUsedInspection */
+
+/** @noinspection StaticClosureCanBeUsedInspection */
 
 namespace App\Http\Controllers;
 
@@ -1682,24 +1684,38 @@ class PagesController extends Controller
         if ($request->filled("search")) {
             $searchTerm = strtolower($request->search);
 
+            // 1. Search users/admins by name
             $matchedUsers = User::where("player", "LIKE", "%{$searchTerm}%")
                 ->pluck("_id")
-                ->map(fn($id) => (string)$id)
+                ->map(fn($id) => new ObjectId($id))
                 ->toArray();
 
             $matchedAdmins = Admin::where("player", "LIKE", "%{$searchTerm}%")
                 ->pluck("_id")
-                ->map(fn($id) => (string)$id)
+                ->map(fn($id) => new ObjectId($id))
                 ->toArray();
 
             $matchedIds = array_merge($matchedUsers, $matchedAdmins);
 
             $query->where(function ($q) use ($searchTerm, $matchedIds) {
-                $q->where("amount", "LIKE", "%{$searchTerm}%")
-                    ->orWhere("type", "LIKE", "%{$searchTerm}%")
-                    ->orWhere("transfer_role", "LIKE", "%{$searchTerm}%")
-                    ->orWhereIn("transfer_by", $matchedIds)
-                    ->orWhereIn("transfer_to", $matchedIds);
+
+                // Numeric/amount search
+                if (is_numeric($searchTerm)) {
+                    $q->orWhere("amount", intval($searchTerm));
+                    $q->orWhere("remaining_balance", intval($searchTerm));
+                }
+
+                // Search "type" field in MongoDB
+                $q->orWhere("type", "LIKE", "%{$searchTerm}%");
+
+                // Search transfer role
+                $q->orWhere("transfer_role", "LIKE", "%{$searchTerm}%");
+
+                // Search by matched user/admin IDs
+                if (!empty($matchedIds)) {
+                    $q->orWhereIn("transfer_by", $matchedIds);
+                    $q->orWhereIn("transfer_to", $matchedIds);
+                }
             });
         }
 
