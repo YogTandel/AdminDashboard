@@ -1,3 +1,4 @@
+<!--suppress JSUnresolvedReference -->
 <div class="modal fade" id="exampleModalAddAgent" tabindex="-1" role="dialog"
      aria-labelledby="exampleModalAddAgent" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-md" role="document">
