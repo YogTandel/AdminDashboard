@@ -75,14 +75,14 @@
                         <select name="date_range" class="form-select form-select-sm" onchange="this.form.submit()"
                                 style="width: 150px;">
                             <option value="">Date Range</option>
-                            <option value="2_days_ago" {{ request('date_range') == '2_days_ago' ? 'selected' : '' }}>
+                            <option value="2_days_ago" {{ request('date_range') === '2_days_ago' ? 'selected' : '' }}>
                                 Last 2
                                 Days
                             </option>
-                            <option value="last_week" {{ request('date_range') == 'last_week' ? 'selected' : '' }}>Last
+                            <option value="last_week" {{ request('date_range') === 'last_week' ? 'selected' : '' }}>Last
                                 Week
                             </option>
-                            <option value="last_month" {{ request('date_range') == 'last_month' ? 'selected' : '' }}>
+                            <option value="last_month" {{ request('date_range') === 'last_month' ? 'selected' : '' }}>
                                 Last
                                 Month
                             </option>
