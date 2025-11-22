@@ -64,7 +64,7 @@
 
                                 <!-- Persist ALL parameters EXCEPT page -->
                                 @foreach (request()->query() as $key => $value)
-                                    @if ($key != 'per_page')
+                                    @if ($key !== 'per_page')
                                         <input type="hidden" name="{{ $key }}" value="{{ $value }}">
                                     @endif
                                 @endforeach
