@@ -1,3 +1,4 @@
+@php use Carbon\Carbon; @endphp
 @extends('layouts.layout')
 
 @section('page-name', 'Agent List')
@@ -14,240 +15,218 @@
             @if (session('success'))
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                     <span class="alert-text"><strong>{{ session('success') }}</strong></span>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             @endif
             @if (session('error'))
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <span class="alert-text"><strong>{{ session('error') }}</strong></span>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             @endif
         </div>
-        <!-- End Toast Container -->
 
         <div class="row">
             <div class="col-12">
                 <div class="card mb-4">
-                    <!-- First Row -->
-                    <div class="d-flex justify-content-between align-items-center flex-wrap mb-2">
-                        <h6 class="mb-0 ms-4 mt-3 text-bolder">Agent Users</h6>
-                        <div class="d-flex align-items-center gap-2 flex-wrap mt-3 me-3">
-                            <!-- Show Dropdown -->
-                            <form method="GET" class="d-flex align-items-center mb-0" id="perPageForm">
-                                <label for="per_page" class="mb-0 me-2 text-sm text-dark fw-bold">Show:</label>
+                    <!-- Clean Header Section -->
+                    <div class="card-header pb-0">
+                        <div class="row align-items-center">
+                            <div class="col-lg-6 col-md-6">
+                                <h5 class="mb-0">Agent Users</h5>
+                                <p class="text-sm text-muted mb-0">Manage your agent accounts</p>
+                            </div>
+                            <div class="col-lg-6 col-md-6 text-end">
+                                @if (auth('admin')->check() || auth()->user()->role === 'distributor')
+                                    <button type="button" class="btn bg-gradient-primary mb-0"
+                                            data-bs-toggle="modal" data-bs-target="#exampleModalAddAgent">
+                                        <i class="fas fa-plus me-2"></i>Add Agent
+                                    </button>
+                                @endif
+                                @include('pages.agent.create')
+                            </div>
+                        </div>
+                    </div>
 
-                                <div class="input-group input-group-outline border-radius-lg shadow-sm">
-                                    <select name="per_page" id="per_page" class="form-select border-0 ps-3 pe-4"
-                                            style="min-width: 60px;">
-                                        <option value="10"
-                                            {{ (int) request()->query('per_page', 10) === 10 ? 'selected' : '' }}>10
+                    <!-- Unified Filter Bar -->
+                    <div class="card-header pt-0 pb-3">
+                        <hr class="horizontal dark mt-0 mb-3">
+                        <form method="GET" action="{{ route('agentlist.show') }}" id="filterForm">
+                            <div class="row g-3 align-items-end">
+                                <!-- Show Per Page -->
+                                <div class="col-lg-1 col-md-2 col-sm-4">
+                                    <label class="form-label text-xs text-uppercase text-muted mb-1">Show</label>
+                                    <select name="per_page" class="form-select form-select-sm"
+                                            onchange="document.getElementById('filterForm').submit()">
+                                        @foreach([10, 20, 30, 40, 50] as $num)
+                                            <option
+                                                value="{{ $num }}" {{ (int)request('per_page', 10) === $num ? 'selected' : '' }}>{{ $num }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <!-- Search -->
+                                <div class="col-lg-2 col-md-3 col-sm-8">
+                                    <label class="form-label text-xs text-uppercase text-muted mb-1">Search</label>
+                                    <div class="input-group input-group-sm">
+                                        <span class="input-group-text"><i class="fas fa-search text-muted"></i></span>
+                                        <input type="search" name="search" class="form-control"
+                                               value="{{ request('search') }}" placeholder="Name, password...">
+                                    </div>
+                                </div>
+
+                                <!-- Distributor Filter -->
+                                <div class="col-lg-2 col-md-3 col-sm-4">
+                                    <label class="form-label text-xs text-uppercase text-muted mb-1">Distributor</label>
+                                    <select name="distributor_name" class="form-select form-select-sm">
+                                        <option value="">All Distributors</option>
+                                        @foreach ($distributors as $distributor)
+                                            <option value="{{ $distributor->player }}"
+                                                {{ request('distributor_name') === $distributor->player ? 'selected' : '' }}>
+                                                {{ $distributor->player }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <!-- Date Range Preset -->
+                                <div class="col-lg-2 col-md-2 col-sm-4">
+                                    <label class="form-label text-xs text-uppercase text-muted mb-1">Quick
+                                        Filter</label>
+                                    <select name="date_range" class="form-select form-select-sm">
+                                        <option value="">All Time</option>
+                                        <option
+                                            value="2_days_ago" {{ request('date_range') === '2_days_ago' ? 'selected' : '' }}>
+                                            Last 2 Days
                                         </option>
-                                        <option value="20"
-                                            {{ (int) request()->query('per_page', 10) === 20 ? 'selected' : '' }}>20
+                                        <option
+                                            value="this_week" {{ request('date_range') === 'this_week' ? 'selected' : '' }}>
+                                            Last Week
                                         </option>
-                                        <option value="30"
-                                            {{ (int) request()->query('per_page', 10) === 30 ? 'selected' : '' }}>30
-                                        </option>
-                                        <option value="40"
-                                            {{ (int) request()->query('per_page', 10) === 40 ? 'selected' : '' }}>40
-                                        </option>
-                                        <option value="50"
-                                            {{ (int) request()->query('per_page', 50) === 20 ? 'selected' : '' }}>50
+                                        <option
+                                            value="last_month" {{ request('date_range') === 'last_month' ? 'selected' : '' }}>
+                                            Last Month
                                         </option>
                                     </select>
                                 </div>
 
-                                <!-- Persist ALL parameters EXCEPT page -->
-                                @foreach (request()->query() as $key => $value)
-                                    @if ($key !== 'per_page')
-                                        <input type="hidden" name="{{ $key }}" value="{{ $value }}">
-                                    @endif
-                                @endforeach
-                            </form>
-
-                            <!-- Search -->
-                            <form action="{{ route('agentlist.show') }}" method="GET" class="d-flex align-items-center">
-                                <div class="input-group input-group-outline rounded-pill me-2 shadow-sm">
-                                    <span class="input-group-text bg-transparent border-0 text-secondary">
-                                        <i class="fas fa-search"></i>
-                                    </span>
-                                    <label class="form-label"></label>
-                                    <input type="search" name="search" class="form-control border-0"
-                                           value="{{ request('search') }}"
-                                           onfocus="this.parentElement.classList.add('is-focused')"
-                                           onfocusout="this.parentElement.classList.remove('is-focused')">
+                                <!-- Date From -->
+                                <div class="col-lg-2 col-md-2 col-sm-4">
+                                    <label class="form-label text-xs text-uppercase text-muted mb-1">From</label>
+                                    <input type="date" name="from_date" class="form-control form-control-sm"
+                                           value="{{ request('from_date') }}">
                                 </div>
 
-                                <button type="submit" class="btn bg-gradient-warning rounded-pill shadow-sm mb-0">
-                                    Search
-                                </button>
+                                <!-- Date To -->
+                                <div class="col-lg-1 col-md-2 col-sm-4">
+                                    <label class="form-label text-xs text-uppercase text-muted mb-1">To</label>
+                                    <input type="date" name="to_date" class="form-control form-control-sm"
+                                           value="{{ request('to_date') }}">
+                                </div>
 
-                                @if (request()->has('search') && request('search') != '')
-                                    <a href="{{ route('agentlist.show') }}"
-                                       class="btn btn-secondary btn-sm px-3 mt-3">Reset</a>
-                                @endif
-                            </form>
-                            @if (auth('admin')->check() || auth()->user()->role === 'distributor')
-                                <!-- Add Agent -->
-                                <button type="button" class="btn bg-primary mb-0 text-white" data-bs-toggle="modal"
-                                        data-bs-target="#exampleModalAddAgent">
-                                    <i class="fas fa-plus"></i>&nbsp;&nbsp;Add Agent
-                                </button>
-                            @endif
-                            @include('pages.agent.create')
-                        </div>
+                                <!-- Action Buttons -->
+                                <div class="col-lg-2 col-md-4 col-sm-12">
+                                    <div class="d-flex gap-2">
+                                        <button type="submit" class="btn btn-sm bg-gradient-info mb-0 flex-grow-1">
+                                            <i class="fas fa-filter me-1"></i> Apply
+                                        </button>
+                                        @if(request()->hasAny(['search', 'from_date', 'to_date', 'date_range', 'distributor_name']))
+                                            <a href="{{ route('agentlist.show') }}"
+                                               class="btn btn-sm btn-outline-secondary mb-0">
+                                                <i class="fas fa-times"></i>
+                                            </a>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
                     </div>
 
-                    <!-- Second Row: Date Filter -->
-                    <form action="{{ route('agentlist.show') }}" method="GET"
-                          class="d-flex justify-content-end align-items-center flex-wrap gap-2 mt-2 me-3">
-                        <!-- Date Range -->
-                        <select name="date_range" class="form-select form-select-sm" onchange="this.form.submit()"
-                                style="width: 150px;">
-                            <option value="">Date Range</option>
-                            <option value="2_days_ago" {{ request('date_range') == '2_days_ago' ? 'selected' : '' }}>
-                                Last 2
-                                Days
-                            </option>
-                            <option value="this_week" {{ request('date_range') == 'this_week' ? 'selected' : '' }}>Last
-                                Week
-                            </option>
-                            <option value="last_month" {{ request('date_range') == 'last_month' ? 'selected' : '' }}>
-                                Last
-                                Month
-                            </option>
-                        </select>
-
-                        <!-- From Date -->
-                        <input type="date" name="from_date" class="form-control form-control-sm"
-                               value="{{ request('from_date') }}" style="width: 150px;">
-
-                        <!-- To Date -->
-                        <span class="text-sm mx-1">to</span>
-                        <input type="date" name="to_date" class="form-control form-control-sm"
-                               value="{{ request('to_date') }}" style="width: 150px;">
-
-                        <!-- Search Hidden -->
-                        @if (request()->has('search'))
-                            <input type="hidden" name="search" value="{{ request('search') }}">
-                        @endif
-                        <input type="hidden" name="per_page" value="{{ request('per_page', 10) }}">
-
-                        <!-- Distributor Filter -->
-                        <select name="distributor_name" class="form-select form-select-sm" onchange="this.form.submit()"
-                                style="width: 180px;">
-                            <option value="">All Distributors</option>
-                            @foreach ($distributors as $distributor)
-                                <option value="{{ $distributor->player }}"
-                                    {{ request('distributor_name') == $distributor->player ? 'selected' : '' }}>
-                                    {{ $distributor->player }}
-                                </option>
-                            @endforeach
-                        </select>
-
-                        <!-- Filter Button -->
-                        <button type="submit" class="btn btn-sm btn-primary mb-0">Filter</button>
-                        <input type="hidden" name="per_page" value="{{ request('per_page', 10) }}">
-
-                        <!-- Reset Button -->
-                        @if (request()->has('from_date') || request()->has('to_date') || request()->has('date_range'))
-                            <a href="{{ route('agentlist.show') }}" class="btn btn-secondary btn-sm px-3 mt-3">Reset</a>
-                        @endif
-                        <input type="hidden" name="per_page" value="{{ request('per_page', 10) }}">
-                    </form>
-
+                    <!-- Table -->
                     <div class="card-body px-0 pt-0 pb-2">
                         <div class="table-responsive p-0">
                             <table class="table align-items-center mb-0">
                                 <thead>
                                 <tr>
-                                    <th
-                                        class="text-uppercase text-secondary text-xxs font-weight-bolder opacity- text-center">
-                                        No
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-3">
+                                        #
                                     </th>
-                                    <th
-                                        class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                         Name
                                     </th>
-                                    <th
-                                        class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                         Password
                                     </th>
-                                    <th
-                                        class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2 text-center">
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                         Role
                                     </th>
-                                    <th
-                                        class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                         Distributor
                                     </th>
-                                    <th
-                                        class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">
                                         Status
                                     </th>
-                                    <th
-                                        class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-end">
                                         Balance
                                     </th>
-                                    <th
-                                        class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">
-                                        Created At
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        Created
                                     </th>
-                                    <th
-                                        class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">
-                                        Action
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">
+                                        Actions
                                     </th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 @forelse ($agents as $index => $agent)
                                     <tr>
-                                        <td class="text-center">
-                                            <p class="text-xs font-weight-bold mb-0 text-dark">{{ $index + 1 }}</p>
+                                        <td class="ps-3">
+                                            <span
+                                                class="text-xs font-weight-bold">{{ $agents->firstItem() + $index }}</span>
+                                        </td>
+                                        <td>
+                                            <span class="text-sm font-weight-bold" id="name-{{ $agent->id }}">
+                                                {{ $agent->player }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="text-xs text-secondary" id="password-{{ $agent->id }}">
+                                                {{ $agent->original_password }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span
+                                                class="badge badge-sm bg-secondary">{{ ucfirst($agent->role) }}</span>
+                                        </td>
+                                        <td>
+                                            <span class="text-xs font-weight-bold">{{ $agent->distributor }}</span>
                                         </td>
                                         <td class="text-center">
-                                            <p class="text-xs font-weight-bold mb-0 text-dark">{{ $agent->player }}
-                                            </p>
+                                            <span id="status-badge-{{ $agent->id }}"
+                                                  class="badge badge-sm {{ $agent->status === 'Active' ? 'bg-gradient-success' : 'bg-gradient-danger' }}">
+                                                {{ $agent->status }}
+                                            </span>
+                                        </td>
+                                        <td class="text-end">
+                                            <span
+                                                class="text-sm font-weight-bold">₹{{ number_format($agent->endpoint) }}</span>
+                                        </td>
+                                        <td>
+                                            <span class="text-xs text-secondary">
+                                                {{ Carbon::createFromFormat('YmdHis', $agent->DateOfCreation)->setTimezone('Asia/Kolkata')->format('d M Y') }}
+                                            </span>
+                                            <br>
+                                            <span class="text-xs text-muted">
+                                                {{ Carbon::createFromFormat('YmdHis', $agent->DateOfCreation)->setTimezone('Asia/Kolkata')->format('H:i') }}
+                                            </span>
                                         </td>
                                         <td class="text-center">
-                                            <p class="text-xs font-weight-bold mb-0 text-dark me-4">
-                                                {{ $agent->original_password }}</p>
-                                        </td>
-                                        <td class="text-center">
-                                            <p class="text-xs font-weight-bold mb-0 text-dark">
-                                                {{ ucfirst($agent->role) }}</p>
-                                        </td>
-                                        <td class="text-center">
-                                            <p class="text-xs font-weight-bold mb-0 text-dark">
-                                                {{ $agent->distributor }}</p>
-                                        </td>
-                                        <td class="text-center text-dark">
-                                                <span id="status-badge-{{ $agent->id }}"
-                                                      class="badge {{ $agent->status === 'Active' ? 'bg-gradient-success' : 'bg-gradient-danger' }}">
-                                                    {{ strtoupper($agent->status) }}
-                                                </span>
-                                        </td>
-                                        <td class="text-center">
-                                            <p class="text-xs font-weight-bold mb-0 text-dark">{{ $agent->endpoint }}
-                                            </p>
-                                        </td>
-                                        <td class="text-center text-dark">
-                                                <span class="text-secondary text-xs font-weight-bold">
-                                                    {{ \Carbon\Carbon::createFromFormat('YmdHis', $agent->DateOfCreation)->setTimezone('Asia/Kolkata')->format('d M Y, H:i') }}
-                                                </span>
-                                        </td>
-                                        <td class="text-center">
-                                            <div class="d-flex justify-content-center gap-2 align-items-center">
-                                                <!-- Radio Button -->
-                                                @php $admin = Auth::guard('admin')->user(); @endphp
+                                            @php $admin = Auth::guard('admin')->user(); @endphp
 
+                                                <!-- Desktop: Inline buttons -->
+                                            <div class="btn-group d-none d-md-inline-flex" role="group">
                                                 @if ($admin)
-                                                    <div class="form-check form-switch">
+                                                    <div class="form-check form-switch me-2">
                                                         <input class="form-check-input agent-radio" type="radio"
                                                                name="agent_select" id="agentSwitch{{ $agent->id }}"
                                                                value="{{ $agent->id }}"
@@ -256,204 +235,344 @@
                                                                data-agent-balance="{{ $agent->balance }}"
                                                                data-agent-distributor="{{ $agent->distributor }}"
                                                                data-agent-endpoint="{{ $agent->endpoint }}"
-                                                               data-bs-toggle="tooltip"
-                                                               title="Select agent {{ $agent->player }}">
+                                                               title="Select agent">
                                                     </div>
                                                 @endif
 
                                                 @if (auth()->check() && auth()->user()->role === 'distributor')
-                                                    <a href="javascript:;"
-                                                       class="text-success font-weight-bold text-xs me-2"
+                                                    <a href="javascript:;" class="btn btn-link text-success px-2 mb-0"
                                                        data-bs-toggle="modal"
-                                                       data-bs-target="#refillModal1{{ $agent->id }}">
-                                                        <i class="fa-solid fa-indian-rupee-sign"></i>
+                                                       data-bs-target="#refillModal1{{ $agent->id }}"
+                                                       title="Refill Balance">
+                                                        <i class="fa-solid fa-indian-rupee-sign fa-sm"></i>
                                                     </a>
                                                 @endif
-                                                @foreach ($agents as $agent_data)
-                                                    @include('pages.agent.refil1', [
-                                                        'user' => $agent_data,
-                                                    ])
-                                                @endforeach
 
-                                                <!-- Copy -->
                                                 <a href="javascript:void(0);"
                                                    onclick="copyToClipboard('{{ $agent->player }} - {{ $agent->original_password }}')"
-                                                   class="text-secondary font-weight-bold text-xs ms-2 me-2"
-                                                   data-bs-toggle="tooltip" title="Copy agent">
-                                                    <i class="fas fa-copy" style="cursor: pointer;"></i>
+                                                   class="btn btn-link text-secondary px-2 mb-0" title="Copy">
+                                                    <i class="fas fa-copy fa-sm"></i>
                                                 </a>
 
-                                                <!-- Edit -->
-                                                @if (auth()->check() && auth()->user()->role === 'distributor')
-                                                @else
-                                                    <a href="javascript:;"
-                                                       class="text-secondary font-weight-bold text-xs me-2"
-                                                       title="Edit Agent" data-bs-toggle="modal"
-                                                       data-bs-target="#editModal{{ $agent->id }}">
-                                                        <i class="fas fa-edit"></i>
+                                                @if (!(auth()->check() && auth()->user()->role === 'distributor'))
+                                                    <a href="javascript:;" class="btn btn-link text-info px-2 mb-0"
+                                                       data-bs-toggle="modal"
+                                                       data-bs-target="#editModal{{ $agent->id }}"
+                                                       title="Edit">
+                                                        <i class="fas fa-edit fa-sm"></i>
                                                     </a>
-                                                    @include('pages.agent.edit')
 
-                                                    <!-- Delete -->
                                                     <form action="{{ route('agent.delete', $agent->id) }}"
-                                                          method="post" style="display:flex;">
+                                                          method="post" class="d-inline">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button class="text-danger font-weight-bold text-xs me-2"
+                                                        <button type="submit" class="btn btn-link text-danger px-2 mb-0"
                                                                 onclick="return confirm('Are you sure?')"
-                                                                data-bs-toggle="tooltip" title="Delete Agent"
-                                                                style="background: none; border: none; padding: 0;">
-                                                            <i class="fas fa-trash"></i>
+                                                                title="Delete">
+                                                            <i class="fas fa-trash fa-sm"></i>
                                                         </button>
                                                     </form>
                                                 @endif
 
-                                                <!-- Block/Unblock -->
-                                                <a href="javascript:;" class="font-weight-bold text-xs toggle-status"
-                                                   data-bs-toggle="tooltip"
-                                                   title="{{ $agent->status === 'Active' ? 'Block Agent' : 'Unblock Agent' }}"
-                                                   data-agent-id="{{ $agent->id }}">
-                                                    <i
-                                                        class="fas {{ $agent->status === 'Active' ? 'fa-ban text-danger' : 'fa-check text-success' }}"></i>
+                                                <a href="javascript:;"
+                                                   class="btn btn-link px-2 mb-0 toggle-status"
+                                                   data-agent-id="{{ $agent->id }}"
+                                                   id="toggle-status-{{ $agent->id }}"
+                                                   title="{{ $agent->status === 'Active' ? 'Block' : 'Unblock' }}">
+                                                    <i class="fas {{ $agent->status === 'Active' ? 'fa-ban text-warning' : 'fa-check text-success' }} fa-sm"></i>
                                                 </a>
+                                            </div>
+
+                                            <!-- Mobile: 3-dot Dropdown + Delete button -->
+                                            <div class="d-inline-flex align-items-center d-md-none">
+                                                @if ($admin)
+                                                    <div class="form-check form-switch me-1">
+                                                        <input class="form-check-input agent-radio" type="radio"
+                                                               name="agent_select_mobile"
+                                                               value="{{ $agent->id }}"
+                                                               data-agent-id="{{ $agent->id }}"
+                                                               data-agent-name="{{ $agent->player }}"
+                                                               data-agent-balance="{{ $agent->balance }}"
+                                                               data-agent-distributor="{{ $agent->distributor }}"
+                                                               data-agent-endpoint="{{ $agent->endpoint }}">
+                                                    </div>
+                                                @endif
+
+                                                <div class="dropdown dropstart">
+                                                    <button class="btn btn-link text-secondary px-2 mb-0" type="button"
+                                                            data-bs-toggle="dropdown" data-bs-display="static"
+                                                            aria-expanded="false">
+                                                        <i class="fas fa-ellipsis-v"></i>
+                                                    </button>
+                                                    <ul class="dropdown-menu shadow">
+                                                        @if (auth()->check() && auth()->user()->role === 'distributor')
+                                                            <li>
+                                                                <a class="dropdown-item" href="javascript:;"
+                                                                   data-bs-toggle="modal"
+                                                                   data-bs-target="#refillModal1{{ $agent->id }}">
+                                                                    <i class="fa-solid fa-indian-rupee-sign text-success me-2 fa-fw"></i>
+                                                                    Refill Balance
+                                                                </a>
+                                                            </li>
+                                                        @endif
+                                                        <li>
+                                                            <a class="dropdown-item" href="javascript:void(0);"
+                                                               onclick="copyToClipboard('{{ $agent->player }} - {{ $agent->original_password }}')">
+                                                                <i class="fas fa-copy text-secondary me-2 fa-fw"></i>
+                                                                Copy Details
+                                                            </a>
+                                                        </li>
+                                                        @if (!(auth()->check() && auth()->user()->role === 'distributor'))
+                                                            <li>
+                                                                <a class="dropdown-item" href="javascript:;"
+                                                                   data-bs-toggle="modal"
+                                                                   data-bs-target="#editModal{{ $agent->id }}">
+                                                                    <i class="fas fa-edit text-info me-2 fa-fw"></i>
+                                                                    Edit
+                                                                </a>
+                                                            </li>
+                                                        @endif
+                                                        <li>
+                                                            <a class="dropdown-item toggle-status-mobile"
+                                                               href="javascript:;"
+                                                               data-agent-id="{{ $agent->id }}">
+                                                                <i class="fas {{ $agent->status === 'Active' ? 'fa-ban text-warning' : 'fa-check text-success' }} me-2 fa-fw"></i>
+                                                                <span>{{ $agent->status === 'Active' ? 'Block' : 'Unblock' }}</span>
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+
+                                                @if (!(auth()->check() && auth()->user()->role === 'distributor'))
+                                                    <!-- Delete button outside dropdown -->
+                                                    <form action="{{ route('agent.delete', $agent->id) }}"
+                                                          method="post" class="d-inline">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-link text-danger px-2 mb-0"
+                                                                onclick="return confirm('Are you sure?')"
+                                                                title="Delete">
+                                                            <i class="fas fa-trash fa-sm"></i>
+                                                        </button>
+                                                    </form>
+                                                @endif
                                             </div>
                                         </td>
                                     </tr>
+                                    @include('pages.agent.refil1', ['user' => $agent])
+                                    @if (!(auth()->check() && auth()->user()->role === 'distributor'))
+                                        @include('pages.agent.edit')
+                                    @endif
                                 @empty
                                     <tr>
-                                        <td colspan="11" class="text-center text-secondary text-sm">No agents data
-                                            found.
+                                        <td colspan="9" class="text-center py-5">
+                                            <i class="fas fa-user-tie fa-3x text-muted mb-3 d-block"></i>
+                                            <p class="text-muted mb-0">No agents found</p>
                                         </td>
                                     </tr>
                                 @endforelse
                                 </tbody>
                             </table>
                         </div>
-                        {{-- Pagination --}}
-                        <div class="d-flex justify-content-center mt-3 pagination pagination-info">
-                            {{ $agents->links('vendor.pagination.bootstrap-4') }}
-                        </div>
+
+                        <!-- Pagination -->
+                        @if($agents->hasPages())
+                            <div class="d-flex justify-content-between align-items-center px-3 pt-3">
+                                <span class="text-sm text-muted">
+                                    Showing {{ $agents->firstItem() }} to {{ $agents->lastItem() }} of {{ $agents->total() }} entries
+                                </span>
+                                {{ $agents->links('vendor.pagination.bootstrap-4') }}
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
-
-            <x-footer/>
         </div>
+        <x-footer/>
     </div>
 
-    <script>
-        // Show loader when page starts loading
-        document.addEventListener('DOMContentLoaded', function () {
-            document.getElementById('loader').style.display = 'flex';
-        });
+    <style>
+        .loader-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-        // Hide loader when page is fully loaded
-        window.addEventListener('load', function () {
+        .loader-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #cb0c9f;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .btn-group .btn-link {
+            padding: 0.25rem 0.5rem;
+        }
+
+        .btn-group .btn-link:hover {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 0.25rem;
+        }
+
+        /* Mobile dropdown styling */
+        .dropdown-menu {
+            border: none;
+            border-radius: 0.5rem;
+            min-width: 160px;
+            z-index: 1050;
+        }
+
+        .dropdown-item {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .dropdown-item i.fa-fw {
+            width: 1.25em;
+        }
+
+        /* Fix dropdown in table on mobile */
+        @media (max-width: 767.98px) {
+            td .dropdown {
+                position: static;
+            }
+
+            td .dropdown-menu {
+                position: absolute !important;
+                right: 1rem !important;
+                left: auto !important;
+                top: auto !important;
+                transform: none !important;
+            }
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('loader').style.display = 'none';
         });
 
-        // Password copy functionality
-        document.addEventListener('DOMContentLoaded', function () {
-            const form = document.querySelector('form[action="{{ route('agent.add') }}"]');
-            if (form) {
-                form.addEventListener('submit', function () {
-                    const password = form.querySelector('input[name="password"]');
-                    const originalPassword = form.querySelector('input[name="original_password"]');
-                    if (password && originalPassword) {
-                        originalPassword.value = password.value;
+        function copyToClipboard(text) {
+            navigator.clipboard?.writeText(text).then(() => {
+                showToast("Copied: " + text);
+            }).catch(() => {
+                const ta = document.createElement("textarea");
+                ta.value = text;
+                ta.style.cssText = "position:fixed;opacity:0";
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                showToast("Copied: " + text);
+            });
+        }
+
+        function showToast(message) {
+            const toast = document.createElement("div");
+            toast.className = "alert alert-info position-fixed top-0 end-0 m-3";
+            toast.style.zIndex = "2000";
+            toast.innerHTML = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2000);
+        }
+
+        // Shared toggle status handler
+        function handleToggleStatus(btn) {
+            const id = btn.dataset.agentId;
+            fetch(`/agent/toggle-status/${id}`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json',
+                }
+            })
+                .then(r => r.json())
+                .then(data => {
+                    const badge = document.getElementById(`status-badge-${id}`);
+                    const isActive = data.status === 'Active';
+
+                    // Update badge
+                    badge.className = `badge badge-sm ${isActive ? 'bg-gradient-success' : 'bg-gradient-danger'}`;
+                    badge.textContent = data.status;
+
+                    // Update desktop icon
+                    const desktopBtn = document.getElementById(`toggle-status-${id}`);
+                    if (desktopBtn) {
+                        desktopBtn.querySelector('i').className = `fas fa-sm ${isActive ? 'fa-ban text-warning' : 'fa-check text-success'}`;
+                        desktopBtn.title = isActive ? 'Block' : 'Unblock';
                     }
-                });
-            }
-        });
 
-        // Toggle status functionality
-        document.addEventListener('DOMContentLoaded', function () {
-            document.querySelectorAll('.toggle-status').forEach(btn => {
-                btn.addEventListener('click', function () {
-                    const agentId = this.dataset.agentId;
-                    const icon = this.querySelector('i');
-                    const statusBadge = document.getElementById(`status-badge-${agentId}`);
-                    const tooltipTitle = this;
+                    // Update mobile dropdown
+                    const mobileBtn = document.querySelector(`.toggle-status-mobile[data-agent-id="${id}"]`);
+                    if (mobileBtn) {
+                        mobileBtn.querySelector('i').className = `fas ${isActive ? 'fa-ban text-warning' : 'fa-check text-success'} me-2 fa-fw`;
+                        mobileBtn.querySelector('span').textContent = isActive ? 'Block' : 'Unblock';
+                    }
+                })
+                .catch(() => alert('Something went wrong.'));
+        }
 
-                    fetch(`/agent/toggle-status/${agentId}`, {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                            'Accept': 'application/json',
-                            'Content-Type': 'application/json',
-                        }
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.status === 'Active') {
-                                icon.classList.remove('fa-check', 'text-success');
-                                icon.classList.add('fa-ban', 'text-danger');
-                                tooltipTitle.setAttribute('title', 'Block Agent');
-                                statusBadge.classList.remove('bg-gradient-danger');
-                                statusBadge.classList.add('bg-gradient-success');
-                            } else {
-                                icon.classList.remove('fa-ban', 'text-danger');
-                                icon.classList.add('fa-check', 'text-success');
-                                tooltipTitle.setAttribute('title', 'Unblock Agent');
-                                statusBadge.classList.remove('bg-gradient-success');
-                                statusBadge.classList.add('bg-gradient-danger');
-                            }
-
-                            statusBadge.innerText = data.status.toUpperCase();
-                        })
-                        .catch(error => {
-                            alert('Something went wrong.');
-                            console.error(error);
-                        });
-                });
+        // Desktop toggle
+        document.querySelectorAll('.toggle-status').forEach(btn => {
+            btn.addEventListener('click', function () {
+                handleToggleStatus(this);
             });
         });
 
-        // Agent selection
+        // Mobile toggle
+        document.querySelectorAll('.toggle-status-mobile').forEach(btn => {
+            btn.addEventListener('click', function () {
+                handleToggleStatus(this);
+            });
+        });
+
+        // Agent selection functionality
         document.addEventListener('DOMContentLoaded', function () {
             let selectedAgent = JSON.parse(sessionStorage.getItem('selectedAgent')) || null;
             const radioButtons = document.querySelectorAll('.agent-radio');
             const sidebarContent = document.getElementById('sidebar-setting-content');
 
-            // Initialize radio buttons state
             radioButtons.forEach(radio => {
                 const agentId = radio.getAttribute('data-agent-id');
                 radio.checked = (selectedAgent && selectedAgent.id === agentId);
             });
 
-            // Handle radio button clicks
             radioButtons.forEach(radio => {
                 radio.addEventListener('click', async function () {
                     const clickedAgentId = this.getAttribute('data-agent-id');
 
-                    // If deselecting current agent
                     if (this.checked && selectedAgent && clickedAgentId === selectedAgent.id) {
                         await handleDeselect(this);
-                    }
-                    // Selecting a new agent
-                    else {
+                    } else {
                         await handleSelect(this, clickedAgentId);
                     }
                 });
             });
 
-            // Deselect handler
             async function handleDeselect(radioElement) {
                 try {
-                    // Uncheck the radio
                     radioElement.checked = false;
-
-                    // Clear UI
-                    if (sidebarContent) {
-                        sidebarContent.innerHTML = '';
-                    }
-
-                    // Clear storage
+                    if (sidebarContent) sidebarContent.innerHTML = '';
                     sessionStorage.removeItem('selectedAgent');
-                    selectedAgent = "0";
+                    selectedAgent = null;
 
-                    // Send deselect request
-                    const response = await fetch("{{ route('agent.deselect') }}", {
+                    await fetch("{{ route('agent.deselect') }}", {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -462,37 +581,26 @@
                         body: JSON.stringify({})
                     });
 
-                    if (!response.ok) throw new Error('Deselect failed');
-
-                    // Only send negative agent update after successful deselect
                     await fetch("/update-negative-agent", {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                             'X-CSRF-TOKEN': "{{ csrf_token() }}"
                         },
-                        body: JSON.stringify({
-                            agent_id: null
-                        })
+                        body: JSON.stringify({agent_id: null})
                     });
-
-                    console.log('Agent deselected successfully');
                 } catch (error) {
                     console.error('Error deselecting agent:', error);
-                    // Revert UI if error occurs
                     radioElement.checked = true;
                 }
             }
 
-            // Select handler
             async function handleSelect(radioElement, agentId) {
                 try {
-                    // Uncheck all other radios
                     radioButtons.forEach(rb => {
                         if (rb !== radioElement) rb.checked = false;
                     });
 
-                    // Store new selection
                     const agentData = {
                         id: agentId,
                         name: radioElement.getAttribute('data-agent-name'),
@@ -504,166 +612,59 @@
                     sessionStorage.setItem('selectedAgent', JSON.stringify(agentData));
                     selectedAgent = agentData;
 
-                    // First update UI
                     if (sidebarContent) {
                         const sidebarResponse = await fetch('/setting/sidebar/' + agentId);
-                        if (!sidebarResponse.ok) throw new Error('Sidebar load failed');
-                        sidebarContent.innerHTML = await sidebarResponse.text();
+                        if (sidebarResponse.ok) {
+                            sidebarContent.innerHTML = await sidebarResponse.text();
+                        }
                     }
 
-                    // Then send select request
-                    const selectResponse = await fetch("{{ route('agent.select') }}", {
+                    await fetch("{{ route('agent.select') }}", {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                             'X-CSRF-TOKEN': "{{ csrf_token() }}"
                         },
-                        body: JSON.stringify({
-                            agent_id: agentId
-                        })
+                        body: JSON.stringify({agent_id: agentId})
                     });
 
-                    if (!selectResponse.ok) throw new Error('Select failed');
-
-                    // Finally update negative agent
                     await fetch("/update-negative-agent", {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                             'X-CSRF-TOKEN': "{{ csrf_token() }}"
                         },
-                        body: JSON.stringify({
-                            agent_id: agentId
-                        })
+                        body: JSON.stringify({agent_id: agentId})
                     });
-
-                    console.log('Agent selected successfully');
                 } catch (error) {
                     console.error('Error selecting agent:', error);
-                    // Revert UI if error occurs
                     radioButtons.forEach(rb => rb.checked = false);
-                    if (sidebarContent) sidebarContent.innerHTML =
-                        '<p class="text-danger">Error loading agent settings</p>';
                 }
             }
         });
 
-        // Transfer functionality
+        // Transfer link functionality
         document.addEventListener('DOMContentLoaded', function () {
             const transferLink = document.getElementById('transfer-link');
-
-            // Update transfer link when agent is selected
-            function updateTransferLink() {
-                const storedAgent = JSON.parse(sessionStorage.getItem('selectedAgent'));
-                if (storedAgent) {
-                    // Update the href to include agent ID as parameter
-                    transferLink.href = "{{ route('transfer.page') }}?agent_id=" + storedAgent.id;
-                    transferLink.classList.remove('disabled');
-                } else {
-                    transferLink.href = "#";
-                    transferLink.classList.add('disabled');
-                }
-            }
-
-            // Check selection on page load
-            updateTransferLink();
-
-            // Update when radio buttons are clicked
-            document.addEventListener('click', function (e) {
-                if (e.target.classList.contains('agent-radio')) {
-                    setTimeout(updateTransferLink, 100);
-                }
-            });
-        });
-
-        // Copy to clipboard functionality
-        function copyToClipboard(text) {
-            if (navigator.clipboard && window.isSecureContext) {
-                navigator.clipboard.writeText(text).then(() => {
-                    showToast("Copied: " + text);
-                }).catch(err => {
-                    console.error("Failed to copy: ", err);
-                });
-            } else {
-                // Fallback for insecure context
-                let textarea = document.createElement("textarea");
-                textarea.value = text;
-                textarea.style.position = "fixed";
-                textarea.style.opacity = "0";
-                document.body.appendChild(textarea);
-                textarea.focus();
-                textarea.select();
-                try {
-                    document.execCommand('copy');
-                    showToast("Copied: " + text);
-                } catch (err) {
-                    console.error("Fallback copy failed", err);
-                }
-                document.body.removeChild(textarea);
-            }
-        }
-
-        // Optional toast instead of alert
-        function showToast(message) {
-            const toast = document.createElement("div");
-            toast.className = "alert alert-info position-fixed top-0 end-0 m-3";
-            toast.style.zIndex = "2000";
-            toast.innerHTML = message;
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 2000);
-        }
-    </script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const form = document.getElementById('perPageForm');
-            const select = document.getElementById('per_page');
-
-            if (select) {
-                select.addEventListener('change', function () {
-                    // Update the force_per_page hidden field
-                    const hiddenField = form.querySelector('input[name="force_per_page"]');
-                    if (hiddenField) {
-                        hiddenField.value = this.value;
+            if (transferLink) {
+                function updateTransferLink() {
+                    const storedAgent = JSON.parse(sessionStorage.getItem('selectedAgent'));
+                    if (storedAgent) {
+                        transferLink.href = "{{ route('transfer.page') }}?agent_id=" + storedAgent.id;
+                        transferLink.classList.remove('disabled');
+                    } else {
+                        transferLink.href = "#";
+                        transferLink.classList.add('disabled');
                     }
-                    form.submit();
+                }
+
+                updateTransferLink();
+                document.addEventListener('click', function (e) {
+                    if (e.target.classList.contains('agent-radio')) {
+                        setTimeout(updateTransferLink, 100);
+                    }
                 });
             }
         });
     </script>
-
-    <style>
-        /* Loader styles */
-        .loader-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 9999;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .loader-spinner {
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid #3498db;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-    </style>
 @endsection
