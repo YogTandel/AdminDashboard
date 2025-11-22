@@ -28,7 +28,7 @@
                     <div class="mb-3">
                         <label class="form-label text-uppercase text-xs font-weight-bolder text-muted">Password</label>
                         <div class="input-group input-group-outline">
-                            <input type="text" class="form-control" placeholder="Enter password"
+                            <input type="password" class="form-control" placeholder="Enter password"
                                    name="password" id="modal_password" required autocomplete="off">
                         </div>
                     </div>
