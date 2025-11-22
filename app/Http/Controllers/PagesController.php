@@ -1656,7 +1656,7 @@ class PagesController extends Controller
         return back()->with("success", "Balance transferred successfully.");
     }
 
-    public function showRefilReport(Request $request)
+    public function showRefillReport(Request $request)
     {
         $user = auth("web")->user();
         $admin = auth("admin")->user();

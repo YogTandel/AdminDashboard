@@ -106,7 +106,7 @@ Route::post('/distributor/transfer-to-agent', [PagesController::class, 'transfer
 Route::post('/agent/transfer-to-player', [PagesController::class, 'transferToPlayer'])
     ->name('agent.transfer.to.player');
 
-Route::get('/refil-report', [PagesController::class, 'showRefilReport'])->name('refil.report')->middleware('auth:web,admin');
+Route::get('/refil-report', [PagesController::class, 'showRefillReport'])->name('refil.report')->middleware('auth:web,admin');
 
 Route::get('/get-settings-data', [PagesController::class, 'getSettingsData'])->name('settings.data')->middleware('auth:web,admin');
 
