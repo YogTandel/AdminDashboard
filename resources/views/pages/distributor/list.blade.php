@@ -20,10 +20,6 @@
                                 <h5 class="mb-0">Distributor Users</h5>
                                 <p class="text-sm text-muted mb-0">Manage your distributor accounts</p>
                             </div>
-                            <div class="col-lg-4 col-md-6 text-center d-none d-lg-block">
-                                <img src="{{ asset('assets/img/curved-images/golden 1.png') }}"
-                                     alt="Logo" style="height: 60px; width: auto;">
-                            </div>
                             <div class="col-lg-4 col-md-6 text-end">
                                 <button type="button" class="btn bg-gradient-primary mb-0"
                                         data-bs-toggle="modal" data-bs-target="#exampleModalAddAgent">
