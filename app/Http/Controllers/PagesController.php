@@ -1670,11 +1670,13 @@ class PagesController extends Controller
             ->table("refils")
             ->orderBy("created_at", "desc");
 
-        // Restrict for normal user
+        // Restrict for normal user (same pattern as transfer report)
         if ($user) {
             $query->where(function ($q) use ($user) {
                 $q->where("transfer_by", new ObjectId($user->id))
-                    ->orWhere("transfer_to", new ObjectId($user->id));
+                    ->orWhere("transfer_to", new ObjectId($user->id))
+                    ->orWhere("transfer_by", (string)$user->id)  // ✅ Added
+                    ->orWhere("transfer_to", (string)$user->id); // ✅ Added
             });
         }
 
@@ -1829,7 +1831,6 @@ class PagesController extends Controller
 
         return view("pages.refil-report", compact("refils", "agents", "distributors"));
     }
-
 
     public function getSettingsData()
     {
