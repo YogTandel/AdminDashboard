@@ -1422,7 +1422,6 @@ class PagesController extends Controller
                 $allAdmins[$transferTo]->player ?? ($users[$transferTo]->player ?? "N/A");
         }
 
-
         /** ----------------------------------------
          * 🔽 5. Role Based Dropdown (NEW)
          * ---------------------------------------- */
