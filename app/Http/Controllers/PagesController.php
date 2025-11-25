@@ -1251,11 +1251,13 @@ class PagesController extends Controller
         }
 
         $perPage = $request->get("per_page", 10);
-        $query = DB::connection("mongodb")->table("transfers")->orderBy("created_at", "desc");
+        $query = DB::connection("mongodb")
+            ->table("transfers")
+            ->orderBy("created_at", "desc");
 
-        /** -------------------------------
-         * 👥 Restrict for Normal User
-         * ------------------------------- */
+        /** ----------------------------------------
+         * 🔐 Restrict data for normal user
+         * ---------------------------------------- */
         if ($user) {
             $query->where(function ($q) use ($user) {
                 $q->where("transfer_by", new ObjectId($user->id))
@@ -1265,68 +1267,60 @@ class PagesController extends Controller
             });
         }
 
-        /** -------------------------------
-         * 🔍 1. Search Filter (Player Fixed)
-         * ------------------------------- */
+        /** ----------------------------------------
+         * 🔍 1. Search Filter
+         * ---------------------------------------- */
         if ($request->filled("search")) {
             $searchTerm = trim($request->search);
 
-            // Find all matching users (any role)
-            $matchedUsers = User::where("player", "like", "%{$searchTerm}%")
+            $matchedUsers = User::where("player", "LIKE", "%{$searchTerm}%")
                 ->pluck("_id")
                 ->map(fn($id) => (string)$id)
                 ->toArray();
 
-            // Find all matching admins
-            $matchedAdmins = Admin::where("player", "like", "%{$searchTerm}%")
+            $matchedAdmins = Admin::where("player", "LIKE", "%{$searchTerm}%")
                 ->pluck("_id")
                 ->map(fn($id) => (string)$id)
                 ->toArray();
 
-            // Combine all matched IDs
             $matchedIds = array_merge($matchedUsers, $matchedAdmins);
 
-            // Convert to ObjectIds too (to handle MongoDB storage)
             $matchedObjectIds = [];
             foreach ($matchedIds as $id) {
                 try {
                     $matchedObjectIds[] = new ObjectId($id);
                 } catch (\Exception $e) {
-                    // Skip invalid ids
                 }
             }
 
             $query->where(function ($q) use ($searchTerm, $matchedIds, $matchedObjectIds) {
-                // 🔹 Match common string fields
-                $q->where("amount", "like", "%{$searchTerm}%")
-                    ->orWhere("remaining_balance", "like", "%{$searchTerm}%")
-                    ->orWhere("transfer_role", "like", "%{$searchTerm}%")
-                    ->orWhere("agent_name", "like", "%{$searchTerm}%")
-                    ->orWhere("distributor_name", "like", "%{$searchTerm}%")
-                    ->orWhere("transfer_type", "like", "%{$searchTerm}%")
-                    ->orWhere("status", "like", "%{$searchTerm}%");
 
-                // 🔹 Match users/admins linked by string IDs
+                $q->orWhere("amount", "LIKE", "%{$searchTerm}%")
+                    ->orWhere("remaining_balance", "LIKE", "%{$searchTerm}%")
+                    ->orWhere("transfer_role", "LIKE", "%{$searchTerm}%")
+                    ->orWhere("agent_name", "LIKE", "%{$searchTerm}%")
+                    ->orWhere("distributor_name", "LIKE", "%{$searchTerm}%")
+                    ->orWhere("transfer_type", "LIKE", "%{$searchTerm}%")
+                    ->orWhere("status", "LIKE", "%{$searchTerm}%");
+
                 if (!empty($matchedIds)) {
                     $q->orWhereIn("transfer_by", $matchedIds)
                         ->orWhereIn("transfer_to", $matchedIds);
                 }
 
-                // 🔹 Match users/admins linked by ObjectIds
                 if (!empty($matchedObjectIds)) {
                     $q->orWhereIn("transfer_by", $matchedObjectIds)
                         ->orWhereIn("transfer_to", $matchedObjectIds);
                 }
 
-                // 🔹 Fallback: direct textual search (handles stored names)
-                $q->orWhere("transfer_by", "like", "%{$searchTerm}%")
-                    ->orWhere("transfer_to", "like", "%{$searchTerm}%");
+                $q->orWhere("transfer_by", "LIKE", "%{$searchTerm}%")
+                    ->orWhere("transfer_to", "LIKE", "%{$searchTerm}%");
             });
         }
 
-        /** -------------------------------
-         * 📅 2. Date Range Filter
-         * ------------------------------- */
+        /** ----------------------------------------
+         * 📅 2. Date Filter
+         * ---------------------------------------- */
         $today = Carbon::today();
         $dateRange = $request->input("date_range");
 
@@ -1356,11 +1350,9 @@ class PagesController extends Controller
             }
         }
 
-        /** -------------------------------
-         * 👤 3. Agent & Distributor Filters (Fixed with ObjectId + String)
-         * ------------------------------- */
-
-        // 🔹 Agent Filter
+        /** ----------------------------------------
+         * 👤 3. Agent / Distributor Filters
+         * ---------------------------------------- */
         if ($request->filled("agent_name")) {
             $agentName = $request->agent_name;
             $agent = User::where("player", $agentName)->first();
@@ -1375,7 +1367,6 @@ class PagesController extends Controller
                         ->orWhere("distributor_name", "LIKE", "%{$agentName}%");
                 });
             } else {
-                // fallback: match by name directly
                 $query->where(function ($q) use ($agentName) {
                     $q->where("agent_name", "LIKE", "%{$agentName}%")
                         ->orWhere("distributor_name", "LIKE", "%{$agentName}%");
@@ -1383,7 +1374,6 @@ class PagesController extends Controller
             }
         }
 
-        // 🔹 Distributor Filter
         if ($request->filled("distributor_name")) {
             $distributorName = $request->distributor_name;
 
@@ -1407,12 +1397,13 @@ class PagesController extends Controller
             }
         }
 
-        /** -------------------------------
-         * 🧾 4. Fetch & Map Results
-         * ------------------------------- */
+        /** ----------------------------------------
+         * 🧾 4. Fetch Results
+         * ---------------------------------------- */
         $transfers = $query->paginate($perPage)->appends($request->query());
 
         $allAdmins = Admin::all()->mapWithKeys(fn($a) => [(string)$a->_id => $a]);
+
         $userIds = $transfers->pluck("transfer_by")
             ->merge($transfers->pluck("transfer_to"))
             ->unique()
@@ -1431,33 +1422,62 @@ class PagesController extends Controller
                 $allAdmins[$transferTo]->player ?? ($users[$transferTo]->player ?? "N/A");
         }
 
-        /** -------------------------------
-         * 🔽 Dropdown Data
-         * ------------------------------- */
-        $allTransferUserIds = DB::connection("mongodb")->table("transfers")
-            ->select("transfer_by", "transfer_to")
-            ->get()
-            ->pluck("transfer_by")
-            ->merge(DB::connection("mongodb")->table("transfers")->pluck("transfer_to"))
-            ->unique()
-            ->map(fn($id) => (string)$id)
-            ->filter()
-            ->toArray();
 
-        $agents = User::whereIn("_id", $allTransferUserIds)
-            ->where("role", "agent")
-            ->orderBy("player")
-            ->get();
+        /** ----------------------------------------
+         * 🔽 5. Role Based Dropdown (NEW)
+         * ---------------------------------------- */
+        if ($admin) {
 
-        $distributors = User::whereIn("_id", $allTransferUserIds)
-            ->where("role", "distributor")
-            ->orderBy("player")
-            ->get()
-            ->merge(Admin::orderBy("player")->get());
+            // Admin sees ALL
+            $agents = User::where("role", "agent")->orderBy("player")->get();
 
-        return view("pages.transfer.report", compact("transfers", "agents", "distributors"));
+            $distributors = User::where("role", "distributor")->orderBy("player")->get()
+                ->merge(Admin::orderBy("player")->get());
+
+        } else {
+
+            // Normal user sees ONLY linked users
+            $loggedId = (string)$user->id;
+
+            $relatedIds = DB::connection("mongodb")
+                ->table("transfers")
+                ->where(function ($q) use ($loggedId) {
+                    $q->where("transfer_by", $loggedId)
+                        ->orWhere("transfer_to", $loggedId);
+                })
+                ->pluck("transfer_by")
+                ->merge(
+                    DB::connection("mongodb")
+                        ->table("transfers")
+                        ->where(function ($q) use ($loggedId) {
+                            $q->where("transfer_by", $loggedId)
+                                ->orWhere("transfer_to", $loggedId);
+                        })
+                        ->pluck("transfer_to")
+                )
+                ->unique()
+                ->map(fn($i) => (string)$i)
+                ->toArray();
+
+            $agents = User::whereIn("_id", $relatedIds)
+                ->where("role", "agent")
+                ->orderBy("player")
+                ->get();
+
+            $distributors = User::whereIn("_id", $relatedIds)
+                ->where("role", "distributor")
+                ->orderBy("player")
+                ->get()
+                ->merge(
+                    Admin::whereIn("_id", $relatedIds)->orderBy("player")->get()
+                );
+        }
+
+        return view(
+            "pages.transfer.report",
+            compact("transfers", "agents", "distributors")
+        );
     }
-
 
     public function getAgents($distributorId)
     {
@@ -1670,23 +1690,24 @@ class PagesController extends Controller
             ->table("refils")
             ->orderBy("created_at", "desc");
 
-        // Restrict for normal user (same pattern as transfer report)
+        /** ----------------------------------------
+         * 🔐 Restrict normal user's visible records
+         * ---------------------------------------- */
         if ($user) {
             $query->where(function ($q) use ($user) {
                 $q->where("transfer_by", new ObjectId($user->id))
                     ->orWhere("transfer_to", new ObjectId($user->id))
-                    ->orWhere("transfer_by", (string)$user->id)  // ✅ Added
-                    ->orWhere("transfer_to", (string)$user->id); // ✅ Added
+                    ->orWhere("transfer_by", (string)$user->id)
+                    ->orWhere("transfer_to", (string)$user->id);
             });
         }
 
-        /** -------------------------------
+        /** ----------------------------------------
          * 🔍 1. Search Filter
-         * ------------------------------- */
+         * ---------------------------------------- */
         if ($request->filled("search")) {
             $searchTerm = strtolower($request->search);
 
-            // 1. Search users/admins by name
             $matchedUsers = User::where("player", "LIKE", "%{$searchTerm}%")
                 ->pluck("_id")
                 ->map(fn($id) => new ObjectId($id))
@@ -1701,19 +1722,14 @@ class PagesController extends Controller
 
             $query->where(function ($q) use ($searchTerm, $matchedIds) {
 
-                // Numeric/amount search
                 if (is_numeric($searchTerm)) {
                     $q->orWhere("amount", intval($searchTerm));
                     $q->orWhere("remaining_balance", intval($searchTerm));
                 }
 
-                // Search "type" field in MongoDB
                 $q->orWhere("type", "LIKE", "%{$searchTerm}%");
-
-                // Search transfer role
                 $q->orWhere("transfer_role", "LIKE", "%{$searchTerm}%");
 
-                // Search by matched user/admin IDs
                 if (!empty($matchedIds)) {
                     $q->orWhereIn("transfer_by", $matchedIds);
                     $q->orWhereIn("transfer_to", $matchedIds);
@@ -1721,9 +1737,9 @@ class PagesController extends Controller
             });
         }
 
-        /** -------------------------------
+        /** ----------------------------------------
          * 📅 2. Date Range Filter
-         * ------------------------------- */
+         * ---------------------------------------- */
         $today = Carbon::today();
         $dateRange = $request->input("date_range");
 
@@ -1761,9 +1777,9 @@ class PagesController extends Controller
             }
         }
 
-        /** -------------------------------
-         * 👤 3. Agent & Distributor Filters (Bidirectional)
-         * ------------------------------- */
+        /** ----------------------------------------
+         * 👤 3. Agent & Distributor Filters
+         * ---------------------------------------- */
         if ($request->filled("agent_name")) {
             $agentName = $request->agent_name;
             $agent = User::where("player", $agentName)->first();
@@ -1800,12 +1816,13 @@ class PagesController extends Controller
             }
         }
 
-        /** -------------------------------
-         * 🧾 4. Fetch & Map Results
-         * ------------------------------- */
+        /** ----------------------------------------
+         * 🧾 4. Fetch Paginated Results
+         * ---------------------------------------- */
         $refils = $query->paginate($perPage)->appends($request->query());
 
         $allAdmins = Admin::all()->mapWithKeys(fn($a) => [(string)$a->_id => $a]);
+
         $userIds = $refils
             ->pluck("transfer_by")
             ->merge($refils->pluck("transfer_to"))
@@ -1825,11 +1842,53 @@ class PagesController extends Controller
                 $allAdmins[$transferTo]->player ?? ($users[$transferTo]->player ?? "N/A");
         }
 
-        // For filter dropdowns
-        $agents = User::where("role", "agent")->orderBy("player")->get();
-        $distributors = User::where("role", "distributor")->orderBy("player")->get();
+        /** ----------------------------------------
+         * 📌 5. Role-Based Filter Dropdown Fix
+         * ---------------------------------------- */
+        if ($admin) {
+            // Admin sees ALL
+            $agents = User::where("role", "agent")->orderBy("player")->get();
+            $distributors = User::where("role", "distributor")->orderBy("player")->get();
+        } else {
+            // Only user-specific related IDs
+            $loggedId = (string)$user->id;
 
-        return view("pages.refil-report", compact("refils", "agents", "distributors"));
+            $relatedIds = DB::connection("mongodb")
+                ->table("refils")
+                ->where(function ($q) use ($loggedId) {
+                    $q->where("transfer_by", $loggedId)
+                        ->orWhere("transfer_to", $loggedId);
+                })
+                ->pluck("transfer_by")
+                ->merge(
+                    DB::connection("mongodb")
+                        ->table("refils")
+                        ->where(function ($q) use ($loggedId) {
+                            $q->where("transfer_by", $loggedId)
+                                ->orWhere("transfer_to", $loggedId);
+                        })
+                        ->pluck("transfer_to")
+                )
+                ->unique()
+                ->map(fn($i) => (string)$i)
+                ->toArray();
+
+            // Dropdown options limited to related users
+            $agents = User::whereIn("_id", $relatedIds)
+                ->where("role", "agent")
+                ->orderBy("player")
+                ->get();
+
+            $distributors = User::whereIn("_id", $relatedIds)
+                ->where("role", "distributor")
+                ->orderBy("player")
+                ->get();
+        }
+
+        return view(
+            "pages.refil-report",
+            compact("refils", "agents", "distributors")
+        );
     }
 
     public function getSettingsData()
