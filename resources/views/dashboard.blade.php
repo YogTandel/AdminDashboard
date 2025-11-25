@@ -145,21 +145,19 @@
 
 @endsection
 
+<script>
+    window.addEventListener('load', function () {
+        setTimeout(() => {
+            const loader = document.getElementById('loader');
+            const content = document.getElementById('mainContent');
 
-@section('scripts')
-    <script>
-        window.addEventListener('load', function () {
+            loader.style.opacity = '0';
+
+
             setTimeout(() => {
-                const loader = document.getElementById('loader');
-                const content = document.getElementById('mainContent');
-
-                loader.style.opacity = '0';
-
-
-                setTimeout(() => {
-                    loader.remove();
-                    content.style.display = 'block';
-                }, 500);
-            }, 1000);
-        });
-    </script>
+                loader.remove();
+                content.style.display = 'block';
+            }, 500);
+        }, 1000);
+    });
+</script>
