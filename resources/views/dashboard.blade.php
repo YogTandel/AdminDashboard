@@ -140,7 +140,6 @@
                                 <h5 class="text-white text-sm">{{ $endpointValue }}</h5>
                             </div>
                         </div>
-
                     @endif
                 @endauth
             </div>
