@@ -68,8 +68,6 @@
                         </div>
                     </div>
 
-
-
                     <!-- Card 5 -->
                     <div class="col-12 col-sm-6 col-md-3">
                         <div class="p-3 bg-primary rounded">
@@ -93,7 +91,6 @@
                             <h5 class="text-white text-sm">{{ $deactiveDistributors }}</h5>
                         </div>
                     </div>
-
 
                     <!-- Card 9 -->
                     <div class="col-12 col-sm-6 col-md-3">
