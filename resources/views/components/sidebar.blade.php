@@ -123,7 +123,7 @@
                 </a>
             </li>
 
-            @if ($role !== 'admin')
+            @if ($role === 'admin')
                 <!-- Player Login History -->
                 <li class="nav-item">
                     <a class="nav-link {{ Request::is('loginHistory*') ? 'active' : '' }}"
