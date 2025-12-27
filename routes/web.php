@@ -40,6 +40,7 @@ Route::delete('/distributor/{id}/delete', [AuthController::class, 'deleteDistrib
 
 //player
 Route::get('/players', [PagesController::class, 'player'])->name('player.show')->middleware('auth:web,admin');
+Route::get('/players/login', [PagesController::class, 'playerLogin'])->name('player.login.show')->middleware('auth:web,admin');
 Route::post('/player/add', [AuthController::class, 'createplayer'])->name('player.add');
 Route::put('/player/{id}/update', [AuthController::class, 'editPlayer'])->name('player.update');
 Route::delete('/player/{id}/delete', [AuthController::class, 'deleteplayer'])->name('player.delete');

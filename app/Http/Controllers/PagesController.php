@@ -313,6 +313,153 @@ class PagesController extends Controller
         );
     }
 
+    public function playerLogin()
+    {
+        $perPage = request()->get("per_page", 10);
+        $query = User::query();
+
+        // Get authenticated user (from admin guard or web guard)
+        $authUser = Auth::guard("admin")->user() ?? Auth::guard("web")->user();
+        $isAdmin = Auth::guard("admin")->check();
+
+        // Search filter
+        if ($search = request()->search) {
+            $query->where("player", "like", "%" . $search . "%");
+        }
+
+        /**
+         * Distributor & Agent name filters
+         * Apply ONLY if logged in as Admin (via admin guard)
+         */
+        if ($isAdmin) {
+            // Distributor filter by name
+            if ($distributorName = request()->distributor_name) {
+                $query->whereHas("distributorUser", function ($q) use (
+                    $distributorName,
+                ) {
+                    $q->where("player", "like", "%" . $distributorName . "%");
+                });
+            }
+
+            // Agent filter by name
+            if ($agentName = request()->agent_name) {
+                $query->where("agent", "like", "%" . $agentName . "%");
+            }
+        }
+
+        // Status filter
+        if ($status = request()->status) {
+            $query->where("status", $status);
+        }
+
+        // Date range filter
+        $from = request()->input("from_date");
+        $to = request()->input("to_date");
+        $dateRange = request()->input("date_range");
+
+        if ($dateRange) {
+            $today = Carbon::today();
+
+            if ($dateRange === "2_days_ago") {
+                $from = $today
+                    ->copy()
+                    ->subDays(2)
+                    ->startOfDay()
+                    ->format("YmdHis");
+                $to = $today->copy()->subDay()->endOfDay()->format("YmdHis");
+            } elseif ($dateRange === "last_week") {
+                $from = $today
+                    ->copy()
+                    ->subWeek()
+                    ->startOfWeek()
+                    ->format("YmdHis");
+                $to = $today->copy()->subWeek()->endOfWeek()->format("YmdHis");
+            } elseif ($dateRange === "last_month") {
+                $from = $today
+                    ->copy()
+                    ->subMonth()
+                    ->startOfMonth()
+                    ->format("YmdHis");
+                $to = $today
+                    ->copy()
+                    ->subMonth()
+                    ->endOfMonth()
+                    ->format("YmdHis");
+            }
+        } else {
+            // Manual dates
+            if ($from) {
+                $from = Carbon::createFromFormat("Y-m-d", $from)
+                    ->startOfDay()
+                    ->format("YmdHis");
+            }
+            if ($to) {
+                $to = Carbon::createFromFormat("Y-m-d", $to)
+                    ->endOfDay()
+                    ->format("YmdHis");
+            }
+        }
+
+        if ($from) {
+            $query->where("DateOfCreation", ">=", (float)$from);
+        }
+        if ($to) {
+            $query->where("DateOfCreation", "<=", (float)$to);
+        }
+
+        // Role-based filtering for web guard users
+        if (!$isAdmin) {
+            if ($authUser->role === "distributor") {
+                $query
+                    ->where("role", "player")
+                    ->where("distributor", $authUser->_id); // distributor = id ✅
+            } elseif ($authUser->role === "agent") {
+                $query
+                    ->where("role", "player")
+                    ->where("agent", $authUser->player); // agent = name ✅
+            }
+        } else {
+            $query->where("role", "player");
+        }
+
+        // Players list with relationships
+        $players = $query
+            ->with(["agentUser", "distributorUser"])
+            ->paginate($perPage)
+            ->appends(request()->query());
+
+        // Dropdown lists for filters
+        if (!$isAdmin && $authUser->role === "distributor") {
+            $agents = User::where("role", "agent")
+                ->where("distributor", $authUser->_id)
+                ->get(["_id", "player"]);
+        } elseif (!$isAdmin && $authUser->role === "agent") {
+            $agents = User::where("_id", $authUser->_id)->get([
+                "_id",
+                "player",
+            ]);
+        } else {
+            $agents = User::where("role", "agent")->get(["_id", "player"]);
+        }
+
+        $distributors = User::where("role", "distributor")->get([
+            "_id",
+            "player",
+        ]);
+
+        return view(
+            "pages.player.login",
+            compact(
+                "players",
+                "perPage",
+                "agents",
+                "distributors",
+                "authUser",
+                "isAdmin",
+            ),
+        );
+    }
+
     public function transactionreport()
     {
         $perPage = request()->get("per_page", 15);

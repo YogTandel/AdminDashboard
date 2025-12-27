@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use \Illuminate\Notifications\Notifiable;
@@ -33,6 +34,7 @@ class User extends Authenticatable
         'DateOfCreation',
         'endpoint',
         'winamount',
+        'last_login',
     ];
 
     /**
@@ -51,14 +53,14 @@ class User extends Authenticatable
      * @var array<string, string>
      */
     protected $casts = [
-        'password'       => 'hashed',
-        'gameHistory'    => 'array',
-        'balance'        => 'integer',
-        'winamount'      => 'integer',
-        'isupdated'      => 'boolean',
-        'login_status'   => 'boolean',
+        'password' => 'hashed',
+        'gameHistory' => 'array',
+        'balance' => 'integer',
+        'winamount' => 'integer',
+        'isupdated' => 'boolean',
+        'login_status' => 'boolean',
         'DateOfCreation' => 'double',
-        'endpoint'       => 'integer',
+        'endpoint' => 'integer',
     ];
 
 
@@ -74,12 +76,12 @@ class User extends Authenticatable
     public function getBalanceAttribute($value)
     {
         // change this value amount save in integer
-        return (int) (string) $value;
+        return (int)(string)$value;
     }
 
     public function getWinamountAttribute($value)
     {
-        return (int) (string) $value;
+        return (int)(string)$value;
     }
 
     public function distributorUser()
