@@ -313,7 +313,7 @@ class PagesController extends Controller
         );
     }
 
-    public function playerLogin()
+    public function loginHistory()
     {
         $perPage = request()->get("per_page", 10);
         $query = User::query();

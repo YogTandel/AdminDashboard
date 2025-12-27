@@ -125,7 +125,7 @@
 
             <!-- Player Login History -->
             <li class="nav-item">
-                <a class="nav-link {{ Request::is('playerLogin*') ? 'active' : '' }}"
+                <a class="nav-link {{ Request::is('loginHistory*') ? 'active' : '' }}"
                    href="{{ route('player.login.show') }}">
                     <div
                         class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
@@ -133,11 +133,11 @@
                              xmlns="http://www.w3.org/2000/svg">
                             <!-- Clock -->
                             <path
-                                class="color-background {{ Request::is('playerLogin*') ? 'fill-orange' : 'fill-white' }}"
+                                class="color-background {{ Request::is('loginHistory*') ? 'fill-orange' : 'fill-white' }}"
                                 d="M12 2a10 10 0 1 0 10 10A10.011 10.011 0 0 0 12 2Zm1 11h5v-2h-4V7h-2v6Z"/>
                             <!-- Check / Login action -->
                             <path
-                                class="color-background {{ Request::is('playerLogin*') ? 'fill-orange opacity-100' : 'fill-white opacity-6' }}"
+                                class="color-background {{ Request::is('loginHistory*') ? 'fill-orange opacity-100' : 'fill-white opacity-6' }}"
                                 d="M7.5 8.5 6 10l3 3 6-6-1.5-1.5L9 10Z"/>
                         </svg>
                     </div>
