@@ -183,7 +183,7 @@
                 </a>
             </li>
 
-            <!--refil report  -->
+            <!--refill report  -->
             <li class="nav-item">
                 <a class="nav-link {{ Request::is('refil-report') ? 'active' : '' }}"
                    href="{{ route('refil.report') }}">
@@ -195,7 +195,7 @@
                 </a>
             </li>
 
-            <!-- relese commission report -->
+            <!-- release commission report -->
             @if ($role === 'admin')
                 <li class="nav-item">
                     <a class="nav-link {{ Request::is('commission-report') ? 'active' : '' }}"
@@ -225,24 +225,22 @@
                 </a>
             </li>
 
-            @if($role === 'admin')
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('Weekly-report') ? 'active' : '' }}"
-                       href="{{ route('Weekly-report') }}">
+            <li class="nav-item">
+                <a class="nav-link {{ request()->routeIs('Weekly-report') ? 'active' : '' }}"
+                   href="{{ route('Weekly-report') }}">
 
-                        <div
-                            class="icon icon-shape icon-sm shadow border-radius-md text-center me-2 d-flex align-items-center justify-content-center
+                    <div
+                        class="icon icon-shape icon-sm shadow border-radius-md text-center me-2 d-flex align-items-center justify-content-center
                    {{ request()->routeIs('Weekly-report') ? 'bg-warning text-white' : 'bg-white' }}">
 
-                            <i
-                                class="fas fa-calendar-week
+                        <i
+                            class="fas fa-calendar-week
                    {{ request()->routeIs('Weekly-report') ? 'text-white' : 'text-dark' }}"></i>
-                        </div>
+                    </div>
 
-                        <span class="nav-link-text ms-1">Weekly Report</span>
-                    </a>
-                </li>
-            @endif
+                    <span class="nav-link-text ms-1">Weekly Report</span>
+                </a>
+            </li>
 
             <!-- Setting (Only for Admin) -->
             @if ($role === 'admin')
