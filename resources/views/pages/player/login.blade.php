@@ -11,7 +11,7 @@
                         <h6>Player Login History</h6>
                         <div class="d-flex align-items-center gap-2 flex-wrap mt-3 me-3">
                             <!-- Show Dropdown -->
-                            <form method="GET" action="{{ route('player.show') }}"
+                            <form method="GET" action="{{ route('login.history') }}"
                                   class="d-flex align-items-center mb-0">
                                 <label for="per_page" class="mb-0 me-2 text-sm text-dark fw-bold">Show:</label>
                                 <div class="input-group input-group-outline border-radius-lg shadow-sm">
