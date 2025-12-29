@@ -306,6 +306,21 @@
                 </a>
             </li>
 
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <div
+                        class="icon-sm shadow border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                    </div>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <div
+                        class="icon-sm shadow border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                    </div>
+                </a>
+            </li>
         </ul>
     </div>
 </aside>
