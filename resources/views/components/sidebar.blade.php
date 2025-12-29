@@ -284,7 +284,7 @@
 
 
             <!-- Logout -->
-            <li class="nav-item d-none d-xl-block">
+            <li class="nav-item">
                 <form action="{{ route('logout') }}" method="POST">
                     @csrf
                     <button type="submit" class="nav-link">
