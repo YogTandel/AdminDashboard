@@ -356,27 +356,3 @@
         }
     }
 </style>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const sidenav = document.getElementById('sidenav-main');
-        const backdrop = document.getElementById('sidenav-backdrop');
-        const closeBtn = document.getElementById('iconSidenav');
-
-        // Open sidebar (you can trigger this from a hamburger button)
-        window.openSidenav = function () {
-            sidenav.classList.add('show');
-            backdrop.classList.add('show');
-        };
-
-        // Close sidebar
-        function closeSidenav() {
-            sidenav.classList.remove('show');
-            backdrop.classList.remove('show');
-        }
-
-        closeBtn?.addEventListener('click', closeSidenav);
-        backdrop?.addEventListener('click', closeSidenav);
-    });
-</script>
-

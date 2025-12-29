@@ -1,4 +1,5 @@
-<nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl position-sticky blur shadow-blur mt-4 left-auto top-1 z-index-sticky"
+<nav
+    class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl position-sticky blur shadow-blur mt-4 left-auto top-1 z-index-sticky"
     id="navbarBlur" navbar-scroll="true">
     <div class="container-fluid py-1 px-3">
         <nav aria-label="breadcrumb">
@@ -48,7 +49,7 @@
             @if ($user)
                 <li class="nav-item d-flex align-items-center">
                     <a class="nav-link text-body font-weight-bold px-0">
-                        <span >
+                        <span>
                             {{ $user->player }} — Balance: {{ $endpointValue }}
                         </span>
                     </a>
@@ -71,19 +72,19 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    $(document).ready(function() {
+    $(document).ready(function () {
         function fetchLiveEarning() {
             $.ajax({
                 url: '/live-game-value',
                 method: 'GET',
-                success: function(response) {
+                success: function (response) {
                     if (response.earningPercentage !== undefined) {
                         $('#live-earning').text(response.earningPercentage);
                     } else {
                         $('#live-earning').text('--');
                     }
                 },
-                error: function() {
+                error: function () {
                     $('#live-earning').text('--');
                 }
             });
@@ -94,5 +95,36 @@
 
         // Optional: Refresh every 10 seconds
         setInterval(fetchLiveEarning, 10000);
+    });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const sidenav = document.getElementById('sidenav-main');
+        const backdrop = document.getElementById('sidenav-backdrop');
+        const navbarToggle = document.getElementById('iconNavbarSidenav');
+        const closeBtn = document.getElementById('iconSidenav');
+
+        function openSidenav() {
+            sidenav.classList.add('show');
+            backdrop.classList.add('show');
+        }
+
+        function closeSidenav() {
+            sidenav.classList.remove('show');
+            backdrop.classList.remove('show');
+        }
+
+        // NAVBAR HAMBURGER (THIS IS THE KEY)
+        navbarToggle?.addEventListener('click', function (e) {
+            e.preventDefault();
+            openSidenav();
+        });
+
+        // CLOSE ICON (X)
+        closeBtn?.addEventListener('click', closeSidenav);
+
+        // CLICK OUTSIDE
+        backdrop?.addEventListener('click', closeSidenav);
     });
 </script>
