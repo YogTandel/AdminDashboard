@@ -296,6 +296,10 @@
                     </button>
                 </form>
             </li>
+
+            <!-- Spacer (blank menu for scroll space) -->
+            <li class="nav-item sidebar-spacer"></li>
+
         </ul>
     </div>
 </aside>
@@ -355,4 +359,17 @@
             right: 2px;
         }
     }
+
+    /* Sidebar bottom spacer */
+    .sidebar-spacer {
+        height: 80px; /* adjust as needed */
+        pointer-events: none;
+    }
+
+    @media (min-width: 992px) {
+        .sidebar-spacer {
+            display: none; /* desktop doesn't need spacer */
+        }
+    }
+
 </style>
