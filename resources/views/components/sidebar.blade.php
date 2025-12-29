@@ -127,7 +127,7 @@
                 <!-- Player Login History -->
                 <li class="nav-item">
                     <a class="nav-link {{ Request::is('loginHistory*') ? 'active' : '' }}"
-                       href="{{ route('player.login.show') }}">
+                       href="{{ route('login.history') }}">
                         <div
                             class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
                             <svg width="12px" height="12px" viewBox="0 0 24 24" fill="none"

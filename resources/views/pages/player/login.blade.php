@@ -56,7 +56,7 @@
                             </form>
 
                             <!-- Search Form -->
-                            <form action="{{ route('player.login.show') }}" method="GET"
+                            <form action="{{ route('login.history') }}" method="GET"
                                   class="d-flex align-items-center">
                                 <div class="input-group input-group-outline rounded-pill me-2 shadow-sm">
                                     <span class="input-group-text bg-transparent border-0 text-secondary">
@@ -73,7 +73,7 @@
                                     Search
                                 </button>
                                 @if (request()->has('search') && request('search') !== '')
-                                    <a href="{{ route('player.login.show') }}"
+                                    <a href="{{ route('login.history') }}"
                                        class="btn btn-secondary btn-sm px-3 ms-2">Reset</a>
                                 @endif
                             </form>
@@ -81,7 +81,7 @@
                     </div>
 
                     <!-- Second Row: Filters -->
-                    <form action="{{ route('player.login.show') }}" method="GET"
+                    <form action="{{ route('login.history') }}" method="GET"
                           class="d-flex justify-content-end align-items-center flex-wrap gap-2 mt-2 me-3 p-3">
                         <!-- Date Range -->
                         <select name="date_range" class="form-select form-select-sm" style="width: 150px;">
@@ -156,7 +156,7 @@
                                 request()->has('distributor_name') ||
                                 request()->has('agent_name') ||
                                 request()->has('status'))
-                            <a href="{{ route('player.login.show') }}" class="btn btn-secondary btn-sm">Reset</a>
+                            <a href="{{ route('login.history') }}" class="btn btn-secondary btn-sm">Reset</a>
                         @endif
                     </form>
 
@@ -189,7 +189,11 @@
                                     </th>
                                     <th
                                         class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                        Last Login Date
+                                        Last Login
+                                    </th>
+                                    <th
+                                        class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        Logout Time
                                     </th>
 
                                 </tr>
@@ -202,7 +206,7 @@
                                             No players data found.
                                             @if (request()->hasAny(['search', 'distributor_name', 'agent_name', 'status', 'from_date', 'to_date', 'date_range']))
                                                 <br><small class="text-info">Try adjusting your filters or <a
-                                                        href="{{ route('player.login.show') }}">reset
+                                                        href="{{ route('login.history') }}">reset
                                                         filters</a></small>
                                             @endif
                                         </td>
@@ -254,6 +258,7 @@
                                                         {{ $player->status }}
                                                     </span>
                                             </td>
+
                                             <td class="align-middle text-center">
                                                 <span class="text-secondary text-xs font-weight-bold">
                                                     @if ($player->last_login)
@@ -266,7 +271,17 @@
                                                 </span>
                                             </td>
 
-
+                                            <td class="align-middle text-center">
+                                                <span class="text-secondary text-xs font-weight-bold">
+                                                   @if ($player->logout_time)
+                                                        {{ \Carbon\Carbon::parse($player->logout_time)
+                                                            ->timezone('Asia/Kolkata')
+                                                            ->format('d M Y, h:i A') }}
+                                                    @else
+                                                        <span class="text-muted">—</span>
+                                                    @endif
+                                                </span>
+                                            </td>
                                         </tr>
                                     @endforeach
                                 @endif
