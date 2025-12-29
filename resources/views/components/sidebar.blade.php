@@ -303,15 +303,80 @@
 @include('auth.changepassword')
 
 <style>
+    /* ===============================
+       MOBILE SIDENAV BEHAVIOR
+       =============================== */
     @media (max-width: 991px) {
+
+        /* Sidebar hidden by default */
         #sidenav-main {
+            transform: translateX(-110%);
+            transition: transform 0.3s ease;
+            z-index: 1050;
+            width: 260px;
             height: 100vh;
             overflow-y: auto;
-            padding-bottom: 1rem;
+            margin: 0;
+            border-radius: 0;
         }
 
+        /* Show sidebar */
+        #sidenav-main.show {
+            transform: translateX(0);
+        }
+
+        /* Backdrop */
+        .sidenav-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            z-index: 1049;
+            display: none;
+        }
+
+        .sidenav-backdrop.show {
+            display: block;
+        }
+
+        /* Improve spacing */
+        .navbar-nav .nav-link {
+            padding: 0.7rem 1rem;
+            font-size: 0.95rem;
+        }
+
+        /* Icon sizing */
+        .icon.icon-shape {
+            width: 34px;
+            height: 34px;
+        }
+
+        /* Scrollbar alignment */
         #sidenav-main .ps__rail-y {
             right: 2px;
         }
     }
 </style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const sidenav = document.getElementById('sidenav-main');
+        const backdrop = document.getElementById('sidenav-backdrop');
+        const closeBtn = document.getElementById('iconSidenav');
+
+        // Open sidebar (you can trigger this from a hamburger button)
+        window.openSidenav = function () {
+            sidenav.classList.add('show');
+            backdrop.classList.add('show');
+        };
+
+        // Close sidebar
+        function closeSidenav() {
+            sidenav.classList.remove('show');
+            backdrop.classList.remove('show');
+        }
+
+        closeBtn?.addEventListener('click', closeSidenav);
+        backdrop?.addEventListener('click', closeSidenav);
+    });
+</script>
+
