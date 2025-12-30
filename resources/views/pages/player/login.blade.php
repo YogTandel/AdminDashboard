@@ -1,3 +1,4 @@
+@php use Carbon\Carbon; @endphp
 @extends('layouts.layout')
 
 @section('page-name', 'Player Login')
@@ -262,7 +263,7 @@
                                             <td class="align-middle text-center">
                                                 <span class="text-secondary text-xs font-weight-bold">
                                                     @if ($player->last_login)
-                                                        {{ \Carbon\Carbon::parse($player->last_login)
+                                                        {{ Carbon::parse($player->last_login)
                                                             ->timezone('Asia/Kolkata')
                                                             ->format('d M Y, h:i A') }}
                                                     @else
@@ -274,7 +275,7 @@
                                             <td class="align-middle text-center">
                                                 <span class="text-secondary text-xs font-weight-bold">
                                                    @if ($player->logout_time)
-                                                        {{ \Carbon\Carbon::parse($player->logout_time)
+                                                        {{ Carbon::parse($player->logout_time)
                                                             ->timezone('Asia/Kolkata')
                                                             ->format('d M Y, h:i A') }}
                                                     @else
