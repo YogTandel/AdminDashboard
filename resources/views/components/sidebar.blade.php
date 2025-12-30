@@ -1,5 +1,5 @@
 <aside
-    class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3 ps ps--active-y bg-white"
+    class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3 bg-white"
     id="sidenav-main">
     <div class="sidenav-header">
         <i class="fas fa-times p-3 cursor-pointer text-secondary opacity-5 position-absolute end-0 top-0 d-none d-xl-none"
@@ -10,7 +10,7 @@
         </a>
     </div>
     <hr class="horizontal dark mt-0">
-    <div class="collapse navbar-collapse w-auto " id="sidenav-collapse-main">
+    <div class="collapse navbar-collapse w-auto" id="sidenav-collapse-main">
         <ul class="navbar-nav">
             <!-- Dashboard -->
             <li class="nav-item">
@@ -42,7 +42,7 @@
 
             @php
                 $admin = Auth::guard('admin')->user();
-                $user = Auth::guard('web')->user(); // for distributor or agent
+                $user = Auth::guard('web')->user();
                 $role = $admin ? 'admin' : ($user ? $user->role : null);
             @endphp
 
@@ -128,18 +128,14 @@
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('login.history') ? 'active' : '' }}"
                        href="{{ route('login.history') }}">
-
                         <div class="icon icon-shape icon-sm shadow border-radius-md bg-white
                     text-center me-2 d-flex align-items-center justify-content-center">
-                            <i class="fas fa-clock
-               {{ request()->routeIs('login.history') ? 'text-warning' : 'text-dark' }}"></i>
+                            <i class="fas fa-clock {{ request()->routeIs('login.history') ? 'text-warning' : 'text-dark' }}"></i>
                         </div>
-
                         <span class="nav-link-text ms-1">Login History</span>
                     </a>
                 </li>
             @endif
-
 
             <!-- Live Game -->
             @if ($role === 'admin')
@@ -156,7 +152,6 @@
             @endif
 
             @if ($role !== 'admin')
-                {{-- Transfer Menu --}}
                 <li class="nav-item">
                     <a class="nav-link {{ Request::is('transfer.transfer.page') ? 'active' : '' }}"
                        href="{{ route('transfer.page') }}">
@@ -168,6 +163,7 @@
                     </a>
                 </li>
             @endif
+
             <li class="nav-item">
                 <a class="nav-link {{ Request::is('transfer-report') ? 'active' : '' }}"
                    href="{{ route('transfer.report') }}">
@@ -179,7 +175,6 @@
                 </a>
             </li>
 
-            <!--refill report  -->
             <li class="nav-item">
                 <a class="nav-link {{ Request::is('refil-report') ? 'active' : '' }}"
                    href="{{ route('refil.report') }}">
@@ -191,7 +186,6 @@
                 </a>
             </li>
 
-            <!-- release commission report -->
             @if ($role === 'admin')
                 <li class="nav-item">
                     <a class="nav-link {{ Request::is('commission-report') ? 'active' : '' }}"
@@ -205,16 +199,13 @@
                 </li>
             @endif
 
-            <!--commission report -->
             <li class="nav-item">
                 <a class="nav-link {{ Request::is('relesecommission-report*') ? 'active' : '' }}"
                    href="{{ route('relesecommission-report') }}">
                     <div
                         class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="fas fa-percentage"
-                           style="
-                            color: {{ Request::is('relesecommission-report*') ? '#fb6340' : '#344767' }};
-                            transition: color 0.3s ease;">
+                           style="color: {{ Request::is('relesecommission-report*') ? '#fb6340' : '#344767' }}; transition: color 0.3s ease;">
                         </i>
                     </div>
                     <span class="nav-link-text ms-1">Commission Report</span>
@@ -224,21 +215,15 @@
             <li class="nav-item">
                 <a class="nav-link {{ request()->routeIs('Weekly-report') ? 'active' : '' }}"
                    href="{{ route('Weekly-report') }}">
-
                     <div
                         class="icon icon-shape icon-sm shadow border-radius-md text-center me-2 d-flex align-items-center justify-content-center
                    {{ request()->routeIs('Weekly-report') ? 'bg-warning text-white' : 'bg-white' }}">
-
-                        <i
-                            class="fas fa-calendar-week
-                   {{ request()->routeIs('Weekly-report') ? 'text-white' : 'text-dark' }}"></i>
+                        <i class="fas fa-calendar-week {{ request()->routeIs('Weekly-report') ? 'text-white' : 'text-dark' }}"></i>
                     </div>
-
                     <span class="nav-link-text ms-1">Weekly Report</span>
                 </a>
             </li>
 
-            <!-- Setting (Only for Admin) -->
             @if ($role === 'admin')
                 <li class="nav-item">
                     <a class="nav-link {{ Request::is('setting') ? 'active' : '' }}" href="{{ route('setting') }}">
@@ -251,7 +236,6 @@
                 </li>
             @endif
 
-            <!-- Version Control (Only for Admin) -->
             @if ($role === 'admin')
                 <li class="nav-item">
                     <a class="nav-link {{ Request::is('version-control') ? 'active' : '' }}"
@@ -265,7 +249,6 @@
                 </li>
             @endif
 
-            <!-- Change Password -->
             <li class="nav-item">
                 <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
                     <div
@@ -276,8 +259,6 @@
                 </a>
             </li>
 
-
-            <!-- Logout -->
             <li class="nav-item">
                 <form action="{{ route('logout') }}" method="POST">
                     @csrf
@@ -290,101 +271,199 @@
                     </button>
                 </form>
             </li>
-
-            <!-- Spacer (blank menu for scroll space) -->
-            <li class="nav-item">
-                <a class="nav-link" href="#">
-                    <div
-                        class="icon-sm shadow border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-                    </div>
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link" href="#">
-                    <div
-                        class="icon-sm shadow border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-                    </div>
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link" href="#">
-                    <div
-                        class="icon-sm shadow border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-                    </div>
-                </a>
-            </li>
         </ul>
     </div>
+
+    <!-- Bottom spacer for mobile scroll -->
+    <div class="sidebar-spacer"></div>
 </aside>
+
+<!-- Backdrop for mobile -->
+<div class="sidenav-backdrop" id="sidenav-backdrop"></div>
 
 @include('auth.changepassword')
 
 <style>
     /* ===============================
-       MOBILE SIDENAV BEHAVIOR
+       DESKTOP STYLES (Default)
        =============================== */
-    @media (max-width: 991px) {
+    .sidenav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: 260px;
+        z-index: 990;
+    }
 
-        /* Sidebar hidden by default */
-        #sidenav-main {
+    /* ===============================
+       MOBILE STYLES
+       =============================== */
+    @media (max-width: 1199.98px) {
+        /* Hide sidebar by default on mobile */
+        .sidenav {
             transform: translateX(-110%);
-            transition: transform 0.3s ease;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 1050;
+            margin: 0 !important;
+            border-radius: 0 !important;
             width: 260px;
             height: 100vh;
             overflow-y: auto;
-            margin: 0;
-            border-radius: 0;
+            -webkit-overflow-scrolling: touch;
         }
 
-        /* Show sidebar */
-        #sidenav-main.show {
+        /* Show sidebar when toggled */
+        .sidenav.show {
             transform: translateX(0);
+            box-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.42), 0 4px 25px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Close button visible on mobile */
+        .sidenav #iconSidenav {
+            display: block !important;
         }
 
         /* Backdrop */
         .sidenav-backdrop {
             position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.45);
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
             z-index: 1049;
-            display: none;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
         }
 
         .sidenav-backdrop.show {
-            display: block;
+            opacity: 1;
+            visibility: visible;
         }
 
-        /* Improve spacing */
+        /* Improve nav link spacing on mobile */
         .navbar-nav .nav-link {
-            padding: 0.7rem 1rem;
+            padding: 0.75rem 1rem;
             font-size: 0.95rem;
         }
 
         /* Icon sizing */
         .icon.icon-shape {
-            width: 34px;
-            height: 34px;
+            width: 36px;
+            height: 36px;
+            min-width: 36px;
         }
 
-        /* Scrollbar alignment */
-        #sidenav-main .ps__rail-y {
-            right: 2px;
+        /* Prevent body scroll when sidebar is open */
+        body.sidenav-open {
+            overflow: hidden;
         }
-    }
 
-    /* Sidebar bottom spacer */
-    .sidebar-spacer {
-        height: 80px; /* adjust as needed */
-        pointer-events: none;
-    }
-
-    @media (min-width: 992px) {
+        /* Bottom spacer for comfortable scrolling */
         .sidebar-spacer {
-            display: none; /* desktop doesn't need spacer */
+            height: 100px;
+            flex-shrink: 0;
         }
     }
 
+    /* Desktop - no backdrop needed */
+    @media (min-width: 1200px) {
+        .sidenav-backdrop {
+            display: none !important;
+        }
+
+        .sidebar-spacer {
+            display: none;
+        }
+    }
+
+    /* Smooth scrollbar */
+    .sidenav::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .sidenav::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.05);
+    }
+
+    .sidenav::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+    }
+
+    .sidenav::-webkit-scrollbar-thumb:hover {
+        background: rgba(0, 0, 0, 0.3);
+    }
 </style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const sidenav = document.getElementById('sidenav-main');
+        const backdrop = document.getElementById('sidenav-backdrop');
+        const closeBtn = document.getElementById('iconSidenav');
+        const body = document.body;
+
+        // Function to open sidebar
+        function openSidenav() {
+            sidenav.classList.add('show');
+            backdrop.classList.add('show');
+            body.classList.add('sidenav-open');
+        }
+
+        // Function to close sidebar
+        function closeSidenav() {
+            sidenav.classList.remove('show');
+            backdrop.classList.remove('show');
+            body.classList.remove('sidenav-open');
+        }
+
+        // Toggle sidebar on hamburger click (you need to add this button to your navbar)
+        // Look for common Soft UI Dashboard toggle buttons
+        const toggleButtons = document.querySelectorAll('[data-bs-toggle="sidenav"], .sidenav-toggler, #iconNavbarSidenav');
+        toggleButtons.forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (window.innerWidth < 1200) {
+                    if (sidenav.classList.contains('show')) {
+                        closeSidenav();
+                    } else {
+                        openSidenav();
+                    }
+                }
+            });
+        });
+
+        // Close on backdrop click
+        if (backdrop) {
+            backdrop.addEventListener('click', closeSidenav);
+        }
+
+        // Close on close button click
+        if (closeBtn) {
+            closeBtn.addEventListener('click', closeSidenav);
+        }
+
+        // Close sidebar when clicking on a link (optional, for better UX)
+        const navLinks = sidenav.querySelectorAll('.nav-link');
+        navLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                if (window.innerWidth < 1200 && !this.getAttribute('data-bs-toggle')) {
+                    setTimeout(closeSidenav, 250); // Small delay for better visual feedback
+                }
+            });
+        });
+
+        // Handle window resize
+        let resizeTimer;
+        window.addEventListener('resize', function() {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(function() {
+                if (window.innerWidth >= 1200) {
+                    closeSidenav();
+                }
+            }, 250);
+        });
+    });
+</script>
