@@ -2381,106 +2381,116 @@ class PagesController extends Controller
 
     public function relesecommissionReport(Request $request)
     {
-        // Get per_page value or default to 10
         $perPage = $request->get("per_page", 10);
 
-        // Start query
         $query = Release::orderBy("created_at", "desc");
 
-        // Get authenticated user based on guard
-        if (Auth::guard("admin")->check()) {
-        } elseif (Auth::guard("web")->check()) {
+        if (Auth::guard("web")->check()) {
             $user = Auth::guard("web")->user();
-            $role = session("login_role");
 
             if ($user->role === "distributor") {
+
                 $agents = User::where("role", "agent")
                     ->where("distributor_id", new ObjectId($user->_id))
-                    ->get();
+                    ->pluck("_id")
+                    ->toArray();
 
-                $agentIds = $agents->pluck("_id")->toArray();
-
-                //print_r( $agentIds);
-
-                //exit(0);
-                // Option 1: Get distributor + agent history (same as before)
-                $query->where(function ($q) use ($user, $agentIds) {
-                    $q->where("transfer_to", $user->_id) // Distributor's own records
-                    ->orWhereIn("transfer_to", $agentIds); // Agents' records
+                $query->where(function ($q) use ($user, $agents) {
+                    $q->where("transfer_to", $user->_id)
+                        ->orWhereIn("transfer_to", $agents);
                 });
+
             } elseif ($user->role === "agent") {
                 $query->where("transfer_to", $user->_id);
             }
         }
 
-        // Apply search filter if search term exists
-        if ($request->has("search") && !empty($request->search)) {
-            $searchTerm = $request->search;
-            $query->where(function ($q) use ($searchTerm) {
-                $q->where("name", "LIKE", "%{$searchTerm}%")
-                    ->orWhere("type", "LIKE", "%{$searchTerm}%")
-                    ->orWhere("transfer_role", "LIKE", "%{$searchTerm}%")
-                    ->orWhere("total_bet", "LIKE", "%{$searchTerm}%")
-                    ->orWhere(
-                        "commission_percentage",
-                        "LIKE",
-                        "%{$searchTerm}%",
-                    )
-                    ->orWhere("remaining_balance", "LIKE", "%{$searchTerm}%");
+        if ($request->filled("search")) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where("name", "LIKE", "%{$search}%")
+                    ->orWhere("type", "LIKE", "%{$search}%");
             });
         }
 
-        // Apply date range filter
-        if (request("date_range")) {
-            $today = \Carbon\Carbon::today();
-            $dateRange = request("date_range");
-
-            if ($dateRange === "2_days_ago") {
+        if ($request->filled("date_range")) {
+            $today = Carbon::today();
+            if ($request->date_range === "2_days_ago") {
                 $query->whereBetween("created_at", [
-                    $today->copy()->subDays(2)->startOfDay(),
-                    $today->copy()->endOfDay(),
-                ]);
-            } elseif ($dateRange === "last_week") {
-                $query->whereBetween("created_at", [
-                    $today->copy()->subWeek()->startOfWeek(),
-                    $today->copy()->subWeek()->endOfWeek(),
-                ]);
-            } elseif ($dateRange === "last_month") {
-                $query->whereBetween("created_at", [
-                    $today->copy()->subMonth()->startOfMonth(),
-                    $today->copy()->subMonth()->endOfMonth(),
+                    $today->subDays(2)->startOfDay(),
+                    Carbon::now(),
                 ]);
             }
         }
 
-        // Apply custom date range filter
-        if ($request->has("from_date") && !empty($request->from_date)) {
-            $query->where(
-                "created_at",
-                ">=",
-                Carbon::parse($request->from_date)->startOfDay(),
-            );
-        }
-
-        if ($request->has("to_date") && !empty($request->to_date)) {
-            $query->where(
-                "created_at",
-                "<=",
-                Carbon::parse($request->to_date)->endOfDay(),
-            );
-        }
-
-        // Paginate the results
         $releases = $query->paginate($perPage);
 
-        // Append all query parameters to pagination links
-        $releases->appends([
-            "per_page" => $perPage,
-            "search" => $request->search,
-            "date_range" => $request->date_range,
-            "from_date" => $request->from_date,
-            "to_date" => $request->to_date,
-        ]);
+        // ✅ FIXED TOTAL PLAYER BALANCE (ROW-WISE)
+        $releases->getCollection()->transform(function ($release) {
+
+            // DISTRIBUTOR ROW
+            if ($release->type === 'distributor') {
+
+                $agentIds = User::where('role', 'agent')
+                    ->where('distributor_id', new ObjectId($release->transfer_to))
+                    ->pluck('_id')
+                    ->map(fn($id) => new ObjectId($id))
+                    ->toArray();
+
+                $result = User::raw(function ($collection) use ($release, $agentIds) {
+                    return $collection->aggregate([
+                        [
+                            '$match' => [
+                                'role' => 'player',
+                                '$or' => [
+                                    ['distributor' => (string)$release->transfer_to],
+                                    ['distributor' => new ObjectId($release->transfer_to)],
+                                    ['agent_id' => ['$in' => $agentIds]],
+                                ],
+                            ],
+                        ],
+                        [
+                            '$group' => [
+                                '_id' => null,
+                                'total' => ['$sum' => '$balance'],
+                            ],
+                        ],
+                    ]);
+                });
+
+                $release->totalBalance = $result->first()['total'] ?? 0;
+            } // AGENT ROW
+            elseif ($release->type === 'agent') {
+
+                $result = User::raw(function ($collection) use ($release) {
+                    return $collection->aggregate([
+                        [
+                            '$match' => [
+                                'role' => 'player',
+                                '$or' => [
+                                    ['agent_id' => new ObjectId($release->transfer_to)],
+                                    ['agent_id' => (string)$release->transfer_to],
+                                ],
+                            ],
+                        ],
+                        [
+                            '$group' => [
+                                '_id' => null,
+                                'total' => ['$sum' => '$balance'],
+                            ],
+                        ],
+                    ]);
+                });
+
+                $release->totalBalance = $result->first()['total'] ?? 0;
+            } else {
+                $release->totalBalance = 0;
+            }
+
+            return $release;
+        });
+
+        $releases->appends($request->all());
 
         return view("pages.comissiom-report", compact("releases"));
     }

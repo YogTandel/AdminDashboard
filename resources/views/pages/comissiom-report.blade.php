@@ -1,3 +1,4 @@
+@php use Carbon\Carbon; @endphp
 @extends('layouts.layout')
 
 @section('page-name', 'Commission Report')
@@ -20,12 +21,12 @@
 
                     <div class="input-group input-group-outline border-radius-lg shadow-sm">
                         <select name="per_page" id="per_page" class="form-select border-0 ps-3 pe-4"
-                            onchange="this.form.submit()" style="min-width: 60px;">
-                            <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
-                            <option value="20" {{ request('per_page') == 20 ? 'selected' : '' }}>20</option>
-                            <option value="30" {{ request('per_page') == 30 ? 'selected' : '' }}>30</option>
-                            <option value="40" {{ request('per_page') == 40 ? 'selected' : '' }}>40</option>
-                            <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
+                                onchange="this.form.submit()" style="min-width: 60px;">
+                            <option value="10" {{ request('per_page') === 10 ? 'selected' : '' }}>10</option>
+                            <option value="20" {{ request('per_page') === 20 ? 'selected' : '' }}>20</option>
+                            <option value="30" {{ request('per_page') === 30 ? 'selected' : '' }}>30</option>
+                            <option value="40" {{ request('per_page') === 40 ? 'selected' : '' }}>40</option>
+                            <option value="50" {{ request('per_page') === 50 ? 'selected' : '' }}>50</option>
                         </select>
                     </div>
                     @if (request()->has('search'))
@@ -41,8 +42,8 @@
                         </span>
                         <label class="form-label"></label>
                         <input type="search" name="search" class="form-control border-0"
-                            onfocus="this.parentElement.classList.add('is-focused')"
-                            onfocusout="this.parentElement.classList.remove('is-focused')">
+                               onfocus="this.parentElement.classList.add('is-focused')"
+                               onfocusout="this.parentElement.classList.remove('is-focused')">
                     </div>
                     <input type="hidden" name="per_page" value="{{ request('per_page', 10) }}">
 
@@ -51,31 +52,33 @@
                     </button>
                     @if (request()->has('search') && request('search') != '')
                         <a href="{{ route('relesecommission-report') }}"
-                            class="btn btn-secondary btn-sm px-3 mt-3">Reset</a>
+                           class="btn btn-secondary btn-sm px-3 mt-3">Reset</a>
                     @endif
                 </form>
             </div>
         </div>
         <form action="{{ route('relesecommission-report') }}" method="GET"
-            class="d-flex justify-content-end align-items-center flex-wrap gap-2 mt-2 me-3">
+              class="d-flex justify-content-end align-items-center flex-wrap gap-2 mt-2 me-3">
             <!-- Date Range -->
             <select name="date_range" class="form-select form-select-sm" onchange="this.form.submit()"
-                style="width: 150px;">
+                    style="width: 150px;">
                 <option value="">Date Range</option>
-                <option value="2_days_ago" {{ request('date_range') == '2_days_ago' ? 'selected' : '' }}>Last 2 Days
+                <option value="2_days_ago" {{ request('date_range') === '2_days_ago' ? 'selected' : '' }}>Last 2 Days
                 </option>
-                <option value="last_week" {{ request('date_range') == 'last_week' ? 'selected' : '' }}>Last Week</option>
-                <option value="last_month" {{ request('date_range') == 'last_month' ? 'selected' : '' }}>Last Month</option>
+                <option value="last_week" {{ request('date_range') === 'last_week' ? 'selected' : '' }}>Last Week
+                </option>
+                <option value="last_month" {{ request('date_range') === 'last_month' ? 'selected' : '' }}>Last Month
+                </option>
             </select>
 
             <!-- From Date -->
             <input type="date" name="from_date" class="form-control form-control-sm" value="{{ request('from_date') }}"
-                style="width: 150px;">
+                   style="width: 150px;">
 
             <!-- To Date -->
             <span class="text-sm mx-1">to</span>
             <input type="date" name="to_date" class="form-control form-control-sm" value="{{ request('to_date') }}"
-                style="width: 150px;">
+                   style="width: 150px;">
 
             <!-- Search Hidden -->
             @if (request()->has('search'))
@@ -102,37 +105,39 @@
             <!-- <h3 class="mb-4">Release History</h3> -->
             <table class="table table-bordered table-striped">
                 <thead>
-                    <tr class="text-center">
-                        <th>No</th>
-                        <th>Transfer To</th>
-                        <th>Type</th>
-                        <th>Total Bet</th>
-                        <th> %</th>
-                        <th>Comission</th>
-                        <th>Before</th>
-                        <th>After</th>
-                        <th>Created At</th>
-                    </tr>
+                <tr class="text-center">
+                    <th>No</th>
+                    <th>Transfer To</th>
+                    <th>Type</th>
+                    <th>Total Bet</th>
+                    <th> %</th>
+                    <th>Comission</th>
+                    <th>Before</th>
+                    <th>After</th>
+                    <th>Total Player Balance</th>
+                    <th>Created At</th>
+                </tr>
                 </thead>
                 <tbody>
-                    @forelse ($releases as $index => $release)
-                        <tr class="text-dark text-center">
-                            <td>{{ $index + 1 }}</td>
-                            <td>{{ $release['name'] ?? 'N/A' }}</td>
-                            <td>{{ $release['type'] ?? 'N/A' }}</td>
-                            <td>₹ {{ $release['total_bet'] ?? '0' }}</td>
-                            <td>{{ $release['commission_percentage'] ?? '0' }}%</td>
-                            <td>{{ $release['commission_amount'] ?? '0' }}</td>
-                            <td>₹ {{ $release['remaining_balance'] ?? '0' }}</td>
-                            <td>₹ {{ $release['remaining_balance'] + $release['commission_amount'] }}</td>
-                            <td>{{ \Carbon\Carbon::parse(time: $release->created_at)->setTimezone('Asia/Kolkata')->format('d-M-Y h:i A') }}
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="9" class="text-center text-dark">No data available</td>
-                        </tr>
-                    @endforelse
+                @forelse ($releases as $index => $release)
+                    <tr class="text-dark text-center">
+                        <td>{{ $index + 1 }}</td>
+                        <td>{{ $release['name'] ?? 'N/A' }}</td>
+                        <td>{{ $release['type'] ?? 'N/A' }}</td>
+                        <td>₹ {{ $release['total_bet'] ?? '0' }}</td>
+                        <td>{{ $release['commission_percentage'] ?? '0' }}%</td>
+                        <td>{{ $release['commission_amount'] ?? '0' }}</td>
+                        <td>₹ {{ $release['remaining_balance'] ?? '0' }}</td>
+                        <td>₹ {{ $release['remaining_balance'] + $release['commission_amount'] }}</td>
+                        <td>₹ {{ number_format($release->totalBalance ?? 0, 2) }}</td>
+                        <td>{{ Carbon::parse(time: $release->created_at)->setTimezone('Asia/Kolkata')->format('d-M-Y h:i A') }}
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="9" class="text-center text-dark">No data available</td>
+                    </tr>
+                @endforelse
                 </tbody>
             </table>
 
@@ -180,18 +185,18 @@
 
     <script>
         // Show loader when page is loading
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Show loader immediately when page starts loading
             document.getElementById('loader').style.display = 'flex';
 
             // Hide loader when page is fully loaded
-            window.addEventListener('load', function() {
+            window.addEventListener('load', function () {
                 document.getElementById('loader').style.display = 'none';
             });
         });
 
         // Show loader when page is being refreshed
-        window.addEventListener('beforeunload', function() {
+        window.addEventListener('beforeunload', function () {
             document.getElementById('loader').style.display = 'flex';
         });
     </script>
