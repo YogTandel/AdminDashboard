@@ -253,7 +253,7 @@
                                             <!-- Net Balance -->
                                             <td class="align-middle text-center">
                                                     <span
-                                                        class="badge bg-success">{{ number_format($entry['current_balance'] ) }}</span>
+                                                        class="badge bg-success">{{ number_format($entry['current_balance'] + $entry['winpoint'] ) }}</span>
                                             </td>
 
                                         </tr>
