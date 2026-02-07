@@ -4,10 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\VersionControl;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class HomeController extends Controller
 {
-    public function home(): \Illuminate\View\View
+    public function home(): View
     {
         return view('dashboard');
     }
