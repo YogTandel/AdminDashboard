@@ -247,7 +247,9 @@
                                             <!-- TB - Win -->
                                             <td class="align-middle text-center">
                                                     <span
-                                                        class="badge bg-gradient-dark">{{ -1 * number_format($entry['endpoint']) }}</span>
+                                                        class="badge bg-gradient-dark">
+                                                         {{ number_format(-1 * (is_numeric($entry['endpoint'] ?? null) ? $entry['endpoint'] : 0)) }}
+                                                    </span>
                                             </td>
 
                                             <!-- Net Balance -->
