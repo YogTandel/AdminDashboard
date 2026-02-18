@@ -246,10 +246,8 @@
 
                                             <!-- TB - Win -->
                                             <td class="align-middle text-center">
-                                                <span class="badge bg-gradient-dark">
-                                                    <?php echo $entry['endpoint'] ?? 0; ?>
-{{--                                                    {{ isset($entry['endpoint']) ? -1 * number_format($entry['endpoint']) : 0 }}--}}
-                                                </span>
+                                                    <span
+                                                        class="badge bg-gradient-dark">{{ -1 * number_format($entry['endpoint']) }}</span>
                                             </td>
 
                                             <!-- Net Balance -->
