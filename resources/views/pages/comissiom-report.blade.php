@@ -51,7 +51,7 @@
                     <button type="submit" class="btn bg-gradient-warning rounded-pill shadow-sm mb-0">
                         Search
                     </button>
-                    @if (request()->has('search') && request('search') != '')
+                    @if (request()->has('search') && request('search') !== '')
                         <a href="{{ route('relesecommission-report') }}"
                            class="btn btn-secondary btn-sm px-3 mt-3">Reset</a>
                     @endif
