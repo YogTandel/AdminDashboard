@@ -5,6 +5,7 @@
 
 @section('content')
     <!-- Loader Container -->
+    <!--suppress JSUnresolvedReference -->
     <div id="loader" class="loader-container">
         <div class="loader"></div>
     </div>
@@ -160,7 +161,6 @@
             justify-content: center;
             align-items: center;
             z-index: 9999;
-            display: none;
         }
 
         .loader {
