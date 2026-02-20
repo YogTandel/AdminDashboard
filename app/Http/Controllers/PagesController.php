@@ -2385,7 +2385,13 @@ class PagesController extends Controller
 
         $query = Release::orderBy("created_at", "desc");
 
+        /*
+        |--------------------------------------------------------------------------
+        | ROLE BASED FILTERING
+        |--------------------------------------------------------------------------
+        */
         if (Auth::guard("web")->check()) {
+
             $user = Auth::guard("web")->user();
 
             if ($user->role === "distributor") {
@@ -2393,6 +2399,7 @@ class PagesController extends Controller
                 $agents = User::where("role", "agent")
                     ->where("distributor_id", new ObjectId($user->_id))
                     ->pluck("_id")
+                    ->map(fn($id) => new ObjectId($id))
                     ->toArray();
 
                 $query->where(function ($q) use ($user, $agents) {
@@ -2401,34 +2408,85 @@ class PagesController extends Controller
                 });
 
             } elseif ($user->role === "agent") {
+
                 $query->where("transfer_to", $user->_id);
             }
         }
 
+        /*
+        |--------------------------------------------------------------------------
+        | SEARCH FILTER
+        |--------------------------------------------------------------------------
+        */
         if ($request->filled("search")) {
             $search = $request->search;
+
             $query->where(function ($q) use ($search) {
                 $q->where("name", "LIKE", "%{$search}%")
                     ->orWhere("type", "LIKE", "%{$search}%");
             });
         }
 
+        /*
+        |--------------------------------------------------------------------------
+        | DATE RANGE QUICK FILTER
+        |--------------------------------------------------------------------------
+        */
         if ($request->filled("date_range")) {
-            $today = Carbon::today();
-            if ($request->date_range === "2_days_ago") {
-                $query->whereBetween("created_at", [
-                    $today->subDays(2)->startOfDay(),
-                    Carbon::now(),
-                ]);
+
+            switch ($request->date_range) {
+
+                case '2_days_ago':
+                    $query->whereBetween('created_at', [
+                        now()->subDays(2)->startOfDay(),
+                        now()
+                    ]);
+                    break;
+
+                case 'last_week':
+                    $query->whereBetween('created_at', [
+                        now()->subWeek()->startOfDay(),
+                        now()
+                    ]);
+                    break;
+
+                case 'last_month':
+                    $query->whereBetween('created_at', [
+                        now()->subMonth()->startOfDay(),
+                        now()
+                    ]);
+                    break;
             }
         }
 
+        /*
+        |--------------------------------------------------------------------------
+        | CUSTOM DATE FILTER
+        |--------------------------------------------------------------------------
+        */
+        if ($request->filled("from_date") && $request->filled("to_date")) {
+
+            $from = Carbon::parse($request->from_date)->startOfDay();
+            $to = Carbon::parse($request->to_date)->endOfDay();
+
+            $query->whereBetween("created_at", [$from, $to]);
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | PAGINATION
+        |--------------------------------------------------------------------------
+        */
         $releases = $query->paginate($perPage);
 
-        // ✅ FIXED TOTAL PLAYER BALANCE (ROW-WISE)
+        /*
+        |--------------------------------------------------------------------------
+        | TOTAL PLAYER BALANCE CALCULATION (ROW-WISE)
+        |--------------------------------------------------------------------------
+        */
         $releases->getCollection()->transform(function ($release) {
 
-            // DISTRIBUTOR ROW
+            // DISTRIBUTOR
             if ($release->type === 'distributor') {
 
                 $agentIds = User::where('role', 'agent')
@@ -2459,7 +2517,7 @@ class PagesController extends Controller
                 });
 
                 $release->totalBalance = $result->first()['total'] ?? 0;
-            } // AGENT ROW
+            } // AGENT
             elseif ($release->type === 'agent') {
 
                 $result = User::raw(function ($collection) use ($release) {
