@@ -197,7 +197,8 @@
                                                     </a>
                                                 @endif
                                                 <a href="javascript:void(0);"
-                                                   onclick="copyToClipboard('{{ $distributor->player }} - {{ $distributor->original_password }}')"
+                                                   data-copy-text="{{ base64_encode($distributor->player . ' - ' . $distributor->original_password) }}"
+                                                   onclick="copyToClipboard(this.dataset.copyText)"
                                                    class="btn btn-link text-secondary px-2 mb-0" title="Copy">
                                                     <i class="fas fa-copy fa-sm"></i>
                                                 </a>
@@ -245,7 +246,8 @@
                                                         @endif
                                                         <li>
                                                             <a class="dropdown-item" href="javascript:void(0);"
-                                                               onclick="copyToClipboard('{{ $distributor->player }} - {{ $distributor->original_password }}')">
+                                                               data-copy-text="{{ base64_encode($distributor->player . ' - ' . $distributor->original_password) }}"
+                                                               onclick="copyToClipboard(this.dataset.copyText)">
                                                                 <i class="fas fa-copy text-secondary me-2 fa-fw"></i>
                                                                 Copy Details
                                                             </a>
@@ -389,19 +391,51 @@
             document.getElementById('loader').style.display = 'none';
         });
 
-        function copyToClipboard(text) {
-            navigator.clipboard?.writeText(text).then(() => {
-                showToast?.("Copied: " + text) || alert("Copied!");
-            }).catch(() => {
-                const ta = document.createElement("textarea");
-                ta.value = text;
-                ta.style.cssText = "position:fixed;opacity:0";
-                document.body.appendChild(ta);
-                ta.select();
+        function copyToClipboard(encodedText) {
+            const text = decodeBase64(encodedText);
+
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showToast("Copied: " + text);
+                }).catch(() => {
+                    fallbackCopy(text);
+                });
+            } else {
+                fallbackCopy(text);
+            }
+        }
+
+        function decodeBase64(value) {
+            try {
+                return atob(value);
+            } catch {
+                return value;
+            }
+        }
+
+        function fallbackCopy(text) {
+            const ta = document.createElement("textarea");
+            ta.value = text;
+            ta.style.cssText = "position:fixed;opacity:0";
+            document.body.appendChild(ta);
+            ta.focus();
+            ta.select();
+
+            try {
                 document.execCommand('copy');
+                showToast("Copied: " + text);
+            } finally {
                 document.body.removeChild(ta);
-                showToast?.("Copied: " + text) || alert("Copied!");
-            });
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.createElement("div");
+            toast.className = "alert alert-info position-fixed top-0 end-0 m-3";
+            toast.style.zIndex = "2000";
+            toast.innerHTML = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2000);
         }
 
         // Shared toggle status handler
