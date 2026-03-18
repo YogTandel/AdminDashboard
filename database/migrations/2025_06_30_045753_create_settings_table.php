@@ -26,6 +26,7 @@ return new class extends Migration
                     $table->integer('result', 10);
                     $table->json('last_10_data')->nullable();
                     $table->string('is_negative_agent')->nullable();
+                    $table->double('big_player')->nullable();
                     $table->timestamps();
             });
     }

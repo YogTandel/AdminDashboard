@@ -931,6 +931,45 @@ class PagesController extends Controller
             ->with("success", "Earning percentage updated successfully.");
     }
 
+    public function updateBigPlayer(Request $request)
+    {
+        $request->validate([
+            "big_player" => "required|numeric|min:0",
+        ]);
+
+        $setting = DB::table("settings")->latest("id")->first();
+
+        if ($setting) {
+            DB::table("settings")
+                ->where("id", $setting->id)
+                ->update([
+                    "big_player" => (float)$request->big_player,
+                    "updated_at" => now(),
+                ]);
+        } else {
+            DB::table("settings")->insert([
+                "agentComission" => 0,
+                "distributorComission" => 0,
+                "earning" => 0,
+                "earningPercentage" => 0,
+                "setTominimum" => false,
+                "standing" => 0,
+                "holding" => 0,
+                "customBet" => -1,
+                "result" => 8,
+                "is_nagative_agent" => "0",
+                "last10data" => [],
+                "big_player" => (float)$request->big_player,
+                "created_at" => now(),
+                "updated_at" => now(),
+            ]);
+        }
+
+        return redirect()
+            ->back()
+            ->with("success", "Big Player value updated successfully.");
+    }
+
     public function addPointsToAdmin(Request $request)
     {
         $request->validate([

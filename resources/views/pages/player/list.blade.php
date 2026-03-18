@@ -290,7 +290,8 @@
                                                         @endif
 
                                                         <a href="javascript:void(0);"
-                                                            onclick="copyToClipboard('{{ $player->player }} - {{ $player->original_password }}')"
+                                                            data-copy-text="{{ base64_encode($player->player . ' - ' . $player->original_password) }}"
+                                                            onclick="copyToClipboard(this.dataset.copyText)"
                                                             class="text-secondary font-weight-bold text-xs ms-2 me-2"
                                                             data-bs-toggle="tooltip" title="Copy Player">
                                                             <i class="fas fa-copy" style="cursor: pointer;"></i>
@@ -382,7 +383,8 @@
                                                                 {{-- Copy --}}
                                                                 <li>
                                                                     <a class="dropdown-item" href="javascript:void(0);"
-                                                                        onclick="copyToClipboard('{{ $player->player }} - {{ $player->original_password }}')">
+                                                                        data-copy-text="{{ base64_encode($player->player . ' - ' . $player->original_password) }}"
+                                                                        onclick="copyToClipboard(this.dataset.copyText)">
                                                                         <i class="fas fa-copy me-1"></i> Copy Player
                                                                     </a>
                                                                 </li>
@@ -432,7 +434,9 @@
 
     @push('scripts')
         <script>
-            function copyToClipboard(text) {
+            function copyToClipboard(encodedText) {
+                const text = decodeBase64(encodedText);
+
                 if (navigator.clipboard && window.isSecureContext) {
                     navigator.clipboard.writeText(text).then(() => {
                         alert("Copied: " + text);
@@ -454,6 +458,14 @@
                         console.error("Fallback copy failed", err);
                     }
                     document.body.removeChild(textarea);
+                }
+            }
+
+            function decodeBase64(value) {
+                try {
+                    return atob(value);
+                } catch (error) {
+                    return value;
                 }
             }
 

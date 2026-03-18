@@ -166,6 +166,31 @@
                         </form>
                     </div>
                 </div>
+
+                <div class="card shadow-soft border-radius-xl mt-4">
+                    <div class="card-header pb-0">
+                        <h6 class="mb-0">Big Player</h6>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-sm mb-3">
+                            Current set value: <strong>{{ $settings->big_player ?? 0 }}</strong>
+                        </p>
+                        <form action="{{ route('settings.updateBigPlayer') }}" method="POST" id="bigPlayerForm">
+                            @csrf
+                            <div class="mb-4">
+                                <label class="form-label">Big Player Value</label>
+                                <input type="number" name="big_player" class="form-control"
+                                       placeholder="Enter Big Player value"
+                                       value="{{ $settings->big_player ?? '' }}" min="0" step="0.01" required>
+                                <div class="d-grid mt-3">
+                                    <button type="submit" class="btn bg-gradient-info" style="font-size:14px">
+                                        Update Big Player
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
 
             <!-- Admin Points Section -->
@@ -328,6 +353,10 @@
             });
 
             $('#profitForm').on('submit', function () {
+                showLoader();
+            });
+
+            $('#bigPlayerForm').on('submit', function () {
                 showLoader();
             });
 

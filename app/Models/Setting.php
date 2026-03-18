@@ -25,7 +25,8 @@ class Setting extends Model
         'result',
         'last10data',
         'is_nagative_agent',
-        'holding'
+        'holding',
+        'big_player'
     ];
 
     /**
