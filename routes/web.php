@@ -16,7 +16,7 @@ Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::post('/change-password', [AuthController::class, 'changePassword'])
     ->name('change.password')
-    ->middleware('auth');
+    ->middleware('auth:web,admin');
 Route::get('/login', function () {
     return redirect('/');
 });
