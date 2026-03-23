@@ -2187,6 +2187,9 @@ class PagesController extends Controller
     {
         $agents = User::where("role", "agent")
             ->where("status", "Active")
+            ->project([
+                'gameHistory' => 0
+            ])
             ->get();
         //print_r($agents);
         $totalWinpointSum = 0;
@@ -2200,6 +2203,11 @@ class PagesController extends Controller
                         '$match' => [
                             "role" => "player",
                             "agent_id" => new ObjectId($agent->_id),
+                        ],
+                    ],
+                    [
+                        '$project' => [
+                            'gameHistory' => 0, // exclude heavy field
                         ],
                     ],
                 ]);
@@ -2469,6 +2477,9 @@ class PagesController extends Controller
 
                 $agents = User::where("role", "agent")
                     ->where("distributor_id", new ObjectId($user->_id))
+                    ->project([
+                        'gameHistory' => 0
+                    ])
                     ->pluck("_id")
                     ->map(fn($id) => new ObjectId($id))
                     ->toArray();
@@ -2562,6 +2573,9 @@ class PagesController extends Controller
 
                 $agentIds = User::where('role', 'agent')
                     ->where('distributor_id', new ObjectId($release->transfer_to))
+                    ->project([
+                        'gameHistory' => 0
+                    ])
                     ->pluck('_id')
                     ->map(fn($id) => new ObjectId($id))
                     ->toArray();
@@ -2576,6 +2590,12 @@ class PagesController extends Controller
                                     ['distributor' => new ObjectId($release->transfer_to)],
                                     ['agent_id' => ['$in' => $agentIds]],
                                 ],
+                            ],
+                        ],
+                        [
+                            '$project' => [
+                                'gameHistory' => 0, // exclude heavy field
+                                'balance' => 1      // keep required field
                             ],
                         ],
                         [
@@ -2600,6 +2620,12 @@ class PagesController extends Controller
                                     ['agent_id' => new ObjectId($release->transfer_to)],
                                     ['agent_id' => (string)$release->transfer_to],
                                 ],
+                            ],
+                        ],
+                        [
+                            '$project' => [
+                                'gameHistory' => 0, // exclude heavy field
+                                'balance' => 1      // keep required field
                             ],
                         ],
                         [

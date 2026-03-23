@@ -96,8 +96,8 @@ Route::get('/test-player', function () {
 Route::get('/get-agents/{distributorId}', [PagesController::class, 'getAgents'])->middleware('auth:web,admin');
 
 Route::get('/commission-report', [PagesController::class, 'commissionReport'])->name('commission.report')->middleware('auth:web,admin');
-// For fetching commission data using distributor ID
-Route::get('/commission-report/{id}', [PagesController::class, 'commissionReportData']);
+//// For fetching commission data using distributor ID
+//Route::get('/commission-report/{id}', [PagesController::class, 'commissionReportData']);
 
 //transfer admin-distributor   distributor-agent    agent-player
 
