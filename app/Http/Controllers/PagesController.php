@@ -278,6 +278,9 @@ class PagesController extends Controller
         // Players list with relationships
         $players = $query
             ->with(["agentUser", "distributorUser"])
+            ->project([
+                'gameHistory' => 0
+            ])
             ->paginate($perPage)
             ->appends(request()->query());
 
