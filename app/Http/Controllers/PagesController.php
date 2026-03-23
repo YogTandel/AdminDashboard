@@ -1462,6 +1462,9 @@ class PagesController extends Controller
             $searchTerm = trim($request->search);
 
             $matchedUsers = User::where("player", "LIKE", "%{$searchTerm}%")
+                ->project([
+                    'gameHistory' => 0
+                ])
                 ->pluck("_id")
                 ->map(fn($id) => (string)$id)
                 ->toArray();
@@ -1543,7 +1546,9 @@ class PagesController extends Controller
          * ---------------------------------------- */
         if ($request->filled("agent_name")) {
             $agentName = $request->agent_name;
-            $agent = User::where("player", $agentName)->first();
+            $agent = User::where("player", $agentName)->project([
+                'gameHistory' => 0
+            ])->first();
 
             if ($agent) {
                 $agentId = (string)$agent->_id;
@@ -1565,7 +1570,9 @@ class PagesController extends Controller
         if ($request->filled("distributor_name")) {
             $distributorName = $request->distributor_name;
 
-            $distributor = User::where("player", $distributorName)->first()
+            $distributor = User::where("player", $distributorName)->project([
+                'gameHistory' => 0
+            ])->first()
                 ?? Admin::where("player", $distributorName)->first();
 
             if ($distributor) {
@@ -1598,6 +1605,9 @@ class PagesController extends Controller
             ->map(fn($id) => (string)$id);
 
         $users = User::whereIn("_id", $userIds)
+            ->project([
+                'gameHistory' => 0
+            ])
             ->get()
             ->mapWithKeys(fn($u) => [(string)$u->_id => $u]);
 
@@ -1616,9 +1626,13 @@ class PagesController extends Controller
         if ($admin) {
 
             // Admin sees ALL
-            $agents = User::where("role", "agent")->orderBy("player")->get();
+            $agents = User::where("role", "agent")->orderBy("player")->project([
+                'gameHistory' => 0
+            ])->get();
 
-            $distributors = User::where("role", "distributor")->orderBy("player")->get()
+            $distributors = User::where("role", "distributor")->orderBy("player")->project([
+                'gameHistory' => 0
+            ])->get()
                 ->merge(Admin::orderBy("player")->get());
 
         } else {
@@ -1648,11 +1662,17 @@ class PagesController extends Controller
 
             $agents = User::whereIn("_id", $relatedIds)
                 ->where("role", "agent")
+                ->project([
+                    'gameHistory' => 0
+                ])
                 ->orderBy("player")
                 ->get();
 
             $distributors = User::whereIn("_id", $relatedIds)
                 ->where("role", "distributor")
+                ->project([
+                    'gameHistory' => 0
+                ])
                 ->orderBy("player")
                 ->get()
                 ->merge(
@@ -2017,6 +2037,9 @@ class PagesController extends Controller
             ->map(fn($id) => (string)$id);
 
         $users = User::whereIn("_id", $userIds)
+            ->project([
+                'gameHistory' => 0
+            ])
             ->get()
             ->mapWithKeys(fn($u) => [(string)$u->_id => $u]);
 
@@ -2063,6 +2086,9 @@ class PagesController extends Controller
             // Dropdown options limited to related users
             $agents = User::whereIn("_id", $relatedIds)
                 ->where("role", "agent")
+                ->project([
+                    'gameHistory' => 0
+                ])
                 ->orderBy("player")
                 ->get();
 
