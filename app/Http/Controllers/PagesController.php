@@ -420,10 +420,10 @@ class PagesController extends Controller
          ================================= */
         $players = $query
             ->with(['agentUser', 'distributorUser'])
+            ->orderBy('last_login', 'desc')
             ->project([
                 'gameHistory' => 0
             ])
-            ->orderBy('last_login', 'desc')
             ->paginate($perPage)
             ->appends($request->query());
 
@@ -432,43 +432,19 @@ class PagesController extends Controller
          ================================= */
         if (!$isAdmin && $authUser->role === 'distributor') {
 
-//            $agents = User::where('role', 'agent')
-//                ->where('distributor', $authUser->_id)
-//                ->project([
-//                    'gameHistory' => 0
-//                ])
-//                ->get(['_id', 'player']);
             $agents = User::where('role', 'agent')
                 ->where('distributor', $authUser->_id)
-                ->project([
-                    '_id' => 1,
-                    'player' => 1,
-                    'gameHistory' => 0
-                ])
-                ->get();
+                ->get(['_id', 'player']);
 
         } elseif (!$isAdmin && $authUser->role === 'agent') {
 
-            $agents = User::where('_id', $authUser->_id)->project([
-                'gameHistory' => 0
-            ])->get(['_id', 'player']);
+            $agents = User::where('_id', $authUser->_id)->get(['_id', 'player']);
 
         } else {
-            $agents = User::where('role', 'agent')->project([
-                'gameHistory' => 0
-            ])->get(['_id', 'player']);
+            $agents = User::where('role', 'agent')->get(['_id', 'player']);
         }
 
-//        $distributors = User::where('role', 'distributor')->project([
-//            'gameHistory' => 0
-//        ])->get(['_id', 'player']);
-        $distributors = User::where('role', 'distributor')
-            ->project([
-                '_id' => 1,
-                'player' => 1,
-                'gameHistory' => 0
-            ])
-            ->get();
+        $distributors = User::where('role', 'distributor')->get(['_id', 'player']);
 
         return view(
             'pages.player.login',
