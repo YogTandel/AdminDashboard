@@ -432,12 +432,20 @@ class PagesController extends Controller
          ================================= */
         if (!$isAdmin && $authUser->role === 'distributor') {
 
+//            $agents = User::where('role', 'agent')
+//                ->where('distributor', $authUser->_id)
+//                ->project([
+//                    'gameHistory' => 0
+//                ])
+//                ->get(['_id', 'player']);
             $agents = User::where('role', 'agent')
                 ->where('distributor', $authUser->_id)
                 ->project([
+                    '_id' => 1,
+                    'player' => 1,
                     'gameHistory' => 0
                 ])
-                ->get(['_id', 'player']);
+                ->get();
 
         } elseif (!$isAdmin && $authUser->role === 'agent') {
 
@@ -451,9 +459,16 @@ class PagesController extends Controller
             ])->get(['_id', 'player']);
         }
 
-        $distributors = User::where('role', 'distributor')->project([
-            'gameHistory' => 0
-        ])->get(['_id', 'player']);
+//        $distributors = User::where('role', 'distributor')->project([
+//            'gameHistory' => 0
+//        ])->get(['_id', 'player']);
+        $distributors = User::where('role', 'distributor')
+            ->project([
+                '_id' => 1,
+                'player' => 1,
+                'gameHistory' => 0
+            ])
+            ->get();
 
         return view(
             'pages.player.login',
