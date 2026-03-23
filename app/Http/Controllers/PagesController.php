@@ -2593,12 +2593,6 @@ class PagesController extends Controller
                             ],
                         ],
                         [
-                            '$project' => [
-                                'gameHistory' => 0, // exclude heavy field
-                                'balance' => 1      // keep required field
-                            ],
-                        ],
-                        [
                             '$group' => [
                                 '_id' => null,
                                 'total' => ['$sum' => '$balance'],
