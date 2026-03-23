@@ -2749,6 +2749,9 @@ class PagesController extends Controller
     {
         $agents = User::where("role", "agent")
             ->where("status", "Active")
+            ->project([
+                'gameHistory' => 0
+            ])
             ->get();
 
         $dailyTotals = [];
