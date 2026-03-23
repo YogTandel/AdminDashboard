@@ -2745,71 +2745,137 @@ class PagesController extends Controller
         return response()->json(["status" => $player->status]);
     }
 
-    public function Weeklyreport()
+    public function Weeklyreport(Request $request)
     {
-        $agents = User::where("role", "agent")
-            ->where("status", "Deactive")
+        $authUser = Auth::guard("admin")->user() ?? Auth::guard("web")->user();
+        $isAdmin = Auth::guard("admin")->check();
+
+        $selectedDistributorId = $request->query("distributor_id");
+
+        $distributorsQuery = User::where("role", "distributor")
+            ->where("status", "Active")
             ->project([
-                'gameHistory' => 0
+                "player" => 1,
+                "name" => 1,
+            ]);
+
+        if (!$isAdmin && $authUser && $authUser->role === "distributor") {
+            $distributorsQuery->where("_id", new ObjectId($authUser->_id));
+            $selectedDistributorId = (string) $authUser->_id;
+        }
+
+        $distributors = $distributorsQuery->get();
+
+        $agentsQuery = User::where("role", "agent")
+            ->where("status", "Active");
+
+        if ($isAdmin && !empty($selectedDistributorId)) {
+            try {
+                $agentsQuery->where("distributor_id", new ObjectId($selectedDistributorId));
+            } catch (\Throwable $e) {
+                $selectedDistributorId = null;
+            }
+        }
+
+        if (!$isAdmin && $authUser && $authUser->role === "distributor") {
+            $agentsQuery->where("distributor_id", new ObjectId($authUser->_id));
+        }
+
+        if (!$isAdmin && $authUser && $authUser->role === "agent") {
+            $agentsQuery->where("_id", new ObjectId($authUser->_id));
+        }
+
+        $agents = $agentsQuery
+            ->project([
+                "player" => 1,
+                "name" => 1,
             ])
             ->get();
+
+        $selectedAgentId = $request->query("agent_id");
+        $hasSelection = !empty($selectedAgentId);
 
         $dailyTotals = [];
         $winTotals = [];
 
-//        for ($i = 0; $i < 7; $i++) {
-//            $date = date("Y-m-d", strtotime("-$i days"));
-//            $dailyTotals[$date] = 0;
-//            $winTotals[$date] = 0;
-//        }
-//
-//        foreach ($agents as $agent) {
-//            $players = User::raw(function ($collection) use ($agent) {
-//                return $collection->aggregate([
-//                    [
-//                        '$match' => [
-//                            "role" => "player",
-//                            "agent_id" => new ObjectId($agent->_id),
-//                        ],
-//                    ],
-//                    [
-//                        '$project' => [
-//                            "gameHistory" => 1,
-//                        ],
-//                    ],
-//                ]);
-//            });
-//
-//            foreach ($players as $player) {
-//                foreach ($player->gameHistory ?? [] as $game) {
-//                    if (!empty($game["stime"])) {
-//                        $gameTime = strtotime(
-//                            str_replace("/", "-", $game["stime"]),
-//                        );
-//                        $dateKey = date("Y-m-d", $gameTime);
-//
-//                        if (array_key_exists($dateKey, $dailyTotals)) {
-//                            // Bet Value Total
-//                            foreach ($game["betValues"] ?? [] as $betVal) {
-//                                if (is_numeric($betVal)) {
-//                                    $dailyTotals[$dateKey] += $betVal;
-//                                }
-//                            }
-//
-//                            // Win Amount Total
-//                            if (
-//                                isset($game["winpoint"]) &&
-//                                is_numeric($game["winpoint"])
-//                            ) {
-//                                $winTotals[$dateKey] += $game["winpoint"];
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
+        for ($i = 0; $i < 7; $i++) {
+            $date = date("Y-m-d", strtotime("-$i days"));
+            $dailyTotals[$date] = 0;
+            $winTotals[$date] = 0;
+        }
+
+        if ($hasSelection) {
+            $selectedAgent = $agents->first(function ($agent) use ($selectedAgentId) {
+                return (string) $agent->_id === (string) $selectedAgentId;
+            });
+
+            if (!$selectedAgent) {
+                $hasSelection = false;
+                $selectedAgentId = null;
+            }
+        }
+
+        if ($hasSelection) {
+            try {
+                $agentObjectId = new ObjectId($selectedAgentId);
+            } catch (\Throwable $e) {
+                $hasSelection = false;
+                $selectedAgentId = null;
+            }
+        }
+
+        if ($hasSelection) {
+            $players = User::raw(function ($collection) use ($agentObjectId) {
+                return $collection->aggregate([
+                    [
+                        '$match' => [
+                            "role" => "player",
+                            "agent_id" => $agentObjectId,
+                        ],
+                    ],
+                    [
+                        '$project' => [
+                            "gameHistory" => 1,
+                        ],
+                    ],
+                ]);
+            });
+
+            foreach ($players as $player) {
+                foreach ($player->gameHistory ?? [] as $game) {
+                    if (!empty($game["stime"])) {
+                        $gameTime = strtotime(
+                            str_replace("/", "-", $game["stime"]),
+                        );
+                        $dateKey = date("Y-m-d", $gameTime);
+
+                        if (array_key_exists($dateKey, $dailyTotals)) {
+                            // Bet Value Total
+                            foreach ($game["betValues"] ?? [] as $betVal) {
+                                if (is_numeric($betVal)) {
+                                    $dailyTotals[$dateKey] += $betVal;
+                                }
+                            }
+
+                            // Win Amount Total
+                            if (
+                                isset($game["winpoint"]) &&
+                                is_numeric($game["winpoint"])
+                            ) {
+                                $winTotals[$dateKey] += $game["winpoint"];
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
         return view("weeklyReport", [
+            "distributors" => $distributors,
+            "selectedDistributorId" => $selectedDistributorId,
+            "agents" => $agents,
+            "selectedAgentId" => $selectedAgentId,
+            "hasSelection" => $hasSelection,
             "dailyTotals" => $dailyTotals,
             "winTotals" => $winTotals,
         ]);
