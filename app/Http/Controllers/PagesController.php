@@ -420,6 +420,9 @@ class PagesController extends Controller
          ================================= */
         $players = $query
             ->with(['agentUser', 'distributorUser'])
+            ->project([
+                'gameHistory' => 0
+            ])
             ->orderBy('last_login', 'desc')
             ->paginate($perPage)
             ->appends($request->query());
@@ -431,17 +434,26 @@ class PagesController extends Controller
 
             $agents = User::where('role', 'agent')
                 ->where('distributor', $authUser->_id)
+                ->project([
+                    'gameHistory' => 0
+                ])
                 ->get(['_id', 'player']);
 
         } elseif (!$isAdmin && $authUser->role === 'agent') {
 
-            $agents = User::where('_id', $authUser->_id)->get(['_id', 'player']);
+            $agents = User::where('_id', $authUser->_id)->project([
+                'gameHistory' => 0
+            ])->get(['_id', 'player']);
 
         } else {
-            $agents = User::where('role', 'agent')->get(['_id', 'player']);
+            $agents = User::where('role', 'agent')->project([
+                'gameHistory' => 0
+            ])->get(['_id', 'player']);
         }
 
-        $distributors = User::where('role', 'distributor')->get(['_id', 'player']);
+        $distributors = User::where('role', 'distributor')->project([
+            'gameHistory' => 0
+        ])->get(['_id', 'player']);
 
         return view(
             'pages.player.login',
