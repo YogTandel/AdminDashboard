@@ -17,7 +17,7 @@
                                 <label class="form-label">Total Earnings</label>
                                 <div class="input-group">
                                     <input type="number" id="totalEarnings" name="total_earnings"
-                                           class="form-control" value="0.1" min="0" max="100"
+                                           class="form-control" value="0" min="0" max="100"
                                            step="0.01" readonly
                                            style="pointer-events: none; background-color: #e9ecef;">
                                 </div>
@@ -46,7 +46,7 @@
                                                 <span class="input-group-text"
                                                       style="pointer-events: none; background-color: #e9ecef;">%</span>
                                         <input type="number" id="distributorPercent" name="distributor_commission"
-                                               value="0.1" class="form-control" min="0" max="100"
+                                               value="0" class="form-control" min="0" max="100"
                                                step="0.01" readonly
                                                style="pointer-events: none; background-color: #e9ecef;">
                                     </div>
@@ -99,7 +99,7 @@
                                                 <span class="input-group-text"
                                                       style="pointer-events: none; background-color: #e9ecef;">%</span>
                                         <input type="number" id="agentPercent" name="agent_commission"
-                                               value="5" class="form-control" min="0" max="100"
+                                               value="0" class="form-control" min="0" max="100"
                                                step="0.01" readonly
                                                style="pointer-events: none; background-color: #e9ecef;">
                                     </div>
@@ -116,17 +116,7 @@
                                     </div>
                                 </div>
 
-                                <!-- NEW Minus Value -->
-                                {{-- <div class="col-md-12 mt-2">
-                                    <label class="form-label">Minus (₹)</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"
-                                            style="pointer-events: none; background-color: #e9ecef;">₹</span>
-                                        <input type="text" id="agentMinus" class="form-control" readonly
-                                            value="-{{ number_format($totalWinpointSum * 0.05, 2) }}"
-                                            style="background-color: #e9ecef; pointer-events: none;">
-                                    </div>
-                                </div> --}}
+
                             </div>
                         </form>
                     </div>
@@ -135,7 +125,7 @@
             <!-- End Agent Commissions -->
 
             <!-- Distributor Dropdown Section -->
-            <div class="row" id="distributorDropdown">
+            <div class="row" id="distributorDropdown" style="display: none;">
                 <div class="col-12">
                     <div class="card shadow-sm border-radius-xl mb-4">
                         <div class="card-body py-4 px-4">
@@ -188,7 +178,7 @@
             <!-- End Distributor Dropdown Section -->
 
             <!-- Dynamic Agent Summary Table Section -->
-            <div class="row mt-4" id="agentSummaryTable">
+            <div class="row mt-4" id="agentSummaryTable" style="display: none;">
                 <div class="col-12">
                     <div class="card shadow-sm border-radius-xl">
                         <div class="card-header pb-0">
@@ -245,8 +235,16 @@
     <script>
         var totalWinpointSum = {{ $totalWinpointSum }};
 
+        function setCommissionSectionsVisible(isVisible) {
+            const displayValue = isVisible ? '' : 'none';
+            document.getElementById('distributorDropdown').style.display = displayValue;
+            document.getElementById('agentSummaryTable').style.display = displayValue;
+        }
+
         function fetchLiveGameValues() {
             console.log('Fetching live game values from settings.data endpoint...');
+            setCommissionSectionsVisible(false);
+
             fetch("{{ route('settings.data') }}", {
                 method: 'GET',
                 headers: {
@@ -276,27 +274,39 @@
                     }
                 })
                 .then(data => {
-                    document.getElementById('totalEarnings').value = data.earning;
-                    document.getElementById('distributorPercent').value = data.distributorComission;
-                    document.getElementById('agentPercent').value = data.agentComission;
+                    const earning = Number(data.earning);
+                    const distributorCommission = Number(data.distributorComission);
+                    const agentCommission = Number(data.agentComission);
+                    const totalWinpoint = Number(data.totalWinpointSum);
 
-                    totalWinpointSum = data.totalWinpointSum;
+                    const isPayloadValid = [earning, distributorCommission, agentCommission, totalWinpoint]
+                        .every(Number.isFinite);
+
+                    if (!isPayloadValid) {
+                        throw new Error('Invalid settings payload received.');
+                    }
+
+                    document.getElementById('totalEarnings').value = earning;
+                    document.getElementById('distributorPercent').value = distributorCommission;
+                    document.getElementById('agentPercent').value = agentCommission;
+
+                    totalWinpointSum = totalWinpoint;
 
 
                     // document.getElementById('distributoramount').value = totalWinpointSum*(data.distributorComission/100).toFixed(2);
-                    document.getElementById('distributoramount').value = totalWinpointSum * (data.distributorComission /
+                    document.getElementById('distributoramount').value = totalWinpointSum * (distributorCommission /
                         100).toFixed(2);
                     //alert(totalWinpointSum);
-                    document.getElementById('agentamount').value = totalWinpointSum * (data.agentComission / 100)
+                    document.getElementById('agentamount').value = totalWinpointSum * (agentCommission / 100)
                         .toFixed(2);
 
-                    //if totalEarnings is zero then hide the distributorDropdown, agentSummaryTable
-                    if (Number(data.earning) === 0) {
-                        document.getElementById('distributorDropdown').style.display = 'none';
-                        document.getElementById('agentSummaryTable').style.display = 'none';
-                    }
+                    // Show sections only after commission values are loaded and earning is positive.
+                    setCommissionSectionsVisible(earning > 0);
                 })
-                .catch(error => console.error('Error fetching live game values:', error));
+                .catch(error => {
+                    setCommissionSectionsVisible(false);
+                    console.error('Error fetching live game values:', error);
+                });
         }
 
         fetchLiveGameValues();
