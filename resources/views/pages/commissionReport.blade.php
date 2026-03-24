@@ -299,7 +299,7 @@
         }
 
         fetchLiveGameValues();
-        setInterval(fetchLiveGameValues, 5000);
+        // setInterval(fetchLiveGameValues, 5000);
     </script>
 
     <script>

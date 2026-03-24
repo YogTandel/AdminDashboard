@@ -2114,12 +2114,26 @@ class PagesController extends Controller
 
         foreach ($agents as $agent) {
             $releaseTimestamp = $agent->release_commission_date;
-            $players = User::raw(function ($collection) use ($agent) {
+            $players = User::raw(function ($collection) use ($agent, $releaseTimestamp) {
                 return $collection->aggregate([
                     [
                         '$match' => [
                             "role" => "player",
                             "agent_id" => new ObjectId($agent->_id),
+                        ],
+                    ],
+                    [
+                        '$project' => [
+                            'player' => 1,
+                            'gameHistory' => [
+                                '$filter' => [
+                                    'input' => '$gameHistory',
+                                    'as' => 'history',
+                                    'cond' => [
+                                        '$gt' => ['$$history.time_stamp', $releaseTimestamp]
+                                    ],
+                                ],
+                            ],
                         ],
                     ],
                     /* [
