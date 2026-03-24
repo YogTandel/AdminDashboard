@@ -246,8 +246,34 @@
         var totalWinpointSum = {{ $totalWinpointSum }};
 
         function fetchLiveGameValues() {
-            fetch("{{ route('settings.data') }}")
-                .then(response => response.json())
+            fetch("{{ route('settings.data') }}", {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'same-origin'
+            })
+                .then(async response => {
+                    const rawBody = await response.text();
+                    const contentType = response.headers.get('content-type') || '';
+
+                    if (!response.ok) {
+                        throw new Error(`settings.data request failed (${response.status})`);
+                    }
+
+                    if (!contentType.includes('application/json')) {
+                        const preview = rawBody.slice(0, 120).replace(/\s+/g, ' ');
+                        throw new Error(`settings.data returned non-JSON response: ${preview}`);
+                    }
+
+                    try {
+                        return JSON.parse(rawBody);
+                    } catch (parseError) {
+                        const preview = rawBody.slice(0, 120).replace(/\s+/g, ' ');
+                        throw new Error(`Invalid JSON from settings.data: ${preview}`);
+                    }
+                })
                 .then(data => {
                     document.getElementById('totalEarnings').value = data.earning;
                     document.getElementById('distributorPercent').value = data.distributorComission;
@@ -264,7 +290,7 @@
                         .toFixed(2);
 
                     //if totalEarnings is zero then hide the distributorDropdown, agentSummaryTable
-                    if (data.earning == 0) {
+                    if (Number(data.earning) === 0) {
                         document.getElementById('distributorDropdown').style.display = 'none';
                         document.getElementById('agentSummaryTable').style.display = 'none';
                     }
@@ -353,6 +379,7 @@
                 setAgentSummaryLoading(true);
 
                 // Fetch distributor details (includes agents)
+                console.log(`Fetching details for distributor ID: ${id} (Request Token: ${currentRequestToken})`);
                 distributorDetailsRequest = $.ajax({
                     url: `/ajax/distributor/${id}`,
                     method: 'GET',
@@ -457,6 +484,7 @@
                     return;
                 }
 
+                console.log(`Releasing commission for Agent ID: ${agentId}, Distributor ID: ${distributorId}, Amount: ₹${commissionAmount.toFixed(2)}`);
                 $.ajax({
                     url: '/release-commission',
                     method: 'POST',

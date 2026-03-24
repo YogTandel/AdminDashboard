@@ -2233,9 +2233,9 @@ class PagesController extends Controller
 
     public function getDistributorDetails($id)
     {
-        $agents = User::where("role", "agent")
+        $agents = User::where("distributor_id", new ObjectId($id))
+            ->where("role", "agent")
             ->where("status", "Active")
-            ->where("distributor_id", new ObjectId($id))
             ->get();
 
         $totalWinpointSum_distributor = 0;
@@ -2247,12 +2247,26 @@ class PagesController extends Controller
             // $releaseTimestamp       = $releaseDate ? Carbon::parse($releaseDate)->timestamp : null;
             $releaseTimestamp = $agent->release_commission_date;
 
-            $players = User::raw(function ($collection) use ($agent) {
+            $players = User::raw(function ($collection) use ($agent, $releaseTimestamp) {
                 return $collection->aggregate([
                     [
                         '$match' => [
                             "role" => "player",
                             "agent_id" => new ObjectId($agent->_id),
+                        ],
+                    ],
+                    [
+                        '$project' => [
+                            'player' => 1,
+                            'gameHistory' => [
+                                '$filter' => [
+                                    'input' => '$gameHistory',
+                                    'as' => 'history',
+                                    'cond' => [
+                                        '$gt' => ['$$history.time_stamp', $releaseTimestamp]
+                                    ],
+                                ],
+                            ],
                         ],
                     ],
                     /* [
@@ -2761,7 +2775,7 @@ class PagesController extends Controller
 
         if (!$isAdmin && $authUser && $authUser->role === "distributor") {
             $distributorsQuery->where("_id", new ObjectId($authUser->_id));
-            $selectedDistributorId = (string) $authUser->_id;
+            $selectedDistributorId = (string)$authUser->_id;
         }
 
         $distributors = $distributorsQuery->get();
@@ -2806,7 +2820,7 @@ class PagesController extends Controller
 
         if ($hasSelection) {
             $selectedAgent = $agents->first(function ($agent) use ($selectedAgentId) {
-                return (string) $agent->_id === (string) $selectedAgentId;
+                return (string)$agent->_id === (string)$selectedAgentId;
             });
 
             if (!$selectedAgent) {
