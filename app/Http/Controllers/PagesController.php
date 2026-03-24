@@ -2779,6 +2779,15 @@ class PagesController extends Controller
         $isAdmin = Auth::guard("admin")->check();
 
         $selectedDistributorId = $request->query("distributor_id");
+        $selectedDistributorObjectId = null;
+
+        if (!empty($selectedDistributorId)) {
+            try {
+                $selectedDistributorObjectId = new ObjectId($selectedDistributorId);
+            } catch (\Throwable $e) {
+                $selectedDistributorId = null;
+            }
+        }
 
         $distributorsQuery = User::where("role", "distributor")
             ->where("status", "Active")
@@ -2790,35 +2799,45 @@ class PagesController extends Controller
         if (!$isAdmin && $authUser && $authUser->role === "distributor") {
             $distributorsQuery->where("_id", new ObjectId($authUser->_id));
             $selectedDistributorId = (string)$authUser->_id;
+            $selectedDistributorObjectId = new ObjectId($authUser->_id);
         }
 
         $distributors = $distributorsQuery->get();
 
-        $agentsQuery = User::where("role", "agent")
-            ->where("status", "Active");
-
-        if ($isAdmin && !empty($selectedDistributorId)) {
-            try {
-                $agentsQuery->where("distributor_id", new ObjectId($selectedDistributorId));
-            } catch (\Throwable $e) {
-                $selectedDistributorId = null;
+        if ($isAdmin) {
+            if ($selectedDistributorObjectId) {
+                $agents = User::where("role", "agent")
+                    ->where("status", "Active")
+                    ->where("distributor_id", $selectedDistributorObjectId)
+                    ->project([
+                        "player" => 1,
+                        "name" => 1,
+                    ])
+                    ->get();
+            } else {
+                $agents = collect();
             }
+        } elseif ($authUser && $authUser->role === "distributor") {
+            $agents = User::where("role", "agent")
+                ->where("status", "Active")
+                ->where("distributor_id", new ObjectId($authUser->_id))
+                ->project([
+                    "player" => 1,
+                    "name" => 1,
+                ])
+                ->get();
+        } elseif ($authUser && $authUser->role === "agent") {
+            $agents = User::where("role", "agent")
+                ->where("status", "Active")
+                ->where("_id", new ObjectId($authUser->_id))
+                ->project([
+                    "player" => 1,
+                    "name" => 1,
+                ])
+                ->get();
+        } else {
+            $agents = collect();
         }
-
-        if (!$isAdmin && $authUser && $authUser->role === "distributor") {
-            $agentsQuery->where("distributor_id", new ObjectId($authUser->_id));
-        }
-
-        if (!$isAdmin && $authUser && $authUser->role === "agent") {
-            $agentsQuery->where("_id", new ObjectId($authUser->_id));
-        }
-
-        $agents = $agentsQuery
-            ->project([
-                "player" => 1,
-                "name" => 1,
-            ])
-            ->get();
 
         $selectedAgentId = $request->query("agent_id");
         $hasSelection = !empty($selectedAgentId);
