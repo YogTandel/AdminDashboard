@@ -279,6 +279,7 @@
     <script>
         var distributordata = [];
         var distributorRequestToken = 0;
+        var distributorDetailsRequest = null;
 
         $(document).ready(function () {
             function setAgentSummaryLoading(isLoading) {
@@ -334,16 +335,25 @@
                     }) : 'N/A');
 
                 if (!id) {
+                    if (distributorDetailsRequest) {
+                        distributorDetailsRequest.abort();
+                        distributorDetailsRequest = null;
+                    }
                     distributorRequestToken++;
                     clearFields();
                     return;
+                }
+
+                if (distributorDetailsRequest) {
+                    distributorDetailsRequest.abort();
+                    distributorDetailsRequest = null;
                 }
 
                 const currentRequestToken = ++distributorRequestToken;
                 setAgentSummaryLoading(true);
 
                 // Fetch distributor details (includes agents)
-                $.ajax({
+                distributorDetailsRequest = $.ajax({
                     url: `/ajax/distributor/${id}`,
                     method: 'GET',
                     success: function (data) {
@@ -405,13 +415,22 @@
 
                         $('#releaseButton').prop('disabled', !releaseAllowed);
                     },
-                    error: function () {
+                    error: function (xhr, textStatus) {
+                        if (textStatus === 'abort' || xhr?.statusText === 'abort') {
+                            return;
+                        }
+
                         if (currentRequestToken !== distributorRequestToken || id !== $('#distributor_id').val()) {
                             return;
                         }
 
                         clearFields();
                         alert('Could not fetch distributor details');
+                    },
+                    complete: function () {
+                        if (currentRequestToken === distributorRequestToken) {
+                            distributorDetailsRequest = null;
+                        }
                     }
                 });
             });
