@@ -246,6 +246,7 @@
         var totalWinpointSum = {{ $totalWinpointSum }};
 
         function fetchLiveGameValues() {
+            console.log('Fetching live game values from settings.data endpoint...');
             fetch("{{ route('settings.data') }}", {
                 method: 'GET',
                 headers: {
