@@ -82,15 +82,15 @@ Route::post('/transfer', [PagesController::class, 'processTransfer'])->name('tra
 Route::get('/transfer-report', [PagesController::class, 'showTransferReport'])->name('transfer.report')->middleware('auth:web,admin');
 
 // test-db
-Route::get('/test-db', function () {
-    return DB::connection('mongodb')->collection('test')->insert(['hello' => 'world']);
-});
+//Route::get('/test-db', static function () {
+//    return DB::connection('mongodb')->collection('test')->insert(['hello' => 'world']);
+//});
 
 // test-player
-Route::get('/test-player', function () {
-    $player = User::where('player', 'zeeshan')->first();
-    dd($player->gameHistory);
-});
+//Route::get('/test-player', function () {
+//    $player = User::where('player', 'zeeshan')->first();
+//    dd($player->gameHistory);
+//});
 
 // web.php
 Route::get('/get-agents/{distributorId}', [PagesController::class, 'getAgents'])->middleware('auth:web,admin');
