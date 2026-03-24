@@ -2872,7 +2872,11 @@ class PagesController extends Controller
         }
 
         if ($hasSelection) {
+
+
             $players = User::raw(function ($collection) use ($agentObjectId) {
+                $sevenDaysAgo = (int)((new \DateTime('-7 days'))->getTimestamp() * 1000);
+
                 return $collection->aggregate([
                     [
                         '$match' => [
@@ -2880,11 +2884,28 @@ class PagesController extends Controller
                             "agent_id" => $agentObjectId,
                         ],
                     ],
+//                    [
+//                        '$project' => [
+//                            "gameHistory" => 1,
+//                        ],
+//                    ],
                     [
                         '$project' => [
-                            "gameHistory" => 1,
+                            "gameHistory" => [
+                                '$filter' => [
+                                    'input' => '$gameHistory',
+                                    'as' => 'game',
+                                    'cond' => [
+                                        '$gte' => [
+                                            '$$game.time_stamp',
+                                            $sevenDaysAgo
+                                        ]
+                                    ]
+                                ]
+                            ]
                         ],
                     ],
+
                 ]);
             });
 
