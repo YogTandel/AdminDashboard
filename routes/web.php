@@ -3,15 +3,13 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PagesController;
-use App\Models\User;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [AuthController::class, 'showLogin'])->name('show.login');
 Route::get('/login/admin', [AuthController::class, 'showAdminLogin'])->name('show.admin.login');
 Route::get('/register', [AuthController::class, 'showRegister'])->name('show.register');
 Route::get('/changepassword', [AuthController::class, 'showChangePassword'])->name('show.changepassword');
-Route::post('/register', [AuthController::class, 'register'])->name('register');
+//Route::post('/register', [AuthController::class, 'register'])->name('register');
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::post('/change-password', [AuthController::class, 'changePassword'])

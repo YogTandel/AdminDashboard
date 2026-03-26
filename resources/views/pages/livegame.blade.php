@@ -45,13 +45,13 @@
                 <div class="d-flex align-items-center">
                     <span class="text-dark me-2" style="font-size: 1.5rem; font-weight: 700;">Result:</span>
                     <span id="live-result" class="badge text-white"
-                        style="background: linear-gradient(135deg, #f093fb, #f5576c); font-size: 1rem; font-weight: 700;">--</span>
+                          style="background: linear-gradient(135deg, #f093fb, #f5576c); font-size: 1rem; font-weight: 700;">--</span>
                 </div>
             </div>
 
             <div class="col-auto mb-2">
                 <span id="timer-badge" class="badge bg-dark"
-                    style="font-size: 16px; color: #FF0000; font-family: 'Share Tech Mono', monospace;">
+                      style="font-size: 16px; color: #FF0000; font-family: 'Share Tech Mono', monospace;">
                     00:00
                 </span>
             </div>
@@ -66,7 +66,7 @@
                 <div class="d-flex flex-wrap justify-content-center gap-2">
                     @for ($i = 1; $i <= 10; $i++)
                         <span id="result-badge-{{ $i }}" class="d-flex align-items-center justify-content-center"
-                            style="font-size: 1rem;
+                              style="font-size: 1rem;
                                      width: 50px;
                                      height: 30px;
                                      text-align: center;
@@ -108,7 +108,8 @@
 
             <div class="col-auto" id="card-total">
                 <div class="p-3 rounded text-white card-bg-total" style="width: 100px;">
-                    <p class="font-weight-bolder mb-2 text-center" style="font-size: 1.5rem; font-weight: 800;">Total</p>
+                    <p class="font-weight-bolder mb-2 text-center" style="font-size: 1.5rem; font-weight: 800;">
+                        Total</p>
                     <h5 class="text-sm value text-center mb-0">0</h5>
                 </div>
             </div>
@@ -125,19 +126,21 @@
                         <div class="table-responsive">
                             <table class="table align-items-center mb-0" style="table-layout: fixed; width: 100%;">
                                 <thead>
-                                    <tr>
+                                <tr>
+                                    <th class="text-uppercase text-dark fw-bold text-center"
+                                        style="font-size: 1rem; width: 22%;">Name
+                                    </th>
+                                    @for ($i = 1; $i <= 9; $i++)
                                         <th class="text-uppercase text-dark fw-bold text-center"
-                                            style="font-size: 1rem; width: 22%;">Name</th>
-                                        @for ($i = 1; $i <= 9; $i++)
-                                            <th class="text-uppercase text-dark fw-bold text-center"
-                                                style="font-size: 1rem;">
-                                                {{ $i }}</th>
-                                        @endfor
-                                        <th class="text-uppercase text-dark fw-bold text-center" style="font-size: 1rem;">0
-                                        </th>
-                                        <th class="text-uppercase text-dark fw-bold text-center" style="font-size: 1rem;">
-                                            Total</th>
-                                    </tr>
+                                            style="font-size: 1rem;">
+                                            {{ $i }}</th>
+                                    @endfor
+                                    <th class="text-uppercase text-dark fw-bold text-center" style="font-size: 1rem;">0
+                                    </th>
+                                    <th class="text-uppercase text-dark fw-bold text-center" style="font-size: 1rem;">
+                                        Total
+                                    </th>
+                                </tr>
                                 </thead>
                                 <tbody id="player-table-body"></tbody>
                             </table>
@@ -145,21 +148,23 @@
                     </div>
                 </div>
             </div>
-            <x-footer />
+            <x-footer/>
         </div>
 
         <!-- Success/Error Messages -->
         @if (session('success'))
-            <div id="alertMessage" class="alert alert-success alert-dismissible fade show position-fixed bottom-0 end-0 m-3"
-                role="alert" style="z-index: 9999;">
+            <div id="alertMessage"
+                 class="alert alert-success alert-dismissible fade show position-fixed bottom-0 end-0 m-3"
+                 role="alert" style="z-index: 9999;">
                 {{ session('success') }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         @endif
 
         @if (session('error'))
-            <div id="alertMessage" class="alert alert-danger alert-dismissible fade show position-fixed bottom-0 end-0 m-3"
-                role="alert" style="z-index: 9999;">
+            <div id="alertMessage"
+                 class="alert alert-danger alert-dismissible fade show position-fixed bottom-0 end-0 m-3"
+                 role="alert" style="z-index: 9999;">
                 {{ session('error') }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
@@ -251,7 +256,7 @@
 
     <!-- All JavaScript remains exactly the same -->
     <script>
-        setTimeout(function() {
+        setTimeout(function () {
             const alertEl = document.getElementById('alertMessage');
             if (alertEl) {
                 alertEl.classList.remove('show');
@@ -276,16 +281,16 @@
         setInterval(fetchLiveGameValues, 10000);
     </script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const config = {
                 refreshInterval: 5000,
                 apiEndpoint: "{{ route('last10.results') }}"
             };
 
             const badgeColors = [{
-                    bg: '#2aabf0ff',
-                    text: '#ffff'
-                },
+                bg: '#2aabf0ff',
+                text: '#ffff'
+            },
                 {
                     bg: '#2aabf0ff',
                     text: '#ffff'
@@ -325,9 +330,9 @@
             ];
 
             const badges = Array.from({
-                    length: 10
-                }, (_, i) =>
-                document.getElementById(`result-badge-${i+1}`)).filter(Boolean);
+                length: 10
+            }, (_, i) =>
+                document.getElementById(`result-badge-${i + 1}`)).filter(Boolean);
 
             function initBadges() {
                 badges.forEach((badge, index) => {
@@ -346,8 +351,8 @@
                         badges[index].textContent = result;
                         badges[index].style.color = (
                             result === 'W' ? '#388E3C' :
-                            result === 'L' ? '#D32F2F' :
-                            !isNaN(result) ? badgeColors[index].text : '#6c757d'
+                                result === 'L' ? '#D32F2F' :
+                                    !isNaN(result) ? badgeColors[index].text : '#6c757d'
                         );
                     }
                 });
@@ -383,19 +388,20 @@
             $.ajax({
                 url: '{{ route('bet.totals') }}',
                 method: 'GET',
-                success: function(response) {
+                success: function (response) {
                     for (let i = 0; i < 10; i++) {
                         $('#card-' + i + ' .value').text(response.totals[i]);
                     }
                     $('#card-total .value').text(response.grandTotal);
                 },
-                error: function(err) {
+                error: function (err) {
                     console.error('Error fetching bet totals:', err);
                 }
             });
+            loadPlayers();
         }
 
-        $(document).ready(function() {
+        $(document).ready(function () {
             fetchBetTotals();
             setInterval(fetchBetTotals, 5000);
         });
@@ -406,11 +412,11 @@
             $.ajax({
                 url: "{{ route('players.live') }}",
                 type: 'GET',
-                success: function(response) {
+                success: function (response) {
                     let players = response.players;
                     let tableBody = '';
 
-                    players.forEach(function(player) {
+                    players.forEach(function (player) {
                         let name = player.name;
                         let betValues = player.betValues;
                         let total = player.total;
@@ -438,13 +444,13 @@
 
                     $('#player-table-body').html(tableBody);
                 },
-                error: function(err) {
+                error: function (err) {
                     console.error("Error fetching player data", err);
                 }
             });
         }
 
-        $(document).ready(function() {
+        $(document).ready(function () {
             loadPlayers();
         });
     </script>
@@ -501,7 +507,7 @@
         function startTimerSocket() {
             const socket = new WebSocket('ws://178.16.138.62:3101');
 
-            socket.onopen = function() {
+            socket.onopen = function () {
                 console.log("✅ [WebSocket] Connection opened");
 
                 sendTimerRequest(socket);
@@ -513,7 +519,7 @@
                 setInterval(() => sendTimerRequest(socket), 5000);
             };
 
-            socket.onmessage = function(event) {
+            socket.onmessage = function (event) {
                 const data = JSON.parse(event.data);
                 console.log("📩 [WebSocket] Message received:", data);
 
@@ -522,12 +528,12 @@
                 }
             };
 
-            socket.onclose = function(event) {
+            socket.onclose = function (event) {
                 console.log("❌ [WebSocket] Connection closed", event);
                 if (countdownInterval) clearInterval(countdownInterval);
             };
 
-            socket.onerror = function(event) {
+            socket.onerror = function (event) {
                 console.error("❌ [WebSocket] Error occurred:", event);
                 if (countdownInterval) clearInterval(countdownInterval);
             };
@@ -537,13 +543,13 @@
     </script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             @for ($i = 0; $i <= 9; $i++)
-                document.getElementById('card-{{ $i }}').addEventListener('click', function() {
-                    if (confirm('Are you sure you want to bet on {{ $i }}?')) {
-                        submitCustomBet({{ $i }});
-                    }
-                });
+            document.getElementById('card-{{ $i }}').addEventListener('click', function () {
+                if (confirm('Are you sure you want to bet on {{ $i }}?')) {
+                    submitCustomBet({{ $i }});
+                }
+            });
             @endfor
 
             function submitCustomBet(betNumber) {

@@ -1163,13 +1163,45 @@ class PagesController extends Controller
 
     public function getLivePlayers()
     {
-        $players = User::where("role", "player")
+        /*$players = User::where("role", "player")
             ->where("login_status", true)
-            ->get();
+            ->join("bets", "bets.player_id", "=", "users._id")
+            ->project([
+                'gameHistory' => 0
+            ])
+            ->get();*/
+        $players = User::raw(function ($collection) {
+            return $collection->aggregate([
+                [
+                    '$match' => [
+                        'role' => 'player',
+                        'login_status' => true
+                    ]
+                ],
+                [
+                    '$lookup' => [
+                        'from' => 'bets',
+                        'localField' => '_id',
+                        'foreignField' => 'player_id',
+                        'as' => 'betValues'
+                    ]
+                ],
+                [
+                    '$match' => [
+                        'betValues.0' => ['$exists' => true] // ✅ only players with bets
+                    ]
+                ],
+                [
+                    '$project' => [
+                        'gameHistory' => 0
+                    ]
+                ]
+            ]);
+        });
 
         $result = [];
 
-        foreach ($players as $player) {
+        /*foreach ($players as $player) {
             $history = $player->gameHistory;
             if (!empty($history)) {
                 $lastGame = end($history);
@@ -1181,12 +1213,27 @@ class PagesController extends Controller
                     "total" => array_sum($betValues),
                 ];
             }
+        }*/
+//        print_r($players->toArray());
+//        exit();
+//        return response()->json(["players" => $players->toArray()]);
+        foreach ($players as $player) {
+
+            $betValues = $player['betValues'][0]['bet'] ?? [];
+
+            $result[] = [
+                "name" => $player->player,
+                "betValues" => $betValues,
+                "total" => array_sum($betValues),
+            ];
+
         }
 
         return response()->json(["players" => $result]);
     }
 
-    public function exportGameHistory($playerId)
+    public
+    function exportGameHistory($playerId)
     {
         // Find player with role validation
         $player = User::where("_id", $playerId)
@@ -1236,7 +1283,8 @@ class PagesController extends Controller
         return response()->stream($callback, 200, $headers);
     }
 
-    public function transferForm()
+    public
+    function transferForm()
     {
         $user = Auth::user();
 
@@ -1267,7 +1315,8 @@ class PagesController extends Controller
         ]);
     }
 
-    public function processTransfer(Request $request)
+    public
+    function processTransfer(Request $request)
     {
         DB::beginTransaction();
         try {
@@ -1429,7 +1478,8 @@ class PagesController extends Controller
         }
     }
 
-    public function showTransferReport(Request $request)
+    public
+    function showTransferReport(Request $request)
     {
         $user = auth("web")->user();
         $admin = auth("admin")->user();
@@ -1686,7 +1736,8 @@ class PagesController extends Controller
         );
     }
 
-    public function getAgents($distributorId)
+    public
+    function getAgents($distributorId)
     {
         try {
             $objectId = new ObjectId($distributorId);
@@ -1709,7 +1760,8 @@ class PagesController extends Controller
         }
     }
 
-    public function updateCustomBet(Request $request)
+    public
+    function updateCustomBet(Request $request)
     {
         $validated = $request->validate([
             "custom_bet" => "required|integer|min:0|max:9",
@@ -1737,13 +1789,15 @@ class PagesController extends Controller
         }
     }
 
-    public function getAdminEndpoint()
+    public
+    function getAdminEndpoint()
     {
         $admin = Auth::guard("admin")->user(); // assuming admin is logged in
         return response()->json(["endpoint" => $admin->endpoint ?? "N/A"]);
     }
 
-    public function transferToDistributor(Request $request)
+    public
+    function transferToDistributor(Request $request)
     {
         $request->validate([
             "transfer_to" => "required|exists:users,id",
@@ -1795,7 +1849,8 @@ class PagesController extends Controller
             ->with("success", "Balance transferred successfully.");
     }
 
-    public function transferToAgent(Request $request)
+    public
+    function transferToAgent(Request $request)
     {
         $request->validate([
             "transfer_to" => "required",
@@ -1839,7 +1894,8 @@ class PagesController extends Controller
         return back()->with("success", "Balance transferred successfully.");
     }
 
-    public function transferToPlayer(Request $request)
+    public
+    function transferToPlayer(Request $request)
     {
         $request->validate([
             "transfer_to" => "required|exists:users,id",
@@ -1883,7 +1939,8 @@ class PagesController extends Controller
         return back()->with("success", "Balance transferred successfully.");
     }
 
-    public function showRefillReport(Request $request)
+    public
+    function showRefillReport(Request $request)
     {
         $user = auth("web")->user();
         $admin = auth("admin")->user();
@@ -2104,7 +2161,8 @@ class PagesController extends Controller
         );
     }
 
-    public function getSettingsData()
+    public
+    function getSettingsData()
     {
         $agents = User::where("role", "agent")
             ->where("status", "Active")
@@ -2179,7 +2237,8 @@ class PagesController extends Controller
         ]);
     }
 
-    public function getDistributors(Request $request)
+    public
+    function getDistributors(Request $request)
     {
         $distributors = User::where("role", "distributor")->get();
 
@@ -2197,7 +2256,8 @@ class PagesController extends Controller
         return response()->json($data);
     }
 
-    public function commissionReport()
+    public
+    function commissionReport()
     {
         $agents = User::where("role", "agent")
             ->where("status", "Active")
@@ -2245,7 +2305,8 @@ class PagesController extends Controller
         ]);
     }
 
-    public function getDistributorDetails($id)
+    public
+    function getDistributorDetails($id)
     {
         $agents = User::where("distributor_id", new ObjectId($id))
             ->where("role", "agent")
@@ -2332,7 +2393,8 @@ class PagesController extends Controller
         ]);
     }
 
-    public function releaseCommission(Request $request)
+    public
+    function releaseCommission(Request $request)
     {
         $rules = [
             "transfer_to" => "required|string",
@@ -2471,7 +2533,8 @@ class PagesController extends Controller
     }
 
     // Helper method to format integer values for display
-    private function formatReleaseForDisplay($release)
+    private
+    function formatReleaseForDisplay($release)
     {
         return [
             "id" => $release->id,
@@ -2486,7 +2549,8 @@ class PagesController extends Controller
         ];
     }
 
-    public function relesecommissionReport(Request $request)
+    public
+    function relesecommissionReport(Request $request)
     {
         $perPage = $request->get("per_page", 10);
 
@@ -2666,7 +2730,8 @@ class PagesController extends Controller
         return view("pages.comissiom-report", compact("releases"));
     }
 
-    public function updateStatus(Request $request, $id)
+    public
+    function updateStatus(Request $request, $id)
     {
         $distributor = User::find($id);
         if ($distributor) {
@@ -2677,7 +2742,8 @@ class PagesController extends Controller
         return response()->json(["success" => false]);
     }
 
-    public function index()
+    public
+    function index()
     {
         $totalAgents = User::where("role", "agent")->count();
         $activeAgents = User::where("role", "agent")
@@ -2726,7 +2792,8 @@ class PagesController extends Controller
         );
     }
 
-    public function toggleStatus($id)
+    public
+    function toggleStatus($id)
     {
         $user = User::where("id", $id)->where("role", "agent")->firstOrFail();
 
@@ -2743,7 +2810,8 @@ class PagesController extends Controller
         ]);
     }
 
-    public function distoggleStatus($id)
+    public
+    function distoggleStatus($id)
     {
         $distributor = User::where("_id", $id)
             ->where("role", "distributor")
@@ -2759,7 +2827,8 @@ class PagesController extends Controller
         ]);
     }
 
-    public function playertoggleStatus($id)
+    public
+    function playertoggleStatus($id)
     {
         $player = User::find($id);
 
@@ -2773,7 +2842,8 @@ class PagesController extends Controller
         return response()->json(["status" => $player->status]);
     }
 
-    public function Weeklyreport(Request $request)
+    public
+    function Weeklyreport(Request $request)
     {
         $authUser = Auth::guard("admin")->user() ?? Auth::guard("web")->user();
         $isAdmin = Auth::guard("admin")->check();
@@ -2949,7 +3019,8 @@ class PagesController extends Controller
         ]);
     }
 
-    public function toggleLoginStatus($id)
+    public
+    function toggleLoginStatus($id)
     {
         $player = User::find($id);
 
@@ -2967,7 +3038,8 @@ class PagesController extends Controller
         return response()->json(["status" => $player->login_status]);
     }
 
-    public function filterShow(Request $request)
+    public
+    function filterShow(Request $request)
     {
         $query = User::where("role", "player");
 
