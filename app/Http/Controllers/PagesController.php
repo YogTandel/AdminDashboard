@@ -1186,11 +1186,11 @@ class PagesController extends Controller
                         'as' => 'betValues'
                     ]
                 ],
-                [
+                /*[
                     '$match' => [
                         'betValues.0' => ['$exists' => true] // ✅ only players with bets
                     ]
-                ],
+                ],*/
                 [
                     '$project' => [
                         'gameHistory' => 0
